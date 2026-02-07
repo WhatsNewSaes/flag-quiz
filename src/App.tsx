@@ -328,10 +328,10 @@ function App() {
                 <button
                   key={level}
                   onClick={() => handleTogglePresentationDifficulty(level)}
-                  className={`flex-1 rounded-lg p-2 text-center transition-all ${
+                  className={`flex-1 rounded-full py-1.5 px-1 text-center transition-all ${
                     isEnabled
-                      ? 'bg-white text-indigo-600 shadow-sm ring-2 ring-indigo-300'
-                      : 'bg-gray-100 text-gray-400'
+                      ? 'bg-indigo-100 text-indigo-700 ring-2 ring-indigo-500'
+                      : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
                   }`}
                 >
                   <div className="text-xs font-medium truncate">
