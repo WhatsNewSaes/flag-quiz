@@ -343,30 +343,29 @@ function App() {
             {presentation.presentationType === 'flag-to-name' ? (
               // Flag → Name: Show flag, reveal name
               <div className="flex flex-col items-center h-[280px] sm:h-[320px] justify-center">
+                <span
+                  className={`mb-4 px-3 py-1 rounded-full text-xs font-medium ${
+                    {
+                      1: 'bg-green-100 text-green-700',
+                      2: 'bg-blue-100 text-blue-700',
+                      3: 'bg-yellow-100 text-yellow-700',
+                      4: 'bg-orange-100 text-orange-700',
+                      5: 'bg-red-100 text-red-700',
+                    }[currentCountry.difficulty]
+                  }`}
+                >
+                  {difficultyLabels[currentCountry.difficulty]}
+                </span>
+
                 <div className="text-[120px] sm:text-[160px] leading-none">
                   {getFlagEmoji(currentCountry.code)}
                 </div>
 
-                <div className="h-[60px] flex flex-col items-center justify-center mt-4">
+                <div className="h-[50px] flex items-center justify-center mt-4">
                   {presentation.revealed ? (
-                    <div className="text-center animate-bounce-in">
-                      <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">
-                        {currentCountry.name}
-                      </h2>
-                      <span
-                        className={`inline-block mt-1 px-3 py-1 rounded-full text-xs font-medium ${
-                          {
-                            1: 'bg-green-100 text-green-700',
-                            2: 'bg-blue-100 text-blue-700',
-                            3: 'bg-yellow-100 text-yellow-700',
-                            4: 'bg-orange-100 text-orange-700',
-                            5: 'bg-red-100 text-red-700',
-                          }[currentCountry.difficulty]
-                        }`}
-                      >
-                        {difficultyLabels[currentCountry.difficulty]}
-                      </span>
-                    </div>
+                    <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 animate-bounce-in">
+                      {currentCountry.name}
+                    </h2>
                   ) : (
                     <div className="text-3xl text-gray-300">???</div>
                   )}
@@ -375,24 +374,23 @@ function App() {
             ) : (
               // Name → Flag: Show name, reveal flag
               <div className="flex flex-col items-center h-[280px] sm:h-[320px] justify-center">
-                <div className="h-[60px] flex flex-col items-center justify-center mb-4">
-                  <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">
-                    {currentCountry.name}
-                  </h2>
-                  <span
-                    className={`inline-block mt-1 px-3 py-1 rounded-full text-xs font-medium ${
-                      {
-                        1: 'bg-green-100 text-green-700',
-                        2: 'bg-blue-100 text-blue-700',
-                        3: 'bg-yellow-100 text-yellow-700',
-                        4: 'bg-orange-100 text-orange-700',
-                        5: 'bg-red-100 text-red-700',
-                      }[currentCountry.difficulty]
-                    }`}
-                  >
-                    {difficultyLabels[currentCountry.difficulty]}
-                  </span>
-                </div>
+                <span
+                  className={`mb-4 px-3 py-1 rounded-full text-xs font-medium ${
+                    {
+                      1: 'bg-green-100 text-green-700',
+                      2: 'bg-blue-100 text-blue-700',
+                      3: 'bg-yellow-100 text-yellow-700',
+                      4: 'bg-orange-100 text-orange-700',
+                      5: 'bg-red-100 text-red-700',
+                    }[currentCountry.difficulty]
+                  }`}
+                >
+                  {difficultyLabels[currentCountry.difficulty]}
+                </span>
+
+                <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4">
+                  {currentCountry.name}
+                </h2>
 
                 <div className="text-[120px] sm:text-[160px] leading-none">
                   {presentation.revealed ? (
