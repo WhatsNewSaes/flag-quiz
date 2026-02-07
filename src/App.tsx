@@ -305,7 +305,7 @@ function App() {
                     : 'text-gray-600 hover:text-gray-800'
                 }`}
               >
-                Flag → Name
+                Pick the Name
               </button>
               <button
                 onClick={() => presentation.setPresentationType('name-to-flag')}
@@ -315,7 +315,7 @@ function App() {
                     : 'text-gray-600 hover:text-gray-800'
                 }`}
               >
-                Name → Flag
+                Pick the Flag
               </button>
             </div>
           </div>
