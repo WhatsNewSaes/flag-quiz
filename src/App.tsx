@@ -18,7 +18,6 @@ import { JeopardyQuestion } from './components/JeopardyQuestion';
 import { JeopardyDailyDouble } from './components/JeopardyDailyDouble';
 import { JeopardySummary } from './components/JeopardySummary';
 import { ContinentFilter } from './components/ContinentFilter';
-import { DifficultyFilter } from './components/DifficultyFilter';
 import { useQuiz, QuizMode } from './hooks/useQuiz';
 import { useCampaign } from './hooks/useCampaign';
 import { useAroundTheWorld } from './hooks/useAroundTheWorld';
