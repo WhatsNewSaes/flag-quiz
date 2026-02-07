@@ -320,13 +320,34 @@ function App() {
             </div>
           </div>
 
-          {/* Settings Panel */}
+          {/* Difficulty Toggles - Always visible */}
+          <div className="flex gap-2 mb-4">
+            {([1, 2, 3, 4, 5] as Difficulty[]).map(level => {
+              const isEnabled = presentationDifficulties.includes(level);
+              const colors = {
+                1: isEnabled ? 'bg-green-100 text-green-700 ring-green-400' : 'bg-gray-100 text-gray-400',
+                2: isEnabled ? 'bg-blue-100 text-blue-700 ring-blue-400' : 'bg-gray-100 text-gray-400',
+                3: isEnabled ? 'bg-yellow-100 text-yellow-700 ring-yellow-400' : 'bg-gray-100 text-gray-400',
+                4: isEnabled ? 'bg-orange-100 text-orange-700 ring-orange-400' : 'bg-gray-100 text-gray-400',
+                5: isEnabled ? 'bg-red-100 text-red-700 ring-red-400' : 'bg-gray-100 text-gray-400',
+              };
+              return (
+                <button
+                  key={level}
+                  onClick={() => handleTogglePresentationDifficulty(level)}
+                  className={`flex-1 rounded-lg p-2 text-center transition-all ${colors[level]} ${isEnabled ? 'ring-2' : ''}`}
+                >
+                  <div className="text-xs font-medium">
+                    {difficultyLabels[level]}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Settings Panel - Continent filters only */}
           {showPresentationSettings && (
-            <div className="mb-4 space-y-4">
-              <DifficultyFilter
-                enabledDifficulties={presentationDifficulties}
-                onToggle={handleTogglePresentationDifficulty}
-              />
+            <div className="mb-4">
               <ContinentFilter
                 enabledContinents={presentationContinents}
                 onToggle={handleTogglePresentationContinent}

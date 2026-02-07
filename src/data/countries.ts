@@ -231,11 +231,11 @@ export const continents: Continent[] = [
 ];
 
 export const difficultyLabels: Record<Difficulty, string> = {
-  1: 'Very Easy',
+  1: 'V. Easy',
   2: 'Easy',
   3: 'Medium',
   4: 'Hard',
-  5: 'Very Hard',
+  5: 'V. Hard',
 };
 
 export const getCountriesByDifficulty = (difficulty: Difficulty): Country[] =>
