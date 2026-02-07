@@ -11,7 +11,7 @@ export function PresentationTypeSelect({ onSelect, onBack }: PresentationTypeSel
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
           <div className="text-5xl mb-4">📖</div>
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">Presentation Mode</h1>
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">Flashcard Mode</h1>
           <p className="text-gray-600">Study flags at your own pace</p>
         </div>
 

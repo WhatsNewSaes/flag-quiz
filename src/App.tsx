@@ -269,7 +269,7 @@ function App() {
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
             <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-              Presentation Mode
+              Flashcard Mode
             </h1>
             <div className="flex items-center gap-2">
               <button

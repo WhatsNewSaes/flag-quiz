@@ -83,7 +83,7 @@ export function GameModeSelect({ onSelectMode }: GameModeSelectProps) {
             <div className="flex items-start gap-4">
               <div className="text-4xl">📖</div>
               <div>
-                <h2 className="text-xl font-bold text-gray-800 mb-1">Presentation Mode</h2>
+                <h2 className="text-xl font-bold text-gray-800 mb-1">Flashcard Mode</h2>
                 <p className="text-gray-600 text-sm">
                   Flashcard-style study mode. Reveal flags or names at your own pace.
                 </p>
