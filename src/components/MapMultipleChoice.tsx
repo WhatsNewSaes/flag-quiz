@@ -38,7 +38,7 @@ export function MapMultipleChoice({
   }, [options, onSelect, disabled]);
 
   const getButtonStyles = (option: Country) => {
-    const baseStyles = 'w-full py-3 px-4 text-left font-medium rounded-xl transition-all transform flex items-center gap-3';
+    const baseStyles = 'w-full py-2 px-3 lg:py-3 lg:px-4 text-left font-medium rounded-xl transition-all transform flex items-center gap-2 lg:gap-3';
 
     if (answeredCorrectly !== null) {
       if (option.code === correctCountry.code) {
@@ -54,7 +54,7 @@ export function MapMultipleChoice({
   };
 
   return (
-    <div className="grid grid-cols-1 gap-2 w-full">
+    <div className="grid grid-cols-2 lg:grid-cols-1 gap-2 w-full">
       {options.map((option, index) => (
         <button
           key={option.code}
@@ -65,8 +65,8 @@ export function MapMultipleChoice({
           <span className="hidden sm:inline-flex items-center justify-center w-6 h-6 text-xs font-medium text-gray-500 bg-gray-100 border border-gray-300 rounded shadow-sm flex-shrink-0">
             {index + 1}
           </span>
-          <span className="text-2xl">{getFlagEmoji(option.code)}</span>
-          <span className="text-sm sm:text-base">{option.name}</span>
+          <span className="text-xl lg:text-2xl">{getFlagEmoji(option.code)}</span>
+          <span className="text-xs lg:text-base truncate">{option.name}</span>
         </button>
       ))}
     </div>
