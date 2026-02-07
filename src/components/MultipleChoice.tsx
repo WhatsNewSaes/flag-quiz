@@ -37,7 +37,7 @@ export function MultipleChoice({
   }, [options, onSelect, disabled]);
 
   const getButtonStyles = (option: Country) => {
-    const baseStyles = 'w-full py-4 px-6 text-lg font-medium rounded-xl transition-all transform flex items-center justify-center sm:justify-start';
+    const baseStyles = 'w-full py-3 px-3 sm:py-4 sm:px-6 text-base sm:text-lg font-medium rounded-xl transition-all transform flex items-center justify-center sm:justify-start';
 
     if (answeredCorrectly !== null) {
       // After answer
@@ -55,7 +55,7 @@ export function MultipleChoice({
   };
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-xl mx-auto">
+    <div className="grid grid-cols-2 gap-2 sm:gap-3 w-full max-w-xl mx-auto">
       {options.map((option, index) => (
         <button
           key={option.code}
