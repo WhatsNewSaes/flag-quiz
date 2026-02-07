@@ -61,7 +61,7 @@ export function LevelScoreTracker({
               className={`flex-1 rounded-lg p-2 text-center ${bgColor} ${textColor} ${ringStyle}`}
             >
               <div className="text-xs font-medium truncate">
-                {difficultyLabels[level].split(' ')[0]}
+                {difficultyLabels[level]}
               </div>
               {score.total > 0 ? (
                 <div className="text-sm font-bold">
