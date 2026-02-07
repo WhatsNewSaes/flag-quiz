@@ -23,13 +23,12 @@ import { useQuiz, QuizMode } from './hooks/useQuiz';
 import { useCampaign } from './hooks/useCampaign';
 import { useAroundTheWorld } from './hooks/useAroundTheWorld';
 import { useJeopardy } from './hooks/useJeopardy';
-import { usePresentation, PresentationType } from './hooks/usePresentation';
-import { PresentationTypeSelect } from './components/PresentationTypeSelect';
+import { usePresentation } from './hooks/usePresentation';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { Continent, continents, Difficulty, difficultyLabels } from './data/countries';
 import { getFlagEmoji } from './utils/flagEmoji';
 
-type AppScreen = 'mode-select' | 'campaign-quiz-select' | 'free-play' | 'campaign' | 'around-the-world' | 'jeopardy' | 'presentation-type-select' | 'presentation';
+type AppScreen = 'mode-select' | 'campaign-quiz-select' | 'free-play' | 'campaign' | 'around-the-world' | 'jeopardy' | 'presentation';
 
 function App() {
   const [screen, setScreen] = useLocalStorage<AppScreen>('app-screen', 'mode-select');
@@ -80,7 +79,8 @@ function App() {
       jeopardy.resetGame();
       setScreen('jeopardy');
     } else if (gameMode === 'presentation') {
-      setScreen('presentation-type-select');
+      presentation.reset();
+      setScreen('presentation');
     }
   }, [setScreen, aroundTheWorld, jeopardy]);
 
@@ -89,12 +89,6 @@ function App() {
     campaign.resetCampaign(quizType);
     setScreen('campaign');
   }, [campaign, setScreen]);
-
-  // Handle presentation type selection
-  const handleSelectPresentationType = useCallback((type: PresentationType) => {
-    presentation.setPresentationType(type);
-    setScreen('presentation');
-  }, [presentation, setScreen]);
 
   // Presentation filter handlers
   const handleTogglePresentationContinent = useCallback((continent: Continent) => {
@@ -228,15 +222,6 @@ function App() {
     );
   }
 
-  if (screen === 'presentation-type-select') {
-    return (
-      <PresentationTypeSelect
-        onSelect={handleSelectPresentationType}
-        onBack={handleBackToMenu}
-      />
-    );
-  }
-
   if (screen === 'presentation') {
     const currentCountry = presentation.currentCountry;
 
@@ -301,12 +286,6 @@ function App() {
                 </svg>
               </button>
               <button
-                onClick={() => setScreen('presentation-type-select')}
-                className="px-3 py-1.5 text-sm text-gray-500 hover:text-gray-700 bg-white border border-gray-300 rounded-lg transition-colors flex items-center gap-1.5"
-              >
-                <span>↺</span> Change Type
-              </button>
-              <button
                 onClick={handleBackToMenu}
                 className="px-3 py-1.5 text-sm text-gray-500 hover:text-gray-700 bg-white border border-gray-300 rounded-lg transition-colors"
               >
@@ -318,6 +297,31 @@ function App() {
           {/* Settings Panel */}
           {showPresentationSettings && (
             <div className="mb-6 space-y-4">
+              {/* Flashcard Type Toggle */}
+              <div className="flex justify-center">
+                <div className="inline-flex rounded-lg bg-gray-100 p-1">
+                  <button
+                    onClick={() => presentation.setPresentationType('flag-to-name')}
+                    className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                      presentation.presentationType === 'flag-to-name'
+                        ? 'bg-white text-indigo-600 shadow-sm'
+                        : 'text-gray-600 hover:text-gray-800'
+                    }`}
+                  >
+                    Flag → Name
+                  </button>
+                  <button
+                    onClick={() => presentation.setPresentationType('name-to-flag')}
+                    className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                      presentation.presentationType === 'name-to-flag'
+                        ? 'bg-white text-indigo-600 shadow-sm'
+                        : 'text-gray-600 hover:text-gray-800'
+                    }`}
+                  >
+                    Name → Flag
+                  </button>
+                </div>
+              </div>
               <DifficultyFilter
                 enabledDifficulties={presentationDifficulties}
                 onToggle={handleTogglePresentationDifficulty}
