@@ -294,34 +294,35 @@ function App() {
             </div>
           </div>
 
+          {/* Flashcard Type Toggle - Always visible */}
+          <div className="flex justify-center mb-4">
+            <div className="flex bg-gray-200 rounded-full p-1">
+              <button
+                onClick={() => presentation.setPresentationType('flag-to-name')}
+                className={`px-3 py-2 rounded-full text-sm font-medium transition-all ${
+                  presentation.presentationType === 'flag-to-name'
+                    ? 'bg-white text-indigo-600 shadow-sm'
+                    : 'text-gray-600 hover:text-gray-800'
+                }`}
+              >
+                Flag → Name
+              </button>
+              <button
+                onClick={() => presentation.setPresentationType('name-to-flag')}
+                className={`px-3 py-2 rounded-full text-sm font-medium transition-all ${
+                  presentation.presentationType === 'name-to-flag'
+                    ? 'bg-white text-indigo-600 shadow-sm'
+                    : 'text-gray-600 hover:text-gray-800'
+                }`}
+              >
+                Name → Flag
+              </button>
+            </div>
+          </div>
+
           {/* Settings Panel */}
           {showPresentationSettings && (
-            <div className="mb-6 space-y-4">
-              {/* Flashcard Type Toggle */}
-              <div className="flex justify-center">
-                <div className="inline-flex rounded-lg bg-gray-100 p-1">
-                  <button
-                    onClick={() => presentation.setPresentationType('flag-to-name')}
-                    className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-                      presentation.presentationType === 'flag-to-name'
-                        ? 'bg-white text-indigo-600 shadow-sm'
-                        : 'text-gray-600 hover:text-gray-800'
-                    }`}
-                  >
-                    Flag → Name
-                  </button>
-                  <button
-                    onClick={() => presentation.setPresentationType('name-to-flag')}
-                    className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-                      presentation.presentationType === 'name-to-flag'
-                        ? 'bg-white text-indigo-600 shadow-sm'
-                        : 'text-gray-600 hover:text-gray-800'
-                    }`}
-                  >
-                    Name → Flag
-                  </button>
-                </div>
-              </div>
+            <div className="mb-4 space-y-4">
               <DifficultyFilter
                 enabledDifficulties={presentationDifficulties}
                 onToggle={handleTogglePresentationDifficulty}
