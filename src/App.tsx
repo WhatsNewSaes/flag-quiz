@@ -331,7 +331,7 @@ function App() {
                   className={`flex-1 rounded-full py-1.5 px-1 text-center transition-all ${
                     isEnabled
                       ? 'bg-indigo-100 text-indigo-700 ring-2 ring-indigo-500'
-                      : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                      : 'bg-white text-gray-600 ring-1 ring-gray-300 hover:ring-gray-400'
                   }`}
                 >
                   <div className="text-xs font-medium truncate">
