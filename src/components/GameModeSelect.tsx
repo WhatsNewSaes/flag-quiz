@@ -25,8 +25,7 @@ export function GameModeSelect({ onSelectMode }: GameModeSelectProps) {
               <div>
                 <h2 className="text-xl font-bold text-gray-800 mb-1">Free Play</h2>
                 <p className="text-gray-600 text-sm">
-                  Practice at your own pace. Choose your difficulty levels, continents, and quiz type.
-                  No pressure, just fun!
+                  Practice with custom filters. Choose difficulty, continents, and quiz type.
                 </p>
               </div>
             </div>
@@ -41,8 +40,7 @@ export function GameModeSelect({ onSelectMode }: GameModeSelectProps) {
               <div>
                 <h2 className="text-xl font-bold text-gray-800 mb-1">Campaign Mode</h2>
                 <p className="text-gray-600 text-sm">
-                  Challenge yourself through all 5 difficulty levels! Start with well-known flags
-                  and work your way up to the most obscure. Track your progress as you go.
+                  Progress through 5 difficulty levels, from well-known to obscure flags.
                 </p>
               </div>
             </div>
@@ -57,8 +55,7 @@ export function GameModeSelect({ onSelectMode }: GameModeSelectProps) {
               <div>
                 <h2 className="text-xl font-bold text-gray-800 mb-1">Around the World</h2>
                 <p className="text-gray-600 text-sm">
-                  Identify countries on a world map! Countries light up and you pick the correct
-                  flag and name. Watch the map fill in as you explore the globe.
+                  Identify highlighted countries on a world map. Fill in the globe!
                 </p>
               </div>
             </div>
@@ -73,8 +70,7 @@ export function GameModeSelect({ onSelectMode }: GameModeSelectProps) {
               <div>
                 <h2 className="text-xl font-bold text-gray-800 mb-1">Flag Jeopardy</h2>
                 <p className="text-gray-600 text-sm">
-                  Classic Jeopardy-style game! Pick questions by continent and difficulty.
-                  Earn money for correct answers, lose it for wrong ones. Watch out for Daily Doubles!
+                  Jeopardy-style board game. Pick by continent and difficulty. Daily Doubles included!
                 </p>
               </div>
             </div>
@@ -89,8 +85,7 @@ export function GameModeSelect({ onSelectMode }: GameModeSelectProps) {
               <div>
                 <h2 className="text-xl font-bold text-gray-800 mb-1">Presentation Mode</h2>
                 <p className="text-gray-600 text-sm">
-                  Study and learn flags at your own pace. See a flag and reveal the name,
-                  or see a name and reveal the flag. Perfect for learning!
+                  Flashcard-style study mode. Reveal flags or names at your own pace.
                 </p>
               </div>
             </div>
