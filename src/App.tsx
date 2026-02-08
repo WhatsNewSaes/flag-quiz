@@ -17,6 +17,7 @@ import { JeopardyBoard } from './components/JeopardyBoard';
 import { JeopardyQuestion } from './components/JeopardyQuestion';
 import { JeopardyDailyDouble } from './components/JeopardyDailyDouble';
 import { JeopardySummary } from './components/JeopardySummary';
+import { JeopardyDifficultySelect, JeopardyDifficulty } from './components/JeopardyDifficultySelect';
 import { ContinentFilter } from './components/ContinentFilter';
 import { useQuiz, QuizMode } from './hooks/useQuiz';
 import { useCampaign } from './hooks/useCampaign';
@@ -27,7 +28,7 @@ import { useLocalStorage } from './hooks/useLocalStorage';
 import { Continent, continents, Difficulty, difficultyLabels } from './data/countries';
 import { getFlagEmoji } from './utils/flagEmoji';
 
-type AppScreen = 'mode-select' | 'campaign-quiz-select' | 'free-play' | 'campaign' | 'around-the-world' | 'jeopardy' | 'presentation';
+type AppScreen = 'mode-select' | 'campaign-quiz-select' | 'free-play' | 'campaign' | 'around-the-world' | 'jeopardy-difficulty-select' | 'jeopardy' | 'presentation';
 
 function App() {
   const [screen, setScreen] = useLocalStorage<AppScreen>('app-screen', 'mode-select');
@@ -75,8 +76,7 @@ function App() {
       aroundTheWorld.reset();
       setScreen('around-the-world');
     } else if (gameMode === 'jeopardy') {
-      jeopardy.resetGame();
-      setScreen('jeopardy');
+      setScreen('jeopardy-difficulty-select');
     } else if (gameMode === 'presentation') {
       presentation.reset();
       setScreen('presentation');
@@ -88,6 +88,12 @@ function App() {
     campaign.resetCampaign(quizType);
     setScreen('campaign');
   }, [campaign, setScreen]);
+
+  // Handle jeopardy difficulty selection
+  const handleSelectJeopardyDifficulty = useCallback((difficulty: JeopardyDifficulty) => {
+    jeopardy.resetGame(difficulty);
+    setScreen('jeopardy');
+  }, [jeopardy, setScreen]);
 
   // Presentation filter handlers
   const handleTogglePresentationContinent = useCallback((continent: Continent) => {
@@ -216,6 +222,15 @@ function App() {
     return (
       <CampaignQuizTypeSelect
         onSelect={handleSelectCampaignQuizType}
+        onBack={handleBackToMenu}
+      />
+    );
+  }
+
+  if (screen === 'jeopardy-difficulty-select') {
+    return (
+      <JeopardyDifficultySelect
+        onSelect={handleSelectJeopardyDifficulty}
         onBack={handleBackToMenu}
       />
     );

@@ -1,6 +1,9 @@
 import { useState, useCallback, useMemo } from 'react';
 import { countries, Country, Continent, Difficulty } from '../data/countries';
 import { shuffle, getRandomElements } from '../utils/shuffle';
+import { getSimilarFlags } from '../data/flagFeatures';
+
+export type JeopardyDifficulty = 'easy' | 'medium' | 'hard';
 
 export type QuestionType = 'name-the-flag' | 'pick-the-flag';
 
@@ -25,6 +28,7 @@ export interface JeopardyState {
   showDailyDouble: boolean;
   dailyDoubleWager: number;
   gameOver: boolean;
+  gameDifficulty: JeopardyDifficulty;
 }
 
 const continentOrder: Continent[] = [
@@ -79,9 +83,55 @@ function generateBoard(): JeopardyCell[][] {
   return board;
 }
 
-function generateOptions(currentCountry: Country): Country[] {
-  const others = countries.filter(c => c.code !== currentCountry.code);
-  const wrongAnswers = getRandomElements(others, 3);
+function generateOptions(
+  currentCountry: Country,
+  gameDifficulty: JeopardyDifficulty,
+  questionType: QuestionType
+): Country[] {
+  let candidates: Country[];
+
+  if (gameDifficulty === 'easy') {
+    // Easy: random from any country
+    candidates = countries.filter(c => c.code !== currentCountry.code);
+  } else if (gameDifficulty === 'medium') {
+    // Medium: same continent
+    candidates = countries.filter(
+      c => c.code !== currentCountry.code && c.continent === currentCountry.continent
+    );
+    // Fallback to all if not enough in continent
+    if (candidates.length < 3) {
+      candidates = countries.filter(c => c.code !== currentCountry.code);
+    }
+  } else {
+    // Hard: similar flags for pick-the-flag, same continent for pick-the-name
+    if (questionType === 'pick-the-flag') {
+      const similarCodes = getSimilarFlags(
+        currentCountry.code,
+        countries.map(c => c.code)
+      );
+      candidates = countries.filter(c => similarCodes.includes(c.code));
+      // Fallback to same continent if not enough similar flags
+      if (candidates.length < 3) {
+        candidates = countries.filter(
+          c => c.code !== currentCountry.code && c.continent === currentCountry.continent
+        );
+      }
+      // Final fallback to all countries
+      if (candidates.length < 3) {
+        candidates = countries.filter(c => c.code !== currentCountry.code);
+      }
+    } else {
+      // For name-the-flag, use same continent
+      candidates = countries.filter(
+        c => c.code !== currentCountry.code && c.continent === currentCountry.continent
+      );
+      if (candidates.length < 3) {
+        candidates = countries.filter(c => c.code !== currentCountry.code);
+      }
+    }
+  }
+
+  const wrongAnswers = getRandomElements(candidates, 3);
   return shuffle([currentCountry, ...wrongAnswers]);
 }
 
@@ -104,6 +154,7 @@ export function useJeopardy() {
       showDailyDouble: false,
       dailyDoubleWager: 0,
       gameOver: false,
+      gameDifficulty: 'easy' as JeopardyDifficulty,
     };
   });
 
@@ -140,7 +191,7 @@ export function useJeopardy() {
         ...prev,
         selectedCell: { row, col },
         currentQuestion: cell,
-        options: generateOptions(cell.country),
+        options: generateOptions(cell.country, prev.gameDifficulty, cell.questionType),
         answeredCorrectly: null,
         selectedAnswer: null,
       };
@@ -161,7 +212,11 @@ export function useJeopardy() {
       return {
         ...prev,
         showDailyDouble: false,
-        options: generateOptions(prev.currentQuestion.country),
+        options: generateOptions(
+          prev.currentQuestion.country,
+          prev.gameDifficulty,
+          prev.currentQuestion.questionType
+        ),
         answeredCorrectly: null,
         selectedAnswer: null,
       };
@@ -223,12 +278,12 @@ export function useJeopardy() {
     }));
   }, []);
 
-  const resetGame = useCallback(() => {
+  const resetGame = useCallback((difficulty?: JeopardyDifficulty) => {
     const board = generateBoard();
     const dailyDoubleRow = Math.floor(Math.random() * 5);
     const dailyDoubleCol = Math.floor(Math.random() * 6);
 
-    setState({
+    setState(prev => ({
       board,
       score: 0,
       dailyDoubleLocation: { row: dailyDoubleRow, col: dailyDoubleCol },
@@ -240,7 +295,8 @@ export function useJeopardy() {
       showDailyDouble: false,
       dailyDoubleWager: 0,
       gameOver: false,
-    });
+      gameDifficulty: difficulty ?? prev.gameDifficulty,
+    }));
   }, []);
 
   return {
