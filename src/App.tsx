@@ -757,6 +757,7 @@ function App() {
             onClose={jeopardy.closeQuestion}
             isDailyDouble={isDailyDouble || false}
             wager={jeopardy.dailyDoubleWager}
+            gameDifficulty={jeopardy.gameDifficulty}
           />
         )}
 

@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
-import { Country } from '../data/countries';
-import { JeopardyCell } from '../hooks/useJeopardy';
+import { useEffect, useState, useRef, useMemo } from 'react';
+import { Country, countries } from '../data/countries';
+import { JeopardyCell, JeopardyDifficulty } from '../hooks/useJeopardy';
 import { getFlagEmoji } from '../utils/flagEmoji';
 
 interface JeopardyQuestionProps {
@@ -12,6 +12,7 @@ interface JeopardyQuestionProps {
   onClose: () => void;
   isDailyDouble: boolean;
   wager: number;
+  gameDifficulty: JeopardyDifficulty;
 }
 
 export function JeopardyQuestion({
@@ -23,13 +24,54 @@ export function JeopardyQuestion({
   onClose,
   isDailyDouble,
   wager,
+  gameDifficulty,
 }: JeopardyQuestionProps) {
   const isAnswered = answeredCorrectly !== null;
   const valueAtStake = isDailyDouble ? wager : cell.value;
+  const isExtraHard = gameDifficulty === 'extra-hard';
 
-  // Keyboard shortcuts
+  // Type-ahead state for extra-hard mode
+  const [inputValue, setInputValue] = useState('');
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [highlightedIndex, setHighlightedIndex] = useState(0);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const filteredCountries = useMemo(() => {
+    if (!inputValue.trim()) return [];
+    const searchTerm = inputValue.toLowerCase();
+    return countries
+      .filter(country => {
+        const matchesName = country.name.toLowerCase().includes(searchTerm);
+        const matchesAlt = country.alternateNames?.some(alt =>
+          alt.toLowerCase().includes(searchTerm)
+        );
+        return matchesName || matchesAlt;
+      })
+      .slice(0, 6);
+  }, [inputValue]);
+
+  // Reset highlighted index when filtered countries change
   useEffect(() => {
-    if (isAnswered) return;
+    setHighlightedIndex(0);
+  }, [filteredCountries]);
+
+  // Focus input in extra-hard mode
+  useEffect(() => {
+    if (isExtraHard && !isAnswered && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isExtraHard, isAnswered]);
+
+  // Reset input when answered
+  useEffect(() => {
+    if (answeredCorrectly === null) {
+      setInputValue('');
+    }
+  }, [answeredCorrectly]);
+
+  // Keyboard shortcuts for multiple choice
+  useEffect(() => {
+    if (isAnswered || isExtraHard) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
       const key = e.key;
@@ -43,17 +85,43 @@ export function JeopardyQuestion({
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [options, onAnswer, isAnswered]);
+  }, [options, onAnswer, isAnswered, isExtraHard]);
 
   // Auto-close after showing result
   useEffect(() => {
     if (isAnswered) {
       const timer = setTimeout(() => {
         onClose();
-      }, 1000);
+      }, 1500);
       return () => clearTimeout(timer);
     }
   }, [isAnswered, onClose]);
+
+  // Handle type-ahead keyboard navigation
+  const handleTypeAheadKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setHighlightedIndex(prev =>
+        prev < filteredCountries.length - 1 ? prev + 1 : prev
+      );
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setHighlightedIndex(prev => (prev > 0 ? prev - 1 : 0));
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (filteredCountries.length > 0 && highlightedIndex < filteredCountries.length) {
+        handleTypeAheadSubmit(filteredCountries[highlightedIndex]);
+      }
+    } else if (e.key === 'Escape') {
+      setIsDropdownOpen(false);
+    }
+  };
+
+  // Submit type-ahead answer
+  const handleTypeAheadSubmit = (country: Country) => {
+    setIsDropdownOpen(false);
+    onAnswer(country);
+  };
 
   const getButtonStyles = (option: Country) => {
     const baseStyles = 'w-full py-3 px-4 font-medium rounded-xl transition-all flex items-center gap-3';
@@ -102,27 +170,82 @@ export function JeopardyQuestion({
         </div>
 
         {/* Answer options */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          {options.map((option, index) => (
-            <button
-              key={option.code}
-              onClick={() => onAnswer(option)}
+        {isExtraHard ? (
+          // Type-ahead input for extra-hard mode
+          <div className="relative w-full max-w-md mx-auto">
+            <input
+              ref={inputRef}
+              type="text"
+              value={inputValue}
+              onChange={e => {
+                setInputValue(e.target.value);
+                setIsDropdownOpen(true);
+              }}
+              onFocus={() => setIsDropdownOpen(true)}
+              onBlur={() => setTimeout(() => setIsDropdownOpen(false), 150)}
+              onKeyDown={handleTypeAheadKeyDown}
               disabled={isAnswered}
-              className={getButtonStyles(option)}
-            >
-              <span className="hidden sm:inline-flex items-center justify-center w-6 h-6 text-xs font-medium text-gray-500 bg-gray-100 border border-gray-300 rounded shadow-sm flex-shrink-0">
-                {index + 1}
-              </span>
-              {cell.questionType === 'name-the-flag' ? (
-                // Show country names as options
-                <span className="text-lg">{option.name}</span>
-              ) : (
-                // Show flags only as options
-                <span className="text-5xl">{getFlagEmoji(option.code)}</span>
-              )}
-            </button>
-          ))}
-        </div>
+              placeholder="Type the country name..."
+              className={`w-full px-6 py-4 text-xl rounded-xl border-2 outline-none transition-all ${
+                answeredCorrectly === true
+                  ? 'bg-green-100 border-green-500 text-green-800'
+                  : answeredCorrectly === false
+                  ? 'bg-red-100 border-red-500 text-red-800'
+                  : 'bg-white border-gray-300 focus:border-yellow-400 focus:ring-2 focus:ring-yellow-200'
+              }`}
+            />
+
+            {/* Dropdown */}
+            {isDropdownOpen && filteredCountries.length > 0 && !isAnswered && (
+              <ul className="absolute z-10 w-full mt-1 bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+                {filteredCountries.map((country, index) => (
+                  <li
+                    key={country.code}
+                    onMouseDown={() => handleTypeAheadSubmit(country)}
+                    onMouseEnter={() => setHighlightedIndex(index)}
+                    className={`px-4 py-3 cursor-pointer transition-colors ${
+                      index === highlightedIndex
+                        ? 'bg-yellow-100 text-yellow-800'
+                        : 'hover:bg-gray-50'
+                    }`}
+                  >
+                    {country.name}
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            {/* Show correct answer after wrong guess */}
+            {answeredCorrectly === false && (
+              <p className="mt-3 text-center text-red-300 font-medium">
+                Correct answer: {cell.country.name}
+              </p>
+            )}
+          </div>
+        ) : (
+          // Multiple choice for other difficulties
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            {options.map((option, index) => (
+              <button
+                key={option.code}
+                onClick={() => onAnswer(option)}
+                disabled={isAnswered}
+                className={getButtonStyles(option)}
+              >
+                <span className="hidden sm:inline-flex items-center justify-center w-6 h-6 text-xs font-medium text-gray-500 bg-gray-100 border border-gray-300 rounded shadow-sm flex-shrink-0">
+                  {index + 1}
+                </span>
+                {cell.questionType === 'name-the-flag' ? (
+                  // Show country names as options
+                  <span className="text-lg">{option.name}</span>
+                ) : (
+                  // Show flags only as options
+                  <span className="text-5xl">{getFlagEmoji(option.code)}</span>
+                )}
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Result feedback */}
         {isAnswered && (

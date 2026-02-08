@@ -1,4 +1,4 @@
-export type JeopardyDifficulty = 'easy' | 'medium' | 'hard';
+export type JeopardyDifficulty = 'easy' | 'medium' | 'hard' | 'extra-hard';
 
 interface JeopardyDifficultySelectProps {
   onSelect: (difficulty: JeopardyDifficulty) => void;
@@ -24,7 +24,7 @@ export function JeopardyDifficultySelect({ onSelect, onBack }: JeopardyDifficult
               <div className="text-3xl">🟢</div>
               <div>
                 <h2 className="text-lg font-bold text-yellow-400">Easy</h2>
-                <p className="text-blue-200 text-sm">Random answer options from any country</p>
+                <p className="text-blue-200 text-sm">Multiple choice options are random</p>
               </div>
             </div>
           </button>
@@ -37,7 +37,7 @@ export function JeopardyDifficultySelect({ onSelect, onBack }: JeopardyDifficult
               <div className="text-3xl">🟡</div>
               <div>
                 <h2 className="text-lg font-bold text-yellow-400">Medium</h2>
-                <p className="text-blue-200 text-sm">Answer options from the same continent</p>
+                <p className="text-blue-200 text-sm">Multiple choice options are from same region</p>
               </div>
             </div>
           </button>
@@ -50,7 +50,20 @@ export function JeopardyDifficultySelect({ onSelect, onBack }: JeopardyDifficult
               <div className="text-3xl">🔴</div>
               <div>
                 <h2 className="text-lg font-bold text-yellow-400">Hard</h2>
-                <p className="text-blue-200 text-sm">Similar-looking flags for Pick the Flag questions</p>
+                <p className="text-blue-200 text-sm">Multiple choice options look similar or are spelled similar</p>
+              </div>
+            </div>
+          </button>
+
+          <button
+            onClick={() => onSelect('extra-hard')}
+            className="w-full bg-blue-800 rounded-2xl p-5 text-left hover:bg-blue-700 transition-colors border-2 border-transparent hover:border-yellow-400"
+          >
+            <div className="flex items-center gap-4">
+              <div className="text-3xl">💀</div>
+              <div>
+                <h2 className="text-lg font-bold text-yellow-400">Extra Hard</h2>
+                <p className="text-blue-200 text-sm">No multiple choice. Must type out each answer</p>
               </div>
             </div>
           </button>
