@@ -18,3 +18,148 @@ body {
     transform: scale(0.98);
   }
 }
+
+/* Retro pixel border */
+.pixel-border {
+  border: 3px solid #2D2D2D;
+  box-shadow: 4px 4px 0px 0px #2D2D2D;
+}
+
+/* Retro button */
+.retro-btn {
+  border: 3px solid #2D2D2D;
+  box-shadow: 3px 3px 0px 0px #2D2D2D;
+  transition: all 0.1s ease;
+  cursor: pointer;
+}
+.retro-btn:hover {
+  filter: brightness(1.1);
+}
+.retro-btn:active {
+  box-shadow: 1px 1px 0px 0px #2D2D2D;
+  transform: translate(2px, 2px);
+}
+.retro-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: none;
+}
+
+/* Retro window chrome */
+.retro-window {
+  border: 3px solid #2D2D2D;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 4px 4px 0px 0px #2D2D2D;
+  transition: box-shadow 0.1s ease, transform 0.1s ease;
+}
+button.retro-window:not(:disabled):active {
+  box-shadow: 1px 1px 0px 0px #2D2D2D;
+  transform: translate(3px, 3px);
+}
+.retro-window-title {
+  font-family: 'Press Start 2P', cursive;
+  border-bottom: 3px solid #2D2D2D;
+  padding: 10px 14px;
+  font-size: 1rem;
+}
+.retro-window-body {
+  background-color: #FFF8E7;
+  padding: 16px;
+}
+
+/* Retro heading shortcut */
+.retro-heading {
+  font-family: 'Press Start 2P', cursive;
+}
+
+/* Overworld map scroll container */
+.overworld-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #BDBDBD transparent;
+}
+.overworld-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.overworld-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.overworld-scroll::-webkit-scrollbar-thumb {
+  background-color: #BDBDBD;
+  border-radius: 3px;
+}
+
+/* Level node hover/active */
+.level-node {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.level-node:not(:disabled):hover {
+  transform: scale(1.1);
+}
+.level-node:not(:disabled):active {
+  transform: scale(0.95);
+}
+
+/* SVG crisp pixel rendering */
+.overworld-svg {
+  shape-rendering: crispEdges;
+}
+.overworld-svg text {
+  shape-rendering: geometricPrecision;
+}
+
+/* Rainbow shimmer border for login callout */
+.rainbow-shimmer {
+  background: linear-gradient(
+    90deg,
+    #EF4444, #FFD93D, #16A34A, #3B82F6, #7C3AED, #EC4899, #EF4444
+  );
+  background-size: 300% 100%;
+  animation: shimmer 8s ease-in-out infinite;
+}
+@keyframes shimmer {
+  0% { background-position: 100% 0; }
+  50% { background-position: 0% 0; }
+  100% { background-position: 100% 0; }
+}
+
+/* Stacked card background layers */
+.card-stack-bg-1 {
+  position: absolute;
+  inset: 0;
+  background: #FFF8E7;
+  border: 3px solid #2D2D2D;
+  box-shadow: 4px 4px 0px 0px #2D2D2D;
+  border-radius: 0.5rem;
+  transform: rotate(3deg) translateY(6px);
+  opacity: 0.3;
+  z-index: -1;
+  pointer-events: none;
+}
+.card-stack-bg-2 {
+  position: absolute;
+  inset: 0;
+  background: #FFF8E7;
+  border: 3px solid #2D2D2D;
+  box-shadow: 4px 4px 0px 0px #2D2D2D;
+  border-radius: 0.5rem;
+  transform: rotate(-2deg) translateY(10px);
+  opacity: 0.15;
+  z-index: -2;
+  pointer-events: none;
+}
+
+/* Bounce shadow for pixel character */
+.animate-bounce-slow-shadow {
+  animation: bounceSlowShadow 2s ease-in-out infinite;
+}
+@keyframes bounceSlowShadow {
+  0%, 100% {
+    transform: translateX(-50%) scaleX(1);
+    opacity: 0.35;
+  }
+  50% {
+    transform: translateX(-50%) scaleX(0.7);
+    opacity: 0.15;
+  }
+}

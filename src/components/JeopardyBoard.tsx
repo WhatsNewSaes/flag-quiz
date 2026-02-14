@@ -14,7 +14,7 @@ export function JeopardyBoard({ board, onSelectCell }: JeopardyBoardProps) {
           {continentOrder.map(continent => (
             <div
               key={continent}
-              className="bg-blue-800 text-white text-center py-2 px-1 font-bold text-xs sm:text-sm rounded-t-lg"
+              className="bg-[#2563EB] text-white text-center py-2 px-1 font-bold text-xs sm:text-sm rounded-t-lg"
             >
               {continent}
             </div>
@@ -33,8 +33,8 @@ export function JeopardyBoard({ board, onSelectCell }: JeopardyBoardProps) {
                   aspect-[4/3] flex items-center justify-center font-bold text-lg sm:text-2xl
                   rounded transition-all
                   ${cell.used
-                    ? 'bg-blue-950 text-blue-900 cursor-default'
-                    : 'bg-blue-700 text-yellow-400 hover:bg-blue-600 hover:scale-105 cursor-pointer shadow-lg'
+                    ? 'bg-[#1E3A8A] text-[#1E3A8A] cursor-default'
+                    : 'bg-[#2563EB] text-yellow-400 hover:bg-blue-500 hover:scale-105 cursor-pointer shadow-lg'
                   }
                 `}
               >

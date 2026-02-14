@@ -37,21 +37,21 @@ export function MultipleChoice({
   }, [options, onSelect, disabled]);
 
   const getButtonStyles = (option: Country) => {
-    const baseStyles = 'w-full py-3 px-3 sm:py-4 sm:px-6 text-base sm:text-lg font-medium rounded-xl transition-all transform flex items-center justify-center sm:justify-start';
+    const baseStyles = 'w-full py-3 px-3 sm:py-4 sm:px-6 text-base sm:text-lg font-medium transition-all transform flex items-center justify-center sm:justify-start retro-btn rounded-lg';
 
     if (answeredCorrectly !== null) {
       // After answer
       if (option.code === correctCountry.code) {
-        return `${baseStyles} bg-green-500 text-white shadow-lg scale-105`;
+        return `${baseStyles} bg-retro-neon-green text-white scale-105`;
       }
       if (selectedAnswer?.code === option.code && !answeredCorrectly) {
-        return `${baseStyles} bg-red-500 text-white animate-shake`;
+        return `${baseStyles} bg-retro-neon-red text-white animate-shake`;
       }
-      return `${baseStyles} bg-gray-200 text-gray-400`;
+      return `${baseStyles} bg-gray-300 text-gray-500 opacity-60`;
     }
 
     // Before answer
-    return `${baseStyles} bg-white text-gray-800 shadow-md hover:shadow-lg hover:scale-102 active:scale-98 border-2 border-gray-200 hover:border-indigo-300`;
+    return `${baseStyles} bg-retro-surface text-retro-text hover:bg-retro-accent`;
   };
 
   return (
@@ -63,7 +63,7 @@ export function MultipleChoice({
           disabled={disabled}
           className={getButtonStyles(option)}
         >
-          <span className="hidden sm:inline-flex items-center justify-center w-6 h-6 mr-3 text-xs font-medium text-gray-500 bg-gray-100 border border-gray-300 rounded shadow-sm flex-shrink-0">
+          <span className="hidden sm:inline-flex items-center justify-center w-6 h-6 mr-3 text-xs font-retro text-retro-text-secondary bg-retro-bg/50 border-2 border-retro-border/30 rounded flex-shrink-0">
             {index + 1}
           </span>
           {option.name}

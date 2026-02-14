@@ -52,26 +52,31 @@ export function CampaignSummary({ levelScores, onPlayAgain, onBackToMenu }: Camp
   const { title, message, emoji } = getOverallMessage(overallPercentage);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-b from-sky-300 to-sky-400 py-8 px-4">
       <div className="max-w-md mx-auto">
-        <div className="bg-white rounded-3xl shadow-xl p-8 text-center mb-6">
-          <div className="text-7xl mb-4">{emoji}</div>
+        <div className="retro-window text-center mb-6">
+          <div className="retro-window-title bg-retro-accent text-retro-text flex items-center justify-between">
+            <span>✦</span><span>Campaign Complete</span><span>✦</span>
+          </div>
+          <div className="retro-window-body p-8">
+            <div className="text-7xl mb-4">{emoji}</div>
 
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">{title}</h1>
-          <p className="text-gray-600 mb-6">{message}</p>
+            <h1 className="text-3xl font-retro text-retro-gold mb-2">{title}</h1>
+            <p className="text-retro-text-secondary mb-6">{message}</p>
 
-          <div className="bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl p-6 mb-6">
-            <div className="text-5xl font-bold text-white mb-1">
-              {totalCorrect}/{totalQuestions}
-            </div>
-            <div className="text-indigo-100 text-lg">
-              {overallPercentage}% overall
+            <div className="bg-retro-gold rounded-2xl p-6 mb-6">
+              <div className="text-5xl font-bold text-white mb-1">
+                {totalCorrect}/{totalQuestions}
+              </div>
+              <div className="text-yellow-100 text-lg">
+                {overallPercentage}% overall
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
-          <h2 className="text-lg font-bold text-gray-800 mb-4">Level Breakdown</h2>
+        <div className="bg-retro-surface pixel-border rounded-lg p-6 mb-6">
+          <h2 className="text-lg font-bold text-retro-text mb-4">Level Breakdown</h2>
 
           <div className="space-y-3">
             {levels.map(level => {
@@ -109,14 +114,14 @@ export function CampaignSummary({ levelScores, onPlayAgain, onBackToMenu }: Camp
         <div className="space-y-3">
           <button
             onClick={onPlayAgain}
-            className="w-full py-4 px-6 bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-bold rounded-xl hover:from-indigo-600 hover:to-purple-600 transition-all transform hover:scale-105 shadow-lg"
+            className="retro-btn w-full py-4 px-6 bg-retro-neon-blue text-white font-bold font-retro text-sm"
           >
             Play Again
           </button>
 
           <button
             onClick={onBackToMenu}
-            className="w-full py-3 px-6 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition-all"
+            className="retro-btn w-full py-3 px-6 bg-retro-surface text-retro-text-secondary font-medium"
           >
             Back to Menu
           </button>

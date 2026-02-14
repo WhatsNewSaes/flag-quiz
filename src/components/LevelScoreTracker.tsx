@@ -17,12 +17,12 @@ export function LevelScoreTracker({
   totalFlagsInLevel,
 }: LevelScoreTrackerProps) {
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-4 mb-4">
+    <div className="bg-retro-surface pixel-border rounded-lg p-4 mb-4">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
+        <h3 className="text-sm font-semibold text-retro-text-secondary uppercase tracking-wide">
           Campaign Progress
         </h3>
-        <span className="text-sm text-gray-500">
+        <span className="text-sm text-retro-text-secondary">
           Flag {currentFlagIndex + 1} of {totalFlagsInLevel}
         </span>
       </div>
@@ -38,9 +38,9 @@ export function LevelScoreTracker({
           let ringStyle = '';
 
           if (isCurrent) {
-            bgColor = 'bg-indigo-100';
-            textColor = 'text-indigo-700';
-            ringStyle = 'ring-2 ring-indigo-500';
+            bgColor = 'bg-retro-accent';
+            textColor = 'text-retro-text';
+            ringStyle = 'ring-2 ring-retro-gold';
           } else if (isCompleted) {
             const percentage = score.total > 0 ? (score.correct / score.total) * 100 : 0;
             if (percentage >= 80) {

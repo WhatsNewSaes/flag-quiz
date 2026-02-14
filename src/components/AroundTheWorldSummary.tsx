@@ -40,25 +40,29 @@ export function AroundTheWorldSummary({
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-3xl shadow-2xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto"
+        className="retro-window max-w-md w-full max-h-[90vh]"
         onClick={(e) => e.stopPropagation()}
       >
+        <div className="retro-window-title bg-teal-400 text-white flex items-center justify-between">
+          <span>✦</span><span>Your Progress</span><span>✦</span>
+        </div>
+        <div className="retro-window-body overflow-y-auto max-h-[80vh]">
         <div className="text-center mb-6">
           <div className="text-5xl mb-3">🌍</div>
-          <h2 className="text-2xl font-bold text-gray-800">Your Progress</h2>
-          <p className="text-gray-500 mt-1">Around the World</p>
+          <h2 className="text-2xl font-bold text-retro-text">Your Progress</h2>
+          <p className="text-retro-text-secondary mt-1">Around the World</p>
         </div>
 
-        <div className="bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl p-5 mb-6 text-center">
+        <div className="bg-retro-gold rounded-2xl p-5 mb-6 text-center">
           <div className="text-4xl font-bold text-white mb-1">
             {totalCorrect}/{totalAnswered}
           </div>
-          <div className="text-indigo-100">
+          <div className="text-yellow-100">
             {overallPercentage}% correct
           </div>
         </div>
 
-        <h3 className="text-lg font-bold text-gray-800 mb-3">By Continent</h3>
+        <h3 className="text-lg font-bold text-retro-text mb-3">By Continent</h3>
 
         <div className="space-y-3 mb-6">
           {continents.map(continent => {
@@ -97,10 +101,11 @@ export function AroundTheWorldSummary({
 
         <button
           onClick={onClose}
-          className="w-full py-3 px-6 bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-bold rounded-xl hover:from-indigo-600 hover:to-purple-600 transition-all"
+          className="retro-btn w-full py-3 px-6 bg-retro-neon-blue text-white font-bold font-retro text-sm"
         >
           Continue Playing
         </button>
+        </div>
       </div>
     </div>
   );

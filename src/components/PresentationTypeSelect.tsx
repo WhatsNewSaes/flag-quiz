@@ -1,4 +1,5 @@
 import { PresentationType } from '../hooks/usePresentation';
+import { playMenuSelectSound } from '../utils/sounds';
 
 interface PresentationTypeSelectProps {
   onSelect: (type: PresentationType) => void;
@@ -7,37 +8,47 @@ interface PresentationTypeSelectProps {
 
 export function PresentationTypeSelect({ onSelect, onBack }: PresentationTypeSelectProps) {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-retro-bg flex items-center justify-center p-4">
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
           <div className="text-5xl mb-4">📖</div>
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">Flashcard Mode</h1>
-          <p className="text-gray-600">Study flags at your own pace</p>
+          <h1 className="text-3xl font-retro text-retro-gold mb-2">Flashcard Mode</h1>
+          <p className="text-retro-text-secondary">Study flags at your own pace</p>
         </div>
 
         <div className="space-y-3">
           <button
-            onClick={() => onSelect('flag-to-name')}
-            className="w-full bg-white rounded-2xl shadow-lg p-5 text-left hover:shadow-xl transition-shadow border-2 border-transparent hover:border-indigo-300"
+            onClick={() => { playMenuSelectSound(); onSelect('flag-to-name'); }}
+            className="w-full retro-window text-left hover:scale-[1.01] active:scale-[0.99] transition-transform"
           >
-            <div className="flex items-center gap-4">
-              <div className="text-3xl">🏳️</div>
-              <div>
-                <h2 className="text-lg font-bold text-gray-800">Flag → Name</h2>
-                <p className="text-gray-500 text-sm">See a flag, reveal the country name</p>
+            <div className="retro-window-title bg-retro-accent text-retro-text flex items-center justify-between">
+              <span>✦</span><span>Flag → Name</span><span>✦</span>
+            </div>
+            <div className="retro-window-body">
+              <div className="flex items-center gap-4">
+                <div className="text-3xl">🏳️</div>
+                <div>
+                  <h2 className="text-lg font-bold text-retro-text">Flag → Name</h2>
+                  <p className="text-retro-text-secondary text-base">See a flag, reveal the country name</p>
+                </div>
               </div>
             </div>
           </button>
 
           <button
-            onClick={() => onSelect('name-to-flag')}
-            className="w-full bg-white rounded-2xl shadow-lg p-5 text-left hover:shadow-xl transition-shadow border-2 border-transparent hover:border-purple-300"
+            onClick={() => { playMenuSelectSound(); onSelect('name-to-flag'); }}
+            className="w-full retro-window text-left hover:scale-[1.01] active:scale-[0.99] transition-transform"
           >
-            <div className="flex items-center gap-4">
-              <div className="text-3xl">🌍</div>
-              <div>
-                <h2 className="text-lg font-bold text-gray-800">Name → Flag</h2>
-                <p className="text-gray-500 text-sm">See a country name, reveal the flag</p>
+            <div className="retro-window-title bg-purple-400 text-white flex items-center justify-between">
+              <span>✦</span><span>Name → Flag</span><span>✦</span>
+            </div>
+            <div className="retro-window-body">
+              <div className="flex items-center gap-4">
+                <div className="text-3xl">🌍</div>
+                <div>
+                  <h2 className="text-lg font-bold text-retro-text">Name → Flag</h2>
+                  <p className="text-retro-text-secondary text-base">See a country name, reveal the flag</p>
+                </div>
               </div>
             </div>
           </button>
@@ -45,7 +56,7 @@ export function PresentationTypeSelect({ onSelect, onBack }: PresentationTypeSel
 
         <button
           onClick={onBack}
-          className="w-full mt-6 py-3 px-6 text-gray-500 font-medium hover:text-gray-700 transition-colors"
+          className="w-full mt-6 py-3 px-6 text-retro-text-secondary font-medium hover:text-retro-text transition-colors"
         >
           Back to Menu
         </button>

@@ -16,8 +16,8 @@ const continentEmojis: Record<Continent, string> = {
 
 export function ContinentFilter({ enabledContinents, onToggle }: ContinentFilterProps) {
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-4">
-      <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
+    <div className="bg-retro-surface pixel-border rounded-lg p-4">
+      <h3 className="text-sm font-semibold text-retro-text-secondary uppercase tracking-wide mb-3">
         Filter by Continent
       </h3>
       <div className="flex flex-wrap gap-2">
@@ -29,8 +29,8 @@ export function ContinentFilter({ enabledContinents, onToggle }: ContinentFilter
               onClick={() => onToggle(continent)}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
                 isEnabled
-                  ? 'bg-indigo-100 text-indigo-700 ring-2 ring-indigo-500'
-                  : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                  ? 'bg-retro-accent text-retro-text ring-2 ring-retro-gold'
+                  : 'bg-white text-retro-text-secondary hover:bg-gray-100'
               }`}
             >
               <span>{continentEmojis[continent]}</span>

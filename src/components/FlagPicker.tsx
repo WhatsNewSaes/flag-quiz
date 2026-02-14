@@ -52,7 +52,7 @@ export function FlagPicker({
     }
 
     // Before answer
-    return `${baseStyles} bg-white shadow-md hover:shadow-lg hover:scale-105 active:scale-98 border-2 border-gray-200 hover:border-indigo-300`;
+    return `${baseStyles} bg-white shadow-md hover:shadow-lg hover:scale-105 active:scale-98 border-2 border-gray-200 hover:border-retro-neon-blue`;
   };
 
   return (

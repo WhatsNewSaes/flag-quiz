@@ -36,35 +36,40 @@ export function LevelSummary({ level, score, onContinue }: LevelSummaryProps) {
 
   return (
     <div className="min-h-[60vh] flex items-center justify-center">
-      <div className="bg-white rounded-3xl shadow-xl p-8 max-w-sm w-full text-center">
-        <div className="text-6xl mb-4">{emoji}</div>
-
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">
-          Level {level} Complete!
-        </h2>
-
-        <p className="text-gray-500 mb-4">{difficultyLabels[level]}</p>
-
-        <div className="bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl p-6 mb-6">
-          <div className="text-5xl font-bold text-white mb-1">
-            {score.correct}/{score.total}
-          </div>
-          <div className="text-indigo-100 text-lg">
-            {percentage}% correct
-          </div>
+      <div className="retro-window max-w-sm w-full text-center">
+        <div className="retro-window-title bg-retro-accent text-retro-text flex items-center justify-between">
+          <span>✦</span><span>Level Complete</span><span>✦</span>
         </div>
+        <div className="retro-window-body p-8">
+          <div className="text-6xl mb-4">{emoji}</div>
 
-        <p className="text-gray-600 mb-6">{message}</p>
+          <h2 className="text-2xl font-bold text-retro-text mb-2">
+            Level {level} Complete!
+          </h2>
 
-        <button
-          onClick={onContinue}
-          className="w-full py-4 px-6 bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-bold rounded-xl hover:from-indigo-600 hover:to-purple-600 transition-all transform hover:scale-105 shadow-lg"
-        >
-          Continue to Level {nextLevel}
-          <span className="block text-sm font-normal text-indigo-100">
-            {difficultyLabels[nextLevel]}
-          </span>
-        </button>
+          <p className="text-retro-text-secondary mb-4">{difficultyLabels[level]}</p>
+
+          <div className="bg-retro-gold rounded-2xl p-6 mb-6">
+            <div className="text-5xl font-bold text-white mb-1">
+              {score.correct}/{score.total}
+            </div>
+            <div className="text-yellow-100 text-lg">
+              {percentage}% correct
+            </div>
+          </div>
+
+          <p className="text-retro-text-secondary mb-6">{message}</p>
+
+          <button
+            onClick={onContinue}
+            className="retro-btn w-full py-4 px-6 bg-retro-neon-blue text-white font-bold font-retro text-sm"
+          >
+            Continue to Level {nextLevel}
+            <span className="block text-xs font-normal text-blue-100 mt-1">
+              {difficultyLabels[nextLevel]}
+            </span>
+          </button>
+        </div>
       </div>
     </div>
   );

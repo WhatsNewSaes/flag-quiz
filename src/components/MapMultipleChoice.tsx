@@ -50,7 +50,7 @@ export function MapMultipleChoice({
       return `${baseStyles} bg-gray-200 text-gray-400`;
     }
 
-    return `${baseStyles} bg-white text-gray-800 shadow-md hover:shadow-lg hover:scale-102 active:scale-98 border-2 border-gray-200 hover:border-indigo-300`;
+    return `${baseStyles} bg-white text-gray-800 shadow-md hover:shadow-lg hover:scale-102 active:scale-98 border-2 border-gray-200 hover:border-retro-neon-blue`;
   };
 
   return (

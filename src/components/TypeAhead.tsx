@@ -83,7 +83,7 @@ export function TypeAhead({
     if (answeredCorrectly === false) {
       return `${baseStyles} bg-red-100 border-red-500 text-red-800 animate-shake`;
     }
-    return `${baseStyles} bg-white border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200`;
+    return `${baseStyles} bg-white border-gray-300 focus:border-retro-neon-blue focus:ring-2 focus:ring-retro-neon-blue/30`;
   };
 
   return (
@@ -124,7 +124,7 @@ export function TypeAhead({
               onMouseEnter={() => setHighlightedIndex(index)}
               className={`px-4 py-3 cursor-pointer transition-colors ${
                 index === highlightedIndex
-                  ? 'bg-indigo-100 text-indigo-800'
+                  ? 'bg-retro-accent/30 text-retro-text'
                   : 'hover:bg-gray-50'
               }`}
             >

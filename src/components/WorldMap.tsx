@@ -142,7 +142,7 @@ function WorldMapComponent({ highlightedCountry, answeredCountries }: WorldMapPr
   };
 
   return (
-    <div className="relative w-full bg-blue-50 rounded-xl overflow-hidden border border-gray-200">
+    <div className="relative w-full bg-sky-100 rounded-xl overflow-hidden border border-retro-border/20">
       {/* Zoom Controls */}
       <div className="absolute top-2 right-2 z-10 flex flex-col gap-1">
         <button

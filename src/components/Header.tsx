@@ -30,15 +30,15 @@ export function Header({
   return (
     <header className="w-full">
       <div className="flex items-center justify-between mb-4">
-        <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-          Fantastic Flags
+        <h1 className="text-2xl sm:text-3xl font-retro text-retro-gold">
+          Flag Arcade
         </h1>
         <div className="flex items-center gap-3">
           <StreakCounter streak={streak} />
           <button
             onClick={() => setShowSettings(!showSettings)}
             className={`p-2 rounded-full transition-colors ${
-              showSettings ? 'bg-indigo-100 text-indigo-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              showSettings ? 'bg-retro-accent text-retro-text' : 'bg-retro-surface text-retro-text-secondary hover:bg-retro-surface'
             }`}
             aria-label="Settings"
           >

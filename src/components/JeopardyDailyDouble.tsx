@@ -12,7 +12,7 @@ export function JeopardyDailyDouble({ currentScore, onConfirmWager }: JeopardyDa
   const presetAmounts = [100, 250, 500, 1000].filter(amt => amt <= maxWager);
 
   return (
-    <div className="fixed inset-0 bg-blue-900/95 flex items-center justify-center p-4 z-50">
+    <div className="fixed inset-0 bg-[#1E3A8A]/95 flex items-center justify-center p-4 z-50">
       <div className="max-w-md w-full text-center">
         {/* Daily Double animation/title */}
         <div className="mb-8">
@@ -29,7 +29,7 @@ export function JeopardyDailyDouble({ currentScore, onConfirmWager }: JeopardyDa
         </div>
 
         {/* Wager input */}
-        <div className="bg-blue-800 rounded-2xl p-6 mb-6">
+        <div className="bg-[#2563EB] rounded-2xl p-6 mb-6">
           <p className="text-white text-lg mb-4">How much will you wager?</p>
 
           {/* Preset buttons */}
@@ -41,7 +41,7 @@ export function JeopardyDailyDouble({ currentScore, onConfirmWager }: JeopardyDa
                 className={`px-4 py-2 rounded-lg font-bold transition-all ${
                   wager === amount
                     ? 'bg-yellow-400 text-blue-900'
-                    : 'bg-blue-700 text-white hover:bg-blue-600'
+                    : 'bg-blue-600 text-white hover:bg-blue-600'
                 }`}
               >
                 ${amount}
@@ -52,7 +52,7 @@ export function JeopardyDailyDouble({ currentScore, onConfirmWager }: JeopardyDa
               className={`px-4 py-2 rounded-lg font-bold transition-all ${
                 wager === maxWager
                   ? 'bg-yellow-400 text-blue-900'
-                  : 'bg-blue-700 text-white hover:bg-blue-600'
+                  : 'bg-blue-600 text-white hover:bg-blue-600'
               }`}
             >
               MAX
@@ -68,7 +68,7 @@ export function JeopardyDailyDouble({ currentScore, onConfirmWager }: JeopardyDa
               max={maxWager}
               value={wager}
               onChange={(e) => setWager(Math.min(Math.max(0, parseInt(e.target.value) || 0), maxWager))}
-              className="w-32 text-center text-2xl font-bold bg-blue-700 text-white rounded-lg py-2 px-4 border-2 border-blue-600 focus:border-yellow-400 focus:outline-none"
+              className="w-32 text-center text-2xl font-bold bg-blue-600 text-white rounded-lg py-2 px-4 border-2 border-blue-600 focus:border-yellow-400 focus:outline-none"
             />
           </div>
 

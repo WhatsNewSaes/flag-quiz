@@ -12,8 +12,8 @@ export function ModeToggle({ mode, onModeChange }: ModeToggleProps) {
         onClick={() => onModeChange('multiple-choice')}
         className={`px-3 py-2 rounded-full text-sm font-medium transition-all ${
           mode === 'multiple-choice'
-            ? 'bg-white text-indigo-600 shadow-sm'
-            : 'text-gray-600 hover:text-gray-800'
+            ? 'bg-retro-accent text-retro-text shadow-sm'
+            : 'text-retro-text-secondary hover:text-retro-text'
         }`}
       >
         Pick the Name
@@ -22,8 +22,8 @@ export function ModeToggle({ mode, onModeChange }: ModeToggleProps) {
         onClick={() => onModeChange('flag-picker')}
         className={`px-3 py-2 rounded-full text-sm font-medium transition-all ${
           mode === 'flag-picker'
-            ? 'bg-white text-indigo-600 shadow-sm'
-            : 'text-gray-600 hover:text-gray-800'
+            ? 'bg-retro-accent text-retro-text shadow-sm'
+            : 'text-retro-text-secondary hover:text-retro-text'
         }`}
       >
         Pick the Flag
@@ -32,8 +32,8 @@ export function ModeToggle({ mode, onModeChange }: ModeToggleProps) {
         onClick={() => onModeChange('type-ahead')}
         className={`px-3 py-2 rounded-full text-sm font-medium transition-all ${
           mode === 'type-ahead'
-            ? 'bg-white text-indigo-600 shadow-sm'
-            : 'text-gray-600 hover:text-gray-800'
+            ? 'bg-retro-accent text-retro-text shadow-sm'
+            : 'text-retro-text-secondary hover:text-retro-text'
         }`}
       >
         Type Answer

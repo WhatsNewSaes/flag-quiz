@@ -2,6 +2,7 @@ import { useEffect, useState, useRef, useMemo } from 'react';
 import { Country, countries } from '../data/countries';
 import { JeopardyCell, JeopardyDifficulty } from '../hooks/useJeopardy';
 import { getFlagEmoji } from '../utils/flagEmoji';
+import { playCorrectSound, playIncorrectSound } from '../utils/sounds';
 
 interface JeopardyQuestionProps {
   cell: JeopardyCell;
@@ -87,6 +88,15 @@ export function JeopardyQuestion({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [options, onAnswer, isAnswered, isExtraHard]);
 
+  // Play sound on answer
+  useEffect(() => {
+    if (answeredCorrectly === true) {
+      playCorrectSound();
+    } else if (answeredCorrectly === false) {
+      playIncorrectSound();
+    }
+  }, [answeredCorrectly]);
+
   // Auto-close after showing result
   useEffect(() => {
     if (isAnswered) {
@@ -140,7 +150,7 @@ export function JeopardyQuestion({
   };
 
   return (
-    <div className="fixed inset-0 bg-blue-900/95 flex items-center justify-center p-4 z-50">
+    <div className="fixed inset-0 bg-[#1E3A8A]/95 flex items-center justify-center p-4 z-50">
       <div className="max-w-lg w-full">
         {/* Value display */}
         <div className="text-center mb-6">
@@ -153,7 +163,7 @@ export function JeopardyQuestion({
         </div>
 
         {/* Question */}
-        <div className="bg-blue-800 rounded-2xl p-6 mb-6">
+        <div className="bg-[#2563EB] rounded-2xl p-6 mb-6">
           {cell.questionType === 'name-the-flag' ? (
             // Show flag, pick country name
             <div className="text-center">

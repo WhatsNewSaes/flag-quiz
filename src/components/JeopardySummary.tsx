@@ -44,14 +44,14 @@ export function JeopardySummary({ score, onPlayAgain, onBackToMenu }: JeopardySu
   const { title, message, emoji } = getScoreMessage(score);
 
   return (
-    <div className="fixed inset-0 bg-blue-900/95 flex items-center justify-center p-4 z-50">
+    <div className="fixed inset-0 bg-[#1E3A8A]/95 flex items-center justify-center p-4 z-50">
       <div className="max-w-md w-full text-center">
         <div className="text-7xl mb-4">{emoji}</div>
 
         <h1 className="text-3xl font-bold text-white mb-2">{title}</h1>
         <p className="text-blue-200 text-lg mb-8">{message}</p>
 
-        <div className="bg-blue-800 rounded-2xl p-6 mb-8">
+        <div className="bg-[#2563EB] rounded-2xl p-6 mb-8">
           <p className="text-blue-300 text-lg mb-2">Final Score</p>
           <p className={`text-5xl font-bold ${score >= 0 ? 'text-yellow-400' : 'text-red-400'}`}>
             ${score.toLocaleString()}
@@ -68,7 +68,7 @@ export function JeopardySummary({ score, onPlayAgain, onBackToMenu }: JeopardySu
 
           <button
             onClick={onBackToMenu}
-            className="w-full py-3 px-6 bg-blue-700 text-white font-medium rounded-xl hover:bg-blue-600 transition-all"
+            className="w-full py-3 px-6 bg-[#2563EB] text-white font-medium rounded-xl hover:bg-blue-600 transition-all"
           >
             Back to Menu
           </button>

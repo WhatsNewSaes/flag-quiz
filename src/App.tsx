@@ -1,227 +1,335 @@
-import { useState, useEffect, useCallback } from 'react';
-import { Header } from './components/Header';
-import { FlagDisplay } from './components/FlagDisplay';
-import { MultipleChoice } from './components/MultipleChoice';
-import { FlagPicker } from './components/FlagPicker';
-import { TypeAhead } from './components/TypeAhead';
-import { Celebration } from './components/Celebration';
+import { useState, useCallback, useMemo, useEffect } from 'react';
+import { CelebrationTest } from './components/CelebrationTest';
 import { GameModeSelect, GameMode } from './components/GameModeSelect';
 import { CampaignQuizTypeSelect } from './components/CampaignQuizTypeSelect';
-import { LevelScoreTracker } from './components/LevelScoreTracker';
-import { LevelSummary } from './components/LevelSummary';
-import { CampaignSummary } from './components/CampaignSummary';
-import { WorldMap } from './components/WorldMap';
-import { MapMultipleChoice } from './components/MapMultipleChoice';
-import { AroundTheWorldSummary } from './components/AroundTheWorldSummary';
-import { JeopardyBoard } from './components/JeopardyBoard';
-import { JeopardyQuestion } from './components/JeopardyQuestion';
-import { JeopardyDailyDouble } from './components/JeopardyDailyDouble';
-import { JeopardySummary } from './components/JeopardySummary';
 import { JeopardyDifficultySelect, JeopardyDifficulty } from './components/JeopardyDifficultySelect';
-import { ContinentFilter } from './components/ContinentFilter';
-import { useQuiz, QuizMode } from './hooks/useQuiz';
-import { useCampaign } from './hooks/useCampaign';
-import { useAroundTheWorld } from './hooks/useAroundTheWorld';
-import { useJeopardy } from './hooks/useJeopardy';
-import { usePresentation } from './hooks/usePresentation';
+import { FreePlayScreen } from './screens/FreePlayScreen';
+import { CampaignScreen } from './screens/CampaignScreen';
+import { AroundTheWorldScreen } from './screens/AroundTheWorldScreen';
+import { JeopardyScreen } from './screens/JeopardyScreen';
+import { PresentationScreen } from './screens/PresentationScreen';
+import { OverworldMap } from './components/journey/OverworldMap';
+import { JourneyLevelPlay } from './components/journey/JourneyLevelPlay';
+import { LevelCompleteFlow } from './components/journey/LevelCompleteFlow';
+import { JourneyPractice } from './components/journey/JourneyPractice';
+import { AchievementsPage } from './components/journey/AchievementsPage';
+import { AchievementToast } from './components/journey/AchievementToast';
+import { buildJourneyRegions, getAllLevels, JourneyLevel } from './data/journeyLevels';
+import { useJourneyProgress, getUnlockedModes, calculateStars } from './hooks/useJourneyProgress';
+import { useJourneyGame } from './hooks/useJourneyGame';
 import { useLocalStorage } from './hooks/useLocalStorage';
-import { Continent, continents, Difficulty, difficultyLabels } from './data/countries';
-import { getFlagEmoji } from './utils/flagEmoji';
+import { QuizMode } from './hooks/useQuiz';
+import { playCorrectSound, playIncorrectSound, playLevelCompleteSound, playStarEarnedSound, playAchievementSound } from './utils/sounds';
 
-type AppScreen = 'mode-select' | 'campaign-quiz-select' | 'free-play' | 'campaign' | 'around-the-world' | 'jeopardy-difficulty-select' | 'jeopardy' | 'presentation';
+type AppScreen =
+  | 'journey-map'
+  | 'journey-quiz-select'
+  | 'journey-play'
+  | 'journey-practice'
+  | 'journey-complete'
+  | 'achievements'
+  | 'mode-select'
+  | 'campaign-quiz-select'
+  | 'free-play'
+  | 'campaign'
+  | 'around-the-world'
+  | 'jeopardy-difficulty-select'
+  | 'jeopardy'
+  | 'presentation';
+
+const VALID_SCREENS: Set<string> = new Set([
+  'journey-map', 'journey-quiz-select', 'journey-play', 'journey-practice',
+  'journey-complete', 'achievements', 'mode-select', 'campaign-quiz-select',
+  'free-play', 'campaign', 'around-the-world', 'jeopardy-difficulty-select',
+  'jeopardy', 'presentation',
+]);
+
+function migrateScreen(raw: any): AppScreen {
+  if (typeof raw === 'string' && VALID_SCREENS.has(raw)) return raw as AppScreen;
+  return 'journey-map';
+}
 
 function App() {
-  const [screen, setScreen] = useLocalStorage<AppScreen>('app-screen', 'mode-select');
+  const [screen, setScreen] = useLocalStorage<AppScreen>('app-screen', 'journey-map', migrateScreen);
 
-  // Free play state
-  const [mode, setMode] = useLocalStorage<QuizMode>('quiz-mode', 'multiple-choice');
-  const [enabledContinents, setEnabledContinents] = useLocalStorage<Continent[]>(
-    'enabled-continents',
-    [...continents]
-  );
-  const [enabledDifficulties, setEnabledDifficulties] = useLocalStorage<Difficulty[]>(
-    'enabled-difficulties',
-    [1, 2, 3, 4, 5]
-  );
+  // Journey state
+  const regions = useMemo(() => buildJourneyRegions(), []);
+  const allLevels = useMemo(() => getAllLevels(regions), [regions]);
+  const journeyProgress = useJourneyProgress(regions, allLevels);
+  const journeyGame = useJourneyGame();
+  const [selectedLevel, setSelectedLevel] = useState<JourneyLevel | null>(null);
   const [showCelebration, setShowCelebration] = useState(false);
+  const [completionResult, setCompletionResult] = useState<{
+    correct: number; total: number; stars: number; isNewBest: boolean; previousBestPct: number | null;
+  } | null>(null);
+  const [pendingAchievements, setPendingAchievements] = useState<string[]>([]);
+  const [newlyUnlockedModes, setNewlyUnlockedModes] = useState<string[]>([]);
 
-  // Presentation mode state (separate from free play)
-  const [presentationContinents, setPresentationContinents] = useLocalStorage<Continent[]>(
-    'presentation-continents',
-    [...continents]
-  );
-  const [presentationDifficulties, setPresentationDifficulties] = useLocalStorage<Difficulty[]>(
-    'presentation-difficulties',
-    [1, 2, 3, 4, 5]
-  );
-  const [showPresentationSettings, setShowPresentationSettings] = useState(false);
+  // Campaign/Jeopardy quiz type state
+  const [campaignQuizType, setCampaignQuizType] = useState<QuizMode>('multiple-choice');
+  const [jeopardyDifficulty, setJeopardyDifficulty] = useState<JeopardyDifficulty>('medium');
 
-  const quiz = useQuiz({ enabledContinents, enabledDifficulties, mode });
-  const campaign = useCampaign();
-  const aroundTheWorld = useAroundTheWorld();
-  const jeopardy = useJeopardy();
-  const presentation = usePresentation({
-    enabledContinents: presentationContinents,
-    enabledDifficulties: presentationDifficulties
-  });
-  const [showATWSummary, setShowATWSummary] = useState(false);
+  // Hidden test page
+  const [showTestPage, setShowTestPage] = useState(() => window.location.hash === '#test-celebrations');
 
-  // Handle game mode selection
+  useEffect(() => {
+    const handleHashChange = () => setShowTestPage(window.location.hash === '#test-celebrations');
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  // --- Journey handlers ---
+  const handleSelectLevel = useCallback((level: JourneyLevel) => {
+    setSelectedLevel(level);
+    setCompletionResult(null);
+    journeyGame.startLevel(level);
+    setScreen('journey-play');
+  }, [journeyGame, setScreen]);
+
+  const handleJourneyAnswer = useCallback((answer: any) => {
+    const isCorrect = journeyGame.checkAnswer(answer);
+    if (isCorrect) {
+      playCorrectSound();
+      setShowCelebration(true);
+      setTimeout(() => {
+        setShowCelebration(false);
+        journeyGame.nextFlag();
+      }, 1500);
+    } else {
+      playIncorrectSound();
+      setTimeout(() => {
+        journeyGame.nextFlag();
+      }, 2000);
+    }
+  }, [journeyGame]);
+
+  // Handle journey level completion
+  const handleJourneyComplete = useCallback(() => {
+    if (!selectedLevel) return;
+    const { correct, total } = { correct: journeyGame.correctCount, total: journeyGame.totalFlags };
+    const existing = journeyProgress.progress.levelResults[selectedLevel.id];
+    const previousBestPct = existing?.bestPercentage ?? null;
+
+    // Capture modes before saving result
+    const modesBefore = getUnlockedModes(regions, journeyProgress.progress.levelResults);
+
+    // Project what level results will look like after saving
+    const newStars = calculateStars(correct, total);
+    const existingStars = existing?.stars ?? 0;
+    const projectedResults = {
+      ...journeyProgress.progress.levelResults,
+      [selectedLevel.id]: {
+        ...existing,
+        stars: Math.max(existingStars, newStars),
+        bestScore: correct,
+        totalFlags: total,
+        bestPercentage: total > 0 ? Math.round((correct / total) * 100) : 0,
+        attempts: (existing?.attempts ?? 0) + 1,
+        lastFailedAt: existing?.lastFailedAt ?? null,
+      },
+    };
+    const modesAfter = getUnlockedModes(regions, projectedResults);
+    const freshModes = modesAfter.filter(m => !modesBefore.includes(m));
+
+    const result = journeyProgress.saveResult(selectedLevel.id, correct, total);
+    playLevelCompleteSound();
+    if (result.stars > 0) playStarEarnedSound();
+
+    setNewlyUnlockedModes(freshModes);
+
+    // Check achievements
+    const newAchievements = journeyProgress.checkAchievements(
+      selectedLevel.id, result.stars, result.percentage, selectedLevel.regionIndex
+    );
+    if (newAchievements.length > 0) {
+      playAchievementSound();
+      setPendingAchievements(newAchievements);
+    }
+
+    setCompletionResult({
+      correct,
+      total,
+      stars: result.stars,
+      isNewBest: !previousBestPct || result.percentage > previousBestPct,
+      previousBestPct,
+    });
+    setScreen('journey-complete');
+  }, [selectedLevel, journeyGame, journeyProgress, regions, setScreen]);
+
+  const handleNextLevel = useCallback(() => {
+    if (!selectedLevel) return;
+    const nextGlobalIdx = selectedLevel.globalLevelIndex + 1;
+    setCompletionResult(null);
+
+    if (nextGlobalIdx < allLevels.length) {
+      const nextLevel = allLevels[nextGlobalIdx];
+      setSelectedLevel(nextLevel);
+      journeyGame.startLevel(nextLevel);
+      setScreen('journey-play');
+    } else {
+      setScreen('journey-map');
+    }
+  }, [selectedLevel, allLevels, journeyGame, setScreen]);
+
+  const hasNextLevel = useMemo(() => {
+    if (!selectedLevel) return false;
+    return selectedLevel.globalLevelIndex + 1 < allLevels.length;
+  }, [selectedLevel, allLevels]);
+
+  const handleRetryLevel = useCallback(() => {
+    if (!selectedLevel) return;
+    setCompletionResult(null);
+    journeyGame.startLevel(selectedLevel);
+    setScreen('journey-play');
+  }, [selectedLevel, journeyGame, setScreen]);
+
+  const handlePracticeLevel = useCallback(() => {
+    setScreen('journey-practice');
+  }, [setScreen]);
+
+  // --- Other mode handlers ---
   const handleSelectGameMode = useCallback((gameMode: GameMode) => {
-    if (gameMode === 'free-play') {
-      setScreen('free-play');
-    } else if (gameMode === 'campaign') {
-      setScreen('campaign-quiz-select');
-    } else if (gameMode === 'around-the-world') {
-      aroundTheWorld.reset();
-      setScreen('around-the-world');
-    } else if (gameMode === 'jeopardy') {
-      setScreen('jeopardy-difficulty-select');
-    } else if (gameMode === 'presentation') {
-      presentation.reset();
-      setScreen('presentation');
-    }
-  }, [setScreen, aroundTheWorld, jeopardy]);
-
-  // Handle campaign quiz type selection
-  const handleSelectCampaignQuizType = useCallback((quizType: QuizMode) => {
-    campaign.resetCampaign(quizType);
-    setScreen('campaign');
-  }, [campaign, setScreen]);
-
-  // Handle jeopardy difficulty selection
-  const handleSelectJeopardyDifficulty = useCallback((difficulty: JeopardyDifficulty) => {
-    jeopardy.resetGame(difficulty);
-    setScreen('jeopardy');
-  }, [jeopardy, setScreen]);
-
-  // Presentation filter handlers
-  const handleTogglePresentationContinent = useCallback((continent: Continent) => {
-    setPresentationContinents(prev => {
-      if (prev.includes(continent)) {
-        if (prev.length === 1) return prev;
-        return prev.filter(c => c !== continent);
-      }
-      return [...prev, continent];
-    });
-  }, [setPresentationContinents]);
-
-  const handleTogglePresentationDifficulty = useCallback((difficulty: Difficulty) => {
-    setPresentationDifficulties(prev => {
-      if (prev.includes(difficulty)) {
-        if (prev.length === 1) return prev;
-        return prev.filter(d => d !== difficulty);
-      }
-      return [...prev, difficulty];
-    });
-  }, [setPresentationDifficulties]);
-
-  // Free play handlers
-  const handleToggleContinent = useCallback((continent: Continent) => {
-    setEnabledContinents(prev => {
-      if (prev.includes(continent)) {
-        if (prev.length === 1) return prev;
-        return prev.filter(c => c !== continent);
-      }
-      return [...prev, continent];
-    });
-  }, [setEnabledContinents]);
-
-  const handleToggleDifficulty = useCallback((difficulty: Difficulty) => {
-    setEnabledDifficulties(prev => {
-      if (prev.includes(difficulty)) {
-        if (prev.length === 1) return prev;
-        return prev.filter(d => d !== difficulty);
-      }
-      return [...prev, difficulty];
-    });
-  }, [setEnabledDifficulties]);
-
-  const handleFreePlayAnswer = useCallback((answer: string | typeof quiz.options[0]) => {
-    const isCorrect = quiz.checkAnswer(answer);
-
-    if (isCorrect) {
-      setShowCelebration(true);
-      setTimeout(() => {
-        setShowCelebration(false);
-        quiz.nextQuestion();
-      }, 1500);
-    } else {
-      setTimeout(() => {
-        quiz.nextQuestion();
-      }, 2000);
-    }
-  }, [quiz]);
-
-  // Campaign handlers
-  const handleCampaignAnswer = useCallback((answer: string | typeof campaign.options[0]) => {
-    const isCorrect = campaign.checkAnswer(answer);
-
-    if (isCorrect) {
-      setShowCelebration(true);
-      setTimeout(() => {
-        setShowCelebration(false);
-        campaign.nextFlag();
-      }, 1500);
-    } else {
-      setTimeout(() => {
-        campaign.nextFlag();
-      }, 2000);
-    }
-  }, [campaign]);
+    if (gameMode === 'free-play') setScreen('free-play');
+    else if (gameMode === 'campaign') setScreen('campaign-quiz-select');
+    else if (gameMode === 'around-the-world') setScreen('around-the-world');
+    else if (gameMode === 'jeopardy') setScreen('jeopardy-difficulty-select');
+    else if (gameMode === 'presentation') setScreen('presentation');
+  }, [setScreen]);
 
   const handleBackToMenu = useCallback(() => {
     setScreen('mode-select');
   }, [setScreen]);
 
-  const handleResetCampaign = useCallback(() => {
-    campaign.resetCampaign();
-  }, [campaign]);
+  const handleBackToJourney = useCallback(() => {
+    setScreen('journey-map');
+  }, [setScreen]);
 
-  // Around the World handlers
-  const handleATWAnswer = useCallback((answer: typeof aroundTheWorld.options[0]) => {
-    const isCorrect = aroundTheWorld.checkAnswer(answer);
-
-    if (isCorrect) {
-      setShowCelebration(true);
-      setTimeout(() => {
-        setShowCelebration(false);
-        aroundTheWorld.nextCountry();
-      }, 1500);
-    } else {
-      setTimeout(() => {
-        aroundTheWorld.nextCountry();
-      }, 2000);
-    }
-  }, [aroundTheWorld]);
-
-  const handleResetATW = useCallback(() => {
-    aroundTheWorld.reset();
-  }, [aroundTheWorld]);
-
-  // Reset question when free play filters change
+  // --- Check for level completion in play screen ---
   useEffect(() => {
-    if (screen === 'free-play' && quiz.availableCountries.length > 0) {
-      quiz.nextQuestion();
+    if (screen === 'journey-play' && journeyGame.isComplete && !completionResult) {
+      handleJourneyComplete();
     }
-  }, [enabledContinents, enabledDifficulties]);
+  }, [screen, journeyGame.isComplete, completionResult, handleJourneyComplete]);
 
-  // Reset presentation when filters change
-  useEffect(() => {
-    if (screen === 'presentation') {
-      presentation.reset();
-    }
-  }, [presentationContinents, presentationDifficulties]);
+  // --- Render ---
+  if (showTestPage) {
+    return (
+      <CelebrationTest
+        onBack={() => {
+          window.location.hash = '';
+          setShowTestPage(false);
+        }}
+      />
+    );
+  }
 
-  // Render based on current screen
+  // Journey screens
+  if (screen === 'journey-map') {
+    return (
+      <>
+        <OverworldMap
+          regions={regions}
+          allLevels={allLevels}
+          levelResults={journeyProgress.progress.levelResults}
+          totalStars={journeyProgress.progress.totalStars}
+          currentRank={journeyProgress.progress.currentRank}
+          onSelectLevel={handleSelectLevel}
+          onOpenModes={handleBackToMenu}
+          onOpenAchievements={() => setScreen('achievements')}
+          isLevelUnlocked={journeyProgress.isUnlocked}
+        />
+        {pendingAchievements.length > 0 && (
+          <AchievementToast
+            achievementIds={pendingAchievements}
+            onDone={() => setPendingAchievements([])}
+          />
+        )}
+      </>
+    );
+  }
+
+  // If someone has journey-quiz-select persisted, redirect to map
+  if (screen === 'journey-quiz-select') {
+    setScreen('journey-map');
+    return null;
+  }
+
+  if (screen === 'journey-play') {
+    if (!selectedLevel || !journeyGame.currentCountry) { setScreen('journey-map'); return null; }
+    return (
+      <JourneyLevelPlay
+        level={selectedLevel}
+        quizMode={journeyGame.currentQuizMode}
+        currentCountry={journeyGame.currentCountry}
+        currentIndex={journeyGame.currentIndex}
+        totalFlags={journeyGame.totalFlags}
+        options={journeyGame.options}
+        selectedAnswer={journeyGame.selectedAnswer}
+        answeredCorrectly={journeyGame.answeredCorrectly}
+        correctCount={journeyGame.correctCount}
+        onAnswer={handleJourneyAnswer}
+        onQuit={() => setScreen('journey-map')}
+        showCelebration={showCelebration}
+        availableCountries={journeyGame.availableCountries}
+      />
+    );
+  }
+
+  if (screen === 'journey-complete') {
+    if (!selectedLevel || !completionResult) { setScreen('journey-map'); return null; }
+    return (
+      <LevelCompleteFlow
+        level={selectedLevel}
+        correct={completionResult.correct}
+        total={completionResult.total}
+        stars={completionResult.stars}
+        isNewBest={completionResult.isNewBest}
+        previousBestPct={completionResult.previousBestPct}
+        onNextLevel={handleNextLevel}
+        onRetry={handleRetryLevel}
+        onPractice={handlePracticeLevel}
+        onBackToMap={() => { setPendingAchievements([]); setNewlyUnlockedModes([]); setScreen('journey-map'); }}
+        hasNextLevel={hasNextLevel}
+        newAchievementIds={pendingAchievements}
+        newlyUnlockedModes={newlyUnlockedModes}
+      />
+    );
+  }
+
+  if (screen === 'journey-practice') {
+    if (!selectedLevel) { setScreen('journey-map'); return null; }
+    return (
+      <JourneyPractice
+        level={selectedLevel}
+        onBack={() => setScreen('journey-map')}
+      />
+    );
+  }
+
+  if (screen === 'achievements') {
+    return (
+      <AchievementsPage
+        unlockedAchievements={journeyProgress.progress.achievements}
+        onBack={() => setScreen('journey-map')}
+      />
+    );
+  }
+
+  // Other mode screens
   if (screen === 'mode-select') {
-    return <GameModeSelect onSelectMode={handleSelectGameMode} />;
+    return (
+      <GameModeSelect
+        onSelectMode={handleSelectGameMode}
+        unlockedModes={journeyProgress.unlockedModes}
+        onJourney={handleBackToJourney}
+      />
+    );
   }
 
   if (screen === 'campaign-quiz-select') {
     return (
       <CampaignQuizTypeSelect
-        onSelect={handleSelectCampaignQuizType}
+        onSelect={(qt) => { setCampaignQuizType(qt); setScreen('campaign'); }}
         onBack={handleBackToMenu}
       />
     );
@@ -230,663 +338,34 @@ function App() {
   if (screen === 'jeopardy-difficulty-select') {
     return (
       <JeopardyDifficultySelect
-        onSelect={handleSelectJeopardyDifficulty}
+        onSelect={(d) => { setJeopardyDifficulty(d); setScreen('jeopardy'); }}
         onBack={handleBackToMenu}
       />
     );
   }
 
-  if (screen === 'presentation') {
-    const currentCountry = presentation.currentCountry;
-
-    if (!currentCountry) {
-      return (
-        <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 flex items-center justify-center p-4">
-          <div className="text-center">
-            <p className="text-xl text-gray-600 mb-4">No countries available!</p>
-            <p className="text-gray-500 mb-4">Please adjust your filters using the settings button.</p>
-            <button
-              onClick={() => setShowPresentationSettings(true)}
-              className="px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 mr-2"
-            >
-              Open Settings
-            </button>
-            <button
-              onClick={handleBackToMenu}
-              className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
-            >
-              Back to Menu
-            </button>
-          </div>
-        </div>
-      );
-    }
-
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 py-6 px-4">
-        <div className="max-w-2xl mx-auto">
-          {/* Header */}
-          <div className="flex items-center justify-between mb-6">
-            <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-              Flashcard Mode
-            </h1>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setShowPresentationSettings(!showPresentationSettings)}
-                className={`p-2 rounded-full transition-colors ${
-                  showPresentationSettings ? 'bg-indigo-100 text-indigo-600' : 'bg-white border border-gray-300 text-gray-600 hover:bg-gray-50'
-                }`}
-                aria-label="Settings"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-                  />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                  />
-                </svg>
-              </button>
-              <button
-                onClick={handleBackToMenu}
-                className="px-3 py-1.5 text-sm text-gray-500 hover:text-gray-700 bg-white border border-gray-300 rounded-lg transition-colors"
-              >
-                Menu
-              </button>
-            </div>
-          </div>
-
-          {/* Flashcard Type Toggle - Always visible */}
-          <div className="flex justify-center mb-4">
-            <div className="flex bg-gray-200 rounded-full p-1">
-              <button
-                onClick={() => presentation.setPresentationType('flag-to-name')}
-                className={`px-3 py-2 rounded-full text-sm font-medium transition-all ${
-                  presentation.presentationType === 'flag-to-name'
-                    ? 'bg-white text-indigo-600 shadow-sm'
-                    : 'text-gray-600 hover:text-gray-800'
-                }`}
-              >
-                Pick the Name
-              </button>
-              <button
-                onClick={() => presentation.setPresentationType('name-to-flag')}
-                className={`px-3 py-2 rounded-full text-sm font-medium transition-all ${
-                  presentation.presentationType === 'name-to-flag'
-                    ? 'bg-white text-indigo-600 shadow-sm'
-                    : 'text-gray-600 hover:text-gray-800'
-                }`}
-              >
-                Pick the Flag
-              </button>
-            </div>
-          </div>
-
-          {/* Difficulty Toggles - Always visible */}
-          <div className="flex gap-2 mb-4">
-            {([1, 2, 3, 4, 5] as Difficulty[]).map(level => {
-              const isEnabled = presentationDifficulties.includes(level);
-              return (
-                <button
-                  key={level}
-                  onClick={() => handleTogglePresentationDifficulty(level)}
-                  className={`flex-1 rounded-full py-1.5 px-1 text-center transition-all ${
-                    isEnabled
-                      ? 'bg-indigo-100 text-indigo-700 ring-2 ring-indigo-500'
-                      : 'bg-white text-gray-600 ring-1 ring-gray-300 hover:ring-gray-400'
-                  }`}
-                >
-                  <div className="text-xs font-medium truncate">
-                    {difficultyLabels[level]}
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Settings Panel - Continent filters only */}
-          {showPresentationSettings && (
-            <div className="mb-4">
-              <ContinentFilter
-                enabledContinents={presentationContinents}
-                onToggle={handleTogglePresentationContinent}
-              />
-            </div>
-          )}
-
-          {/* Progress Counter */}
-          <div className="text-center mb-6 text-gray-600">
-            {presentation.currentIndex + 1} of {presentation.totalCount}
-          </div>
-
-          {/* Main Content - Fixed height container */}
-          <div className="bg-white rounded-3xl shadow-xl p-8">
-            {presentation.presentationType === 'flag-to-name' ? (
-              // Flag → Name: Show flag, reveal name
-              <div className="flex flex-col items-center h-[280px] sm:h-[320px] justify-center">
-                <span
-                  className={`mb-4 px-3 py-1 rounded-full text-xs font-medium ${
-                    {
-                      1: 'bg-green-100 text-green-700',
-                      2: 'bg-blue-100 text-blue-700',
-                      3: 'bg-yellow-100 text-yellow-700',
-                      4: 'bg-orange-100 text-orange-700',
-                      5: 'bg-red-100 text-red-700',
-                    }[currentCountry.difficulty]
-                  }`}
-                >
-                  {difficultyLabels[currentCountry.difficulty]}
-                </span>
-
-                <div className="text-[120px] sm:text-[160px] leading-none">
-                  {getFlagEmoji(currentCountry.code)}
-                </div>
-
-                <div className="h-[50px] flex items-center justify-center mt-4">
-                  {presentation.revealed ? (
-                    <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 animate-bounce-in">
-                      {currentCountry.name}
-                    </h2>
-                  ) : (
-                    <div className="text-3xl text-gray-300">???</div>
-                  )}
-                </div>
-              </div>
-            ) : (
-              // Name → Flag: Show name, reveal flag
-              <div className="flex flex-col items-center h-[280px] sm:h-[320px] justify-center">
-                <span
-                  className={`mb-4 px-3 py-1 rounded-full text-xs font-medium ${
-                    {
-                      1: 'bg-green-100 text-green-700',
-                      2: 'bg-blue-100 text-blue-700',
-                      3: 'bg-yellow-100 text-yellow-700',
-                      4: 'bg-orange-100 text-orange-700',
-                      5: 'bg-red-100 text-red-700',
-                    }[currentCountry.difficulty]
-                  }`}
-                >
-                  {difficultyLabels[currentCountry.difficulty]}
-                </span>
-
-                <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4">
-                  {currentCountry.name}
-                </h2>
-
-                <div className="text-[120px] sm:text-[160px] leading-none">
-                  {presentation.revealed ? (
-                    <span className="animate-bounce-in inline-block">
-                      {getFlagEmoji(currentCountry.code)}
-                    </span>
-                  ) : (
-                    <span className="text-gray-200">🏳️</span>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Action Buttons */}
-          <div className="mt-8 flex justify-center gap-4">
-            {!presentation.revealed ? (
-              <button
-                onClick={presentation.reveal}
-                className="px-8 py-4 bg-indigo-500 text-white text-lg font-semibold rounded-xl hover:bg-indigo-600 transition-colors shadow-lg"
-              >
-                Reveal
-              </button>
-            ) : (
-              <button
-                onClick={presentation.next}
-                className="px-8 py-4 bg-purple-500 text-white text-lg font-semibold rounded-xl hover:bg-purple-600 transition-colors shadow-lg"
-              >
-                Next →
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
-    );
+  if (screen === 'free-play') {
+    return <FreePlayScreen onBack={handleBackToMenu} />;
   }
 
   if (screen === 'campaign') {
-    // Campaign final summary
-    if (campaign.showFinalSummary) {
-      return (
-        <CampaignSummary
-          levelScores={campaign.levelScores}
-          onPlayAgain={handleResetCampaign}
-          onBackToMenu={handleBackToMenu}
-        />
-      );
-    }
-
-    // Campaign level summary
-    if (campaign.showLevelSummary) {
-      return (
-        <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 py-6 px-4">
-          <div className="max-w-2xl mx-auto">
-            <LevelScoreTracker
-              currentLevel={campaign.currentLevel}
-              levelScores={campaign.levelScores}
-              currentFlagIndex={campaign.currentFlagIndex}
-              totalFlagsInLevel={campaign.totalFlagsInLevel}
-            />
-            <LevelSummary
-              level={campaign.currentLevel}
-              score={campaign.levelScores[campaign.currentLevel]}
-              onContinue={campaign.startNextLevel}
-            />
-          </div>
-        </div>
-      );
-    }
-
-    // Campaign gameplay
-    const isAnswered = campaign.answeredCorrectly !== null;
-
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 py-6 px-4">
-        <div className="max-w-2xl mx-auto">
-          {/* Campaign Header */}
-          <div className="flex items-center justify-between mb-4">
-            <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-              Campaign Mode
-            </h1>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={handleResetCampaign}
-                className="px-3 py-1.5 text-sm text-gray-500 hover:text-gray-700 bg-white border border-gray-300 rounded-lg transition-colors flex items-center gap-1.5"
-              >
-                <span>↺</span> Reset
-              </button>
-              <button
-                onClick={handleBackToMenu}
-                className="px-3 py-1.5 text-sm text-gray-500 hover:text-gray-700 bg-white border border-gray-300 rounded-lg transition-colors"
-              >
-                Menu
-              </button>
-            </div>
-          </div>
-
-          <LevelScoreTracker
-            currentLevel={campaign.currentLevel}
-            levelScores={campaign.levelScores}
-            currentFlagIndex={campaign.currentFlagIndex}
-            totalFlagsInLevel={campaign.totalFlagsInLevel}
-          />
-
-          <main className="mt-4">
-            {campaign.quizType === 'flag-picker' ? (
-              <div className="flex flex-col items-center py-8">
-                <h2
-                  key={campaign.currentCountry?.code}
-                  className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-800 animate-bounce-in text-center"
-                >
-                  {campaign.currentCountry?.name}
-                </h2>
-                <span
-                  className={`mt-3 px-3 py-1 rounded-full text-xs font-medium ${
-                    {
-                      1: 'bg-green-100 text-green-700',
-                      2: 'bg-blue-100 text-blue-700',
-                      3: 'bg-yellow-100 text-yellow-700',
-                      4: 'bg-orange-100 text-orange-700',
-                      5: 'bg-red-100 text-red-700',
-                    }[campaign.currentCountry?.difficulty || 1]
-                  }`}
-                >
-                  {difficultyLabels[campaign.currentCountry?.difficulty || 1]}
-                </span>
-              </div>
-            ) : (
-              <FlagDisplay
-                countryCode={campaign.currentCountry?.code || ''}
-                animationKey={campaign.currentCountry?.code || ''}
-                difficulty={campaign.currentCountry?.difficulty || 1}
-              />
-            )}
-
-            <div className="mt-6">
-              {campaign.quizType === 'multiple-choice' && (
-                <MultipleChoice
-                  options={campaign.options}
-                  correctCountry={campaign.currentCountry!}
-                  selectedAnswer={campaign.selectedAnswer}
-                  answeredCorrectly={campaign.answeredCorrectly}
-                  onSelect={handleCampaignAnswer}
-                  disabled={isAnswered}
-                />
-              )}
-              {campaign.quizType === 'flag-picker' && (
-                <FlagPicker
-                  options={campaign.options}
-                  correctCountry={campaign.currentCountry!}
-                  selectedAnswer={campaign.selectedAnswer}
-                  answeredCorrectly={campaign.answeredCorrectly}
-                  onSelect={handleCampaignAnswer}
-                  disabled={isAnswered}
-                />
-              )}
-              {campaign.quizType === 'type-ahead' && (
-                <TypeAhead
-                  countries={campaign.availableCountries}
-                  onSubmit={handleCampaignAnswer}
-                  disabled={isAnswered}
-                  answeredCorrectly={campaign.answeredCorrectly}
-                  correctCountry={campaign.currentCountry!}
-                />
-              )}
-            </div>
-
-            <div className="mt-8 text-center text-sm text-gray-500">
-              Level {campaign.currentLevel}: {difficultyLabels[campaign.currentLevel]}
-            </div>
-          </main>
-        </div>
-
-        <Celebration streak={1} show={showCelebration} />
-      </div>
-    );
+    return <CampaignScreen initialQuizType={campaignQuizType} onBack={handleBackToMenu} />;
   }
 
-  // Around the World mode
   if (screen === 'around-the-world') {
-    const isAnswered = aroundTheWorld.answeredCorrectly !== null;
-
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 py-4 px-4">
-        <div className="max-w-6xl mx-auto">
-          {/* Header */}
-          <div className="flex items-center justify-between mb-4">
-            <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-              Around the World
-            </h1>
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-600">
-                {aroundTheWorld.totalCorrect}/{aroundTheWorld.totalAnswered} correct
-              </span>
-              <button
-                onClick={() => setShowATWSummary(true)}
-                className="px-3 py-1.5 text-sm text-gray-500 hover:text-gray-700 bg-white border border-gray-300 rounded-lg transition-colors flex items-center gap-1.5"
-              >
-                <span>📊</span> Stats
-              </button>
-              <button
-                onClick={handleResetATW}
-                className="px-3 py-1.5 text-sm text-gray-500 hover:text-gray-700 bg-white border border-gray-300 rounded-lg transition-colors flex items-center gap-1.5"
-              >
-                <span>↺</span> Reset
-              </button>
-              <button
-                onClick={handleBackToMenu}
-                className="px-3 py-1.5 text-sm text-gray-500 hover:text-gray-700 bg-white border border-gray-300 rounded-lg transition-colors"
-              >
-                Menu
-              </button>
-            </div>
-          </div>
-
-          {/* Main content - side by side on desktop */}
-          <div className="flex flex-col lg:flex-row gap-4">
-            {/* World Map */}
-            <div className="lg:flex-1">
-              <WorldMap
-                highlightedCountry={aroundTheWorld.currentCountry.code}
-                answeredCountries={aroundTheWorld.answeredCountries}
-              />
-            </div>
-
-            {/* Right panel - Question and Options */}
-            <div className="lg:w-72 flex flex-col">
-              {/* Question */}
-              <div className="text-center lg:text-left mb-4">
-                <p className="text-lg text-gray-600">
-                  Which country is highlighted?
-                </p>
-              </div>
-
-              {/* Multiple Choice - vertical on desktop */}
-              <div className="flex-1">
-                <MapMultipleChoice
-                  options={aroundTheWorld.options}
-                  correctCountry={aroundTheWorld.currentCountry}
-                  selectedAnswer={aroundTheWorld.selectedAnswer}
-                  answeredCorrectly={aroundTheWorld.answeredCorrectly}
-                  onSelect={handleATWAnswer}
-                  disabled={isAnswered}
-                />
-              </div>
-
-              <div className="mt-4 text-center lg:text-left text-sm text-gray-500">
-                {aroundTheWorld.totalAnswered} of {aroundTheWorld.totalCountries} countries explored
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <Celebration streak={1} show={showCelebration} />
-
-        {showATWSummary && (
-          <AroundTheWorldSummary
-            continentStats={aroundTheWorld.continentStats}
-            totalCorrect={aroundTheWorld.totalCorrect}
-            totalAnswered={aroundTheWorld.totalAnswered}
-            onClose={() => setShowATWSummary(false)}
-          />
-        )}
-      </div>
-    );
+    return <AroundTheWorldScreen onBack={handleBackToMenu} />;
   }
 
-  // Jeopardy mode
   if (screen === 'jeopardy') {
-    const isDailyDouble = jeopardy.selectedCell &&
-      jeopardy.dailyDoubleLocation.row === jeopardy.selectedCell.row &&
-      jeopardy.dailyDoubleLocation.col === jeopardy.selectedCell.col;
-
-    return (
-      <div className="min-h-screen bg-blue-900 py-4 px-4">
-        <div className="max-w-4xl mx-auto">
-          {/* Header */}
-          <div className="flex items-center justify-between mb-4">
-            <h1 className="text-xl sm:text-2xl font-bold text-yellow-400">
-              Flag Jeopardy
-            </h1>
-            <div className="flex items-center gap-4">
-              <span className={`text-2xl font-bold ${jeopardy.score >= 0 ? 'text-yellow-400' : 'text-red-400'}`}>
-                ${jeopardy.score.toLocaleString()}
-              </span>
-              <button
-                onClick={() => jeopardy.resetGame()}
-                className="px-3 py-1.5 text-sm text-blue-200 hover:text-white border border-blue-400 rounded-lg transition-colors flex items-center gap-1.5"
-              >
-                <span>↺</span> Reset
-              </button>
-              <button
-                onClick={handleBackToMenu}
-                className="px-3 py-1.5 text-sm text-blue-200 hover:text-white border border-blue-400 rounded-lg transition-colors"
-              >
-                Menu
-              </button>
-            </div>
-          </div>
-
-          {/* Jeopardy Board */}
-          <JeopardyBoard
-            board={jeopardy.board}
-            onSelectCell={jeopardy.selectCell}
-          />
-
-          <div className="mt-4 text-center text-sm text-blue-300">
-            {jeopardy.remainingCells} questions remaining
-          </div>
-        </div>
-
-        {/* Daily Double Wager Modal */}
-        {jeopardy.showDailyDouble && (
-          <JeopardyDailyDouble
-            currentScore={jeopardy.score}
-            onConfirmWager={(wager) => {
-              jeopardy.setDailyDoubleWager(wager);
-              jeopardy.confirmDailyDoubleWager();
-            }}
-          />
-        )}
-
-        {/* Question Modal */}
-        {jeopardy.currentQuestion && !jeopardy.showDailyDouble && (
-          <JeopardyQuestion
-            cell={jeopardy.currentQuestion}
-            options={jeopardy.options}
-            selectedAnswer={jeopardy.selectedAnswer}
-            answeredCorrectly={jeopardy.answeredCorrectly}
-            onAnswer={jeopardy.checkAnswer}
-            onClose={jeopardy.closeQuestion}
-            isDailyDouble={isDailyDouble || false}
-            wager={jeopardy.dailyDoubleWager}
-            gameDifficulty={jeopardy.gameDifficulty}
-          />
-        )}
-
-        {/* Game Over Summary */}
-        {jeopardy.gameOver && (
-          <JeopardySummary
-            score={jeopardy.score}
-            onPlayAgain={() => jeopardy.resetGame()}
-            onBackToMenu={handleBackToMenu}
-          />
-        )}
-      </div>
-    );
+    return <JeopardyScreen difficulty={jeopardyDifficulty} onBack={handleBackToMenu} />;
   }
 
-  // Free Play mode
-  if (quiz.availableCountries.length === 0) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 flex items-center justify-center p-4">
-        <div className="text-center">
-          <p className="text-xl text-gray-600 mb-4">No countries available!</p>
-          <p className="text-gray-500 mb-4">Please enable at least one continent and difficulty level.</p>
-          <button
-            onClick={handleBackToMenu}
-            className="px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600"
-          >
-            Back to Menu
-          </button>
-        </div>
-      </div>
-    );
+  if (screen === 'presentation') {
+    return <PresentationScreen onBack={handleBackToMenu} />;
   }
 
-  const isAnswered = quiz.answeredCorrectly !== null;
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 py-6 px-4">
-      <div className="max-w-2xl mx-auto">
-        <div className="flex items-center justify-between mb-2">
-          <button
-            onClick={handleBackToMenu}
-            className="text-sm text-gray-500 hover:text-gray-700 bg-white border border-gray-300 px-3 py-1.5 rounded-lg transition-colors"
-          >
-            Menu
-          </button>
-        </div>
-
-        <Header
-          mode={mode}
-          onModeChange={setMode}
-          streak={quiz.streak}
-          enabledContinents={enabledContinents}
-          onToggleContinent={handleToggleContinent}
-          enabledDifficulties={enabledDifficulties}
-          onToggleDifficulty={handleToggleDifficulty}
-        />
-
-        <main className="mt-4">
-          {mode === 'flag-picker' ? (
-            <div className="flex flex-col items-center py-8">
-              <h2
-                key={quiz.currentCountry.code}
-                className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-800 animate-bounce-in text-center"
-              >
-                {quiz.currentCountry.name}
-              </h2>
-              <span
-                className={`mt-3 px-3 py-1 rounded-full text-xs font-medium ${
-                  {
-                    1: 'bg-green-100 text-green-700',
-                    2: 'bg-blue-100 text-blue-700',
-                    3: 'bg-yellow-100 text-yellow-700',
-                    4: 'bg-orange-100 text-orange-700',
-                    5: 'bg-red-100 text-red-700',
-                  }[quiz.currentCountry.difficulty]
-                }`}
-              >
-                {difficultyLabels[quiz.currentCountry.difficulty]}
-              </span>
-            </div>
-          ) : (
-            <FlagDisplay
-              countryCode={quiz.currentCountry.code}
-              animationKey={quiz.currentCountry.code}
-              difficulty={quiz.currentCountry.difficulty}
-            />
-          )}
-
-          <div className="mt-6">
-            {mode === 'multiple-choice' && (
-              <MultipleChoice
-                options={quiz.options}
-                correctCountry={quiz.currentCountry}
-                selectedAnswer={quiz.selectedAnswer}
-                answeredCorrectly={quiz.answeredCorrectly}
-                onSelect={handleFreePlayAnswer}
-                disabled={isAnswered}
-              />
-            )}
-            {mode === 'flag-picker' && (
-              <FlagPicker
-                options={quiz.options}
-                correctCountry={quiz.currentCountry}
-                selectedAnswer={quiz.selectedAnswer}
-                answeredCorrectly={quiz.answeredCorrectly}
-                onSelect={handleFreePlayAnswer}
-                disabled={isAnswered}
-              />
-            )}
-            {mode === 'type-ahead' && (
-              <TypeAhead
-                countries={quiz.availableCountries}
-                onSubmit={handleFreePlayAnswer}
-                disabled={isAnswered}
-                answeredCorrectly={quiz.answeredCorrectly}
-                correctCountry={quiz.currentCountry}
-              />
-            )}
-          </div>
-
-          <div className="mt-8 text-center text-sm text-gray-500">
-            {quiz.availableCountries.length} countries available
-          </div>
-        </main>
-      </div>
-
-      <Celebration streak={quiz.streak} show={showCelebration} />
-    </div>
-  );
+  // Fallback
+  return null;
 }
 
 export default App;
