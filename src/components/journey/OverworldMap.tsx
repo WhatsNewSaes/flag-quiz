@@ -120,13 +120,12 @@ export function OverworldMap({
                   </div>
 
                   <div className="flex-1 flex flex-col gap-3 pb-2">
-                    {region.levels.map((level, levelIdx) => {
+                    {region.levels.map((level) => {
                       const unlocked = isLevelUnlocked(level.id);
                       const result = levelResults[level.id];
                       const completed = result && result.stars >= 1;
                       const stars = result?.stars ?? 0;
                       const isCurrent = level.globalLevelIndex === currentLevelIndex;
-                      const isLast = levelIdx === region.levels.length - 1;
 
                       return (
                         <div key={level.id} className="flex items-center gap-0 relative">

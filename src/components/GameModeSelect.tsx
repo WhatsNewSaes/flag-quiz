@@ -7,7 +7,7 @@ import GlobeIcon from '../icons/ecology-global-warming-globe--Streamline-Pixel.s
 import DiceIcon from '../icons/entertainment-events-hobbies-board-game-dice--Streamline-Pixel.svg';
 import BookIcon from '../icons/content-files-open-book--Streamline-Pixel.svg';
 import RocketIcon from '../icons/business-product-startup-2--Streamline-Pixel.svg';
-import LockIcon from '../icons/interface-essential-lock--Streamline-Pixel.svg';
+
 
 export type GameMode = 'free-play' | 'campaign' | 'around-the-world' | 'jeopardy' | 'presentation';
 
