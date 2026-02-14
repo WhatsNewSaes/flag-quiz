@@ -14,10 +14,9 @@ import { playCorrectSound, playIncorrectSound } from '../utils/sounds';
 
 interface CampaignScreenProps {
   initialQuizType: QuizMode;
-  onBack: () => void;
 }
 
-export function CampaignScreen({ initialQuizType, onBack }: CampaignScreenProps) {
+export function CampaignScreen({ initialQuizType }: CampaignScreenProps) {
   const [showCelebration, setShowCelebration] = useState(false);
   const campaign = useCampaign(initialQuizType);
 
@@ -47,7 +46,6 @@ export function CampaignScreen({ initialQuizType, onBack }: CampaignScreenProps)
       <CampaignSummary
         levelScores={campaign.levelScores}
         onPlayAgain={handleReset}
-        onBackToMenu={onBack}
       />
     );
   }
@@ -81,20 +79,12 @@ export function CampaignScreen({ initialQuizType, onBack }: CampaignScreenProps)
           <h1 className="text-2xl sm:text-3xl font-retro text-retro-gold">
             Campaign Mode
           </h1>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={handleReset}
-              className="px-3 py-1.5 text-sm text-retro-text-secondary hover:text-retro-text bg-retro-surface border border-retro-border/20 rounded-lg transition-colors flex items-center gap-1.5"
-            >
-              <span>↺</span> Reset
-            </button>
-            <button
-              onClick={onBack}
-              className="px-3 py-1.5 text-sm text-retro-text-secondary hover:text-retro-text bg-retro-surface border border-retro-border/20 rounded-lg transition-colors"
-            >
-              Menu
-            </button>
-          </div>
+          <button
+            onClick={handleReset}
+            className="px-3 py-1.5 text-sm text-retro-text-secondary hover:text-retro-text bg-retro-surface border border-retro-border/20 rounded-lg transition-colors flex items-center gap-1.5"
+          >
+            <span>↺</span> Reset
+          </button>
         </div>
 
         <LevelScoreTracker

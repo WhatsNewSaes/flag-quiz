@@ -1,5 +1,4 @@
 import { playMenuSelectSound } from '../utils/sounds';
-import { AuthButton } from './AuthButton';
 import ArcadeIcon from '../icons/entertainment-events-hobbies-game-machines-arcade-1--Streamline-Pixel.svg';
 import Logo from '../logo/big-logo.svg';
 import TrophyIcon from '../icons/interface-essential-trophy--Streamline-Pixel.svg';
@@ -7,9 +6,10 @@ import GlobeIcon from '../icons/ecology-global-warming-globe--Streamline-Pixel.s
 import DiceIcon from '../icons/entertainment-events-hobbies-board-game-dice--Streamline-Pixel.svg';
 import BookIcon from '../icons/content-files-open-book--Streamline-Pixel.svg';
 import RocketIcon from '../icons/business-product-startup-2--Streamline-Pixel.svg';
+import FlagRunnerIcon from '../icons/social-rewards-flag--Streamline-Pixel.svg';
 
 
-export type GameMode = 'free-play' | 'campaign' | 'around-the-world' | 'jeopardy' | 'presentation';
+export type GameMode = 'free-play' | 'campaign' | 'around-the-world' | 'jeopardy' | 'presentation' | 'flag-runner';
 
 interface GameModeSelectProps {
   onSelectMode: (mode: GameMode) => void;
@@ -65,24 +65,28 @@ const modes: ModeConfig[] = [
     description: 'Flashcard-style study mode. Reveal flags or names at your own pace.',
     titleBarColor: 'bg-purple-400',
   },
+  {
+    mode: 'flag-runner',
+    icon: FlagRunnerIcon,
+    title: 'Flag Runner',
+    description: 'Dodge wrong flags, collect correct ones! How long can you survive?',
+    titleBarColor: 'bg-emerald-500',
+  },
 ];
 
 export function GameModeSelect({ onSelectMode, unlockedModes, onJourney }: GameModeSelectProps) {
   function isModeUnlocked(mode: GameMode): boolean {
     if (!unlockedModes) return true;
-    if (mode === 'campaign' || mode === 'presentation') return true;
+    if (mode === 'campaign' || mode === 'presentation' || mode === 'flag-runner') return true;
     return unlockedModes.includes(mode);
   }
 
   return (
     <div className="min-h-screen bg-retro-bg flex items-center justify-center p-4">
       <div className="max-w-md w-full">
-        <div className="flex justify-end mb-4">
-          <AuthButton />
-        </div>
         <div className="text-center mb-8">
           <img src={Logo} alt="Flag Arcade" className="mx-auto w-64 sm:w-72 mb-3" />
-          <p className="text-retro-text-secondary">Test your knowledge of flags from around the world!</p>
+          <p className="font-body text-sm text-retro-text-secondary">EXPLORE THE WORLD ONE FLAG AT A TIME</p>
         </div>
 
         <div className="space-y-4">
@@ -95,10 +99,10 @@ export function GameModeSelect({ onSelectMode, unlockedModes, onJourney }: GameM
               <div className="retro-window-title bg-retro-neon-green text-white flex items-center justify-between">
                 <span>✦</span><span>Continue Journey</span><span>✦</span>
               </div>
-              <div className="retro-window-body">
+              <div className="retro-window-body !p-3 sm:!p-4">
                 <div className="flex items-center gap-4">
-                  <img src={RocketIcon} alt="" className="w-10 h-10" />
-                  <p className="font-body text-base text-retro-text leading-relaxed">
+                  <img src={RocketIcon} alt="" className="w-8 h-8 sm:w-10 sm:h-10" />
+                  <p className="font-body text-sm sm:text-base text-retro-text leading-snug sm:leading-relaxed">
                     Progress through worlds, earn stars, and unlock achievements.
                   </p>
                 </div>
@@ -131,9 +135,9 @@ export function GameModeSelect({ onSelectMode, unlockedModes, onJourney }: GameM
                 <div className={`retro-window-title ${unlocked ? titleBarColor : 'bg-gray-400'} text-white flex items-center justify-between ${!unlocked ? 'opacity-50' : ''}`}>
                   <span>✦</span><span>{title}</span><span>✦</span>
                 </div>
-                <div className="retro-window-body">
+                <div className="retro-window-body !p-3 sm:!p-4">
                   {!unlocked && unlockRequirement && (
-                    <p className="font-body text-sm text-amber-700 bg-amber-100 rounded px-2 py-0.5 mb-2 inline-flex items-center gap-1">
+                    <p className="font-body text-xs sm:text-sm text-amber-700 bg-amber-100 rounded px-2 py-0.5 mb-2 inline-flex items-center gap-1">
                       🔒 {unlockRequirement}
                     </p>
                   )}
@@ -141,9 +145,9 @@ export function GameModeSelect({ onSelectMode, unlockedModes, onJourney }: GameM
                     <img
                       src={icon}
                       alt=""
-                      className="w-10 h-10"
+                      className="w-8 h-8 sm:w-10 sm:h-10"
                     />
-                    <p className="font-body text-base text-retro-text leading-relaxed">
+                    <p className="font-body text-sm sm:text-base text-retro-text leading-snug sm:leading-relaxed">
                       {description}
                     </p>
                   </div>

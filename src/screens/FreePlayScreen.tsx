@@ -10,11 +10,7 @@ import { useLocalStorage } from '../hooks/useLocalStorage';
 import { Continent, continents, Difficulty, difficultyLabels } from '../data/countries';
 import { playCorrectSound, playIncorrectSound } from '../utils/sounds';
 
-interface FreePlayScreenProps {
-  onBack: () => void;
-}
-
-export function FreePlayScreen({ onBack }: FreePlayScreenProps) {
+export function FreePlayScreen() {
   const [mode, setMode] = useLocalStorage<QuizMode>('quiz-mode', 'multiple-choice');
   const [enabledContinents, setEnabledContinents] = useLocalStorage<Continent[]>(
     'enabled-continents',
@@ -77,12 +73,6 @@ export function FreePlayScreen({ onBack }: FreePlayScreenProps) {
         <div className="text-center">
           <p className="text-xl text-gray-600 mb-4">No countries available!</p>
           <p className="text-gray-500 mb-4">Please enable at least one continent and difficulty level.</p>
-          <button
-            onClick={onBack}
-            className="px-4 py-2 bg-retro-neon-blue text-white rounded-lg hover:bg-blue-600"
-          >
-            Back to Menu
-          </button>
         </div>
       </div>
     );
@@ -93,15 +83,6 @@ export function FreePlayScreen({ onBack }: FreePlayScreenProps) {
   return (
     <div className="min-h-screen bg-gradient-to-b from-sky-300 to-sky-400 py-6 px-4">
       <div className="max-w-2xl mx-auto">
-        <div className="flex items-center justify-between mb-2">
-          <button
-            onClick={onBack}
-            className="text-sm text-retro-text-secondary hover:text-retro-text bg-retro-surface border border-retro-border/20 px-3 py-1.5 rounded-lg transition-colors"
-          >
-            Menu
-          </button>
-        </div>
-
         <Header
           mode={mode}
           onModeChange={setMode}

@@ -8,6 +8,9 @@ import { CampaignScreen } from './screens/CampaignScreen';
 import { AroundTheWorldScreen } from './screens/AroundTheWorldScreen';
 import { JeopardyScreen } from './screens/JeopardyScreen';
 import { PresentationScreen } from './screens/PresentationScreen';
+import { FlagRunnerScreen } from './screens/FlagRunnerScreen';
+import { NavBar } from './components/NavBar';
+import { Onboarding } from './components/Onboarding';
 import { OverworldMap } from './components/journey/OverworldMap';
 import { JourneyLevelPlay } from './components/journey/JourneyLevelPlay';
 import { LevelCompleteFlow } from './components/journey/LevelCompleteFlow';
@@ -35,13 +38,14 @@ type AppScreen =
   | 'around-the-world'
   | 'jeopardy-difficulty-select'
   | 'jeopardy'
-  | 'presentation';
+  | 'presentation'
+  | 'flag-runner';
 
 const VALID_SCREENS: Set<string> = new Set([
   'journey-map', 'journey-quiz-select', 'journey-play', 'journey-practice',
   'journey-complete', 'achievements', 'mode-select', 'campaign-quiz-select',
   'free-play', 'campaign', 'around-the-world', 'jeopardy-difficulty-select',
-  'jeopardy', 'presentation',
+  'jeopardy', 'presentation', 'flag-runner',
 ]);
 
 function migrateScreen(raw: any): AppScreen {
@@ -64,6 +68,11 @@ function App() {
   } | null>(null);
   const [pendingAchievements, setPendingAchievements] = useState<string[]>([]);
   const [newlyUnlockedModes, setNewlyUnlockedModes] = useState<string[]>([]);
+
+  // Onboarding state
+  const [onboardingComplete, setOnboardingComplete] = useLocalStorage<string>('onboarding-complete', '');
+  const [, setSelectedCharacter] = useLocalStorage<string>('selected-character', '');
+  const [, setFavoriteFlag] = useLocalStorage<string>('favorite-flag', '');
 
   // Campaign/Jeopardy quiz type state
   const [campaignQuizType, setCampaignQuizType] = useState<QuizMode>('multiple-choice');
@@ -194,14 +203,25 @@ function App() {
     else if (gameMode === 'around-the-world') setScreen('around-the-world');
     else if (gameMode === 'jeopardy') setScreen('jeopardy-difficulty-select');
     else if (gameMode === 'presentation') setScreen('presentation');
+    else if (gameMode === 'flag-runner') setScreen('flag-runner');
   }, [setScreen]);
 
-  const handleBackToMenu = useCallback(() => {
+  // --- Onboarding handler ---
+  const handleOnboardingComplete = useCallback((character: 'boy' | 'girl', flag: string) => {
+    setSelectedCharacter(character);
+    setFavoriteFlag(flag);
+    setOnboardingComplete('true');
+    // Start level 1
+    handleSelectLevel(allLevels[0]);
+  }, [setSelectedCharacter, setFavoriteFlag, setOnboardingComplete, handleSelectLevel, allLevels]);
+
+  // --- Navigation handlers ---
+  const handleNavigate = useCallback((target: string) => {
+    setScreen(target as AppScreen);
+  }, [setScreen]);
+
+  const handleBackToModeSelect = useCallback(() => {
     setScreen('mode-select');
-  }, [setScreen]);
-
-  const handleBackToJourney = useCallback(() => {
-    setScreen('journey-map');
   }, [setScreen]);
 
   // --- Check for level completion in play screen ---
@@ -223,19 +243,21 @@ function App() {
     );
   }
 
+  // Onboarding gate: show onboarding for first-time users
+  if (!onboardingComplete) {
+    return <Onboarding onComplete={handleOnboardingComplete} />;
+  }
+
   // Journey screens
   if (screen === 'journey-map') {
     return (
       <>
+        <NavBar onNavigate={handleNavigate} totalStars={journeyProgress.progress.totalStars} unlockedModes={journeyProgress.unlockedModes} />
         <OverworldMap
           regions={regions}
           allLevels={allLevels}
           levelResults={journeyProgress.progress.levelResults}
-          totalStars={journeyProgress.progress.totalStars}
-          currentRank={journeyProgress.progress.currentRank}
           onSelectLevel={handleSelectLevel}
-          onOpenModes={handleBackToMenu}
-          onOpenAchievements={() => setScreen('achievements')}
           isLevelUnlocked={journeyProgress.isUnlocked}
         />
         {pendingAchievements.length > 0 && (
@@ -308,60 +330,99 @@ function App() {
 
   if (screen === 'achievements') {
     return (
-      <AchievementsPage
-        unlockedAchievements={journeyProgress.progress.achievements}
-        onBack={() => setScreen('journey-map')}
-      />
+      <>
+        <NavBar onNavigate={handleNavigate} totalStars={journeyProgress.progress.totalStars} unlockedModes={journeyProgress.unlockedModes} />
+        <AchievementsPage
+          unlockedAchievements={journeyProgress.progress.achievements}
+        />
+      </>
     );
   }
 
-  // Other mode screens
   if (screen === 'mode-select') {
     return (
-      <GameModeSelect
-        onSelectMode={handleSelectGameMode}
-        unlockedModes={journeyProgress.unlockedModes}
-        onJourney={handleBackToJourney}
-      />
+      <>
+        <NavBar onNavigate={handleNavigate} totalStars={journeyProgress.progress.totalStars} unlockedModes={journeyProgress.unlockedModes} />
+        <GameModeSelect
+          onSelectMode={handleSelectGameMode}
+          unlockedModes={journeyProgress.unlockedModes}
+          onJourney={() => setScreen('journey-map')}
+        />
+      </>
     );
   }
 
   if (screen === 'campaign-quiz-select') {
     return (
-      <CampaignQuizTypeSelect
-        onSelect={(qt) => { setCampaignQuizType(qt); setScreen('campaign'); }}
-        onBack={handleBackToMenu}
-      />
+      <>
+        <NavBar onNavigate={handleNavigate} totalStars={journeyProgress.progress.totalStars} unlockedModes={journeyProgress.unlockedModes} />
+        <CampaignQuizTypeSelect
+          onSelect={(qt) => { setCampaignQuizType(qt); setScreen('campaign'); }}
+          onBack={handleBackToModeSelect}
+        />
+      </>
     );
   }
 
   if (screen === 'jeopardy-difficulty-select') {
     return (
-      <JeopardyDifficultySelect
-        onSelect={(d) => { setJeopardyDifficulty(d); setScreen('jeopardy'); }}
-        onBack={handleBackToMenu}
-      />
+      <>
+        <NavBar onNavigate={handleNavigate} totalStars={journeyProgress.progress.totalStars} unlockedModes={journeyProgress.unlockedModes} variant="dark" />
+        <JeopardyDifficultySelect
+          onSelect={(d) => { setJeopardyDifficulty(d); setScreen('jeopardy'); }}
+          onBack={handleBackToModeSelect}
+        />
+      </>
     );
   }
 
   if (screen === 'free-play') {
-    return <FreePlayScreen onBack={handleBackToMenu} />;
+    return (
+      <>
+        <NavBar onNavigate={handleNavigate} totalStars={journeyProgress.progress.totalStars} unlockedModes={journeyProgress.unlockedModes} />
+        <FreePlayScreen />
+      </>
+    );
   }
 
   if (screen === 'campaign') {
-    return <CampaignScreen initialQuizType={campaignQuizType} onBack={handleBackToMenu} />;
+    return (
+      <>
+        <NavBar onNavigate={handleNavigate} totalStars={journeyProgress.progress.totalStars} unlockedModes={journeyProgress.unlockedModes} />
+        <CampaignScreen initialQuizType={campaignQuizType} />
+      </>
+    );
   }
 
   if (screen === 'around-the-world') {
-    return <AroundTheWorldScreen onBack={handleBackToMenu} />;
+    return (
+      <>
+        <NavBar onNavigate={handleNavigate} totalStars={journeyProgress.progress.totalStars} unlockedModes={journeyProgress.unlockedModes} />
+        <AroundTheWorldScreen />
+      </>
+    );
   }
 
   if (screen === 'jeopardy') {
-    return <JeopardyScreen difficulty={jeopardyDifficulty} onBack={handleBackToMenu} />;
+    return (
+      <>
+        <NavBar onNavigate={handleNavigate} totalStars={journeyProgress.progress.totalStars} unlockedModes={journeyProgress.unlockedModes} variant="dark" />
+        <JeopardyScreen difficulty={jeopardyDifficulty} />
+      </>
+    );
   }
 
   if (screen === 'presentation') {
-    return <PresentationScreen onBack={handleBackToMenu} />;
+    return (
+      <>
+        <NavBar onNavigate={handleNavigate} totalStars={journeyProgress.progress.totalStars} unlockedModes={journeyProgress.unlockedModes} />
+        <PresentationScreen />
+      </>
+    );
+  }
+
+  if (screen === 'flag-runner') {
+    return <FlagRunnerScreen onBack={handleBackToModeSelect} />;
   }
 
   // Fallback

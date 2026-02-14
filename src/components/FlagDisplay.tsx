@@ -5,6 +5,7 @@ interface FlagDisplayProps {
   countryCode: string;
   animationKey: string | number;
   difficulty: Difficulty;
+  showDifficulty?: boolean;
 }
 
 const difficultyColors: Record<Difficulty, string> = {
@@ -15,7 +16,7 @@ const difficultyColors: Record<Difficulty, string> = {
   5: 'bg-retro-neon-red text-white',
 };
 
-export function FlagDisplay({ countryCode, animationKey, difficulty }: FlagDisplayProps) {
+export function FlagDisplay({ countryCode, animationKey, difficulty, showDifficulty = true }: FlagDisplayProps) {
   return (
     <div className="flex flex-col items-center py-4">
       <span
@@ -26,12 +27,14 @@ export function FlagDisplay({ countryCode, animationKey, difficulty }: FlagDispl
       >
         {getFlagEmoji(countryCode)}
       </span>
-      <span
-        className={`mt-2 px-3 py-1.5 text-xs font-retro rounded-lg border-2 border-retro-border ${difficultyColors[difficulty]}`}
-        style={{ boxShadow: '2px 2px 0px 0px #2D2D2D' }}
-      >
-        {difficultyLabels[difficulty]}
-      </span>
+      {showDifficulty && (
+        <span
+          className={`mt-2 px-3 py-1.5 text-xs font-retro rounded-lg border-2 border-retro-border ${difficultyColors[difficulty]}`}
+          style={{ boxShadow: '2px 2px 0px 0px #2D2D2D' }}
+        >
+          {difficultyLabels[difficulty]}
+        </span>
+      )}
     </div>
   );
 }

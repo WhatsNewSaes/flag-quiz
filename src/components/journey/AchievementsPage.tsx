@@ -2,10 +2,9 @@ import { ACHIEVEMENTS } from '../../data/achievements';
 
 interface AchievementsPageProps {
   unlockedAchievements: Record<string, number | null>;
-  onBack: () => void;
 }
 
-export function AchievementsPage({ unlockedAchievements, onBack }: AchievementsPageProps) {
+export function AchievementsPage({ unlockedAchievements }: AchievementsPageProps) {
   const unlockedCount = Object.values(unlockedAchievements).filter(Boolean).length;
   const totalCount = ACHIEVEMENTS.length;
 
@@ -13,13 +12,7 @@ export function AchievementsPage({ unlockedAchievements, onBack }: AchievementsP
     <div className="min-h-screen bg-retro-bg py-6 px-4">
       <div className="max-w-lg mx-auto">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <button
-            onClick={onBack}
-            className="retro-btn px-3 py-2 text-xs font-retro bg-retro-surface text-retro-text-secondary"
-          >
-            ← Back
-          </button>
+        <div className="text-center mb-6">
           <h1 className="font-retro text-sm text-retro-gold">
             Achievements
           </h1>

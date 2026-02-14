@@ -4,7 +4,6 @@ import { LevelScore } from '../hooks/useCampaign';
 interface CampaignSummaryProps {
   levelScores: Record<Difficulty, LevelScore>;
   onPlayAgain: () => void;
-  onBackToMenu: () => void;
 }
 
 const levels: Difficulty[] = [1, 2, 3, 4, 5];
@@ -45,7 +44,7 @@ function getOverallMessage(percentage: number): { title: string; message: string
   };
 }
 
-export function CampaignSummary({ levelScores, onPlayAgain, onBackToMenu }: CampaignSummaryProps) {
+export function CampaignSummary({ levelScores, onPlayAgain }: CampaignSummaryProps) {
   const totalCorrect = levels.reduce((sum, l) => sum + levelScores[l].correct, 0);
   const totalQuestions = levels.reduce((sum, l) => sum + levelScores[l].total, 0);
   const overallPercentage = totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
@@ -117,13 +116,6 @@ export function CampaignSummary({ levelScores, onPlayAgain, onBackToMenu }: Camp
             className="retro-btn w-full py-4 px-6 bg-retro-neon-blue text-white font-bold font-retro text-sm"
           >
             Play Again
-          </button>
-
-          <button
-            onClick={onBackToMenu}
-            className="retro-btn w-full py-3 px-6 bg-retro-surface text-retro-text-secondary font-medium"
-          >
-            Back to Menu
           </button>
         </div>
       </div>

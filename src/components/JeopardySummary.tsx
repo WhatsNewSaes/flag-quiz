@@ -1,7 +1,6 @@
 interface JeopardySummaryProps {
   score: number;
   onPlayAgain: () => void;
-  onBackToMenu: () => void;
 }
 
 function getScoreMessage(score: number): { title: string; message: string; emoji: string } {
@@ -40,7 +39,7 @@ function getScoreMessage(score: number): { title: string; message: string; emoji
   };
 }
 
-export function JeopardySummary({ score, onPlayAgain, onBackToMenu }: JeopardySummaryProps) {
+export function JeopardySummary({ score, onPlayAgain }: JeopardySummaryProps) {
   const { title, message, emoji } = getScoreMessage(score);
 
   return (
@@ -64,13 +63,6 @@ export function JeopardySummary({ score, onPlayAgain, onBackToMenu }: JeopardySu
             className="w-full py-4 px-6 bg-yellow-400 text-blue-900 font-bold text-xl rounded-xl hover:bg-yellow-300 transition-all transform hover:scale-105 shadow-lg"
           >
             Play Again
-          </button>
-
-          <button
-            onClick={onBackToMenu}
-            className="w-full py-3 px-6 bg-[#2563EB] text-white font-medium rounded-xl hover:bg-blue-600 transition-all"
-          >
-            Back to Menu
           </button>
         </div>
       </div>

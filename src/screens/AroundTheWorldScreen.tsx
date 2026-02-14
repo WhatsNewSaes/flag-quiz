@@ -6,11 +6,7 @@ import { AroundTheWorldSummary } from '../components/AroundTheWorldSummary';
 import { useAroundTheWorld } from '../hooks/useAroundTheWorld';
 import { playCorrectSound, playIncorrectSound } from '../utils/sounds';
 
-interface AroundTheWorldScreenProps {
-  onBack: () => void;
-}
-
-export function AroundTheWorldScreen({ onBack }: AroundTheWorldScreenProps) {
+export function AroundTheWorldScreen() {
   const [showCelebration, setShowCelebration] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
   const aroundTheWorld = useAroundTheWorld();
@@ -60,12 +56,6 @@ export function AroundTheWorldScreen({ onBack }: AroundTheWorldScreenProps) {
               className="px-3 py-1.5 text-sm text-retro-text-secondary hover:text-retro-text bg-retro-surface border border-retro-border/20 rounded-lg transition-colors flex items-center gap-1.5"
             >
               <span>↺</span> Reset
-            </button>
-            <button
-              onClick={onBack}
-              className="px-3 py-1.5 text-sm text-retro-text-secondary hover:text-retro-text bg-retro-surface border border-retro-border/20 rounded-lg transition-colors"
-            >
-              Menu
             </button>
           </div>
         </div>

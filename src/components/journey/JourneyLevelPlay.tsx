@@ -3,8 +3,16 @@ import { FlagDisplay } from '../FlagDisplay';
 import { MultipleChoice } from '../MultipleChoice';
 import { FlagPicker } from '../FlagPicker';
 import { Celebration } from '../Celebration';
-import { Country } from '../../data/countries';
+import { Country, difficultyLabels } from '../../data/countries';
 import { QuizMode } from '../../hooks/useQuiz';
+
+const difficultyBadgeColors: Record<number, string> = {
+  1: 'bg-retro-neon-green text-white',
+  2: 'bg-retro-neon-blue text-white',
+  3: 'bg-retro-accent text-retro-text',
+  4: 'bg-orange-500 text-white',
+  5: 'bg-retro-neon-red text-white',
+};
 
 interface JourneyLevelPlayProps {
   level: JourneyLevel;
@@ -46,9 +54,12 @@ export function JourneyLevelPlay({
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
-          <div>
+          <div className="flex items-center gap-2">
             <span className="font-retro text-sm text-retro-text">
-              {level.displayName}
+              W{level.regionIndex + 1}-L{level.levelIndexInRegion + 1}
+            </span>
+            <span className={`font-retro text-[10px] px-2 py-0.5 rounded-full ${difficultyBadgeColors[currentCountry.difficulty] || 'bg-gray-400 text-white'}`}>
+              {difficultyLabels[currentCountry.difficulty]}
             </span>
           </div>
           <div className="flex items-center gap-3">
@@ -92,6 +103,7 @@ export function JourneyLevelPlay({
               countryCode={currentCountry.code}
               animationKey={currentCountry.code}
               difficulty={currentCountry.difficulty}
+              showDifficulty={false}
             />
           )}
 

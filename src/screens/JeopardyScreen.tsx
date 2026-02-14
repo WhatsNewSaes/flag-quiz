@@ -8,10 +8,9 @@ import { JeopardyDifficulty } from '../components/JeopardyDifficultySelect';
 
 interface JeopardyScreenProps {
   difficulty: JeopardyDifficulty;
-  onBack: () => void;
 }
 
-export function JeopardyScreen({ difficulty, onBack }: JeopardyScreenProps) {
+export function JeopardyScreen({ difficulty }: JeopardyScreenProps) {
   const jeopardy = useJeopardy();
   const initialized = useRef(false);
 
@@ -42,12 +41,6 @@ export function JeopardyScreen({ difficulty, onBack }: JeopardyScreenProps) {
               className="px-3 py-1.5 text-sm text-blue-200 hover:text-white border border-blue-400 rounded-lg transition-colors flex items-center gap-1.5"
             >
               <span>↺</span> Reset
-            </button>
-            <button
-              onClick={onBack}
-              className="px-3 py-1.5 text-sm text-blue-200 hover:text-white border border-blue-400 rounded-lg transition-colors"
-            >
-              Menu
             </button>
           </div>
         </div>
@@ -90,7 +83,6 @@ export function JeopardyScreen({ difficulty, onBack }: JeopardyScreenProps) {
         <JeopardySummary
           score={jeopardy.score}
           onPlayAgain={() => jeopardy.resetGame()}
-          onBackToMenu={onBack}
         />
       )}
     </div>
