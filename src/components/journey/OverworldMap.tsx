@@ -179,12 +179,12 @@ export function OverworldMap({
 
                           {/* Pixel character + flag badge */}
                           {isCurrent && (
-                            <div className="absolute top-1/2 -translate-y-1/2" style={{ left: '-2.7rem' }}>
+                            <div className="absolute top-1/2 -translate-y-1/2" style={{ left: -72 }}>
                               <PixelCharacter />
                               {favoriteFlag && (
                                 <span
                                   className="absolute text-xs"
-                                  style={{ top: -4, right: -10 }}
+                                  style={{ top: 22, right: 10 }}
                                 >
                                   {getFlagEmoji(favoriteFlag)}
                                 </span>

@@ -18,6 +18,8 @@ export default {
         'retro-neon-green': '#16A34A',
         'retro-neon-red': '#EF4444',
         'retro-neon-blue': '#3B82F6',
+        'retro-neon-orange': '#F59E0B',
+        'retro-neon-purple': '#8B5CF6',
         'retro-border': '#2D2D2D',
         'retro-text': '#2D2D2D',
         'retro-text-secondary': '#555555',

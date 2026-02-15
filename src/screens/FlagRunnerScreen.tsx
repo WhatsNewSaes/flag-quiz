@@ -3,18 +3,22 @@ import { useFlagRunner } from '../hooks/useFlagRunner';
 import { getFlagEmoji } from '../utils/flagEmoji';
 import { Celebration } from '../components/Celebration';
 
-import boyRun0 from '../images/character/run-north/frame_000.png';
-import boyRun1 from '../images/character/run-north/frame_001.png';
-import boyRun2 from '../images/character/run-north/frame_002.png';
-import boyRun3 from '../images/character/run-north/frame_003.png';
+import abelRun0 from '../images/character-abel/run-north/frame_000.png';
+import abelRun1 from '../images/character-abel/run-north/frame_001.png';
+import abelRun2 from '../images/character-abel/run-north/frame_002.png';
+import abelRun3 from '../images/character-abel/run-north/frame_003.png';
 
-import girlRun0 from '../images/character-girl/run-north/frame_000.png';
-import girlRun1 from '../images/character-girl/run-north/frame_001.png';
-import girlRun2 from '../images/character-girl/run-north/frame_002.png';
-import girlRun3 from '../images/character-girl/run-north/frame_003.png';
+import edenRun0 from '../images/character-eden/run-north/frame_000.png';
+import edenRun1 from '../images/character-eden/run-north/frame_001.png';
+import edenRun2 from '../images/character-eden/run-north/frame_002.png';
+import edenRun3 from '../images/character-eden/run-north/frame_003.png';
 
-const BOY_RUN_FRAMES = [boyRun0, boyRun1, boyRun2, boyRun3];
-const GIRL_RUN_FRAMES = [girlRun0, girlRun1, girlRun2, girlRun3];
+const CHARACTER_RUN_FRAMES: Record<string, string[]> = {
+  boy: [abelRun0, abelRun1, abelRun2, abelRun3],
+  girl: [edenRun0, edenRun1, edenRun2, edenRun3],
+  nico: [abelRun0, abelRun1, abelRun2, abelRun3],     // TODO: replace with Nico's run frames
+  amara: [edenRun0, edenRun1, edenRun2, edenRun3],    // TODO: replace with Amara's run frames
+};
 const RUN_FRAME_DURATION = 120;
 
 interface FlagRunnerScreenProps {
@@ -28,7 +32,7 @@ export function FlagRunnerScreen({ onBack }: FlagRunnerScreenProps) {
 
   const runFrames = useMemo(() => {
     const stored = localStorage.getItem('selected-character')?.replace(/"/g, '') || '';
-    return stored === 'girl' ? GIRL_RUN_FRAMES : BOY_RUN_FRAMES;
+    return CHARACTER_RUN_FRAMES[stored] || CHARACTER_RUN_FRAMES.boy;
   }, []);
 
   const [runFrameIdx, setRunFrameIdx] = useState(0);
