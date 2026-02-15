@@ -169,41 +169,50 @@ export function useJourneyProgress(regions: JourneyRegion[], allLevels: JourneyL
   );
 
   const checkAchievements = useCallback(
-    (levelId: string, stars: number, percentage: number, regionIndex: number) => {
+    (
+      levelId: string,
+      stars: number,
+      percentage: number,
+      regionIndex: number,
+      projectedLevelResults?: Record<string, LevelResult>,
+      projectedTotalStars?: number
+    ) => {
+      const levelResults = projectedLevelResults ?? progress.levelResults;
+      const totalStars = projectedTotalStars ?? progress.totalStars;
+
+      const ctx: AchievementContext = {
+        levelId,
+        stars,
+        percentage,
+        regionIndex,
+        levelResults,
+        totalStars,
+        regions,
+        allLevels,
+        streak: progress.completionStreak,
+      };
+
       const newlyUnlocked: string[] = [];
+      const updatedAchievements = { ...progress.achievements };
 
-      setProgress((prev) => {
-        const ctx: AchievementContext = {
-          levelId,
-          stars,
-          percentage,
-          regionIndex,
-          levelResults: prev.levelResults,
-          totalStars: prev.totalStars,
-          regions,
-          allLevels,
-          streak: prev.completionStreak,
-        };
-
-        const updatedAchievements = { ...prev.achievements };
-        let changed = false;
-
-        for (const def of ACHIEVEMENTS) {
-          if (prev.achievements[def.id]) continue;
-          if (def.check(ctx)) {
-            updatedAchievements[def.id] = Date.now();
-            newlyUnlocked.push(def.id);
-            changed = true;
-          }
+      for (const def of ACHIEVEMENTS) {
+        if (progress.achievements[def.id]) continue;
+        if (def.check(ctx)) {
+          updatedAchievements[def.id] = Date.now();
+          newlyUnlocked.push(def.id);
         }
+      }
 
-        if (!changed) return prev;
-        return { ...prev, achievements: updatedAchievements };
-      });
+      if (newlyUnlocked.length > 0) {
+        setProgress((prev) => ({
+          ...prev,
+          achievements: { ...prev.achievements, ...updatedAchievements },
+        }));
+      }
 
       return newlyUnlocked;
     },
-    [setProgress, regions, allLevels]
+    [setProgress, regions, allLevels, progress]
   );
 
   const unlockedModes = useMemo(

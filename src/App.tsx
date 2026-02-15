@@ -155,9 +155,11 @@ function App() {
 
     setNewlyUnlockedModes(freshModes);
 
-    // Check achievements
+    // Check achievements using projected state (saveResult queues async update)
+    const projectedTotalStars = journeyProgress.progress.totalStars + (Math.max(existingStars, newStars) - existingStars);
     const newAchievements = journeyProgress.checkAchievements(
-      selectedLevel.id, result.stars, result.percentage, selectedLevel.regionIndex
+      selectedLevel.id, result.stars, result.percentage, selectedLevel.regionIndex,
+      projectedResults, projectedTotalStars
     );
     if (newAchievements.length > 0) {
       playAchievementSound();
