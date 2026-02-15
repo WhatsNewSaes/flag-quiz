@@ -95,7 +95,7 @@ export function FreePlayScreen() {
 
         <main className="mt-4">
           {mode === 'flag-picker' ? (
-            <div className="flex flex-col items-center py-8">
+            <div className="flex flex-col items-center justify-center min-h-[200px] sm:min-h-[240px]">
               <h2
                 key={quiz.currentCountry.code}
                 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-800 animate-bounce-in text-center"
@@ -103,15 +103,16 @@ export function FreePlayScreen() {
                 {quiz.currentCountry.name}
               </h2>
               <span
-                className={`mt-3 px-3 py-1 rounded-full text-xs font-medium ${
+                className={`mt-3 px-3 py-1.5 text-xs font-retro rounded-lg border-2 border-retro-border ${
                   {
-                    1: 'bg-green-100 text-green-700',
-                    2: 'bg-blue-100 text-blue-700',
-                    3: 'bg-yellow-100 text-yellow-700',
-                    4: 'bg-orange-100 text-orange-700',
-                    5: 'bg-red-100 text-red-700',
+                    1: 'bg-retro-neon-green text-white',
+                    2: 'bg-retro-neon-blue text-white',
+                    3: 'bg-retro-accent text-retro-text',
+                    4: 'bg-orange-500 text-white',
+                    5: 'bg-retro-neon-red text-white',
                   }[quiz.currentCountry.difficulty]
                 }`}
+                style={{ boxShadow: '2px 2px 0px 0px #2D2D2D' }}
               >
                 {difficultyLabels[quiz.currentCountry.difficulty]}
               </span>

@@ -67,7 +67,7 @@ export function JourneyLevelComplete({
 
           <div className="p-6">
             <h2 className="font-retro text-sm text-retro-gold mb-4">
-              Level Complete!
+              {stars >= 1 ? 'Level Complete!' : 'Keep Going!'}
             </h2>
 
             {/* Score box */}
@@ -162,20 +162,20 @@ export function JourneyLevelComplete({
                   Next Level →
                 </button>
               )}
+              {stars === 0 && (
+                <button
+                  onClick={onPractice}
+                  className="retro-btn w-full px-4 py-3 font-retro text-xs bg-retro-accent text-retro-text"
+                >
+                  Practice {levelNumber}
+                </button>
+              )}
               <button
                 onClick={onRetry}
                 className="retro-btn w-full px-4 py-3 font-retro text-xs bg-retro-neon-blue text-white"
               >
-                Retry
+                Retry {levelNumber}
               </button>
-              {stars === 0 && (
-                <button
-                  onClick={onPractice}
-                  className="retro-btn w-full px-4 py-3 font-retro text-xs bg-retro-accent text-retro-text animate-pulse"
-                >
-                  Practice First
-                </button>
-              )}
               <button
                 onClick={onBackToMap}
                 className="retro-btn w-full px-4 py-3 font-retro text-xs bg-retro-surface text-retro-text-secondary"

@@ -37,38 +37,40 @@ export function MultipleChoice({
   }, [options, onSelect, disabled]);
 
   const getButtonStyles = (option: Country) => {
-    const baseStyles = 'w-full py-3 px-3 sm:py-4 sm:px-6 text-base sm:text-lg font-medium transition-all transform flex items-center justify-center sm:justify-start retro-btn rounded-lg';
+    const baseStyles = 'relative w-full pt-[1rem] pb-3 sm:text-lg transition-all transform flex items-center justify-center keycap-btn';
 
     if (answeredCorrectly !== null) {
       // After answer
       if (option.code === correctCountry.code) {
-        return `${baseStyles} bg-retro-neon-green text-white scale-105`;
+        return `${baseStyles} keycap-btn-green keycap-btn-pressed text-white`;
       }
       if (selectedAnswer?.code === option.code && !answeredCorrectly) {
-        return `${baseStyles} bg-retro-neon-red text-white animate-shake`;
+        return `${baseStyles} keycap-btn-red keycap-btn-pressed text-white animate-shake`;
       }
-      return `${baseStyles} bg-gray-300 text-gray-500 opacity-60`;
+      return `${baseStyles} keycap-btn-faded opacity-60`;
     }
 
     // Before answer
-    return `${baseStyles} bg-retro-surface text-retro-text hover:bg-retro-accent`;
+    return `${baseStyles} text-retro-text`;
   };
 
   return (
-    <div className="grid grid-cols-2 gap-2 sm:gap-3 w-full max-w-xl mx-auto">
-      {options.map((option, index) => (
-        <button
-          key={option.code}
-          onClick={() => onSelect(option)}
-          disabled={disabled}
-          className={getButtonStyles(option)}
-        >
-          <span className="hidden sm:inline-flex items-center justify-center w-6 h-6 mr-3 text-xs font-retro text-retro-text-secondary bg-retro-bg/50 border-2 border-retro-border/30 rounded flex-shrink-0">
-            {index + 1}
-          </span>
-          {option.name}
-        </button>
-      ))}
+    <div className="keyboard-case w-full max-w-xl mx-auto">
+      <div className="grid grid-cols-2" style={{ gap: '0.3rem' }}>
+        {options.map((option, index) => (
+          <button
+            key={option.code}
+            onClick={() => onSelect(option)}
+            disabled={disabled}
+            className={getButtonStyles(option)}
+          >
+            <span className="absolute top-1 left-2.5 sm:top-1.5 sm:left-3 font-mono opacity-70" style={{ fontSize: '11px' }}>
+              {index + 1}
+            </span>
+            {option.name}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }

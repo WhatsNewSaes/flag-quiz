@@ -38,37 +38,39 @@ export function MapMultipleChoice({
   }, [options, onSelect, disabled]);
 
   const getButtonStyles = (option: Country) => {
-    const baseStyles = 'w-full py-2 px-3 lg:py-3 lg:px-4 text-left font-medium rounded-xl transition-all transform flex items-center gap-2 lg:gap-3';
+    const baseStyles = 'relative w-full pt-[1rem] pb-3 transition-all transform flex items-center justify-center gap-2 lg:gap-3 keycap-btn';
 
     if (answeredCorrectly !== null) {
       if (option.code === correctCountry.code) {
-        return `${baseStyles} bg-green-500 text-white shadow-lg scale-105`;
+        return `${baseStyles} keycap-btn-green keycap-btn-pressed text-white`;
       }
       if (selectedAnswer?.code === option.code && !answeredCorrectly) {
-        return `${baseStyles} bg-red-500 text-white animate-shake`;
+        return `${baseStyles} keycap-btn-red keycap-btn-pressed text-white animate-shake`;
       }
-      return `${baseStyles} bg-gray-200 text-gray-400`;
+      return `${baseStyles} keycap-btn-faded opacity-60`;
     }
 
-    return `${baseStyles} bg-white text-gray-800 shadow-md hover:shadow-lg hover:scale-102 active:scale-98 border-2 border-gray-200 hover:border-retro-neon-blue`;
+    return `${baseStyles} text-retro-text`;
   };
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-1 gap-2 w-full">
-      {options.map((option, index) => (
-        <button
-          key={option.code}
-          onClick={() => onSelect(option)}
-          disabled={disabled}
-          className={getButtonStyles(option)}
-        >
-          <span className="hidden sm:inline-flex items-center justify-center w-6 h-6 text-xs font-medium text-gray-500 bg-gray-100 border border-gray-300 rounded shadow-sm flex-shrink-0">
-            {index + 1}
-          </span>
-          <span className="text-xl lg:text-2xl">{getFlagEmoji(option.code)}</span>
-          <span className="text-xs lg:text-base truncate">{option.name}</span>
-        </button>
-      ))}
+    <div className="keyboard-case w-full lg:max-w-sm">
+      <div className="grid grid-cols-2 lg:grid-cols-1" style={{ gap: '0.3rem' }}>
+        {options.map((option, index) => (
+          <button
+            key={option.code}
+            onClick={() => onSelect(option)}
+            disabled={disabled}
+            className={getButtonStyles(option)}
+          >
+            <span className="absolute top-1 left-2.5 sm:top-1.5 sm:left-3 font-mono opacity-70" style={{ fontSize: '11px' }}>
+              {index + 1}
+            </span>
+            <span className="text-xl lg:text-2xl">{getFlagEmoji(option.code)}</span>
+            <span className="text-xs lg:text-base truncate">{option.name}</span>
+          </button>
+        ))}
+      </div>
     </div>
   );
 }

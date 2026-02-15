@@ -7,9 +7,10 @@ import { getFlagEmoji } from '../../utils/flagEmoji';
 interface JourneyPracticeProps {
   level: JourneyLevel;
   onBack: () => void;
+  onRetry: () => void;
 }
 
-export function JourneyPractice({ level, onBack }: JourneyPracticeProps) {
+export function JourneyPractice({ level, onBack, onRetry }: JourneyPracticeProps) {
   const levelCountries = useMemo(() => {
     const list = level.countryCodes
       .map(code => countries.find(c => c.code === code))
@@ -46,36 +47,57 @@ export function JourneyPractice({ level, onBack }: JourneyPracticeProps) {
     setRevealed(false);
   }, [levelCountries]);
 
+  const levelNumber = `W${level.regionIndex + 1}-L${level.levelIndexInRegion + 1}`;
+
   if (!currentCountry) return null;
 
   return (
     <div className="min-h-screen bg-retro-bg py-6 px-4">
       <div className="max-w-md mx-auto">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <button
-            onClick={onBack}
-            className="retro-btn px-3 py-2 text-xs font-retro bg-retro-surface text-retro-text-secondary"
-          >
-            ← Back
+        <div className="flex items-center justify-between mb-5">
+          <button onClick={onBack} className="font-retro text-xs text-retro-text hover:text-retro-text-secondary transition-colors">
+            ← Practice {levelNumber}
           </button>
-          <span className="font-retro text-xs text-retro-gold">
-            Practice
-          </span>
+          <button
+            onClick={onRetry}
+            className="retro-btn px-3 py-1.5 text-[0.6rem] font-retro bg-retro-neon-blue text-white"
+          >
+            Retry {levelNumber}
+          </button>
         </div>
 
         {/* Mode toggle */}
         <div className="flex justify-center mb-4">
-          <button
-            onClick={handleToggleMode}
-            className="retro-btn px-4 py-2 text-xs font-retro bg-retro-accent text-retro-text"
+          <div
+            className="inline-flex rounded-lg overflow-hidden border-2 border-retro-border"
+            style={{ boxShadow: '2px 2px 0px 0px #2D2D2D' }}
           >
-            {mode === 'flag-to-name' ? 'Flag → Name' : 'Name → Flag'}
-          </button>
+            <button
+              onClick={mode === 'name-to-flag' ? handleToggleMode : undefined}
+              className={`px-4 py-2 text-[0.6rem] font-retro transition-colors ${
+                mode === 'flag-to-name'
+                  ? 'bg-retro-text text-white'
+                  : 'bg-retro-surface text-retro-text-secondary hover:bg-gray-100'
+              }`}
+            >
+              Flag → Name
+            </button>
+            <button
+              onClick={mode === 'flag-to-name' ? handleToggleMode : undefined}
+              className={`px-4 py-2 text-[0.6rem] font-retro transition-colors border-l-2 border-retro-border ${
+                mode === 'name-to-flag'
+                  ? 'bg-retro-text text-white'
+                  : 'bg-retro-surface text-retro-text-secondary hover:bg-gray-100'
+              }`}
+            >
+              Name → Flag
+            </button>
+          </div>
         </div>
 
         {/* Progress */}
-        <div className="text-center text-xs text-retro-text-secondary mb-6">
+        <div className="text-center text-xs text-retro-text-secondary mb-4">
           {currentIndex + 1} of {shuffledCountries.length}
         </div>
 
@@ -107,7 +129,7 @@ export function JourneyPractice({ level, onBack }: JourneyPracticeProps) {
                     {getFlagEmoji(currentCountry.code)}
                   </span>
                 ) : (
-                  <span className="text-gray-600">🏳️</span>
+                  <span className="text-gray-600">{'\u{1F3F3}\u{FE0F}'}</span>
                 )}
               </div>
             </>

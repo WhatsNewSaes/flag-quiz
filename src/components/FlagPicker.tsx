@@ -38,40 +38,40 @@ export function FlagPicker({
   }, [options, onSelect, disabled]);
 
   const getButtonStyles = (option: Country) => {
-    const baseStyles = 'flex flex-col items-center justify-center py-4 px-6 rounded-xl transition-all transform relative';
+    const baseStyles = 'relative w-full pt-[1rem] pb-3 flex flex-col items-center justify-center transition-all transform keycap-btn';
 
     if (answeredCorrectly !== null) {
-      // After answer
       if (option.code === correctCountry.code) {
-        return `${baseStyles} bg-green-500 shadow-lg scale-105 ring-4 ring-green-300`;
+        return `${baseStyles} keycap-btn-green keycap-btn-pressed text-white`;
       }
       if (selectedAnswer?.code === option.code && !answeredCorrectly) {
-        return `${baseStyles} bg-red-500 animate-shake ring-4 ring-red-300`;
+        return `${baseStyles} keycap-btn-red keycap-btn-pressed text-white animate-shake`;
       }
-      return `${baseStyles} bg-gray-200 opacity-50`;
+      return `${baseStyles} keycap-btn-faded opacity-60`;
     }
 
-    // Before answer
-    return `${baseStyles} bg-white shadow-md hover:shadow-lg hover:scale-105 active:scale-98 border-2 border-gray-200 hover:border-retro-neon-blue`;
+    return `${baseStyles} text-retro-text`;
   };
 
   return (
-    <div className="grid grid-cols-2 gap-4 w-full max-w-md mx-auto">
-      {options.map((option, index) => (
-        <button
-          key={option.code}
-          onClick={() => onSelect(option)}
-          disabled={disabled}
-          className={getButtonStyles(option)}
-        >
-          <span className="hidden sm:inline-flex absolute top-2 left-2 items-center justify-center w-6 h-6 text-xs font-medium text-gray-500 bg-gray-100 border border-gray-300 rounded shadow-sm">
-            {index + 1}
-          </span>
-          <span className="text-6xl sm:text-7xl select-none">
-            {getFlagEmoji(option.code)}
-          </span>
-        </button>
-      ))}
+    <div className="keyboard-case w-full max-w-xl mx-auto">
+      <div className="grid grid-cols-2" style={{ gap: '0.3rem' }}>
+        {options.map((option, index) => (
+          <button
+            key={option.code}
+            onClick={() => onSelect(option)}
+            disabled={disabled}
+            className={getButtonStyles(option)}
+          >
+            <span className="absolute top-1 left-2.5 sm:top-1.5 sm:left-3 font-mono opacity-70" style={{ fontSize: '11px' }}>
+              {index + 1}
+            </span>
+            <span className="text-6xl sm:text-7xl select-none">
+              {getFlagEmoji(option.code)}
+            </span>
+          </button>
+        ))}
+      </div>
     </div>
   );
 }

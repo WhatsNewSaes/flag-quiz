@@ -18,10 +18,10 @@ const difficultyColors: Record<Difficulty, string> = {
 
 export function FlagDisplay({ countryCode, animationKey, difficulty, showDifficulty = true }: FlagDisplayProps) {
   return (
-    <div className="flex flex-col items-center py-4">
+    <div className="flex flex-col items-center justify-center py-4 min-h-[200px] sm:min-h-[240px]">
       <span
         key={animationKey}
-        className="text-[8rem] sm:text-[10rem] md:text-[12rem] animate-bounce-in select-none"
+        className="text-[7rem] sm:text-[8rem] md:text-[9rem] animate-bounce-in select-none"
         role="img"
         aria-label="Flag"
       >

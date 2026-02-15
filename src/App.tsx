@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useEffect } from 'react';
+import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { CelebrationTest } from './components/CelebrationTest';
 import { GameModeSelect, GameMode } from './components/GameModeSelect';
 import { CampaignQuizTypeSelect } from './components/CampaignQuizTypeSelect';
@@ -78,13 +78,22 @@ function App() {
   const [campaignQuizType, setCampaignQuizType] = useState<QuizMode>('multiple-choice');
   const [jeopardyDifficulty, setJeopardyDifficulty] = useState<JeopardyDifficulty>('medium');
 
-  // Hidden test page
-  const [showTestPage, setShowTestPage] = useState(() => window.location.hash === '#test-celebrations');
+  // Hidden test page — type "devmode" anywhere to toggle
+  const [showTestPage, setShowTestPage] = useState(false);
+  const secretBuffer = useRef('');
 
   useEffect(() => {
-    const handleHashChange = () => setShowTestPage(window.location.hash === '#test-celebrations');
-    window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
+    const SECRET = 'devmode';
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+      secretBuffer.current = (secretBuffer.current + e.key).slice(-SECRET.length);
+      if (secretBuffer.current === SECRET) {
+        setShowTestPage(prev => !prev);
+        secretBuffer.current = '';
+      }
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
   }, []);
 
   // --- Journey handlers ---
@@ -207,7 +216,7 @@ function App() {
   }, [setScreen]);
 
   // --- Onboarding handler ---
-  const handleOnboardingComplete = useCallback((character: 'boy' | 'girl', flag: string) => {
+  const handleOnboardingComplete = useCallback((character: string, flag: string) => {
     setSelectedCharacter(character);
     setFavoriteFlag(flag);
     setOnboardingComplete('true');
@@ -235,10 +244,7 @@ function App() {
   if (showTestPage) {
     return (
       <CelebrationTest
-        onBack={() => {
-          window.location.hash = '';
-          setShowTestPage(false);
-        }}
+        onBack={() => setShowTestPage(false)}
       />
     );
   }
@@ -324,6 +330,7 @@ function App() {
       <JourneyPractice
         level={selectedLevel}
         onBack={() => setScreen('journey-map')}
+        onRetry={handleRetryLevel}
       />
     );
   }

@@ -134,19 +134,19 @@ export function JeopardyQuestion({
   };
 
   const getButtonStyles = (option: Country) => {
-    const baseStyles = 'w-full py-3 px-4 font-medium rounded-xl transition-all flex items-center gap-3';
+    const baseStyles = 'relative w-full pt-[1rem] pb-3 transition-all transform flex items-center justify-center gap-3 keycap-btn';
 
     if (answeredCorrectly !== null) {
       if (option.code === cell.country.code) {
-        return `${baseStyles} bg-green-500 text-white shadow-lg scale-105`;
+        return `${baseStyles} keycap-btn-green keycap-btn-pressed text-white`;
       }
       if (selectedAnswer?.code === option.code && !answeredCorrectly) {
-        return `${baseStyles} bg-red-500 text-white`;
+        return `${baseStyles} keycap-btn-red keycap-btn-pressed text-white animate-shake`;
       }
-      return `${baseStyles} bg-gray-200 text-gray-400`;
+      return `${baseStyles} keycap-btn-faded opacity-60`;
     }
 
-    return `${baseStyles} bg-white text-gray-800 shadow-md hover:shadow-lg hover:bg-gray-50 border-2 border-gray-200 hover:border-blue-300`;
+    return `${baseStyles} text-retro-text`;
   };
 
   return (
@@ -234,26 +234,26 @@ export function JeopardyQuestion({
           </div>
         ) : (
           // Multiple choice for other difficulties
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {options.map((option, index) => (
-              <button
-                key={option.code}
-                onClick={() => onAnswer(option)}
-                disabled={isAnswered}
-                className={getButtonStyles(option)}
-              >
-                <span className="hidden sm:inline-flex items-center justify-center w-6 h-6 text-xs font-medium text-gray-500 bg-gray-100 border border-gray-300 rounded shadow-sm flex-shrink-0">
-                  {index + 1}
-                </span>
-                {cell.questionType === 'name-the-flag' ? (
-                  // Show country names as options
-                  <span className="text-lg">{option.name}</span>
-                ) : (
-                  // Show flags only as options
-                  <span className="text-5xl">{getFlagEmoji(option.code)}</span>
-                )}
-              </button>
-            ))}
+          <div className="keyboard-case w-full max-w-lg mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2" style={{ gap: '0.3rem' }}>
+              {options.map((option, index) => (
+                <button
+                  key={option.code}
+                  onClick={() => onAnswer(option)}
+                  disabled={isAnswered}
+                  className={getButtonStyles(option)}
+                >
+                  <span className="absolute top-1 left-2.5 sm:top-1.5 sm:left-3 font-mono opacity-70" style={{ fontSize: '11px' }}>
+                    {index + 1}
+                  </span>
+                  {cell.questionType === 'name-the-flag' ? (
+                    <span className="text-lg">{option.name}</span>
+                  ) : (
+                    <span className="text-5xl">{getFlagEmoji(option.code)}</span>
+                  )}
+                </button>
+              ))}
+            </div>
           </div>
         )}
 
