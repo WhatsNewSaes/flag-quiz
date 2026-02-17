@@ -6,6 +6,12 @@ export default {
   ],
   theme: {
     extend: {
+      minHeight: {
+        screen: ['100vh /* fallback */', '100dvh'],
+      },
+      height: {
+        screen: ['100vh /* fallback */', '100dvh'],
+      },
       fontFamily: {
         retro: ['"Press Start 2P"', 'cursive'],
         body: ['"Space Mono"', 'monospace'],

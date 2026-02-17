@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useEffect } from 'react';
+import { useCallback, useMemo, useEffect, useRef } from 'react';
 import { useLocalStorage } from './useLocalStorage';
 import { useSync } from '../contexts/SyncContext';
 import { JourneyLevel, JourneyRegion } from '../data/journeyLevels';
@@ -179,6 +179,20 @@ export function useJourneyProgress(regions: JourneyRegion[], allLevels: JourneyL
   );
   const { pushProgress } = useSync();
 
+  // Track claimed achievements in a ref so we can check synchronously
+  // even when saveResult has queued a state update in the same tick.
+  const claimedAchievementsRef = useRef<Set<string>>(
+    new Set(Object.keys(progress.achievements).filter(id => progress.achievements[id]))
+  );
+  // Keep ref in sync whenever state updates
+  useEffect(() => {
+    const claimed = new Set<string>();
+    for (const [id, ts] of Object.entries(progress.achievements)) {
+      if (ts) claimed.add(id);
+    }
+    claimedAchievementsRef.current = claimed;
+  }, [progress.achievements]);
+
   // Push progress to cloud whenever it changes
   useEffect(() => {
     if (progress.version >= CURRENT_VERSION) {
@@ -257,13 +271,16 @@ export function useJourneyProgress(regions: JourneyRegion[], allLevels: JourneyL
       };
 
       const newlyUnlocked: string[] = [];
-      const updatedAchievements = { ...progress.achievements };
+      const updatedAchievements: Record<string, number> = {};
 
       for (const def of ACHIEVEMENTS) {
-        if (progress.achievements[def.id]) continue;
+        // Use the ref for the freshest check — survives same-tick calls
+        if (claimedAchievementsRef.current.has(def.id)) continue;
         if (def.check(ctx)) {
           updatedAchievements[def.id] = Date.now();
           newlyUnlocked.push(def.id);
+          // Mark immediately so subsequent calls in the same tick won't re-fire
+          claimedAchievementsRef.current.add(def.id);
         }
       }
 

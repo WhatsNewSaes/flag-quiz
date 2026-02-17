@@ -143,7 +143,7 @@ export function FlagRunnerScreen({ onBack }: FlagRunnerScreenProps) {
   // --- LOBBY PHASE ---
   if (game.phase === 'ready') {
     return (
-      <div className="bg-retro-bg flex flex-col px-4 pb-4 pt-3" style={{ minHeight: 'calc(100vh - 52px)' }}>
+      <div className="bg-retro-bg flex flex-col px-4 pb-4 pt-3" style={{ minHeight: 'calc(100dvh - 52px)' }}>
         <button
           onClick={onBack}
           className="self-start font-body text-sm text-retro-text-secondary hover:text-retro-text transition-colors flex items-center gap-1 mb-2"

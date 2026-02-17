@@ -37,7 +37,7 @@ export function AroundTheWorldScreen({ onBack }: AroundTheWorldScreenProps) {
   // --- LOBBY PHASE ---
   if (atw.phase === 'lobby') {
     return (
-      <div className="bg-retro-bg flex flex-col px-4 pb-4 pt-3" style={{ minHeight: 'calc(100vh - 52px)' }}>
+      <div className="bg-retro-bg flex flex-col px-4 pb-4 pt-3" style={{ minHeight: 'calc(100dvh - 52px)' }}>
         {onBack && (
           <button
             onClick={onBack}

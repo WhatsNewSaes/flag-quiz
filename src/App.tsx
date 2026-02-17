@@ -114,12 +114,12 @@ function App() {
       setTimeout(() => {
         setShowCelebration(false);
         journeyGame.nextFlag();
-      }, 1500);
+      }, 1000);
     } else {
       playIncorrectSound();
       setTimeout(() => {
         journeyGame.nextFlag();
-      }, 2000);
+      }, 1500);
     }
   }, [journeyGame]);
 

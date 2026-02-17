@@ -56,7 +56,7 @@ export function Onboarding({ onComplete }: OnboardingProps) {
       <div className="min-h-screen bg-black flex flex-col items-center justify-center relative overflow-hidden px-4">
         <div className="w-full relative" style={{ maxWidth: 400 }}>
           <img
-            src="/splash.png"
+            src="/splash.jpg"
             alt="Flag Quest"
             className="w-full rounded-lg"
             style={{ imageRendering: 'pixelated' }}

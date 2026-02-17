@@ -76,8 +76,8 @@ export function Celebration({ streak, show, hideText }: CelebrationProps) {
     }
 
     // Start fade out after a delay
-    const fadeTimer = setTimeout(() => setFading(true), 800);
-    const hideTimer = setTimeout(() => setVisible(false), 1400);
+    const fadeTimer = setTimeout(() => setFading(true), 600);
+    const hideTimer = setTimeout(() => setVisible(false), 1000);
 
     // Fire confetti
     const isMilestone = streak in milestoneMessages;

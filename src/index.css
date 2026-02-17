@@ -2,11 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
+html, body, #root {
+  height: 100vh;
+  height: 100dvh;
+  margin: 0;
+  padding: 0;
+  background-color: #7EC8E3;
+}
+
 body {
   font-family: 'Space Mono', monospace;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+}
+
+#root {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 /* Force react-simple-maps SVGs to stay within their container */
