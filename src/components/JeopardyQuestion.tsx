@@ -154,7 +154,7 @@ export function JeopardyQuestion({
       <div className="max-w-lg w-full">
         {/* Value display */}
         <div className="text-center mb-6">
-          <span className="text-yellow-400 text-4xl font-bold">
+          <span className="text-yellow-300 text-4xl font-bold">
             ${valueAtStake}
           </span>
           {isDailyDouble && (
@@ -174,7 +174,7 @@ export function JeopardyQuestion({
             // Show country name, pick flag
             <div className="text-center">
               <h2 className="text-3xl font-bold text-white mb-4">{cell.country.name}</h2>
-              <p className="text-blue-200 text-lg">Which flag belongs to this country?</p>
+              <p className="text-white text-lg">Which flag belongs to this country?</p>
             </div>
           )}
         </div>

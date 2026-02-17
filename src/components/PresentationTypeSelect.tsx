@@ -12,8 +12,8 @@ export function PresentationTypeSelect({ onSelect, onBack }: PresentationTypeSel
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
           <div className="text-5xl mb-4">📖</div>
-          <h1 className="text-3xl font-retro text-retro-gold mb-2">Flashcard Mode</h1>
-          <p className="text-retro-text-secondary">Study flags at your own pace</p>
+          <h1 className="text-3xl font-retro text-retro-text mb-2">Practice Mode</h1>
+          <p className="text-retro-text">Study flags at your own pace</p>
         </div>
 
         <div className="space-y-3">
@@ -39,7 +39,7 @@ export function PresentationTypeSelect({ onSelect, onBack }: PresentationTypeSel
             onClick={() => { playMenuSelectSound(); onSelect('name-to-flag'); }}
             className="w-full retro-window text-left hover:scale-[1.01] active:scale-[0.99] transition-transform"
           >
-            <div className="retro-window-title bg-purple-400 text-white flex items-center justify-between">
+            <div className="retro-window-title bg-purple-600 text-white flex items-center justify-between">
               <span>✦</span><span>Name → Flag</span><span>✦</span>
             </div>
             <div className="retro-window-body">
@@ -56,7 +56,7 @@ export function PresentationTypeSelect({ onSelect, onBack }: PresentationTypeSel
 
         <button
           onClick={onBack}
-          className="w-full mt-6 py-3 px-6 text-retro-text-secondary font-medium hover:text-retro-text transition-colors"
+          className="w-full mt-6 py-3 px-6 text-retro-text font-medium hover:text-retro-border transition-colors"
         >
           Back to Menu
         </button>

@@ -5,11 +5,11 @@ interface RankBadgeProps {
 }
 
 const rankConfig: Record<Rank, { emoji: string; color: string }> = {
-  'Novice': { emoji: '🌱', color: 'text-green-600' },
-  'Explorer': { emoji: '🧭', color: 'text-blue-600' },
-  'Cartographer': { emoji: '🗺️', color: 'text-purple-600' },
-  'Diplomat': { emoji: '🎖️', color: 'text-yellow-600' },
-  'Ambassador': { emoji: '🏅', color: 'text-orange-600' },
+  'Novice': { emoji: '🌱', color: 'text-green-700' },
+  'Explorer': { emoji: '🧭', color: 'text-blue-700' },
+  'Cartographer': { emoji: '🗺️', color: 'text-purple-700' },
+  'Diplomat': { emoji: '🎖️', color: 'text-yellow-700' },
+  'Ambassador': { emoji: '🏅', color: 'text-orange-700' },
   'World Leader': { emoji: '👑', color: 'text-retro-gold' },
 };
 

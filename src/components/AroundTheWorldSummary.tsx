@@ -43,7 +43,7 @@ export function AroundTheWorldSummary({
         className="retro-window max-w-md w-full max-h-[90vh]"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="retro-window-title bg-teal-400 text-white flex items-center justify-between">
+        <div className="retro-window-title bg-teal-600 text-white flex items-center justify-between">
           <span>✦</span><span>Your Progress</span><span>✦</span>
         </div>
         <div className="retro-window-body overflow-y-auto max-h-[80vh]">

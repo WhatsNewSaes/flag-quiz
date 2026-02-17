@@ -22,16 +22,21 @@ export function JourneyPractice({ level, onBack, onRetry }: JourneyPracticeProps
   const [revealed, setRevealed] = useState(false);
   const [shuffledCountries, setShuffledCountries] = useState(levelCountries);
   const [mode, setMode] = useState<'flag-to-name' | 'name-to-flag'>('flag-to-name');
+  const [completedOneCycle, setCompletedOneCycle] = useState(false);
 
   const currentCountry = shuffledCountries[currentIndex] || null;
 
   const handleReveal = useCallback(() => {
     setRevealed(true);
-  }, []);
+    if (currentIndex + 1 >= shuffledCountries.length) {
+      setCompletedOneCycle(true);
+    }
+  }, [currentIndex, shuffledCountries.length]);
 
   const handleNext = useCallback(() => {
     const nextIndex = currentIndex + 1;
     if (nextIndex >= shuffledCountries.length) {
+      setCompletedOneCycle(true);
       setShuffledCountries(shuffle([...levelCountries]));
       setCurrentIndex(0);
     } else {
@@ -55,15 +60,9 @@ export function JourneyPractice({ level, onBack, onRetry }: JourneyPracticeProps
     <div className="min-h-screen bg-retro-bg py-6 px-4">
       <div className="max-w-md mx-auto">
         {/* Header */}
-        <div className="flex items-center justify-between mb-5">
-          <button onClick={onBack} className="font-retro text-xs text-retro-text hover:text-retro-text-secondary transition-colors">
-            ← Practice {levelNumber}
-          </button>
-          <button
-            onClick={onRetry}
-            className="retro-btn px-3 py-1.5 text-[0.6rem] font-retro bg-retro-neon-blue text-white"
-          >
-            Retry {levelNumber}
+        <div className="mb-5">
+          <button onClick={onBack} className="font-body text-sm text-retro-text-secondary hover:text-retro-text transition-colors flex items-center gap-1">
+            <span>&#8592;</span> Back
           </button>
         </div>
 
@@ -96,13 +95,12 @@ export function JourneyPractice({ level, onBack, onRetry }: JourneyPracticeProps
           </div>
         </div>
 
-        {/* Progress */}
-        <div className="text-center text-xs text-retro-text-secondary mb-4">
-          {currentIndex + 1} of {shuffledCountries.length}
-        </div>
-
         {/* Card */}
         <div className="pixel-border bg-retro-surface rounded-lg p-8 text-center">
+          {/* Progress */}
+          <div className="text-xs text-retro-text-secondary mb-4">
+            {currentIndex + 1} of {shuffledCountries.length}
+          </div>
           {mode === 'flag-to-name' ? (
             <>
               <div className="text-[100px] sm:text-[140px] leading-none mb-4">
@@ -134,26 +132,38 @@ export function JourneyPractice({ level, onBack, onRetry }: JourneyPracticeProps
               </div>
             </>
           )}
+
+          {/* Reveal / Next button inside card */}
+          <div className="mt-6">
+            {!revealed ? (
+              <button
+                onClick={handleReveal}
+                className="retro-btn w-full px-8 py-4 font-retro text-sm bg-retro-neon-green text-white"
+              >
+                Reveal
+              </button>
+            ) : (
+              <button
+                onClick={handleNext}
+                className="retro-btn w-full px-8 py-4 font-retro text-sm bg-retro-neon-blue text-white"
+              >
+                Next →
+              </button>
+            )}
+          </div>
         </div>
 
-        {/* Action button */}
-        <div className="mt-6 flex justify-center">
-          {!revealed ? (
-            <button
-              onClick={handleReveal}
-              className="retro-btn px-8 py-4 font-retro text-sm bg-retro-neon-green text-white"
-            >
-              Reveal
-            </button>
-          ) : (
-            <button
-              onClick={handleNext}
-              className="retro-btn px-8 py-4 font-retro text-sm bg-retro-neon-blue text-white"
-            >
-              Next →
-            </button>
-          )}
-        </div>
+        {/* Retry button below card */}
+        <button
+          onClick={onRetry}
+          className={`retro-btn w-full mt-4 px-4 py-3 font-retro text-xs ${
+            completedOneCycle
+              ? 'rainbow-shimmer text-white'
+              : 'bg-retro-surface text-retro-text'
+          }`}
+        >
+          Retry {levelNumber}
+        </button>
       </div>
     </div>
   );

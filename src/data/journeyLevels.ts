@@ -53,7 +53,7 @@ export const REGION_THEMES: RegionTheme[] = [
 ];
 
 const DIFFICULTY_FOR_REGION: Difficulty[] = [1, 2, 3, 4, 5];
-const LEVELS_PER_REGION = [2, 2, 3, 5, 8];
+const LEVELS_PER_REGION = [2, 3, 4, 5, 6];
 
 export interface JourneyLevel {
   id: string;

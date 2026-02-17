@@ -17,14 +17,14 @@ export function JeopardyDailyDouble({ currentScore, onConfirmWager }: JeopardyDa
         {/* Daily Double animation/title */}
         <div className="mb-8">
           <div className="text-6xl mb-4">🎰</div>
-          <h1 className="text-4xl font-bold text-yellow-400 animate-pulse">
+          <h1 className="text-4xl font-bold text-yellow-300 animate-pulse">
             DAILY DOUBLE!
           </h1>
         </div>
 
         {/* Current score */}
         <div className="mb-6">
-          <p className="text-blue-200 text-lg">Your current score:</p>
+          <p className="text-white text-lg">Your current score:</p>
           <p className="text-white text-3xl font-bold">${currentScore}</p>
         </div>
 
@@ -61,7 +61,7 @@ export function JeopardyDailyDouble({ currentScore, onConfirmWager }: JeopardyDa
 
           {/* Custom input */}
           <div className="flex items-center justify-center gap-2">
-            <span className="text-yellow-400 text-2xl">$</span>
+            <span className="text-yellow-300 text-2xl">$</span>
             <input
               type="number"
               min={0}
@@ -72,7 +72,7 @@ export function JeopardyDailyDouble({ currentScore, onConfirmWager }: JeopardyDa
             />
           </div>
 
-          <p className="text-blue-300 text-sm mt-2">
+          <p className="text-blue-100 text-sm mt-2">
             Max wager: ${maxWager}
           </p>
         </div>

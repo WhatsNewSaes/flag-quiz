@@ -2,13 +2,36 @@ import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { playMenuSelectSound } from '../utils/sounds';
 import { getFlagEmoji } from '../utils/flagEmoji';
+import { CharacterKey } from '../data/characters';
+
+import boySouth from '../images/character/boy-south.png';
+import girlSouth from '../images/character/girl-south.png';
+import nicoSouth from '../images/character/nico-south.png';
+import amaraSouth from '../images/character/amara-south.png';
+import kitsuneSouth from '../images/character/kitsune-south.png';
+import krakenSouth from '../images/character/kraken-south.png';
+import dragonSouth from '../images/character/dragon-south.png';
+import eagleSouth from '../images/character/eagle-south.png';
+import phoenixSouth from '../images/character/phoenix-south.png';
+
+const CHARACTER_THUMBS: Record<CharacterKey, string> = {
+  boy: boySouth,
+  girl: girlSouth,
+  nico: nicoSouth,
+  amara: amaraSouth,
+  kitsune: kitsuneSouth,
+  kraken: krakenSouth,
+  dragon: dragonSouth,
+  eagle: eagleSouth,
+  phoenix: phoenixSouth,
+};
 
 type NavigateTarget =
   | 'mode-select'
   | 'achievements'
+  | 'characters'
   | 'journey-map'
-  | 'free-play'
-  | 'campaign-quiz-select'
+  | 'arcade'
   | 'jeopardy-difficulty-select'
   | 'around-the-world'
   | 'presentation'
@@ -45,8 +68,21 @@ export function NavBar({ onNavigate, totalStars = 0, variant = 'default' }: NavB
   const [profileOpen, setProfileOpen] = useState(false);
   const { user, loading, signInWithGoogle, signOut } = useAuth();
 
-  const authName = user?.user_metadata?.full_name || user?.user_metadata?.name || 'Player';
-  const avatarUrl = user?.user_metadata?.avatar_url || user?.user_metadata?.picture;
+  const [selectedCharThumb, setSelectedCharThumb] = useState(() => {
+    const key = localStorage.getItem('selected-character')?.replace(/"/g, '') || 'boy';
+    return CHARACTER_THUMBS[key as CharacterKey] || CHARACTER_THUMBS.boy;
+  });
+
+  useEffect(() => {
+    const handler = () => {
+      const key = localStorage.getItem('selected-character')?.replace(/"/g, '') || 'boy';
+      setSelectedCharThumb(CHARACTER_THUMBS[key as CharacterKey] || CHARACTER_THUMBS.boy);
+    };
+    window.addEventListener('character-changed', handler);
+    return () => window.removeEventListener('character-changed', handler);
+  }, []);
+
+  const authName = user?.user_metadata?.full_name || user?.user_metadata?.name || 'Guest';
   const { name: displayName, save: saveName } = useCustomName(authName);
 
   const favoriteFlag = localStorage.getItem('favorite-flag')?.replace(/"/g, '') || '';
@@ -111,32 +147,21 @@ export function NavBar({ onNavigate, totalStars = 0, variant = 'default' }: NavB
             Game Modes
           </button>
 
-          {/* Right: Profile avatar */}
+          {/* Right: Character avatar + hamburger menu */}
           <button
             onClick={() => setProfileOpen(!profileOpen)}
-            className="min-w-[44px] min-h-[44px] flex items-center justify-center"
-            aria-label="Profile"
+            className="retro-btn min-h-[44px] flex items-center gap-1 px-2 py-1 bg-retro-surface"
+            aria-label="Open menu"
           >
-            {!loading && user && avatarUrl ? (
-              <img
-                src={avatarUrl}
-                alt=""
-                className="w-8 h-8 rounded-full border-2 border-retro-border"
-                referrerPolicy="no-referrer"
-              />
-            ) : !loading && user ? (
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold border-2 border-retro-border ${
-                isDark ? 'bg-yellow-400 text-[#1E3A8A]' : 'bg-retro-accent text-retro-text'
-              }`}>
-                {displayName.charAt(0).toUpperCase()}
-              </div>
-            ) : (
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm border-2 border-retro-border ${
-                isDark ? 'bg-blue-700 text-yellow-400' : 'bg-gray-300 text-retro-text'
-              }`}>
-                ?
-              </div>
-            )}
+            <img
+              src={selectedCharThumb}
+              alt=""
+              className="w-8 h-8"
+              style={{ imageRendering: 'pixelated' }}
+            />
+            <svg className={`w-5 h-5 ${isDark ? 'text-white' : 'text-retro-text'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
           </button>
         </div>
       </nav>
@@ -149,41 +174,20 @@ export function NavBar({ onNavigate, totalStars = 0, variant = 'default' }: NavB
 
       {/* Profile Drawer */}
       <div className={`menu-drawer ${profileOpen ? 'menu-drawer-open' : ''}`}>
-        {/* Profile header */}
-        <div className="border-b-[3px] border-retro-border p-4 bg-retro-accent/10">
-          <div className="flex items-center justify-between">
-            <span className="font-retro text-sm text-retro-text">Profile</span>
-            <button
-              onClick={close}
-              className="min-w-[44px] min-h-[44px] flex items-center justify-center text-xl text-retro-text"
-              aria-label="Close profile"
-            >
-              &#10005;
-            </button>
-          </div>
-        </div>
-
         {/* User info */}
         <div className="p-4 border-b-[3px] border-retro-border">
           <div className="flex items-center gap-3">
-            {user && avatarUrl ? (
+            <div className="w-14 h-14 rounded-lg bg-retro-bg/40 border-2 border-retro-border/20 flex items-center justify-center">
               <img
-                src={avatarUrl}
+                src={selectedCharThumb}
                 alt=""
-                className="w-12 h-12 rounded-full border-2 border-retro-border"
-                referrerPolicy="no-referrer"
+                className="w-12 h-12"
+                style={{ imageRendering: 'pixelated' }}
               />
-            ) : user ? (
-              <div className="w-12 h-12 rounded-full bg-retro-accent flex items-center justify-center text-xl font-bold border-2 border-retro-border">
-                {displayName.charAt(0).toUpperCase()}
-              </div>
-            ) : (
-              <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center text-xl border-2 border-retro-border">
-                ?
-              </div>
-            )}
+            </div>
             <div className="flex-1 min-w-0">
               {editing ? (
+
                 <input
                   ref={inputRef}
                   type="text"
@@ -206,7 +210,7 @@ export function NavBar({ onNavigate, totalStars = 0, variant = 'default' }: NavB
                     <span className="text-base">{getFlagEmoji(favoriteFlag)}</span>
                   )}
                   <span className="font-retro text-sm text-retro-text truncate">
-                    {user ? displayName : 'Guest'}
+                    {displayName}
                   </span>
                   <span className="text-retro-text-secondary text-xs opacity-0 group-hover:opacity-100 transition-opacity">
                     &#9998;
@@ -214,9 +218,18 @@ export function NavBar({ onNavigate, totalStars = 0, variant = 'default' }: NavB
                 </button>
               )}
               <div className="font-retro text-xs text-retro-gold flex items-center gap-1 mt-1">
-                <span className="text-sm">&#9733;</span> {totalStars} stars
+                <span className="relative top-[-2px]">&#9733;</span> {totalStars} stars
               </div>
             </div>
+            <button
+              onClick={close}
+              className="min-w-[44px] min-h-[44px] flex items-center justify-center text-retro-text"
+              aria-label="Close menu"
+            >
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
         </div>
 
@@ -227,6 +240,24 @@ export function NavBar({ onNavigate, totalStars = 0, variant = 'default' }: NavB
         >
           <span className="text-lg">&#127942;</span>
           <span className="font-retro text-sm text-retro-text">Achievements</span>
+        </button>
+
+        {/* Characters shortcut */}
+        <button
+          onClick={() => { playMenuSelectSound(); close(); onNavigate('characters'); }}
+          className="w-full flex items-center gap-3 px-4 min-h-[48px] text-left border-b-[3px] border-retro-border hover:bg-retro-accent/10 transition-colors"
+        >
+          <span className="text-lg">&#128100;</span>
+          <span className="font-retro text-sm text-retro-text">Characters</span>
+        </button>
+
+        {/* Game Modes shortcut */}
+        <button
+          onClick={() => { playMenuSelectSound(); close(); onNavigate('mode-select'); }}
+          className="w-full flex items-center gap-3 px-4 min-h-[48px] text-left border-b-[3px] border-retro-border hover:bg-retro-accent/10 transition-colors"
+        >
+          <span className="text-lg">&#127918;</span>
+          <span className="font-retro text-sm text-retro-text">Game Modes</span>
         </button>
 
         {/* Sign In / Sign Out */}
@@ -242,9 +273,9 @@ export function NavBar({ onNavigate, totalStars = 0, variant = 'default' }: NavB
             ) : (
               <button
                 onClick={() => { signInWithGoogle(); close(); }}
-                className="retro-btn w-full px-3 py-2 text-xs font-retro bg-retro-surface text-retro-text min-h-[44px]"
+                className="retro-btn w-full px-3 py-2 text-xs font-retro text-white min-h-[44px] rainbow-shimmer"
               >
-                Sign In with Google
+                Save Progress
               </button>
             )
           )}

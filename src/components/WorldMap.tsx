@@ -57,15 +57,39 @@ const numericToAlpha2: Record<string, string> = {
   '716': 'ZW', '-99': 'XK', // Kosovo
 };
 
+import { Continent } from '../data/countries';
+
+const CONTINENT_VIEWS: Record<string, { center: [number, number]; zoom: number }> = {
+  'Africa': { center: [20, 5], zoom: 1.8 },
+  'Asia': { center: [80, 30], zoom: 1.6 },
+  'Europe': { center: [15, 52], zoom: 2.8 },
+  'North America': { center: [-95, 40], zoom: 1.8 },
+  'South America': { center: [-60, -15], zoom: 1.6 },
+  'Oceania': { center: [140, -20], zoom: 2.2 },
+};
+
 interface WorldMapProps {
   highlightedCountry: string; // ISO alpha-2 code
   answeredCountries: Map<string, boolean>; // code -> correct/incorrect
+  focusContinent?: Continent | null;
 }
 
-function WorldMapComponent({ highlightedCountry, answeredCountries }: WorldMapProps) {
+function WorldMapComponent({ highlightedCountry, answeredCountries, focusContinent }: WorldMapProps) {
   const [geoData, setGeoData] = useState<any>(null);
   const [zoom, setZoom] = useState(DEFAULT_ZOOM);
   const [center, setCenter] = useState<[number, number]>(DEFAULT_CENTER);
+
+  // When focusContinent changes, snap to that view
+  useEffect(() => {
+    if (focusContinent && CONTINENT_VIEWS[focusContinent]) {
+      const view = CONTINENT_VIEWS[focusContinent];
+      setCenter(view.center);
+      setZoom(view.zoom);
+    } else if (!focusContinent) {
+      setCenter(DEFAULT_CENTER);
+      setZoom(DEFAULT_ZOOM);
+    }
+  }, [focusContinent]);
 
   useEffect(() => {
     fetch(geoUrl)
@@ -141,8 +165,14 @@ function WorldMapComponent({ highlightedCountry, answeredCountries }: WorldMapPr
     return 0.5;
   };
 
+  const isHighlighted = (geo: any) => {
+    const numericCode = geo.id || geo.properties?.id;
+    const alpha2 = numericToAlpha2[numericCode] || geo.properties?.ISO_A2;
+    return alpha2 === highlightedCountry;
+  };
+
   return (
-    <div className="relative w-full bg-sky-100 rounded-xl overflow-hidden border border-retro-border/20">
+    <div className="relative w-full max-w-full bg-sky-100 rounded-xl overflow-hidden border border-retro-border/20">
       {/* Zoom Controls */}
       <div className="absolute top-2 right-2 z-10 flex flex-col gap-1">
         <button
@@ -168,13 +198,14 @@ function WorldMapComponent({ highlightedCountry, answeredCountries }: WorldMapPr
         </button>
       </div>
 
+      <div style={{ width: '100%', overflow: 'hidden' }}>
       <ComposableMap
         projection="geoMercator"
         projectionConfig={{
           scale: 140,
           center: [10, 25],
         }}
-        style={{ width: '100%', height: 'auto' }}
+        style={{ width: '100%', height: 'auto', display: 'block' }}
         viewBox="0 -50 800 580"
       >
         <ZoomableGroup
@@ -191,6 +222,7 @@ function WorldMapComponent({ highlightedCountry, answeredCountries }: WorldMapPr
                   fill={getCountryColor(geo)}
                   stroke={getStrokeColor(geo)}
                   strokeWidth={getStrokeWidth(geo)}
+                  className={isHighlighted(geo) ? 'country-highlight' : ''}
                   style={{
                     default: { outline: 'none' },
                     hover: { outline: 'none' },
@@ -202,6 +234,7 @@ function WorldMapComponent({ highlightedCountry, answeredCountries }: WorldMapPr
           </Geographies>
         </ZoomableGroup>
       </ComposableMap>
+      </div>
     </div>
   );
 }

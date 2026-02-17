@@ -2,6 +2,8 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useFlagRunner } from '../hooks/useFlagRunner';
 import { getFlagEmoji } from '../utils/flagEmoji';
 import { Celebration } from '../components/Celebration';
+import { ContinentFilter } from '../components/ContinentFilter';
+import { Difficulty, difficultyLabels } from '../data/countries';
 
 import abelRun0 from '../images/character-abel/run-north/frame_000.png';
 import abelRun1 from '../images/character-abel/run-north/frame_001.png';
@@ -13,11 +15,51 @@ import edenRun1 from '../images/character-eden/run-north/frame_001.png';
 import edenRun2 from '../images/character-eden/run-north/frame_002.png';
 import edenRun3 from '../images/character-eden/run-north/frame_003.png';
 
+import nicoRun0 from '../images/character-nico/run-north/frame_000.png';
+import nicoRun1 from '../images/character-nico/run-north/frame_001.png';
+import nicoRun2 from '../images/character-nico/run-north/frame_002.png';
+import nicoRun3 from '../images/character-nico/run-north/frame_003.png';
+
+import amaraRun0 from '../images/character-amara/run-north/frame_000.png';
+import amaraRun1 from '../images/character-amara/run-north/frame_001.png';
+import amaraRun2 from '../images/character-amara/run-north/frame_002.png';
+import amaraRun3 from '../images/character-amara/run-north/frame_003.png';
+
+import kitsuneRun0 from '../images/character-kitsune/run-north/frame_000.png';
+import kitsuneRun1 from '../images/character-kitsune/run-north/frame_001.png';
+import kitsuneRun2 from '../images/character-kitsune/run-north/frame_002.png';
+import kitsuneRun3 from '../images/character-kitsune/run-north/frame_003.png';
+
+import krakenRun0 from '../images/character-kraken/run-north/frame_000.png';
+import krakenRun1 from '../images/character-kraken/run-north/frame_001.png';
+import krakenRun2 from '../images/character-kraken/run-north/frame_002.png';
+import krakenRun3 from '../images/character-kraken/run-north/frame_003.png';
+
+import dragonRun0 from '../images/character-dragon/run-north/frame_000.png';
+import dragonRun1 from '../images/character-dragon/run-north/frame_001.png';
+import dragonRun2 from '../images/character-dragon/run-north/frame_002.png';
+import dragonRun3 from '../images/character-dragon/run-north/frame_003.png';
+
+import eagleRun0 from '../images/character-eagle/run-north/frame_000.png';
+import eagleRun1 from '../images/character-eagle/run-north/frame_001.png';
+import eagleRun2 from '../images/character-eagle/run-north/frame_002.png';
+import eagleRun3 from '../images/character-eagle/run-north/frame_003.png';
+
+import phoenixRun0 from '../images/character-phoenix/run-north/frame_000.png';
+import phoenixRun1 from '../images/character-phoenix/run-north/frame_001.png';
+import phoenixRun2 from '../images/character-phoenix/run-north/frame_002.png';
+import phoenixRun3 from '../images/character-phoenix/run-north/frame_003.png';
+
 const CHARACTER_RUN_FRAMES: Record<string, string[]> = {
   boy: [abelRun0, abelRun1, abelRun2, abelRun3],
   girl: [edenRun0, edenRun1, edenRun2, edenRun3],
-  nico: [abelRun0, abelRun1, abelRun2, abelRun3],     // TODO: replace with Nico's run frames
-  amara: [edenRun0, edenRun1, edenRun2, edenRun3],    // TODO: replace with Amara's run frames
+  nico: [nicoRun0, nicoRun1, nicoRun2, nicoRun3],
+  amara: [amaraRun0, amaraRun1, amaraRun2, amaraRun3],
+  kitsune: [kitsuneRun0, kitsuneRun1, kitsuneRun2, kitsuneRun3],
+  kraken: [krakenRun0, krakenRun1, krakenRun2, krakenRun3],
+  dragon: [dragonRun0, dragonRun1, dragonRun2, dragonRun3],
+  eagle: [eagleRun0, eagleRun1, eagleRun2, eagleRun3],
+  phoenix: [phoenixRun0, phoenixRun1, phoenixRun2, phoenixRun3],
 };
 const RUN_FRAME_DURATION = 120;
 
@@ -36,6 +78,7 @@ export function FlagRunnerScreen({ onBack }: FlagRunnerScreenProps) {
   }, []);
 
   const [runFrameIdx, setRunFrameIdx] = useState(0);
+  const [showOptions, setShowOptions] = useState(false);
 
   useEffect(() => {
     if (game.phase !== 'playing') return;
@@ -97,6 +140,92 @@ export function FlagRunnerScreen({ onBack }: FlagRunnerScreenProps) {
     else game.movePlayer(2);
   }, [game]);
 
+  // --- LOBBY PHASE ---
+  if (game.phase === 'ready') {
+    return (
+      <div className="bg-retro-bg flex flex-col px-4 pb-4 pt-3" style={{ minHeight: 'calc(100vh - 52px)' }}>
+        <button
+          onClick={onBack}
+          className="self-start font-body text-sm text-retro-text-secondary hover:text-retro-text transition-colors flex items-center gap-1 mb-2"
+        >
+          <span>&#8592;</span> Back
+        </button>
+        <div className="flex-1 flex items-center justify-center">
+          <div className="max-w-md w-full">
+            <div className="text-center mb-8">
+              <h1 className="font-retro text-lg text-retro-text mb-2">Flag Runner</h1>
+              <p className="font-body text-sm text-retro-text-secondary">
+                Dodge wrong flags, collect correct ones! Use arrow keys or tap lanes.
+              </p>
+            </div>
+
+            {/* Flag count */}
+            <div className="text-center mb-6">
+              <div className="inline-block pixel-border bg-retro-surface rounded-lg px-6 py-3">
+                <span className="font-retro text-sm text-retro-gold">{game.flagCount}</span>
+                <span className="font-body text-sm text-retro-text ml-2">flags ready!</span>
+              </div>
+            </div>
+
+            {/* Play button */}
+            <button
+              onClick={game.startGame}
+              disabled={game.flagCount === 0}
+              className="retro-btn w-full px-4 py-4 font-retro text-sm bg-retro-neon-green text-white mb-4 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Play
+            </button>
+
+            {/* Options toggle */}
+            <button
+              onClick={() => setShowOptions(!showOptions)}
+              className="retro-btn w-full px-4 py-3 font-retro text-xs bg-retro-surface text-retro-text mb-4"
+            >
+              {showOptions ? 'Hide Game Options' : 'Game Options'}
+            </button>
+
+            {/* Collapsible options */}
+            {showOptions && (
+              <div className="space-y-4">
+                {/* Difficulty filter */}
+                <div>
+                  <h3 className="font-retro text-[0.6rem] text-retro-text-secondary mb-2">Difficulty</h3>
+                  <div className="flex gap-2">
+                    {([1, 2, 3, 4, 5] as Difficulty[]).map(level => {
+                      const isEnabled = game.enabledDifficulties.includes(level);
+                      return (
+                        <button
+                          key={level}
+                          onClick={() => game.toggleDifficulty(level)}
+                          className={`flex-1 rounded-full py-1.5 px-1 text-center transition-all ${
+                            isEnabled
+                              ? 'bg-retro-accent text-retro-text ring-2 ring-retro-gold'
+                              : 'bg-white text-retro-text-secondary ring-1 ring-retro-border/20 hover:ring-retro-border/40'
+                          }`}
+                        >
+                          <div className="text-xs font-medium truncate">
+                            {difficultyLabels[level]}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Continent filter */}
+                <ContinentFilter
+                  enabledContinents={game.enabledContinents}
+                  onToggle={game.toggleContinent}
+                />
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // --- PLAYING / GAME-OVER PHASE ---
   return (
     <div className="h-[100dvh] bg-retro-bg flex flex-col items-center justify-center p-2 sm:p-4 select-none overflow-hidden">
       <div className="max-w-sm w-full flex flex-col gap-2">
@@ -209,31 +338,6 @@ export function FlagRunnerScreen({ onBack }: FlagRunnerScreenProps) {
             }}
           />
 
-          {/* Start overlay */}
-          {game.phase === 'ready' && (
-            <div className="absolute inset-0 bg-black/70 flex flex-col items-center justify-center gap-4 z-10">
-              <div className="font-retro text-xl text-white text-center leading-loose">
-                FLAG<br />RUNNER
-              </div>
-              <div className="font-body text-sm text-gray-300 text-center px-6 leading-relaxed">
-                Dodge wrong flags, collect correct ones!<br />
-                Use ← → arrow keys or tap lanes.
-              </div>
-              <button
-                onClick={(e) => { e.stopPropagation(); game.startGame(); }}
-                className="retro-btn bg-retro-neon-green text-white font-retro text-sm px-8 py-3 rounded-lg"
-              >
-                START
-              </button>
-              <button
-                onClick={(e) => { e.stopPropagation(); onBack(); }}
-                className="font-body text-sm text-gray-400 hover:text-white transition-colors"
-              >
-                ← Back to menu
-              </button>
-            </div>
-          )}
-
           {/* Game Over overlay */}
           {game.phase === 'game-over' && (
             <div className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center gap-3 z-10">
@@ -282,7 +386,7 @@ export function FlagRunnerScreen({ onBack }: FlagRunnerScreenProps) {
         )}
       </div>
 
-      <Celebration streak={game.combo} show={game.showCorrectFlash} />
+      <Celebration streak={game.combo} show={game.showCorrectFlash} hideText />
 
       {/* Road scroll keyframes injected via style tag */}
       <style>{`

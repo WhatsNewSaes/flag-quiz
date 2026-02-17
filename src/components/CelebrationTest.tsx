@@ -17,7 +17,12 @@ const MOCK_LEVEL: JourneyLevel = {
 
 type DemoScreen = 'menu' | 'level-only' | 'level-achievement' | 'level-achievement-mode' | 'level-failed' | 'level-barely-failed' | 'practice' | 'onboarding';
 
-export function CelebrationTest({ onBack }: { onBack: () => void }) {
+interface CelebrationTestProps {
+  onBack: () => void;
+  onNavigate?: (screen: string) => void;
+}
+
+export function CelebrationTest({ onBack, onNavigate }: CelebrationTestProps) {
   const [activeStreak, setActiveStreak] = useState<number | null>(null);
   const [showCelebration, setShowCelebration] = useState(false);
   const [demoScreen, setDemoScreen] = useState<DemoScreen>('menu');
@@ -70,6 +75,8 @@ export function CelebrationTest({ onBack }: { onBack: () => void }) {
         hasNextLevel={true}
         newAchievementIds={[]}
         newlyUnlockedModes={[]}
+        newlyUnlockedCharacters={[]}
+        newlyUnlockedWorlds={[]}
       />
     );
   }
@@ -90,6 +97,8 @@ export function CelebrationTest({ onBack }: { onBack: () => void }) {
         hasNextLevel={true}
         newAchievementIds={['first-steps', 'perfect-score']}
         newlyUnlockedModes={[]}
+        newlyUnlockedCharacters={[]}
+        newlyUnlockedWorlds={[]}
       />
     );
   }
@@ -108,8 +117,10 @@ export function CelebrationTest({ onBack }: { onBack: () => void }) {
         onPractice={() => setDemoScreen('practice')}
         onBackToMap={() => setDemoScreen('menu')}
         hasNextLevel={true}
-        newAchievementIds={['meadow-master']}
+        newAchievementIds={[]}
         newlyUnlockedModes={['free-play']}
+        newlyUnlockedCharacters={['kitsune']}
+        newlyUnlockedWorlds={[0]}
       />
     );
   }
@@ -130,6 +141,8 @@ export function CelebrationTest({ onBack }: { onBack: () => void }) {
         hasNextLevel={true}
         newAchievementIds={[]}
         newlyUnlockedModes={[]}
+        newlyUnlockedCharacters={[]}
+        newlyUnlockedWorlds={[]}
       />
     );
   }
@@ -150,6 +163,8 @@ export function CelebrationTest({ onBack }: { onBack: () => void }) {
         hasNextLevel={true}
         newAchievementIds={[]}
         newlyUnlockedModes={[]}
+        newlyUnlockedCharacters={[]}
+        newlyUnlockedWorlds={[]}
       />
     );
   }
@@ -240,7 +255,7 @@ export function CelebrationTest({ onBack }: { onBack: () => void }) {
               Level + Achievement + Mode Unlock
             </div>
             <div className="font-body text-retro-text-secondary text-xs">
-              Completes Green Meadows — "Meadow Master" achievement card, then "Free Play" mode unlock card, then summary.
+              Completes Green Meadows — "New World Unlocked" card with Sandy Shores preview, then "Arcade Mode" unlock card, then summary.
             </div>
           </button>
 
@@ -302,6 +317,31 @@ export function CelebrationTest({ onBack }: { onBack: () => void }) {
             </div>
           </button>
         </div>
+
+        {/* Section: Game Modes */}
+        {onNavigate && (
+          <>
+            <h2 className="font-retro text-[0.6rem] text-retro-text mb-3 mt-8">Game Modes</h2>
+            <div className="grid grid-cols-2 gap-2">
+              {[
+                { screen: 'arcade', label: 'Arcade Mode', color: 'bg-retro-accent text-retro-text' },
+                { screen: 'around-the-world', label: 'Around the World', color: 'bg-teal-600 text-white' },
+                { screen: 'jeopardy-difficulty-select', label: 'Flag Jeopardy', color: 'bg-retro-neon-blue text-white' },
+                { screen: 'presentation', label: 'Practice Mode', color: 'bg-purple-600 text-white' },
+                { screen: 'flag-runner', label: 'Flag Runner', color: 'bg-emerald-500 text-white' },
+                { screen: 'journey-map', label: 'Journey', color: 'bg-retro-neon-green text-white' },
+              ].map(({ screen, label, color }) => (
+                <button
+                  key={screen}
+                  onClick={() => { onBack(); onNavigate(screen); }}
+                  className={`retro-btn py-3 px-2 font-retro text-[0.5rem] ${color}`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

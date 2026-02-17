@@ -14,7 +14,7 @@ export default {
         'retro-bg': '#7EC8E3',
         'retro-surface': '#FFF8E7',
         'retro-accent': '#FFD93D',
-        'retro-gold': '#D4960A',
+        'retro-gold': '#B07D08',
         'retro-neon-green': '#16A34A',
         'retro-neon-red': '#EF4444',
         'retro-neon-blue': '#3B82F6',
@@ -22,7 +22,7 @@ export default {
         'retro-neon-purple': '#8B5CF6',
         'retro-border': '#2D2D2D',
         'retro-text': '#2D2D2D',
-        'retro-text-secondary': '#555555',
+        'retro-text-secondary': '#1F3A4D',
       },
       boxShadow: {
         'pixel-sm': '2px 2px 0px 0px #2D2D2D',
@@ -39,6 +39,7 @@ export default {
         'node-pulse': 'nodePulse 2s ease-in-out infinite',
         'card-enter': 'cardEnter 0.4s ease-out forwards',
         'card-exit': 'cardExit 0.3s ease-in forwards',
+        'fade-in': 'fadeIn 1.5s ease-in both',
       },
       keyframes: {
         nodePulse: {
@@ -82,6 +83,10 @@ export default {
         cardExit: {
           '0%': { transform: 'scale(1) rotate(0deg) translateY(0)', opacity: '1' },
           '100%': { transform: 'scale(0.8) rotate(-8deg) translateY(-100px)', opacity: '0' },
+        },
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
         },
       },
     },

@@ -29,16 +29,16 @@ export function JeopardyScreen({ difficulty }: JeopardyScreenProps) {
     <div className="min-h-screen bg-[#1E3A8A] py-4 px-4">
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center justify-between mb-4">
-          <h1 className="text-xl sm:text-2xl font-bold text-yellow-400">
+          <h1 className="text-xl sm:text-2xl font-bold text-yellow-300">
             Flag Jeopardy
           </h1>
           <div className="flex items-center gap-4">
-            <span className={`text-2xl font-bold ${jeopardy.score >= 0 ? 'text-yellow-400' : 'text-red-400'}`}>
+            <span className={`text-2xl font-bold ${jeopardy.score >= 0 ? 'text-yellow-300' : 'text-red-400'}`}>
               ${jeopardy.score.toLocaleString()}
             </span>
             <button
               onClick={() => jeopardy.resetGame()}
-              className="px-3 py-1.5 text-sm text-blue-200 hover:text-white border border-blue-400 rounded-lg transition-colors flex items-center gap-1.5"
+              className="px-3 py-1.5 text-sm text-white hover:text-white border border-blue-400 rounded-lg transition-colors flex items-center gap-1.5"
             >
               <span>↺</span> Reset
             </button>
@@ -50,7 +50,7 @@ export function JeopardyScreen({ difficulty }: JeopardyScreenProps) {
           onSelectCell={jeopardy.selectCell}
         />
 
-        <div className="mt-4 text-center text-sm text-blue-300">
+        <div className="mt-4 text-center text-sm text-blue-100">
           {jeopardy.remainingCells} questions remaining
         </div>
       </div>

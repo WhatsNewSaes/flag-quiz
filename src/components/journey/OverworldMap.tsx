@@ -78,7 +78,7 @@ export function OverworldMap({
               'bg-retro-neon-green',  // Green Meadows
               'bg-retro-accent',      // Sandy Shores
               'bg-teal-500',          // Misty Forest
-              'bg-orange-400',        // Rocky Mountains
+              'bg-orange-600',        // Rocky Mountains
               'bg-retro-neon-red',    // Volcanic Peak
             ];
             const titleBarColor = regionColors[region.regionIndex] || 'bg-retro-accent';

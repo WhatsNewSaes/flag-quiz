@@ -51,8 +51,8 @@ export function PresentationScreen() {
     return (
       <div className="min-h-screen bg-gradient-to-b from-sky-300 to-sky-400 flex items-center justify-center p-4">
         <div className="text-center">
-          <p className="text-xl text-gray-600 mb-4">No countries available!</p>
-          <p className="text-gray-500 mb-4">Please adjust your filters using the settings button.</p>
+          <p className="text-xl text-gray-700 mb-4">No countries available!</p>
+          <p className="text-gray-700 mb-4">Please adjust your filters using the settings button.</p>
           <button
             onClick={() => setShowSettings(true)}
             className="px-4 py-2 bg-retro-neon-blue text-white rounded-lg hover:bg-blue-600"
@@ -68,8 +68,8 @@ export function PresentationScreen() {
     <div className="min-h-screen bg-gradient-to-b from-sky-300 to-sky-400 py-6 px-4">
       <div className="max-w-2xl mx-auto">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl sm:text-3xl font-retro text-retro-gold">
-            Flashcard Mode
+          <h1 className="text-2xl sm:text-3xl font-retro text-retro-text">
+            Practice Mode
           </h1>
           <div className="flex items-center gap-2">
             <button
@@ -151,7 +151,7 @@ export function PresentationScreen() {
         </div>
 
         {/* Main Content */}
-        <div className="retro-window"><div className="retro-window-title bg-retro-accent text-retro-text flex items-center justify-between"><span>✦</span><span>Flashcard</span><span>✦</span></div><div className="retro-window-body p-8">
+        <div className="retro-window"><div className="retro-window-title bg-retro-accent text-retro-text flex items-center justify-between"><span>✦</span><span>Practice</span><span>✦</span></div><div className="retro-window-body p-8">
           {presentation.presentationType === 'flag-to-name' ? (
             <div className="flex flex-col items-center h-[280px] sm:h-[320px] justify-center">
               <span
@@ -159,8 +159,8 @@ export function PresentationScreen() {
                   {
                     1: 'bg-green-100 text-green-700',
                     2: 'bg-blue-100 text-blue-700',
-                    3: 'bg-yellow-100 text-yellow-700',
-                    4: 'bg-orange-100 text-orange-700',
+                    3: 'bg-yellow-100 text-yellow-800',
+                    4: 'bg-orange-100 text-orange-800',
                     5: 'bg-red-100 text-red-700',
                   }[currentCountry.difficulty]
                 }`}
@@ -187,8 +187,8 @@ export function PresentationScreen() {
                   {
                     1: 'bg-green-100 text-green-700',
                     2: 'bg-blue-100 text-blue-700',
-                    3: 'bg-yellow-100 text-yellow-700',
-                    4: 'bg-orange-100 text-orange-700',
+                    3: 'bg-yellow-100 text-yellow-800',
+                    4: 'bg-orange-100 text-orange-800',
                     5: 'bg-red-100 text-red-700',
                   }[currentCountry.difficulty]
                 }`}

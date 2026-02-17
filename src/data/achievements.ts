@@ -20,15 +20,6 @@ export interface AchievementDef {
   check: (ctx: AchievementContext) => boolean;
 }
 
-function regionCompleted(ctx: AchievementContext, regionIndex: number): boolean {
-  const region = ctx.regions[regionIndex];
-  if (!region) return false;
-  return region.levels.every(level => {
-    const result = ctx.levelResults[level.id];
-    return result && result.stars >= 1;
-  });
-}
-
 function regionPerfect(ctx: AchievementContext, regionIndex: number): boolean {
   const region = ctx.regions[regionIndex];
   if (!region) return false;
@@ -52,41 +43,6 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     description: 'Get 100% on any level',
     icon: '💯',
     check: (ctx) => ctx.percentage === 100,
-  },
-  {
-    id: 'meadow-master',
-    name: 'Meadow Master',
-    description: 'Complete all Green Meadows levels',
-    icon: '🌿',
-    check: (ctx) => regionCompleted(ctx, 0),
-  },
-  {
-    id: 'shore-explorer',
-    name: 'Shore Explorer',
-    description: 'Complete all Sandy Shores levels',
-    icon: '🏖️',
-    check: (ctx) => regionCompleted(ctx, 1),
-  },
-  {
-    id: 'forest-guide',
-    name: 'Forest Guide',
-    description: 'Complete all Misty Forest levels',
-    icon: '🌲',
-    check: (ctx) => regionCompleted(ctx, 2),
-  },
-  {
-    id: 'mountain-climber',
-    name: 'Mountain Climber',
-    description: 'Complete all Rocky Mountains levels',
-    icon: '⛰️',
-    check: (ctx) => regionCompleted(ctx, 3),
-  },
-  {
-    id: 'volcano-conqueror',
-    name: 'Volcano Conqueror',
-    description: 'Complete all Volcanic Peak levels',
-    icon: '🌋',
-    check: (ctx) => regionCompleted(ctx, 4),
   },
   {
     id: 'star-collector-10',

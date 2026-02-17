@@ -1,10 +1,8 @@
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { CelebrationTest } from './components/CelebrationTest';
 import { GameModeSelect, GameMode } from './components/GameModeSelect';
-import { CampaignQuizTypeSelect } from './components/CampaignQuizTypeSelect';
 import { JeopardyDifficultySelect, JeopardyDifficulty } from './components/JeopardyDifficultySelect';
-import { FreePlayScreen } from './screens/FreePlayScreen';
-import { CampaignScreen } from './screens/CampaignScreen';
+import { ArcadeScreen } from './screens/ArcadeScreen';
 import { AroundTheWorldScreen } from './screens/AroundTheWorldScreen';
 import { JeopardyScreen } from './screens/JeopardyScreen';
 import { PresentationScreen } from './screens/PresentationScreen';
@@ -16,12 +14,12 @@ import { JourneyLevelPlay } from './components/journey/JourneyLevelPlay';
 import { LevelCompleteFlow } from './components/journey/LevelCompleteFlow';
 import { JourneyPractice } from './components/journey/JourneyPractice';
 import { AchievementsPage } from './components/journey/AchievementsPage';
+import { CharactersPage } from './components/journey/CharactersPage';
 import { AchievementToast } from './components/journey/AchievementToast';
 import { buildJourneyRegions, getAllLevels, JourneyLevel } from './data/journeyLevels';
-import { useJourneyProgress, getUnlockedModes, calculateStars } from './hooks/useJourneyProgress';
+import { useJourneyProgress, getUnlockedModes, getUnlockedCharacters, getNewlyUnlockedWorlds, calculateStars } from './hooks/useJourneyProgress';
 import { useJourneyGame } from './hooks/useJourneyGame';
 import { useLocalStorage } from './hooks/useLocalStorage';
-import { QuizMode } from './hooks/useQuiz';
 import { playCorrectSound, playIncorrectSound, playLevelCompleteSound, playStarEarnedSound, playAchievementSound } from './utils/sounds';
 
 type AppScreen =
@@ -31,10 +29,9 @@ type AppScreen =
   | 'journey-practice'
   | 'journey-complete'
   | 'achievements'
+  | 'characters'
   | 'mode-select'
-  | 'campaign-quiz-select'
-  | 'free-play'
-  | 'campaign'
+  | 'arcade'
   | 'around-the-world'
   | 'jeopardy-difficulty-select'
   | 'jeopardy'
@@ -43,13 +40,17 @@ type AppScreen =
 
 const VALID_SCREENS: Set<string> = new Set([
   'journey-map', 'journey-quiz-select', 'journey-play', 'journey-practice',
-  'journey-complete', 'achievements', 'mode-select', 'campaign-quiz-select',
-  'free-play', 'campaign', 'around-the-world', 'jeopardy-difficulty-select',
+  'journey-complete', 'achievements', 'characters', 'mode-select', 'arcade',
+  'around-the-world', 'jeopardy-difficulty-select',
   'jeopardy', 'presentation', 'flag-runner',
 ]);
 
 function migrateScreen(raw: any): AppScreen {
-  if (typeof raw === 'string' && VALID_SCREENS.has(raw)) return raw as AppScreen;
+  if (typeof raw === 'string') {
+    // Migrate old screen names to arcade
+    if (raw === 'free-play' || raw === 'campaign' || raw === 'campaign-quiz-select') return 'arcade';
+    if (VALID_SCREENS.has(raw)) return raw as AppScreen;
+  }
   return 'journey-map';
 }
 
@@ -68,14 +69,15 @@ function App() {
   } | null>(null);
   const [pendingAchievements, setPendingAchievements] = useState<string[]>([]);
   const [newlyUnlockedModes, setNewlyUnlockedModes] = useState<string[]>([]);
+  const [newlyUnlockedCharacters, setNewlyUnlockedCharacters] = useState<string[]>([]);
+  const [newlyUnlockedWorlds, setNewlyUnlockedWorlds] = useState<number[]>([]);
 
   // Onboarding state
   const [onboardingComplete, setOnboardingComplete] = useLocalStorage<string>('onboarding-complete', '');
   const [, setSelectedCharacter] = useLocalStorage<string>('selected-character', '');
   const [, setFavoriteFlag] = useLocalStorage<string>('favorite-flag', '');
 
-  // Campaign/Jeopardy quiz type state
-  const [campaignQuizType, setCampaignQuizType] = useState<QuizMode>('multiple-choice');
+  // Jeopardy difficulty state
   const [jeopardyDifficulty, setJeopardyDifficulty] = useState<JeopardyDifficulty>('medium');
 
   // Hidden test page — type "devmode" anywhere to toggle
@@ -128,8 +130,9 @@ function App() {
     const existing = journeyProgress.progress.levelResults[selectedLevel.id];
     const previousBestPct = existing?.bestPercentage ?? null;
 
-    // Capture modes before saving result
+    // Capture modes and characters before saving result
     const modesBefore = getUnlockedModes(regions, journeyProgress.progress.levelResults);
+    const charsBefore = getUnlockedCharacters(regions, journeyProgress.progress.levelResults);
 
     // Project what level results will look like after saving
     const newStars = calculateStars(correct, total);
@@ -148,12 +151,19 @@ function App() {
     };
     const modesAfter = getUnlockedModes(regions, projectedResults);
     const freshModes = modesAfter.filter(m => !modesBefore.includes(m));
+    const charsAfter = getUnlockedCharacters(regions, projectedResults);
+    const freshCharacters = charsAfter.filter(c => !charsBefore.includes(c));
+
+    // Detect newly completed worlds
+    const freshWorlds = getNewlyUnlockedWorlds(regions, journeyProgress.progress.levelResults, projectedResults);
 
     const result = journeyProgress.saveResult(selectedLevel.id, correct, total);
     playLevelCompleteSound();
     if (result.stars > 0) playStarEarnedSound();
 
     setNewlyUnlockedModes(freshModes);
+    setNewlyUnlockedCharacters(freshCharacters);
+    setNewlyUnlockedWorlds(freshWorlds);
 
     // Check achievements using projected state (saveResult queues async update)
     const projectedTotalStars = journeyProgress.progress.totalStars + (Math.max(existingStars, newStars) - existingStars);
@@ -209,8 +219,7 @@ function App() {
 
   // --- Other mode handlers ---
   const handleSelectGameMode = useCallback((gameMode: GameMode) => {
-    if (gameMode === 'free-play') setScreen('free-play');
-    else if (gameMode === 'campaign') setScreen('campaign-quiz-select');
+    if (gameMode === 'arcade') setScreen('arcade');
     else if (gameMode === 'around-the-world') setScreen('around-the-world');
     else if (gameMode === 'jeopardy') setScreen('jeopardy-difficulty-select');
     else if (gameMode === 'presentation') setScreen('presentation');
@@ -247,6 +256,7 @@ function App() {
     return (
       <CelebrationTest
         onBack={() => setShowTestPage(false)}
+        onNavigate={(target) => { setShowTestPage(false); setScreen(target as AppScreen); }}
       />
     );
   }
@@ -318,10 +328,12 @@ function App() {
         onNextLevel={handleNextLevel}
         onRetry={handleRetryLevel}
         onPractice={handlePracticeLevel}
-        onBackToMap={() => { setPendingAchievements([]); setNewlyUnlockedModes([]); setScreen('journey-map'); }}
+        onBackToMap={() => { setPendingAchievements([]); setNewlyUnlockedModes([]); setNewlyUnlockedCharacters([]); setNewlyUnlockedWorlds([]); setScreen('journey-map'); }}
         hasNextLevel={hasNextLevel}
         newAchievementIds={pendingAchievements}
         newlyUnlockedModes={newlyUnlockedModes}
+        newlyUnlockedCharacters={newlyUnlockedCharacters}
+        newlyUnlockedWorlds={newlyUnlockedWorlds}
       />
     );
   }
@@ -348,6 +360,17 @@ function App() {
     );
   }
 
+  if (screen === 'characters') {
+    return (
+      <>
+        <NavBar onNavigate={handleNavigate} totalStars={journeyProgress.progress.totalStars} unlockedModes={journeyProgress.unlockedModes} />
+        <CharactersPage
+          unlockedCharacters={journeyProgress.unlockedCharacters}
+        />
+      </>
+    );
+  }
+
   if (screen === 'mode-select') {
     return (
       <>
@@ -361,12 +384,11 @@ function App() {
     );
   }
 
-  if (screen === 'campaign-quiz-select') {
+  if (screen === 'arcade') {
     return (
       <>
         <NavBar onNavigate={handleNavigate} totalStars={journeyProgress.progress.totalStars} unlockedModes={journeyProgress.unlockedModes} />
-        <CampaignQuizTypeSelect
-          onSelect={(qt) => { setCampaignQuizType(qt); setScreen('campaign'); }}
+        <ArcadeScreen
           onBack={handleBackToModeSelect}
         />
       </>
@@ -385,29 +407,11 @@ function App() {
     );
   }
 
-  if (screen === 'free-play') {
-    return (
-      <>
-        <NavBar onNavigate={handleNavigate} totalStars={journeyProgress.progress.totalStars} unlockedModes={journeyProgress.unlockedModes} />
-        <FreePlayScreen />
-      </>
-    );
-  }
-
-  if (screen === 'campaign') {
-    return (
-      <>
-        <NavBar onNavigate={handleNavigate} totalStars={journeyProgress.progress.totalStars} unlockedModes={journeyProgress.unlockedModes} />
-        <CampaignScreen initialQuizType={campaignQuizType} />
-      </>
-    );
-  }
-
   if (screen === 'around-the-world') {
     return (
       <>
         <NavBar onNavigate={handleNavigate} totalStars={journeyProgress.progress.totalStars} unlockedModes={journeyProgress.unlockedModes} />
-        <AroundTheWorldScreen />
+        <AroundTheWorldScreen onBack={handleBackToModeSelect} />
       </>
     );
   }

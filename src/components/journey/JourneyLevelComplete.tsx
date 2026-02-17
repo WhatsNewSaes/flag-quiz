@@ -1,15 +1,44 @@
 import { JourneyLevel, REGION_THEMES } from '../../data/journeyLevels';
 import { ACHIEVEMENTS } from '../../data/achievements';
-import { StarDisplay } from './StarDisplay';
-import { useAuth } from '../../contexts/AuthContext';
+import { CHARACTER_MAP } from '../../data/characters';
 
 import ArcadeIcon from '../../icons/entertainment-events-hobbies-game-machines-arcade-1--Streamline-Pixel.svg';
 import GlobeIcon from '../../icons/ecology-global-warming-globe--Streamline-Pixel.svg';
 import DiceIcon from '../../icons/entertainment-events-hobbies-board-game-dice--Streamline-Pixel.svg';
+import FlagRunnerIcon from '../../icons/social-rewards-flag--Streamline-Pixel.svg';
+
+import kitsuneSouth from '../../images/character/kitsune-south.png';
+import krakenSouth from '../../images/character/kraken-south.png';
+import dragonSouth from '../../images/character/dragon-south.png';
+import eagleSouth from '../../images/character/eagle-south.png';
+import phoenixSouth from '../../images/character/phoenix-south.png';
+
+import greenMeadowsImg from '../../images/worlds/green meadows.png';
+import sandyShoresImg from '../../images/worlds/sandy shores.png';
+import mistyForestImg from '../../images/worlds/misty-forest.png';
+import rockyMountainsImg from '../../images/worlds/rocky-mountains.png';
+import volcanicPeakImg from '../../images/worlds/volcanic-peak.png';
+
+const WORLD_IMAGES: string[] = [
+  greenMeadowsImg,
+  sandyShoresImg,
+  mistyForestImg,
+  rockyMountainsImg,
+  volcanicPeakImg,
+];
+
+const CHARACTER_THUMBNAILS: Record<string, string> = {
+  kitsune: kitsuneSouth,
+  kraken: krakenSouth,
+  dragon: dragonSouth,
+  eagle: eagleSouth,
+  phoenix: phoenixSouth,
+};
 
 const MODE_DISPLAY: Record<string, { icon: string; title: string; description: string }> = {
-  'free-play': { icon: ArcadeIcon, title: 'Free Play', description: 'Practice with custom filters. Choose difficulty, continents, and quiz type.' },
+  'free-play': { icon: ArcadeIcon, title: 'Arcade Mode', description: 'Test your flag knowledge! Score points with streaks and difficulty bonuses.' },
   jeopardy: { icon: DiceIcon, title: 'Flag Jeopardy', description: 'Jeopardy-style board game. Pick by continent and difficulty. Daily Doubles included!' },
+  'flag-runner': { icon: FlagRunnerIcon, title: 'Flag Runner', description: 'Dodge wrong flags, collect correct ones! How long can you survive?' },
   'around-the-world': { icon: GlobeIcon, title: 'Around the World', description: 'Identify highlighted countries on a world map. Fill in the globe!' },
 };
 
@@ -27,6 +56,8 @@ interface JourneyLevelCompleteProps {
   hasNextLevel: boolean;
   newAchievementIds?: string[];
   newlyUnlockedModes?: string[];
+  newlyUnlockedCharacters?: string[];
+  newlyUnlockedWorlds?: number[];
 }
 
 export function JourneyLevelComplete({
@@ -34,8 +65,6 @@ export function JourneyLevelComplete({
   correct,
   total,
   stars,
-  isNewBest,
-  previousBestPct,
   onNextLevel,
   onRetry,
   onPractice,
@@ -43,10 +72,10 @@ export function JourneyLevelComplete({
   hasNextLevel,
   newAchievementIds = [],
   newlyUnlockedModes = [],
+  newlyUnlockedCharacters = [],
+  newlyUnlockedWorlds = [],
 }: JourneyLevelCompleteProps) {
   const percentage = total > 0 ? Math.round((correct / total) * 100) : 0;
-  const { user, loading: authLoading, signInWithGoogle } = useAuth();
-
   const newAchievements = newAchievementIds
     .map(id => ACHIEVEMENTS.find(a => a.id === id))
     .filter(Boolean);
@@ -55,45 +84,60 @@ export function JourneyLevelComplete({
   const levelNumber = `${level.regionIndex + 1}-${level.levelIndexInRegion + 1}`;
 
   return (
-    <div className="min-h-screen bg-retro-bg flex items-center justify-center px-4">
+    <div className="min-h-screen bg-retro-bg flex items-center justify-center px-4 relative">
+      {/* Back to map — fixed top-left */}
+      <button
+        onClick={onBackToMap}
+        className="absolute top-4 left-4 font-body text-[1rem] hover:opacity-80 transition-opacity"
+        style={{ color: '#5C5340' }}
+      >
+        ← Back to Map
+      </button>
+
       <div className="max-w-sm w-full">
         <div className="pixel-border bg-retro-surface rounded-lg overflow-hidden text-center">
           {/* Banner */}
           <div className="bg-retro-accent/40 px-4 py-3" style={{ borderBottom: '3px solid #2D2D2D' }}>
-            <div className="font-body text-retro-text text-sm">
+            <div className="font-body text-retro-text text-[1rem]">
               {regionName} {levelNumber}
             </div>
           </div>
 
           <div className="p-6">
-            <h2 className="font-retro text-sm text-retro-gold mb-4">
+            <h2 className="font-retro text-[1rem] mb-4 rainbow-text">
               {stars >= 1 ? 'Level Complete!' : 'Keep Going!'}
             </h2>
 
-            {/* Score box */}
-            <div className="bg-white rounded-lg border-2 border-retro-border/20 px-4 py-3 mb-4 inline-block">
-              <div className="font-body text-3xl font-bold text-retro-text mb-1">
-                {correct}/{total}
+            {/* Score */}
+            <div className="mb-2">
+              <div className="font-body text-retro-text text-[1rem]">
+                You got <span className="font-bold">{correct}</span> out of <span className="font-bold">{total}</span> correct
               </div>
-              <div className="font-body text-retro-neon-green text-lg">
+              <div className="font-retro text-2xl text-retro-text mt-4">
                 {percentage}%
               </div>
             </div>
 
             {/* Stars */}
-            <div className="mb-4 text-retro-gold">
-              <StarDisplay stars={stars} size="lg" animated />
+            <div className="flex items-center justify-center gap-2 mb-4">
+              {Array.from({ length: 3 }, (_, i) => (
+                <span
+                  key={i}
+                  className={`text-5xl leading-none ${
+                    i < stars ? 'text-retro-gold drop-shadow-[0_2px_0_#B8860B]' : 'text-retro-border/30'
+                  } ${i < stars ? 'animate-bounce-in' : ''}`}
+                  style={{
+                    animationDelay: i < stars ? `${i * 200}ms` : undefined,
+                    WebkitTextStroke: '1.5px #2D2D2D',
+                  }}
+                >
+                  {i < stars ? '★' : '☆'}
+                </span>
+              ))}
             </div>
 
-            {/* New best indicator */}
-            {isNewBest && previousBestPct !== null && (
-              <div className="font-retro text-xs text-retro-gold mb-4 animate-pulse">
-                {percentage}% — New Best! <span className="text-retro-text-secondary">(was {previousBestPct}%)</span>
-              </div>
-            )}
-
             {stars === 0 && (
-              <div className="font-body text-retro-neon-red text-xs mb-4">
+              <div className="font-body text-red-700 text-xs mb-4">
                 Need 70% to earn a star and unlock the next level
               </div>
             )}
@@ -120,6 +164,94 @@ export function JourneyLevelComplete({
                     </div>
                   </div>
                 ))}
+              </div>
+            )}
+
+            {/* Worlds unlocked */}
+            {newlyUnlockedWorlds.length > 0 && (
+              <div className="mb-4 space-y-2">
+                {newlyUnlockedWorlds.map(regionIdx => {
+                  const totalRegions = REGION_THEMES.length;
+                  if (regionIdx === totalRegions - 1) {
+                    return (
+                      <div key="journey-complete">
+                        <div className="font-retro text-[0.6rem] rainbow-text mb-2">
+                          Journey Complete!
+                        </div>
+                        <div className="flex items-center gap-3 bg-retro-gold/10 border-2 border-retro-gold/50 rounded-lg px-3 py-2 animate-bounce-in">
+                          <span className="text-2xl">🏆</span>
+                          <div className="text-left">
+                            <div className="font-body text-retro-text text-sm font-bold">
+                              Congratulations!
+                            </div>
+                            <div className="font-body text-retro-text-secondary text-xs">
+                              You've conquered every world!
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  }
+                  const nextIdx = regionIdx + 1;
+                  const theme = REGION_THEMES[nextIdx];
+                  const image = WORLD_IMAGES[nextIdx];
+                  if (!theme) return null;
+                  return (
+                    <div key={regionIdx}>
+                      <div className="font-retro text-[0.6rem] text-retro-gold mb-2">
+                        New World Unlocked!
+                      </div>
+                      <div className="flex items-center gap-3 bg-retro-gold/10 border-2 border-retro-gold/50 rounded-lg px-3 py-2 animate-bounce-in">
+                        {image && (
+                          <img
+                            src={image}
+                            alt={theme.name}
+                            className="w-12 h-12 rounded object-cover"
+                            style={{ imageRendering: 'pixelated' }}
+                          />
+                        )}
+                        <div className="text-left">
+                          <div className="font-body text-retro-text text-sm font-bold">
+                            World {nextIdx + 1} &mdash; {theme.name}
+                          </div>
+                          <div className="font-body text-retro-text-secondary text-xs">
+                            {theme.description}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Characters unlocked */}
+            {newlyUnlockedCharacters.length > 0 && (
+              <div className="mb-4 space-y-2">
+                <div className="font-retro text-[0.6rem] text-retro-neon-blue">
+                  New Character{newlyUnlockedCharacters.length > 1 ? 's' : ''} Unlocked!
+                </div>
+                {newlyUnlockedCharacters.map(charKey => {
+                  const character = CHARACTER_MAP[charKey as keyof typeof CHARACTER_MAP];
+                  const thumbnail = CHARACTER_THUMBNAILS[charKey];
+                  if (!character || !thumbnail) return null;
+                  return (
+                    <div
+                      key={charKey}
+                      className="flex items-center gap-3 bg-retro-neon-blue/10 border-2 border-retro-neon-blue/40 rounded-lg px-3 py-2 animate-bounce-in"
+                    >
+                      <img src={thumbnail} alt={character.name} className="w-10 h-10" style={{ imageRendering: 'pixelated' }} />
+                      <div className="text-left">
+                        <div className="font-body text-retro-text text-sm font-bold">
+                          {character.name}
+                        </div>
+                        <div className="font-body text-retro-text-secondary text-xs">
+                          {character.storyText}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             )}
 
@@ -159,46 +291,29 @@ export function JourneyLevelComplete({
                   onClick={onNextLevel}
                   className="retro-btn w-full px-4 py-3 font-retro text-xs bg-retro-neon-green text-white"
                 >
-                  Next Level →
+                  Next Level <span className="text-lg">→</span>
                 </button>
               )}
               {stars === 0 && (
                 <button
                   onClick={onPractice}
-                  className="retro-btn w-full px-4 py-3 font-retro text-xs bg-retro-accent text-retro-text"
+                  className="retro-btn w-full px-4 py-3 font-retro text-xs bg-retro-neon-blue text-white"
                 >
                   Practice {levelNumber}
                 </button>
               )}
-              <button
-                onClick={onRetry}
-                className="retro-btn w-full px-4 py-3 font-retro text-xs bg-retro-neon-blue text-white"
-              >
-                Retry {levelNumber}
-              </button>
-              <button
-                onClick={onBackToMap}
-                className="retro-btn w-full px-4 py-3 font-retro text-xs bg-retro-surface text-retro-text-secondary"
-              >
-                Back to Map
-              </button>
+              {stars === 0 && (
+                <button
+                  onClick={onRetry}
+                  className="retro-btn w-full px-4 py-3 font-retro text-xs bg-retro-surface text-retro-text"
+                >
+                  Retry {levelNumber}
+                </button>
+              )}
             </div>
           </div>
         </div>
 
-        {/* Sign in callout — only when not logged in */}
-        {!authLoading && !user && (
-          <button
-            onClick={signInWithGoogle}
-            className="w-full mt-4 rounded-lg rainbow-shimmer cursor-pointer px-4 py-3 flex items-center justify-center gap-2 border-2 border-retro-border"
-            style={{ boxShadow: '3px 3px 0px 0px #2D2D2D' }}
-          >
-            <span className="text-sm">💾</span>
-            <span className="font-retro text-[0.6rem] text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
-              Sign in to save your progress
-            </span>
-          </button>
-        )}
       </div>
     </div>
   );

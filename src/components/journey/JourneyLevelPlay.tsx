@@ -90,7 +90,7 @@ export function JourneyLevelPlay({
         {/* Question area */}
         <main>
           {quizMode === 'flag-picker' ? (
-            <div className="flex flex-col items-center py-8">
+            <div className="flex flex-col items-center justify-center min-h-[200px] sm:min-h-[240px]">
               <h2
                 key={currentCountry.code}
                 className="text-2xl sm:text-3xl md:text-4xl font-retro text-retro-text animate-bounce-in text-center"

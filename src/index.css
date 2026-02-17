@@ -6,6 +6,23 @@ body {
   font-family: 'Space Mono', monospace;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* Force react-simple-maps SVGs to stay within their container */
+.rsm-svg {
+  max-width: 100% !important;
+  height: auto !important;
+  display: block;
+}
+
+/* Pulsing highlight for the active country on the world map */
+@keyframes country-pulse {
+  0%, 100% { fill: #FCD34D; }
+  50% { fill: #F59E0B; }
+}
+.country-highlight {
+  animation: country-pulse 1.2s ease-in-out infinite;
 }
 
 /* Custom hover scale utilities */
@@ -186,7 +203,7 @@ body {
   border-left: 5px solid #bbb3a0;
   border-right: 5px solid #b0a890;
   border-bottom: 10px solid #9e9580;
-  color: #8a8070;
+  color: #6B5F50;
   box-shadow:
     0 1px 0 0 rgba(255,255,255,0.2) inset,
     0 1px 3px rgba(0,0,0,0.12),
@@ -254,6 +271,19 @@ button.retro-window:not(:disabled):active {
 }
 .overworld-svg text {
   shape-rendering: geometricPrecision;
+}
+
+/* Rainbow shimmer text for headings */
+.rainbow-text {
+  background: linear-gradient(
+    90deg,
+    #EF4444, #FFD93D, #16A34A, #3B82F6, #7C3AED, #EC4899, #EF4444
+  );
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 8s ease-in-out infinite;
 }
 
 /* Rainbow shimmer border for login callout */

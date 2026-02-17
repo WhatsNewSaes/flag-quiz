@@ -13,12 +13,12 @@ export function AchievementsPage({ unlockedAchievements }: AchievementsPageProps
       <div className="max-w-lg mx-auto">
         {/* Header */}
         <div className="text-center mb-6">
-          <h1 className="font-retro text-sm text-retro-gold">
+          <h1 className="font-retro text-sm text-retro-text">
             Achievements
           </h1>
         </div>
 
-        <div className="text-center text-retro-text-secondary text-sm mb-6">
+        <div className="text-center text-retro-text text-sm mb-6">
           {unlockedCount} / {totalCount} unlocked
         </div>
 

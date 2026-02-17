@@ -3,6 +3,7 @@ import { useLocalStorage } from './useLocalStorage';
 import { useSync } from '../contexts/SyncContext';
 import { JourneyLevel, JourneyRegion } from '../data/journeyLevels';
 import { ACHIEVEMENTS, AchievementContext } from '../data/achievements';
+import { CHARACTERS } from '../data/characters';
 
 export type Rank = 'Novice' | 'Explorer' | 'Cartographer' | 'Diplomat' | 'Ambassador' | 'World Leader';
 
@@ -22,10 +23,11 @@ export interface JourneyProgressData {
   currentRank: Rank;
   achievements: Record<string, number | null>;
   unlockedModes: string[];
+  unlockedCharacters: string[];
   completionStreak: number;
 }
 
-const CURRENT_VERSION = 2;
+const CURRENT_VERSION = 3;
 
 const INITIAL_PROGRESS: JourneyProgressData = {
   version: CURRENT_VERSION,
@@ -34,6 +36,7 @@ const INITIAL_PROGRESS: JourneyProgressData = {
   currentRank: 'Novice',
   achievements: {},
   unlockedModes: [],
+  unlockedCharacters: [],
   completionStreak: 0,
 };
 
@@ -82,6 +85,35 @@ export function getUnlockedModes(
 ): string[] {
   const modes: string[] = [];
 
+  // Check if all levels up through the second-to-last in a region are completed
+  const secondLastCompleted = (idx: number) => {
+    const region = regions[idx];
+    if (!region || region.levels.length < 2) return false;
+    const levelsToCheck = region.levels.slice(0, -1);
+    return levelsToCheck.every(l => {
+      const r = levelResults[l.id];
+      return r && r.stars >= 1;
+    });
+  };
+
+  // Arcade after W1 second-to-last (1-1)
+  if (secondLastCompleted(0)) modes.push('free-play');
+  // Flag Runner after W2 second-to-last (2-2)
+  if (secondLastCompleted(1)) modes.push('flag-runner');
+  // Jeopardy after W3 second-to-last (3-3)
+  if (secondLastCompleted(2)) modes.push('jeopardy');
+  // Around the World after W4 second-to-last (4-4)
+  if (secondLastCompleted(3)) modes.push('around-the-world');
+
+  return modes;
+}
+
+export function getUnlockedCharacters(
+  regions: JourneyRegion[],
+  levelResults: Record<string, LevelResult>
+): string[] {
+  const chars: string[] = [];
+
   const regionCompleted = (idx: number) => {
     const region = regions[idx];
     if (!region) return false;
@@ -91,20 +123,50 @@ export function getUnlockedModes(
     });
   };
 
-  // Free Play after Green Meadows (region 0)
-  if (regionCompleted(0)) modes.push('free-play');
-  // Jeopardy after Misty Forest (region 2)
-  if (regionCompleted(2)) modes.push('jeopardy');
-  // Around the World after Rocky Mountains (region 3)
-  if (regionCompleted(3)) modes.push('around-the-world');
+  for (const c of CHARACTERS) {
+    if (c.kind === 'creature' && c.unlockRegion !== null && regionCompleted(c.unlockRegion)) {
+      chars.push(c.key);
+    }
+  }
 
-  return modes;
+  return chars;
+}
+
+/**
+ * Detect which worlds were newly unlocked by comparing before/after level results.
+ * Returns an array of region indices that just became fully completed.
+ * Only reports a region as newly unlocked if it wasn't complete before but is now.
+ */
+export function getNewlyUnlockedWorlds(
+  regions: JourneyRegion[],
+  resultsBefore: Record<string, LevelResult>,
+  resultsAfter: Record<string, LevelResult>
+): number[] {
+  const regionComplete = (results: Record<string, LevelResult>, idx: number) => {
+    const region = regions[idx];
+    if (!region) return false;
+    return region.levels.every(l => {
+      const r = results[l.id];
+      return r && r.stars >= 1;
+    });
+  };
+
+  const unlocked: number[] = [];
+  for (let i = 0; i < regions.length; i++) {
+    if (!regionComplete(resultsBefore, i) && regionComplete(resultsAfter, i)) {
+      unlocked.push(i);
+    }
+  }
+  return unlocked;
 }
 
 function migrateProgress(data: any): JourneyProgressData {
-  // If no version or version < 2, reset progress (old continent-based format)
-  if (!data || !data.version || data.version < CURRENT_VERSION) {
+  if (!data || !data.version || data.version < 2) {
     return INITIAL_PROGRESS;
+  }
+  // v2 -> v3: add unlockedCharacters
+  if (data.version === 2) {
+    return { ...data, version: 3, unlockedCharacters: [] };
   }
   return data as JourneyProgressData;
 }
@@ -152,6 +214,7 @@ export function useJourneyProgress(regions: JourneyRegion[], allLevels: JourneyL
         const newRank = calculateRank(newTotalStars);
         const newStreak = stars >= 1 ? prev.completionStreak + 1 : 0;
         const unlockedModes = getUnlockedModes(regions, newLevelResults);
+        const unlockedCharacters = getUnlockedCharacters(regions, newLevelResults);
 
         return {
           ...prev,
@@ -159,6 +222,7 @@ export function useJourneyProgress(regions: JourneyRegion[], allLevels: JourneyL
           totalStars: newTotalStars,
           currentRank: newRank,
           unlockedModes,
+          unlockedCharacters,
           completionStreak: newStreak,
         };
       });
@@ -220,6 +284,11 @@ export function useJourneyProgress(regions: JourneyRegion[], allLevels: JourneyL
     [regions, progress.levelResults]
   );
 
+  const unlockedCharacters = useMemo(
+    () => getUnlockedCharacters(regions, progress.levelResults),
+    [regions, progress.levelResults]
+  );
+
   const isUnlocked = useCallback(
     (levelId: string) => isLevelUnlocked(levelId, allLevels, progress.levelResults),
     [allLevels, progress.levelResults]
@@ -234,6 +303,7 @@ export function useJourneyProgress(regions: JourneyRegion[], allLevels: JourneyL
     saveResult,
     checkAchievements,
     unlockedModes,
+    unlockedCharacters,
     isUnlocked,
     resetProgress,
   };

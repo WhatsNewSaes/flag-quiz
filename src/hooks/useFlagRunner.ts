@@ -1,5 +1,5 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
-import { countries, Country } from '../data/countries';
+import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
+import { countries, Country, Continent, continents, Difficulty } from '../data/countries';
 import { getRandomElements, getRandomElement } from '../utils/shuffle';
 import { playCorrectSound, playIncorrectSound } from '../utils/sounds';
 import { useLocalStorage } from './useLocalStorage';
@@ -22,9 +22,9 @@ const COLLISION_THRESHOLD = 6;
 const INITIAL_LIVES = 3;
 const LEVEL_UP_INTERVAL = 5;
 
-function generateQuestion(exclude?: Country): { correctCountry: Country; lanes: Country[]; correctLane: number } {
-  const pool = exclude ? countries.filter(c => c.code !== exclude.code) : countries;
-  const correctCountry = getRandomElement(pool);
+function generateQuestion(pool: Country[], exclude?: Country): { correctCountry: Country; lanes: Country[]; correctLane: number } {
+  const pickFrom = exclude ? pool.filter(c => c.code !== exclude.code) : pool;
+  const correctCountry = getRandomElement(pickFrom);
   const distractors = getRandomElements(
     countries.filter(c => c.code !== correctCountry.code),
     2,
@@ -42,8 +42,8 @@ function generateQuestion(exclude?: Country): { correctCountry: Country; lanes: 
   return { correctCountry, lanes, correctLane };
 }
 
-function spawnRow(idRef: React.MutableRefObject<number>, excludeCountry?: Country): FlagRow {
-  const q = generateQuestion(excludeCountry);
+function spawnRow(idRef: React.MutableRefObject<number>, pool: Country[], excludeCountry?: Country): FlagRow {
+  const q = generateQuestion(pool, excludeCountry);
   const id = ++idRef.current;
   return {
     id,
@@ -66,6 +66,33 @@ export function useFlagRunner() {
   const [flagRows, setFlagRows] = useState<FlagRow[]>([]);
   const [highScore, setHighScore] = useLocalStorage('flag-runner-high-score', 0);
   const [showCorrectFlash, setShowCorrectFlash] = useState(false);
+  const [enabledDifficulties, setEnabledDifficulties] = useState<Difficulty[]>([1, 2, 3, 4, 5]);
+  const [enabledContinents, setEnabledContinents] = useState<Continent[]>([...continents]);
+
+  const filteredCountries = useMemo(() => {
+    return countries.filter(
+      c => enabledContinents.includes(c.continent) && enabledDifficulties.includes(c.difficulty)
+    );
+  }, [enabledContinents, enabledDifficulties]);
+
+  const filteredCountriesRef = useRef(filteredCountries);
+  filteredCountriesRef.current = filteredCountries;
+
+  const toggleDifficulty = useCallback((difficulty: Difficulty) => {
+    setEnabledDifficulties(prev => {
+      const has = prev.includes(difficulty);
+      if (has && prev.length === 1) return prev;
+      return has ? prev.filter(d => d !== difficulty) : [...prev, difficulty];
+    });
+  }, []);
+
+  const toggleContinent = useCallback((continent: Continent) => {
+    setEnabledContinents(prev => {
+      const has = prev.includes(continent);
+      if (has && prev.length === 1) return prev;
+      return has ? prev.filter(c => c !== continent) : [...prev, continent];
+    });
+  }, []);
 
   const rowIdRef = useRef(0);
   const frameRef = useRef<number>(0);
@@ -140,14 +167,14 @@ export function useFlagRunner() {
 
     // Spawn new row if needed
     if (needsNewRow && phaseRef.current === 'playing') {
-      const newRow = spawnRow(rowIdRef, lastResolvedCountry);
+      const newRow = spawnRow(rowIdRef, filteredCountriesRef.current, lastResolvedCountry);
       newCountryForPrompt = newRow.correctCountry;
       rows = [...rows, newRow];
     }
 
     // If no active rows, spawn one
     if (!rows.some(r => !r.resolved) && phaseRef.current === 'playing') {
-      const newRow = spawnRow(rowIdRef);
+      const newRow = spawnRow(rowIdRef, filteredCountriesRef.current);
       newCountryForPrompt = newRow.correctCountry;
       rows = [...rows, newRow];
     }
@@ -183,7 +210,7 @@ export function useFlagRunner() {
     livesRef.current = INITIAL_LIVES;
     playerLaneRef.current = 1;
 
-    const firstRow = spawnRow(rowIdRef);
+    const firstRow = spawnRow(rowIdRef, filteredCountriesRef.current);
     rowsRef.current = [firstRow];
 
     setScore(0);
@@ -239,6 +266,11 @@ export function useFlagRunner() {
     flagRows,
     highScore,
     showCorrectFlash,
+    enabledDifficulties,
+    enabledContinents,
+    flagCount: filteredCountries.length,
+    toggleDifficulty,
+    toggleContinent,
     startGame,
     movePlayer,
     moveLeft,

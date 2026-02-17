@@ -34,7 +34,7 @@ export function JeopardyBoard({ board, onSelectCell }: JeopardyBoardProps) {
                   rounded transition-all
                   ${cell.used
                     ? 'bg-[#1E3A8A] text-[#1E3A8A] cursor-default'
-                    : 'bg-[#2563EB] text-yellow-400 hover:bg-blue-500 hover:scale-105 cursor-pointer shadow-lg'
+                    : 'bg-[#2563EB] text-yellow-300 hover:bg-blue-500 hover:scale-105 cursor-pointer shadow-lg'
                   }
                 `}
               >

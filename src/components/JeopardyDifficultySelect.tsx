@@ -13,8 +13,8 @@ export function JeopardyDifficultySelect({ onSelect, onBack }: JeopardyDifficult
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
           <div className="text-5xl mb-4">🎰</div>
-          <h1 className="text-3xl font-bold text-yellow-400 mb-2">Flag Jeopardy</h1>
-          <p className="text-blue-200">Choose your difficulty level</p>
+          <h1 className="text-3xl font-bold text-yellow-300 mb-2">Flag Jeopardy</h1>
+          <p className="text-white">Choose your difficulty level</p>
         </div>
 
         <div className="space-y-3">
@@ -25,8 +25,8 @@ export function JeopardyDifficultySelect({ onSelect, onBack }: JeopardyDifficult
             <div className="flex items-center gap-4">
               <div className="text-3xl">🟢</div>
               <div>
-                <h2 className="text-lg font-bold text-yellow-400">Easy</h2>
-                <p className="text-blue-200 text-base">Multiple choice options are random</p>
+                <h2 className="text-lg font-bold text-yellow-300">Easy</h2>
+                <p className="text-white text-base">Multiple choice options are random</p>
               </div>
             </div>
           </button>
@@ -38,8 +38,8 @@ export function JeopardyDifficultySelect({ onSelect, onBack }: JeopardyDifficult
             <div className="flex items-center gap-4">
               <div className="text-3xl">🟡</div>
               <div>
-                <h2 className="text-lg font-bold text-yellow-400">Medium</h2>
-                <p className="text-blue-200 text-base">Multiple choice options are from same region</p>
+                <h2 className="text-lg font-bold text-yellow-300">Medium</h2>
+                <p className="text-white text-base">Multiple choice options are from same region</p>
               </div>
             </div>
           </button>
@@ -51,8 +51,8 @@ export function JeopardyDifficultySelect({ onSelect, onBack }: JeopardyDifficult
             <div className="flex items-center gap-4">
               <div className="text-3xl">🔴</div>
               <div>
-                <h2 className="text-lg font-bold text-yellow-400">Hard</h2>
-                <p className="text-blue-200 text-base">Multiple choice options look similar or are spelled similar</p>
+                <h2 className="text-lg font-bold text-yellow-300">Hard</h2>
+                <p className="text-white text-base">Multiple choice options look similar or are spelled similar</p>
               </div>
             </div>
           </button>
@@ -64,8 +64,8 @@ export function JeopardyDifficultySelect({ onSelect, onBack }: JeopardyDifficult
             <div className="flex items-center gap-4">
               <div className="text-3xl">💀</div>
               <div>
-                <h2 className="text-lg font-bold text-yellow-400">Extra Hard</h2>
-                <p className="text-blue-200 text-base">No multiple choice. Must type out each answer</p>
+                <h2 className="text-lg font-bold text-yellow-300">Extra Hard</h2>
+                <p className="text-white text-base">No multiple choice. Must type out each answer</p>
               </div>
             </div>
           </button>
@@ -73,7 +73,7 @@ export function JeopardyDifficultySelect({ onSelect, onBack }: JeopardyDifficult
 
         <button
           onClick={onBack}
-          className="w-full mt-6 py-3 px-6 text-blue-300 font-medium hover:text-white transition-colors"
+          className="w-full mt-6 py-3 px-6 text-blue-100 font-medium hover:text-white transition-colors"
         >
           Back to Menu
         </button>
