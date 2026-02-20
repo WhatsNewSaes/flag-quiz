@@ -4,22 +4,22 @@ import { JeopardyQuestion } from '../components/JeopardyQuestion';
 import { JeopardyDailyDouble } from '../components/JeopardyDailyDouble';
 import { JeopardySummary } from '../components/JeopardySummary';
 import { useJeopardy } from '../hooks/useJeopardy';
-import { JeopardyDifficulty } from '../components/JeopardyDifficultySelect';
+import { JeopardyQuizMode } from '../components/JeopardyDifficultySelect';
 
 interface JeopardyScreenProps {
-  difficulty: JeopardyDifficulty;
+  quizMode: JeopardyQuizMode;
 }
 
-export function JeopardyScreen({ difficulty }: JeopardyScreenProps) {
+export function JeopardyScreen({ quizMode }: JeopardyScreenProps) {
   const jeopardy = useJeopardy();
   const initialized = useRef(false);
 
   useEffect(() => {
     if (!initialized.current) {
-      jeopardy.resetGame(difficulty);
+      jeopardy.resetGame(quizMode);
       initialized.current = true;
     }
-  }, [difficulty]);
+  }, [quizMode]);
 
   const isDailyDouble = jeopardy.selectedCell &&
     jeopardy.dailyDoubleLocation.row === jeopardy.selectedCell.row &&
@@ -75,7 +75,7 @@ export function JeopardyScreen({ difficulty }: JeopardyScreenProps) {
           onClose={jeopardy.closeQuestion}
           isDailyDouble={isDailyDouble || false}
           wager={jeopardy.dailyDoubleWager}
-          gameDifficulty={jeopardy.gameDifficulty}
+          quizMode={jeopardy.quizMode}
         />
       )}
 

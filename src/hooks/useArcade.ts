@@ -104,7 +104,6 @@ export function useArcade() {
 
   const toggleContinent = useCallback((continent: Continent) => {
     setState(prev => {
-      if (prev.phase !== 'lobby') return prev;
       const has = prev.enabledContinents.includes(continent);
       if (has && prev.enabledContinents.length === 1) return prev;
       return {
@@ -118,7 +117,6 @@ export function useArcade() {
 
   const toggleDifficulty = useCallback((difficulty: Difficulty) => {
     setState(prev => {
-      if (prev.phase !== 'lobby') return prev;
       const has = prev.enabledDifficulties.includes(difficulty);
       if (has && prev.enabledDifficulties.length === 1) return prev;
       return {
@@ -131,10 +129,7 @@ export function useArcade() {
   }, []);
 
   const setQuizMode = useCallback((quizMode: QuizMode) => {
-    setState(prev => {
-      if (prev.phase !== 'lobby') return prev;
-      return { ...prev, quizMode };
-    });
+    setState(prev => ({ ...prev, quizMode }));
   }, []);
 
   const startGame = useCallback(() => {

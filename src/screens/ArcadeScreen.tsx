@@ -18,6 +18,7 @@ export function ArcadeScreen({ onBack }: ArcadeScreenProps) {
   const arcade = useArcade();
   const [showCelebration, setShowCelebration] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
+  const [showPlayingOptions, setShowPlayingOptions] = useState(false);
 
   const handleAnswer = useCallback((answer: string | typeof arcade.options[0]) => {
     const isCorrect = arcade.checkAnswer(answer);
@@ -214,12 +215,77 @@ export function ArcadeScreen({ onBack }: ArcadeScreenProps) {
   return (
     <div className="min-h-screen bg-gradient-to-b from-sky-300 to-sky-400 py-6 px-4">
       <div className="max-w-2xl mx-auto">
-        <button
-          onClick={arcade.reset}
-          className="font-body text-sm text-gray-600 hover:text-gray-800 transition-colors flex items-center gap-1 mb-2"
-        >
-          <span>&#8592;</span> Back
-        </button>
+        <div className="flex items-center justify-between mb-2">
+          <button
+            onClick={arcade.reset}
+            className="font-body text-sm text-gray-600 hover:text-gray-800 transition-colors flex items-center gap-1"
+          >
+            <span>&#8592;</span> Back
+          </button>
+          <button
+            onClick={() => setShowPlayingOptions(prev => !prev)}
+            className="font-body text-sm text-gray-600 hover:text-gray-800 transition-colors flex items-center gap-1"
+          >
+            Options <span className={`inline-block transition-transform ${showPlayingOptions ? 'rotate-180' : ''}`}>&#9662;</span>
+          </button>
+        </div>
+
+        {showPlayingOptions && (
+          <div className="relative z-10 mb-3 p-3 bg-white/40 rounded-xl space-y-3">
+            <div>
+              <h3 className="font-retro text-[0.6rem] text-retro-text-secondary mb-2">Quiz Type</h3>
+              <div className="flex gap-2">
+                {([['multiple-choice', 'Name'], ['flag-picker', 'Flag'], ['type-ahead', 'Type']] as const).map(([mode, label]) => {
+                  const isActive = arcade.quizMode === mode;
+                  return (
+                    <button
+                      key={mode}
+                      type="button"
+                      onClick={() => arcade.setQuizMode(mode)}
+                      className={`flex-1 rounded-full py-1.5 px-1 text-center transition-all ${
+                        isActive
+                          ? 'bg-retro-accent text-retro-text ring-2 ring-retro-gold'
+                          : 'bg-white text-retro-text-secondary ring-1 ring-retro-border/20 hover:ring-retro-border/40'
+                      }`}
+                    >
+                      <div className="text-xs font-medium truncate">
+                        {label}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            <div>
+              <h3 className="font-retro text-[0.6rem] text-retro-text-secondary mb-2">Difficulty</h3>
+              <div className="flex gap-2">
+                {([1, 2, 3, 4, 5] as Difficulty[]).map(level => {
+                  const isEnabled = arcade.enabledDifficulties.includes(level);
+                  return (
+                    <button
+                      key={level}
+                      onClick={() => arcade.toggleDifficulty(level)}
+                      className={`flex-1 rounded-full py-1.5 px-1 text-center transition-all ${
+                        isEnabled
+                          ? 'bg-retro-accent text-retro-text ring-2 ring-retro-gold'
+                          : 'bg-white text-retro-text-secondary ring-1 ring-retro-border/20 hover:ring-retro-border/40'
+                      }`}
+                    >
+                      <div className="text-xs font-medium truncate">
+                        {difficultyLabels[level]}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            <ContinentFilter
+              enabledContinents={arcade.enabledContinents}
+              onToggle={arcade.toggleContinent}
+            />
+          </div>
+        )}
+
         {/* Top bar: progress + score */}
         <div className="flex items-center justify-between mb-2">
           <div className="font-body text-sm text-retro-text">
@@ -238,7 +304,7 @@ export function ArcadeScreen({ onBack }: ArcadeScreenProps) {
         </div>
 
         {/* Progress bar */}
-        <div className="w-full h-2 bg-retro-surface rounded-full mb-4 pixel-border overflow-hidden">
+        <div className="w-full h-4 bg-retro-surface rounded-full mb-4 pixel-border overflow-hidden">
           <div
             className="h-full bg-retro-neon-green rounded-full transition-all duration-300"
             style={{ width: `${progress}%` }}

@@ -1,7 +1,7 @@
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { CelebrationTest } from './components/CelebrationTest';
 import { GameModeSelect, GameMode } from './components/GameModeSelect';
-import { JeopardyDifficultySelect, JeopardyDifficulty } from './components/JeopardyDifficultySelect';
+import { JeopardyDifficultySelect, JeopardyQuizMode } from './components/JeopardyDifficultySelect';
 import { ArcadeScreen } from './screens/ArcadeScreen';
 import { AroundTheWorldScreen } from './screens/AroundTheWorldScreen';
 import { JeopardyScreen } from './screens/JeopardyScreen';
@@ -77,8 +77,8 @@ function App() {
   const [, setSelectedCharacter] = useLocalStorage<string>('selected-character', '');
   const [, setFavoriteFlag] = useLocalStorage<string>('favorite-flag', '');
 
-  // Jeopardy difficulty state
-  const [jeopardyDifficulty, setJeopardyDifficulty] = useState<JeopardyDifficulty>('medium');
+  // Jeopardy quiz mode state
+  const [jeopardyQuizMode, setJeopardyQuizMode] = useState<JeopardyQuizMode>('pick-the-name');
 
   // Hidden test page — type "devmode" anywhere to toggle
   const [showTestPage, setShowTestPage] = useState(false);
@@ -400,7 +400,7 @@ function App() {
       <>
         <NavBar onNavigate={handleNavigate} totalStars={journeyProgress.progress.totalStars} unlockedModes={journeyProgress.unlockedModes} variant="dark" />
         <JeopardyDifficultySelect
-          onSelect={(d) => { setJeopardyDifficulty(d); setScreen('jeopardy'); }}
+          onSelect={(mode) => { setJeopardyQuizMode(mode); setScreen('jeopardy'); }}
           onBack={handleBackToModeSelect}
         />
       </>
@@ -420,7 +420,7 @@ function App() {
     return (
       <>
         <NavBar onNavigate={handleNavigate} totalStars={journeyProgress.progress.totalStars} unlockedModes={journeyProgress.unlockedModes} variant="dark" />
-        <JeopardyScreen difficulty={jeopardyDifficulty} />
+        <JeopardyScreen quizMode={jeopardyQuizMode} />
       </>
     );
   }

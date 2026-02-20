@@ -64,6 +64,7 @@ export function TypeAhead({
     } else if (e.key === 'Enter') {
       e.preventDefault();
       if (filteredCountries.length > 0 && highlightedIndex < filteredCountries.length) {
+        setInputValue(filteredCountries[highlightedIndex].name);
         onSubmit(filteredCountries[highlightedIndex].name);
         setIsOpen(false);
       } else if (inputValue.trim()) {
@@ -118,6 +119,7 @@ export function TypeAhead({
             <li
               key={country.code}
               onMouseDown={() => {
+                setInputValue(country.name);
                 onSubmit(country.name);
                 setIsOpen(false);
               }}

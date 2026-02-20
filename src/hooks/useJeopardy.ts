@@ -2,6 +2,7 @@ import { useState, useCallback, useMemo } from 'react';
 import { countries, Country, Continent, Difficulty } from '../data/countries';
 import { shuffle, getRandomElements } from '../utils/shuffle';
 import { getSimilarFlags } from '../data/flagFeatures';
+import { JeopardyQuizMode } from '../components/JeopardyDifficultySelect';
 
 export type JeopardyDifficulty = 'easy' | 'medium' | 'hard' | 'extra-hard';
 
@@ -29,6 +30,7 @@ export interface JeopardyState {
   dailyDoubleWager: number;
   gameOver: boolean;
   gameDifficulty: JeopardyDifficulty;
+  quizMode: JeopardyQuizMode;
 }
 
 const continentOrder: Continent[] = [
@@ -56,7 +58,7 @@ function getRandomCountryForCell(continent: Continent, difficulty: Difficulty): 
   return matching[Math.floor(Math.random() * matching.length)];
 }
 
-function generateBoard(gameDifficulty: JeopardyDifficulty = 'easy'): JeopardyCell[][] {
+function generateBoard(quizMode: JeopardyQuizMode = 'pick-the-name'): JeopardyCell[][] {
   const board: JeopardyCell[][] = [];
 
   for (let row = 0; row < 5; row++) {
@@ -67,10 +69,12 @@ function generateBoard(gameDifficulty: JeopardyDifficulty = 'easy'): JeopardyCel
       const continent = continentOrder[col];
       const country = getRandomCountryForCell(continent, difficulty);
 
-      // Extra-hard mode only allows name-the-flag (show flag, type name)
-      const questionType: QuestionType = gameDifficulty === 'extra-hard'
-        ? 'name-the-flag'
-        : (Math.random() < 0.5 ? 'name-the-flag' : 'pick-the-flag');
+      let questionType: QuestionType;
+      if (quizMode === 'pick-the-name' || quizMode === 'type-ahead') {
+        questionType = 'name-the-flag'; // show flag, pick/type country name
+      } else {
+        questionType = 'pick-the-flag'; // show country name, pick flag
+      }
 
       rowCells.push({
         continent,
@@ -159,7 +163,8 @@ export function useJeopardy() {
       showDailyDouble: false,
       dailyDoubleWager: 0,
       gameOver: false,
-      gameDifficulty: 'easy' as JeopardyDifficulty,
+      gameDifficulty: 'medium' as JeopardyDifficulty,
+      quizMode: 'pick-the-name' as JeopardyQuizMode,
     };
   });
 
@@ -283,9 +288,9 @@ export function useJeopardy() {
     }));
   }, []);
 
-  const resetGame = useCallback((difficulty?: JeopardyDifficulty) => {
-    const newDifficulty = difficulty ?? 'easy';
-    const board = generateBoard(newDifficulty);
+  const resetGame = useCallback((quizMode?: JeopardyQuizMode) => {
+    const mode = quizMode ?? 'pick-the-name';
+    const board = generateBoard(mode);
     const dailyDoubleRow = Math.floor(Math.random() * 5);
     const dailyDoubleCol = Math.floor(Math.random() * 6);
 
@@ -301,7 +306,8 @@ export function useJeopardy() {
       showDailyDouble: false,
       dailyDoubleWager: 0,
       gameOver: false,
-      gameDifficulty: difficulty ?? prev.gameDifficulty,
+      gameDifficulty: 'medium' as JeopardyDifficulty,
+      quizMode: quizMode ?? prev.quizMode,
     }));
   }, []);
 

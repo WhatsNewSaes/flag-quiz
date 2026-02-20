@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef, useMemo } from 'react';
 import { Country, countries } from '../data/countries';
-import { JeopardyCell, JeopardyDifficulty } from '../hooks/useJeopardy';
+import { JeopardyCell } from '../hooks/useJeopardy';
+import { JeopardyQuizMode } from './JeopardyDifficultySelect';
 import { getFlagEmoji } from '../utils/flagEmoji';
 import { playCorrectSound, playIncorrectSound } from '../utils/sounds';
 
@@ -13,7 +14,7 @@ interface JeopardyQuestionProps {
   onClose: () => void;
   isDailyDouble: boolean;
   wager: number;
-  gameDifficulty: JeopardyDifficulty;
+  quizMode: JeopardyQuizMode;
 }
 
 export function JeopardyQuestion({
@@ -25,11 +26,11 @@ export function JeopardyQuestion({
   onClose,
   isDailyDouble,
   wager,
-  gameDifficulty,
+  quizMode,
 }: JeopardyQuestionProps) {
   const isAnswered = answeredCorrectly !== null;
   const valueAtStake = isDailyDouble ? wager : cell.value;
-  const isExtraHard = gameDifficulty === 'extra-hard';
+  const isTypeAhead = quizMode === 'type-ahead';
 
   // Type-ahead state for extra-hard mode
   const [inputValue, setInputValue] = useState('');
@@ -58,10 +59,10 @@ export function JeopardyQuestion({
 
   // Focus input in extra-hard mode
   useEffect(() => {
-    if (isExtraHard && !isAnswered && inputRef.current) {
+    if (isTypeAhead && !isAnswered && inputRef.current) {
       inputRef.current.focus();
     }
-  }, [isExtraHard, isAnswered]);
+  }, [isTypeAhead, isAnswered]);
 
   // Reset input when answered
   useEffect(() => {
@@ -72,7 +73,7 @@ export function JeopardyQuestion({
 
   // Keyboard shortcuts for multiple choice
   useEffect(() => {
-    if (isAnswered || isExtraHard) return;
+    if (isAnswered || isTypeAhead) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
       const key = e.key;
@@ -86,7 +87,7 @@ export function JeopardyQuestion({
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [options, onAnswer, isAnswered, isExtraHard]);
+  }, [options, onAnswer, isAnswered, isTypeAhead]);
 
   // Play sound on answer
   useEffect(() => {
@@ -129,6 +130,7 @@ export function JeopardyQuestion({
 
   // Submit type-ahead answer
   const handleTypeAheadSubmit = (country: Country) => {
+    setInputValue(country.name);
     setIsDropdownOpen(false);
     onAnswer(country);
   };
@@ -152,22 +154,20 @@ export function JeopardyQuestion({
   return (
     <div className="fixed inset-0 bg-[#1E3A8A]/95 flex items-center justify-center p-4 z-50">
       <div className="max-w-lg w-full">
-        {/* Value display */}
-        <div className="text-center mb-6">
-          <span className="text-yellow-300 text-4xl font-bold">
-            ${valueAtStake}
-          </span>
-          {isDailyDouble && (
-            <span className="block text-yellow-300 text-lg mt-1">Daily Double!</span>
-          )}
-        </div>
-
         {/* Question */}
-        <div className="bg-[#2563EB] rounded-2xl p-6 mb-6">
+        <div className="bg-[#2563EB] rounded-2xl px-6 py-2 mb-6">
+          <div className="text-center">
+            <span className="text-yellow-300 text-4xl font-bold">
+              ${valueAtStake}
+            </span>
+            {isDailyDouble && (
+              <span className="block text-yellow-300 text-lg mt-1">Daily Double!</span>
+            )}
+          </div>
           {cell.questionType === 'name-the-flag' ? (
             // Show flag, pick country name
             <div className="text-center">
-              <span className="text-8xl block mb-4">{getFlagEmoji(cell.country.code)}</span>
+              <span className="text-[8rem] sm:text-[14rem] block mb-1">{getFlagEmoji(cell.country.code)}</span>
               <p className="text-white text-lg">What country does this flag belong to?</p>
             </div>
           ) : (
@@ -180,7 +180,7 @@ export function JeopardyQuestion({
         </div>
 
         {/* Answer options */}
-        {isExtraHard ? (
+        {isTypeAhead ? (
           // Type-ahead input for extra-hard mode
           <div className="relative w-full max-w-md mx-auto">
             <input
@@ -235,7 +235,7 @@ export function JeopardyQuestion({
         ) : (
           // Multiple choice for other difficulties
           <div className="keyboard-case w-full max-w-lg mx-auto">
-            <div className="grid grid-cols-1 sm:grid-cols-2" style={{ gap: '0.3rem' }}>
+            <div className="grid grid-cols-2" style={{ gap: '0.3rem' }}>
               {options.map((option, index) => (
                 <button
                   key={option.code}
