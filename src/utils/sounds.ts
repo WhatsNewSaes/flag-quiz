@@ -1,5 +1,7 @@
 // Simple sound effects using Web Audio API
 
+import { hapticCorrect, hapticIncorrect, hapticTap } from './haptics';
+
 let audioContext: AudioContext | null = null;
 
 function getAudioContext(): AudioContext {
@@ -10,6 +12,7 @@ function getAudioContext(): AudioContext {
 }
 
 export function playCorrectSound(): void {
+  hapticCorrect();
   try {
     const ctx = getAudioContext();
     const oscillator = ctx.createOscillator();
@@ -36,6 +39,7 @@ export function playCorrectSound(): void {
 }
 
 export function playIncorrectSound(): void {
+  hapticIncorrect();
   try {
     const ctx = getAudioContext();
     const oscillator = ctx.createOscillator();
@@ -77,6 +81,7 @@ function playSquareTone(frequency: number, duration: number, startTime: number, 
 }
 
 export function playLevelCompleteSound(): void {
+  hapticCorrect();
   try {
     const ctx = getAudioContext();
     const t = ctx.currentTime;
@@ -88,6 +93,7 @@ export function playLevelCompleteSound(): void {
 }
 
 export function playStarEarnedSound(): void {
+  hapticCorrect();
   try {
     const ctx = getAudioContext();
     const t = ctx.currentTime;
@@ -98,6 +104,7 @@ export function playStarEarnedSound(): void {
 }
 
 export function playWorldUnlockSound(): void {
+  hapticCorrect();
   try {
     const ctx = getAudioContext();
     const t = ctx.currentTime;
@@ -110,6 +117,7 @@ export function playWorldUnlockSound(): void {
 }
 
 export function playAchievementSound(): void {
+  hapticCorrect();
   try {
     const ctx = getAudioContext();
     const t = ctx.currentTime;
@@ -121,6 +129,7 @@ export function playAchievementSound(): void {
 }
 
 export function playMenuSelectSound(): void {
+  hapticTap();
   try {
     const ctx = getAudioContext();
     const t = ctx.currentTime;
