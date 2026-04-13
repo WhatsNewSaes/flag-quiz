@@ -18,7 +18,7 @@ export function StarDisplay({ stars, maxStars = 3, size = 'md', animated = false
         <span
           key={i}
           className={`${
-            i < stars ? 'text-retro-gold opacity-100' : 'text-gray-500 opacity-50'
+            i < stars ? 'text-retro-gold' : 'text-retro-border/40'
           } ${animated && i < stars ? 'animate-bounce-in' : ''}`}
           style={animated && i < stars ? { animationDelay: `${i * 200}ms` } : undefined}
         >

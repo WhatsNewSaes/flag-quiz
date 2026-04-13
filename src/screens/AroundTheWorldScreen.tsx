@@ -144,7 +144,7 @@ export function AroundTheWorldScreen({ onBack }: AroundTheWorldScreenProps) {
       <div className="max-w-6xl mx-auto px-2 sm:px-0 w-full">
         <button
           onClick={atw.backToLobby}
-          className="font-body text-sm text-gray-600 hover:text-gray-800 transition-colors flex items-center gap-1 mb-2 px-2 sm:px-0"
+          className="font-body text-sm text-retro-text-secondary hover:text-retro-text transition-colors flex items-center gap-1 mb-2 px-2 sm:px-0"
         >
           <span>&#8592;</span> Back
         </button>
@@ -158,7 +158,7 @@ export function AroundTheWorldScreen({ onBack }: AroundTheWorldScreenProps) {
           </div>
           <div className="lg:w-72 flex flex-col min-w-0 px-2 sm:px-0">
             <div className="text-center lg:text-left mb-2 sm:mb-4">
-              <p className="text-base sm:text-lg text-gray-700">
+              <p className="text-base sm:text-lg text-retro-text">
                 Which country is highlighted?
               </p>
             </div>
@@ -172,7 +172,7 @@ export function AroundTheWorldScreen({ onBack }: AroundTheWorldScreenProps) {
                 disabled={isAnswered}
               />
             </div>
-            <div className="mt-2 sm:mt-4 text-center lg:text-left text-xs sm:text-sm text-gray-700">
+            <div className="mt-2 sm:mt-4 text-center lg:text-left text-xs sm:text-sm text-retro-text">
               {atw.totalCorrect}/{atw.totalAnswered} correct · {atw.totalAnswered} of {atw.totalCountries} explored
             </div>
           </div>

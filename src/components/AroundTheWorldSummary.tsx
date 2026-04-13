@@ -43,7 +43,7 @@ export function AroundTheWorldSummary({
         className="retro-window max-w-md w-full max-h-[90vh]"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="retro-window-title bg-teal-600 text-white flex items-center justify-between">
+        <div className="retro-window-title bg-teal-700 text-white flex items-center justify-between">
           <span>✦</span><span>Your Progress</span><span>✦</span>
         </div>
         <div className="retro-window-body overflow-y-auto max-h-[80vh]">
@@ -57,7 +57,7 @@ export function AroundTheWorldSummary({
           <div className="text-4xl font-bold text-white mb-1">
             {totalCorrect}/{totalAnswered}
           </div>
-          <div className="text-yellow-100">
+          <div className="text-white">
             {overallPercentage}% correct
           </div>
         </div>
@@ -80,11 +80,11 @@ export function AroundTheWorldSummary({
             return (
               <div key={continent}>
                 <div className="flex justify-between text-sm mb-1">
-                  <span className="font-medium text-gray-700 flex items-center gap-2">
+                  <span className="font-medium text-retro-text flex items-center gap-2">
                     <span>{continentEmojis[continent]}</span>
                     {continent}
                   </span>
-                  <span className="text-gray-600">
+                  <span className="text-retro-text-secondary">
                     {stats.total > 0 ? `${stats.correct}/${stats.total} (${percentage}%)` : '-'}
                   </span>
                 </div>

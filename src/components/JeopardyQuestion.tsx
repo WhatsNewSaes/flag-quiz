@@ -157,11 +157,11 @@ export function JeopardyQuestion({
         {/* Question */}
         <div className="bg-[#2563EB] rounded-2xl px-6 py-2 mb-6">
           <div className="text-center">
-            <span className="text-yellow-300 text-4xl font-bold">
+            <span className="text-white text-4xl font-bold">
               ${valueAtStake}
             </span>
             {isDailyDouble && (
-              <span className="block text-yellow-300 text-lg mt-1">Daily Double!</span>
+              <span className="block text-white text-lg mt-1">Daily Double!</span>
             )}
           </div>
           {cell.questionType === 'name-the-flag' ? (
@@ -227,7 +227,7 @@ export function JeopardyQuestion({
 
             {/* Show correct answer after wrong guess */}
             {answeredCorrectly === false && (
-              <p className="mt-3 text-center text-red-300 font-medium">
+              <p className="mt-3 text-center text-red-200 font-medium">
                 Correct answer: {cell.country.name}
               </p>
             )}

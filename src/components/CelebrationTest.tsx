@@ -74,7 +74,6 @@ export function CelebrationTest({ onBack, onNavigate }: CelebrationTestProps) {
         onBackToMap={() => setDemoScreen('menu')}
         hasNextLevel={true}
         newAchievementIds={[]}
-        newlyUnlockedModes={[]}
         newlyUnlockedCharacters={[]}
         newlyUnlockedWorlds={[]}
       />
@@ -96,7 +95,6 @@ export function CelebrationTest({ onBack, onNavigate }: CelebrationTestProps) {
         onBackToMap={() => setDemoScreen('menu')}
         hasNextLevel={true}
         newAchievementIds={['first-steps', 'perfect-score']}
-        newlyUnlockedModes={[]}
         newlyUnlockedCharacters={[]}
         newlyUnlockedWorlds={[]}
       />
@@ -118,7 +116,6 @@ export function CelebrationTest({ onBack, onNavigate }: CelebrationTestProps) {
         onBackToMap={() => setDemoScreen('menu')}
         hasNextLevel={true}
         newAchievementIds={[]}
-        newlyUnlockedModes={['free-play']}
         newlyUnlockedCharacters={['kitsune']}
         newlyUnlockedWorlds={[0]}
       />
@@ -140,7 +137,6 @@ export function CelebrationTest({ onBack, onNavigate }: CelebrationTestProps) {
         onBackToMap={() => setDemoScreen('menu')}
         hasNextLevel={true}
         newAchievementIds={[]}
-        newlyUnlockedModes={[]}
         newlyUnlockedCharacters={[]}
         newlyUnlockedWorlds={[]}
       />
@@ -162,7 +158,6 @@ export function CelebrationTest({ onBack, onNavigate }: CelebrationTestProps) {
         onBackToMap={() => setDemoScreen('menu')}
         hasNextLevel={true}
         newAchievementIds={[]}
-        newlyUnlockedModes={[]}
         newlyUnlockedCharacters={[]}
         newlyUnlockedWorlds={[]}
       />
@@ -252,10 +247,10 @@ export function CelebrationTest({ onBack, onNavigate }: CelebrationTestProps) {
             className="retro-btn w-full py-4 px-4 bg-retro-surface text-left"
           >
             <div className="font-retro text-[0.55rem] text-retro-neon-green mb-1">
-              Level + Achievement + Mode Unlock
+              Level + World + Character Unlock
             </div>
             <div className="font-body text-retro-text-secondary text-xs">
-              Completes Green Meadows — "New World Unlocked" card with Sandy Shores preview, then "Arcade Mode" unlock card, then summary.
+              Completes Green Meadows — "New World Unlocked" card with Sandy Shores preview, then character unlock card, then summary.
             </div>
           </button>
 
@@ -275,7 +270,7 @@ export function CelebrationTest({ onBack, onNavigate }: CelebrationTestProps) {
             onClick={() => setDemoScreen('level-barely-failed')}
             className="retro-btn w-full py-4 px-4 bg-retro-surface text-left"
           >
-            <div className="font-retro text-[0.55rem] text-orange-500 mb-1">
+            <div className="font-retro text-[0.55rem] text-orange-700 mb-1">
               Level Barely Failed (60%)
             </div>
             <div className="font-body text-retro-text-secondary text-xs">
@@ -325,10 +320,10 @@ export function CelebrationTest({ onBack, onNavigate }: CelebrationTestProps) {
             <div className="grid grid-cols-2 gap-2">
               {[
                 { screen: 'arcade', label: 'Arcade Mode', color: 'bg-retro-accent text-retro-text' },
-                { screen: 'around-the-world', label: 'Around the World', color: 'bg-teal-600 text-white' },
+                { screen: 'around-the-world', label: 'Around the World', color: 'bg-teal-700 text-white' },
                 { screen: 'jeopardy-difficulty-select', label: 'Flag Jeopardy', color: 'bg-retro-neon-blue text-white' },
                 { screen: 'presentation', label: 'Practice Mode', color: 'bg-purple-600 text-white' },
-                { screen: 'flag-runner', label: 'Flag Runner', color: 'bg-emerald-500 text-white' },
+                { screen: 'flag-runner', label: 'Flag Runner', color: 'bg-emerald-700 text-white' },
                 { screen: 'journey-map', label: 'Journey', color: 'bg-retro-neon-green text-white' },
               ].map(({ screen, label, color }) => (
                 <button

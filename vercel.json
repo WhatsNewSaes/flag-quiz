@@ -1,0 +1,24 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [
+    { "source": "/play/:path*", "destination": "/index.html" },
+    { "source": "/quiz/:path*", "destination": "/index.html" },
+    { "source": "/achievements", "destination": "/index.html" },
+    { "source": "/characters", "destination": "/index.html" }
+  ],
+  "headers": [
+    {
+      "source": "/flags/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=86400, s-maxage=86400" }
+      ]
+    },
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    }
+  ]
+}

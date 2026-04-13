@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { BrowserRouter, MemoryRouter } from 'react-router-dom';
 import { Analytics } from '@vercel/analytics/react';
 import { Capacitor } from '@capacitor/core';
 import { StatusBar, Style } from '@capacitor/status-bar';
@@ -14,14 +15,20 @@ if (Capacitor.isNativePlatform()) {
 }
 
 const isWeb = Capacitor.getPlatform() === 'web';
+const isNative = Capacitor.isNativePlatform();
+
+const routerProps = isNative ? { initialEntries: ['/play'] } : {};
+const Router = isNative ? MemoryRouter : BrowserRouter;
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <AuthProvider>
-      <SyncProvider>
-        <App />
-      </SyncProvider>
-    </AuthProvider>
-    {isWeb && <Analytics />}
+    <Router {...routerProps}>
+      <AuthProvider>
+        <SyncProvider>
+          <App />
+        </SyncProvider>
+      </AuthProvider>
+      {isWeb && <Analytics />}
+    </Router>
   </React.StrictMode>,
 );

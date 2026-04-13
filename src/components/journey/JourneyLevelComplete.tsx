@@ -2,11 +2,6 @@ import { JourneyLevel, REGION_THEMES } from '../../data/journeyLevels';
 import { ACHIEVEMENTS } from '../../data/achievements';
 import { CHARACTER_MAP } from '../../data/characters';
 
-import ArcadeIcon from '../../icons/entertainment-events-hobbies-game-machines-arcade-1--Streamline-Pixel.svg';
-import GlobeIcon from '../../icons/ecology-global-warming-globe--Streamline-Pixel.svg';
-import DiceIcon from '../../icons/entertainment-events-hobbies-board-game-dice--Streamline-Pixel.svg';
-import FlagRunnerIcon from '../../icons/social-rewards-flag--Streamline-Pixel.svg';
-
 import kitsuneSouth from '../../images/character/kitsune-south.png';
 import krakenSouth from '../../images/character/kraken-south.png';
 import dragonSouth from '../../images/character/dragon-south.png';
@@ -35,13 +30,6 @@ const CHARACTER_THUMBNAILS: Record<string, string> = {
   phoenix: phoenixSouth,
 };
 
-const MODE_DISPLAY: Record<string, { icon: string; title: string; description: string }> = {
-  'free-play': { icon: ArcadeIcon, title: 'Arcade Mode', description: 'Test your flag knowledge! Score points with streaks and difficulty bonuses.' },
-  jeopardy: { icon: DiceIcon, title: 'Flag Jeopardy', description: 'Jeopardy-style board game. Pick by continent and difficulty. Daily Doubles included!' },
-  'flag-runner': { icon: FlagRunnerIcon, title: 'Flag Runner', description: 'Dodge wrong flags, collect correct ones! How long can you survive?' },
-  'around-the-world': { icon: GlobeIcon, title: 'Around the World', description: 'Identify highlighted countries on a world map. Fill in the globe!' },
-};
-
 interface JourneyLevelCompleteProps {
   level: JourneyLevel;
   correct: number;
@@ -55,7 +43,6 @@ interface JourneyLevelCompleteProps {
   onBackToMap: () => void;
   hasNextLevel: boolean;
   newAchievementIds?: string[];
-  newlyUnlockedModes?: string[];
   newlyUnlockedCharacters?: string[];
   newlyUnlockedWorlds?: number[];
 }
@@ -71,7 +58,6 @@ export function JourneyLevelComplete({
   onBackToMap,
   hasNextLevel,
   newAchievementIds = [],
-  newlyUnlockedModes = [],
   newlyUnlockedCharacters = [],
   newlyUnlockedWorlds = [],
 }: JourneyLevelCompleteProps) {
@@ -247,35 +233,6 @@ export function JourneyLevelComplete({
                         </div>
                         <div className="font-body text-retro-text-secondary text-xs">
                           {character.storyText}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-
-            {/* Game modes unlocked */}
-            {newlyUnlockedModes.length > 0 && (
-              <div className="mb-4 space-y-2">
-                <div className="font-retro text-[0.6rem] text-retro-neon-green">
-                  New Game Mode{newlyUnlockedModes.length > 1 ? 's' : ''} Unlocked!
-                </div>
-                {newlyUnlockedModes.map(modeId => {
-                  const mode = MODE_DISPLAY[modeId];
-                  if (!mode) return null;
-                  return (
-                    <div
-                      key={modeId}
-                      className="flex items-center gap-3 bg-retro-neon-green/10 border-2 border-retro-neon-green/40 rounded-lg px-3 py-2 animate-bounce-in"
-                    >
-                      <img src={mode.icon} alt="" className="w-8 h-8" />
-                      <div className="text-left">
-                        <div className="font-body text-retro-text text-sm font-bold">
-                          {mode.title}
-                        </div>
-                        <div className="font-body text-retro-text-secondary text-xs">
-                          {mode.description}
                         </div>
                       </div>
                     </div>

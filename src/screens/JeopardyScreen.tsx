@@ -29,11 +29,11 @@ export function JeopardyScreen({ quizMode }: JeopardyScreenProps) {
     <div className="min-h-screen bg-[#1E3A8A] py-4 px-4">
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center justify-between mb-4">
-          <h1 className="text-xl sm:text-2xl font-bold text-yellow-300">
+          <h1 className="text-xl sm:text-2xl font-bold text-white">
             Flag Jeopardy
           </h1>
           <div className="flex items-center gap-4">
-            <span className={`text-2xl font-bold ${jeopardy.score >= 0 ? 'text-yellow-300' : 'text-red-400'}`}>
+            <span className={`text-2xl font-bold ${jeopardy.score >= 0 ? 'text-white' : 'text-red-400'}`}>
               ${jeopardy.score.toLocaleString()}
             </span>
             <button
@@ -50,7 +50,7 @@ export function JeopardyScreen({ quizMode }: JeopardyScreenProps) {
           onSelectCell={jeopardy.selectCell}
         />
 
-        <div className="mt-4 text-center text-sm text-blue-100">
+        <div className="mt-4 text-center text-sm text-blue-50">
           {jeopardy.remainingCells} questions remaining
         </div>
       </div>

@@ -13,7 +13,7 @@ export function JeopardyDifficultySelect({ onSelect, onBack }: JeopardyQuizModeS
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
           <div className="text-5xl mb-4">🎰</div>
-          <h1 className="text-3xl font-bold text-yellow-300 mb-2">Flag Jeopardy</h1>
+          <h1 className="text-3xl font-bold text-white mb-2">Flag Jeopardy</h1>
           <p className="text-white">Choose your quiz mode</p>
         </div>
 
@@ -25,7 +25,7 @@ export function JeopardyDifficultySelect({ onSelect, onBack }: JeopardyQuizModeS
             <div className="flex items-center gap-4">
               <div className="text-3xl">🏳️</div>
               <div>
-                <h2 className="text-lg font-bold text-yellow-300">Pick the Name</h2>
+                <h2 className="text-lg font-bold text-white">Pick the Name</h2>
                 <p className="text-white text-base">See a flag, pick the country name</p>
               </div>
             </div>
@@ -38,7 +38,7 @@ export function JeopardyDifficultySelect({ onSelect, onBack }: JeopardyQuizModeS
             <div className="flex items-center gap-4">
               <div className="text-3xl">🌍</div>
               <div>
-                <h2 className="text-lg font-bold text-yellow-300">Pick the Flag</h2>
+                <h2 className="text-lg font-bold text-white">Pick the Flag</h2>
                 <p className="text-white text-base">See a country name, pick the flag</p>
               </div>
             </div>
@@ -51,7 +51,7 @@ export function JeopardyDifficultySelect({ onSelect, onBack }: JeopardyQuizModeS
             <div className="flex items-center gap-4">
               <div className="text-3xl">⌨️</div>
               <div>
-                <h2 className="text-lg font-bold text-yellow-300">Type Answer</h2>
+                <h2 className="text-lg font-bold text-white">Type Answer</h2>
                 <p className="text-white text-base">See a flag, type the country name</p>
               </div>
             </div>
@@ -60,7 +60,7 @@ export function JeopardyDifficultySelect({ onSelect, onBack }: JeopardyQuizModeS
 
         <button
           onClick={onBack}
-          className="w-full mt-6 py-3 px-6 text-blue-100 font-medium hover:text-white transition-colors"
+          className="w-full mt-6 py-3 px-6 text-blue-50 font-medium hover:text-white transition-colors"
         >
           Back to Menu
         </button>

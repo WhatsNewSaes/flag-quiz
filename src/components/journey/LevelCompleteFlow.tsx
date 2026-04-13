@@ -20,12 +20,6 @@ const WORLD_IMAGES: string[] = [
   volcanicPeakImg,
 ];
 
-// Mode icons
-import ArcadeIcon from '../../icons/entertainment-events-hobbies-game-machines-arcade-1--Streamline-Pixel.svg';
-import GlobeIcon from '../../icons/ecology-global-warming-globe--Streamline-Pixel.svg';
-import DiceIcon from '../../icons/entertainment-events-hobbies-board-game-dice--Streamline-Pixel.svg';
-import FlagRunnerIcon from '../../icons/social-rewards-flag--Streamline-Pixel.svg';
-
 // Character thumbnails for unlock cards
 import kitsuneSouth from '../../images/character/kitsune-south.png';
 import krakenSouth from '../../images/character/kraken-south.png';
@@ -41,40 +35,6 @@ const CHARACTER_THUMBNAILS: Record<string, string> = {
   phoenix: phoenixSouth,
 };
 
-interface ModeInfo {
-  id: string;
-  icon: string;
-  title: string;
-  description: string;
-}
-
-const MODE_INFO: Record<string, ModeInfo> = {
-  'free-play': {
-    id: 'free-play',
-    icon: ArcadeIcon,
-    title: 'Arcade Mode',
-    description: 'Test your flag knowledge! Score points with streaks and difficulty bonuses.',
-  },
-  jeopardy: {
-    id: 'jeopardy',
-    icon: DiceIcon,
-    title: 'Flag Jeopardy',
-    description: 'Jeopardy-style board game. Pick by continent and difficulty. Daily Doubles included!',
-  },
-  'flag-runner': {
-    id: 'flag-runner',
-    icon: FlagRunnerIcon,
-    title: 'Flag Runner',
-    description: 'Dodge wrong flags, collect correct ones! How long can you survive?',
-  },
-  'around-the-world': {
-    id: 'around-the-world',
-    icon: GlobeIcon,
-    title: 'Around the World',
-    description: 'Identify highlighted countries on a world map. Fill in the globe!',
-  },
-};
-
 interface LevelCompleteFlowProps {
   level: JourneyLevel;
   correct: number;
@@ -88,7 +48,6 @@ interface LevelCompleteFlowProps {
   onBackToMap: () => void;
   hasNextLevel: boolean;
   newAchievementIds: string[];
-  newlyUnlockedModes: string[];
   newlyUnlockedCharacters: string[];
   newlyUnlockedWorlds: number[];
 }
@@ -98,7 +57,6 @@ type CardType =
   | { kind: 'world-unlock'; nextRegionIndex: number }
   | { kind: 'journey-complete' }
   | { kind: 'character-unlock'; characterKey: string }
-  | { kind: 'mode-unlock'; modeId: string }
   | { kind: 'summary' };
 
 export function LevelCompleteFlow({
@@ -114,7 +72,6 @@ export function LevelCompleteFlow({
   onBackToMap,
   hasNextLevel,
   newAchievementIds,
-  newlyUnlockedModes,
   newlyUnlockedCharacters,
   newlyUnlockedWorlds,
 }: LevelCompleteFlowProps) {
@@ -137,9 +94,6 @@ export function LevelCompleteFlow({
   for (const charKey of newlyUnlockedCharacters) {
     cards.push({ kind: 'character-unlock', characterKey: charKey });
   }
-  for (const modeId of newlyUnlockedModes) {
-    cards.push({ kind: 'mode-unlock', modeId });
-  }
   cards.push({ kind: 'summary' });
 
   // If only the summary card, render JourneyLevelComplete directly
@@ -158,7 +112,6 @@ export function LevelCompleteFlow({
         onBackToMap={onBackToMap}
         hasNextLevel={hasNextLevel}
         newAchievementIds={newAchievementIds}
-        newlyUnlockedModes={newlyUnlockedModes}
         newlyUnlockedCharacters={newlyUnlockedCharacters}
         newlyUnlockedWorlds={newlyUnlockedWorlds}
       />
@@ -180,7 +133,6 @@ export function LevelCompleteFlow({
       onBackToMap={onBackToMap}
       hasNextLevel={hasNextLevel}
       newAchievementIds={newAchievementIds}
-      newlyUnlockedModes={newlyUnlockedModes}
       newlyUnlockedCharacters={newlyUnlockedCharacters}
       newlyUnlockedWorlds={newlyUnlockedWorlds}
     />
@@ -201,7 +153,6 @@ interface CardFlowProps {
   onBackToMap: () => void;
   hasNextLevel: boolean;
   newAchievementIds: string[];
-  newlyUnlockedModes: string[];
   newlyUnlockedCharacters: string[];
   newlyUnlockedWorlds: number[];
 }
@@ -220,7 +171,6 @@ function CardFlow({
   onBackToMap,
   hasNextLevel,
   newAchievementIds,
-  newlyUnlockedModes,
   newlyUnlockedCharacters,
   newlyUnlockedWorlds,
 }: CardFlowProps) {
@@ -242,7 +192,7 @@ function CardFlow({
   useEffect(() => {
     if (currentCard.kind === 'achievement' || currentCard.kind === 'character-unlock') {
       playAchievementSound();
-    } else if (currentCard.kind === 'mode-unlock' || currentCard.kind === 'world-unlock' || currentCard.kind === 'journey-complete') {
+    } else if (currentCard.kind === 'world-unlock' || currentCard.kind === 'journey-complete') {
       playLevelCompleteSound();
     }
   }, [currentIndex, currentCard.kind]);
@@ -263,7 +213,6 @@ function CardFlow({
         onBackToMap={onBackToMap}
         hasNextLevel={hasNextLevel}
         newAchievementIds={newAchievementIds}
-        newlyUnlockedModes={newlyUnlockedModes}
         newlyUnlockedCharacters={newlyUnlockedCharacters}
         newlyUnlockedWorlds={newlyUnlockedWorlds}
       />
@@ -296,10 +245,6 @@ function CardFlow({
           {currentCard.kind === 'character-unlock' && (
             <CharacterUnlockCard characterKey={currentCard.characterKey} />
           )}
-          {currentCard.kind === 'mode-unlock' && (
-            <ModeUnlockCard modeId={currentCard.modeId} />
-          )}
-
           {/* Next button */}
           <button
             onClick={advance}
@@ -427,24 +372,3 @@ function CharacterUnlockCard({ characterKey }: { characterKey: string }) {
   );
 }
 
-function ModeUnlockCard({ modeId }: { modeId: string }) {
-  const mode = MODE_INFO[modeId];
-  if (!mode) return null;
-
-  return (
-    <>
-      <div className="font-retro text-[1.4rem] text-retro-neon-green mb-4 leading-relaxed">
-        New Game Mode Unlocked!
-      </div>
-      <div className="flex justify-center mb-4">
-        <img src={mode.icon} alt="" className="w-14 h-14" />
-      </div>
-      <div className="font-retro text-sm text-retro-text mb-2">
-        {mode.title}
-      </div>
-      <div className="font-body text-retro-text-secondary text-sm">
-        {mode.description}
-      </div>
-    </>
-  );
-}

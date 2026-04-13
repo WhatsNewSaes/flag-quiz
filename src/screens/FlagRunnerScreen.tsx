@@ -249,7 +249,7 @@ export function FlagRunnerScreen({ onBack }: FlagRunnerScreenProps) {
         {/* Country prompt */}
         {game.phase === 'playing' && game.currentCountry && (
           <div className="retro-window">
-            <div className="retro-window-title bg-emerald-500 text-white text-center text-[10px]">
+            <div className="retro-window-title bg-emerald-700 text-white text-center text-[10px]">
               FIND THE FLAG OF
             </div>
             <div className="retro-window-body py-2 text-center">

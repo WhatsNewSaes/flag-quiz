@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { countries, Country, Continent, continents, Difficulty, difficultyLabels } from '../data/countries';
 import { shuffle, getRandomElements } from '../utils/shuffle';
 import { QuizMode } from './useQuiz';
@@ -74,10 +74,15 @@ const emptyDifficultyStats: Record<Difficulty, DifficultyStats> = {
   5: { correct: 0, total: 0 },
 };
 
-export function useArcade() {
+export interface UseArcadeOptions {
+  initialContinents?: Continent[];
+  autoStart?: boolean;
+}
+
+export function useArcade(options?: UseArcadeOptions) {
   const [state, setState] = useState<ArcadeState>({
     phase: 'lobby',
-    enabledContinents: [...continents],
+    enabledContinents: options?.initialContinents ?? [...continents],
     enabledDifficulties: [1, 2, 3, 4, 5],
     quizMode: 'multiple-choice',
     flags: [],
@@ -162,6 +167,15 @@ export function useArcade() {
       },
     }));
   }, [state.enabledContinents, state.enabledDifficulties]);
+
+  // Auto-start on mount when autoStart option is set
+  const autoStarted = useRef(false);
+  useEffect(() => {
+    if (options?.autoStart && !autoStarted.current) {
+      autoStarted.current = true;
+      startGame();
+    }
+  }, [options?.autoStart, startGame]);
 
   const checkAnswer = useCallback((answer: Country | string): boolean => {
     const normalizeString = (s: string) => s.toLowerCase().trim();

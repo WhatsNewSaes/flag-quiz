@@ -32,7 +32,7 @@ export function AchievementsPage({ unlockedAchievements }: AchievementsPageProps
               <div
                 key={def.id}
                 className={`pixel-border rounded-lg p-4 ${
-                  unlocked ? 'bg-retro-surface' : 'bg-gray-200 opacity-60'
+                  unlocked ? 'bg-retro-surface' : 'bg-gray-300'
                 }`}
               >
                 <div className="flex items-start gap-3">

@@ -4,7 +4,7 @@ interface StreakCounterProps {
 
 export function StreakCounter({ streak }: StreakCounterProps) {
   return (
-    <div className="flex items-center gap-2 bg-gradient-to-r from-amber-400 to-orange-500 text-white px-4 py-2 rounded-full shadow-lg">
+    <div className="flex items-center gap-2 bg-gradient-to-r from-amber-600 to-orange-700 text-white px-4 py-2 rounded-full shadow-lg">
       <span className="text-xl">🔥</span>
       <span
         key={streak}

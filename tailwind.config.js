@@ -20,12 +20,12 @@ export default {
         'retro-bg': '#7EC8E3',
         'retro-surface': '#FFF8E7',
         'retro-accent': '#FFD93D',
-        'retro-gold': '#B07D08',
-        'retro-neon-green': '#16A34A',
-        'retro-neon-red': '#EF4444',
-        'retro-neon-blue': '#3B82F6',
-        'retro-neon-orange': '#F59E0B',
-        'retro-neon-purple': '#8B5CF6',
+        'retro-gold': '#946A08',
+        'retro-neon-green': '#15803D',
+        'retro-neon-red': '#DC2626',
+        'retro-neon-blue': '#2563EB',
+        'retro-neon-orange': '#B45309',
+        'retro-neon-purple': '#7C3AED',
         'retro-border': '#2D2D2D',
         'retro-text': '#2D2D2D',
         'retro-text-secondary': '#1F3A4D',
@@ -46,6 +46,7 @@ export default {
         'card-enter': 'cardEnter 0.4s ease-out forwards',
         'card-exit': 'cardExit 0.3s ease-in forwards',
         'fade-in': 'fadeIn 1.5s ease-in both',
+        'marquee': 'marquee 30s linear infinite',
       },
       keyframes: {
         nodePulse: {
@@ -93,6 +94,10 @@ export default {
         fadeIn: {
           '0%': { opacity: '0' },
           '100%': { opacity: '1' },
+        },
+        marquee: {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-50%)' },
         },
       },
     },

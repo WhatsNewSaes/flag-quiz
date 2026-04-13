@@ -51,8 +51,8 @@ export function PresentationScreen() {
     return (
       <div className="min-h-screen bg-gradient-to-b from-sky-300 to-sky-400 flex items-center justify-center p-4">
         <div className="text-center">
-          <p className="text-xl text-gray-700 mb-4">No countries available!</p>
-          <p className="text-gray-700 mb-4">Please adjust your filters using the settings button.</p>
+          <p className="text-xl text-retro-text-secondary mb-4">No countries available!</p>
+          <p className="text-retro-text-secondary mb-4">Please adjust your filters using the settings button.</p>
           <button
             onClick={() => setShowSettings(true)}
             className="px-4 py-2 bg-retro-neon-blue text-white rounded-lg hover:bg-blue-600"
@@ -157,11 +157,11 @@ export function PresentationScreen() {
               <span
                 className={`mb-4 px-3 py-1 rounded-full text-xs font-medium ${
                   {
-                    1: 'bg-green-100 text-green-700',
-                    2: 'bg-blue-100 text-blue-700',
+                    1: 'bg-green-100 text-green-800',
+                    2: 'bg-blue-100 text-blue-800',
                     3: 'bg-yellow-100 text-yellow-800',
                     4: 'bg-orange-100 text-orange-800',
-                    5: 'bg-red-100 text-red-700',
+                    5: 'bg-red-100 text-red-800',
                   }[currentCountry.difficulty]
                 }`}
               >
@@ -172,7 +172,7 @@ export function PresentationScreen() {
               </div>
               <div className="h-[50px] flex items-center justify-center mt-4">
                 {presentation.revealed ? (
-                  <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 animate-bounce-in">
+                  <h2 className="text-2xl sm:text-3xl font-bold text-retro-text animate-bounce-in">
                     {currentCountry.name}
                   </h2>
                 ) : (
@@ -185,17 +185,17 @@ export function PresentationScreen() {
               <span
                 className={`mb-4 px-3 py-1 rounded-full text-xs font-medium ${
                   {
-                    1: 'bg-green-100 text-green-700',
-                    2: 'bg-blue-100 text-blue-700',
+                    1: 'bg-green-100 text-green-800',
+                    2: 'bg-blue-100 text-blue-800',
                     3: 'bg-yellow-100 text-yellow-800',
                     4: 'bg-orange-100 text-orange-800',
-                    5: 'bg-red-100 text-red-700',
+                    5: 'bg-red-100 text-red-800',
                   }[currentCountry.difficulty]
                 }`}
               >
                 {difficultyLabels[currentCountry.difficulty]}
               </span>
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4">
+              <h2 className="text-2xl sm:text-3xl font-bold text-retro-text mb-4">
                 {currentCountry.name}
               </h2>
               <div className="text-[120px] sm:text-[160px] leading-none">

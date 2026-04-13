@@ -220,23 +220,43 @@ export const flagFeatures: Record<string, FlagFeatures> = {
   VU: { colors: ['red', 'green', 'black', 'yellow'], pattern: 'complex' },
 };
 
-// Helper function to find similar flags
+// Helper function to find similar flags, scored by visual similarity.
+// Pattern is the #1 driver, then color count similarity, then color overlap.
 export function getSimilarFlags(countryCode: string, allCountryCodes: string[]): string[] {
-  const targetFeatures = flagFeatures[countryCode];
-  if (!targetFeatures) return [];
+  const target = flagFeatures[countryCode];
+  if (!target) return [];
 
-  return allCountryCodes.filter(code => {
-    if (code === countryCode) return false;
-    const features = flagFeatures[code];
-    if (!features) return false;
+  const isCatchAll = target.pattern === 'solid' || target.pattern === 'complex';
 
-    // Same pattern is required
-    if (features.pattern !== targetFeatures.pattern) return false;
+  return allCountryCodes
+    .filter(code => code !== countryCode && flagFeatures[code])
+    .map(code => {
+      const f = flagFeatures[code]!;
 
-    // Count shared colors
-    const sharedColors = targetFeatures.colors.filter(c => features.colors.includes(c));
+      // Pattern similarity (most important — 45% of score)
+      let patternScore = 0;
+      if (f.pattern === target.pattern) {
+        patternScore = isCatchAll ? 0.4 : 1.0;
+      } else if (
+        (f.pattern === 'horizontal-stripes' && target.pattern === 'vertical-stripes') ||
+        (f.pattern === 'vertical-stripes' && target.pattern === 'horizontal-stripes')
+      ) {
+        patternScore = 0.8;
+      }
 
-    // Need at least 2 shared colors
-    return sharedColors.length >= 2;
-  });
+      // Color count similarity (25% of score) — flags with the same number
+      // of colors look more alike than ones with very different counts
+      const maxLen = Math.max(target.colors.length, f.colors.length);
+      const countScore = 1 - Math.abs(target.colors.length - f.colors.length) / maxLen;
+
+      // Color overlap (30% of score) — shared colors relative to the larger set
+      const shared = target.colors.filter(c => f.colors.includes(c)).length;
+      const overlapScore = shared / maxLen;
+
+      const score = patternScore * 0.45 + countScore * 0.25 + overlapScore * 0.30;
+      return { code, score };
+    })
+    .filter(({ score }) => score >= 0.8)
+    .sort((a, b) => b.score - a.score)
+    .map(({ code }) => code);
 }

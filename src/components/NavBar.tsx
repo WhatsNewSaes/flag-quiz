@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useGameContext } from '../contexts/GameContext';
 import { playMenuSelectSound } from '../utils/sounds';
 import { getFlagEmoji } from '../utils/flagEmoji';
 import { CharacterKey } from '../data/characters';
@@ -26,22 +28,8 @@ const CHARACTER_THUMBS: Record<CharacterKey, string> = {
   phoenix: phoenixSouth,
 };
 
-type NavigateTarget =
-  | 'mode-select'
-  | 'achievements'
-  | 'characters'
-  | 'journey-map'
-  | 'arcade'
-  | 'jeopardy-difficulty-select'
-  | 'around-the-world'
-  | 'presentation'
-  | 'flag-runner';
-
 interface NavBarProps {
-  onNavigate: (target: NavigateTarget) => void;
-  totalStars?: number;
   variant?: 'default' | 'dark';
-  unlockedModes?: string[];
 }
 
 function useCustomName(fallback: string) {
@@ -63,8 +51,12 @@ function useCustomName(fallback: string) {
   return { name: customName || fallback, isCustom: !!customName, save };
 }
 
-export function NavBar({ onNavigate, totalStars = 0, variant = 'default' }: NavBarProps) {
+export function NavBar({ variant = 'default' }: NavBarProps) {
   const isDark = variant === 'dark';
+  const navigate = useNavigate();
+  const { journeyProgress } = useGameContext();
+  const totalStars = journeyProgress.progress.totalStars;
+
   const [profileOpen, setProfileOpen] = useState(false);
   const { user, loading, signInWithGoogle, signOut } = useAuth();
 
@@ -137,7 +129,7 @@ export function NavBar({ onNavigate, totalStars = 0, variant = 'default' }: NavB
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           {/* Left: Game Modes — navigates to mode list */}
           <button
-            onClick={() => { playMenuSelectSound(); onNavigate('mode-select'); }}
+            onClick={() => { playMenuSelectSound(); navigate('/play/modes'); }}
             className={`retro-btn px-4 py-1.5 font-retro text-sm min-h-[44px] ${
               isDark
                 ? 'bg-yellow-400 text-[#1E3A8A]'
@@ -235,7 +227,7 @@ export function NavBar({ onNavigate, totalStars = 0, variant = 'default' }: NavB
 
         {/* Achievements shortcut */}
         <button
-          onClick={() => { playMenuSelectSound(); close(); onNavigate('achievements'); }}
+          onClick={() => { playMenuSelectSound(); close(); navigate('/play/achievements'); }}
           className="w-full flex items-center gap-3 px-4 min-h-[48px] text-left border-b-[3px] border-retro-border hover:bg-retro-accent/10 transition-colors"
         >
           <span className="text-lg">&#127942;</span>
@@ -244,7 +236,7 @@ export function NavBar({ onNavigate, totalStars = 0, variant = 'default' }: NavB
 
         {/* Characters shortcut */}
         <button
-          onClick={() => { playMenuSelectSound(); close(); onNavigate('characters'); }}
+          onClick={() => { playMenuSelectSound(); close(); navigate('/play/characters'); }}
           className="w-full flex items-center gap-3 px-4 min-h-[48px] text-left border-b-[3px] border-retro-border hover:bg-retro-accent/10 transition-colors"
         >
           <span className="text-lg">&#128100;</span>
@@ -253,7 +245,7 @@ export function NavBar({ onNavigate, totalStars = 0, variant = 'default' }: NavB
 
         {/* Game Modes shortcut */}
         <button
-          onClick={() => { playMenuSelectSound(); close(); onNavigate('mode-select'); }}
+          onClick={() => { playMenuSelectSound(); close(); navigate('/play/modes'); }}
           className="w-full flex items-center gap-3 px-4 min-h-[48px] text-left border-b-[3px] border-retro-border hover:bg-retro-accent/10 transition-colors"
         >
           <span className="text-lg">&#127918;</span>

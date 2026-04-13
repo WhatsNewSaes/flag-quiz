@@ -218,13 +218,13 @@ export function ArcadeScreen({ onBack }: ArcadeScreenProps) {
         <div className="flex items-center justify-between mb-2">
           <button
             onClick={arcade.reset}
-            className="font-body text-sm text-gray-600 hover:text-gray-800 transition-colors flex items-center gap-1"
+            className="font-body text-sm text-retro-text-secondary hover:text-retro-text transition-colors flex items-center gap-1"
           >
             <span>&#8592;</span> Back
           </button>
           <button
             onClick={() => setShowPlayingOptions(prev => !prev)}
-            className="font-body text-sm text-gray-600 hover:text-gray-800 transition-colors flex items-center gap-1"
+            className="font-body text-sm text-retro-text-secondary hover:text-retro-text transition-colors flex items-center gap-1"
           >
             Options <span className={`inline-block transition-transform ${showPlayingOptions ? 'rotate-180' : ''}`}>&#9662;</span>
           </button>
@@ -326,7 +326,7 @@ export function ArcadeScreen({ onBack }: ArcadeScreenProps) {
             <div className="flex flex-col items-center justify-center min-h-[200px] sm:min-h-[240px]">
               <h2
                 key={arcade.currentCountry.code}
-                className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-800 animate-bounce-in text-center"
+                className="text-3xl sm:text-4xl md:text-5xl font-bold text-retro-text animate-bounce-in text-center"
               >
                 {arcade.currentCountry.name}
               </h2>
@@ -336,7 +336,7 @@ export function ArcadeScreen({ onBack }: ArcadeScreenProps) {
                     1: 'bg-retro-neon-green text-white',
                     2: 'bg-retro-neon-blue text-white',
                     3: 'bg-retro-accent text-retro-text',
-                    4: 'bg-orange-500 text-white',
+                    4: 'bg-orange-700 text-white',
                     5: 'bg-retro-neon-red text-white',
                   }[arcade.currentCountry.difficulty]
                 }`}

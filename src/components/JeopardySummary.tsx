@@ -51,8 +51,8 @@ export function JeopardySummary({ score, onPlayAgain }: JeopardySummaryProps) {
         <p className="text-white text-lg mb-8">{message}</p>
 
         <div className="bg-[#2563EB] rounded-2xl p-6 mb-8">
-          <p className="text-blue-100 text-lg mb-2">Final Score</p>
-          <p className={`text-5xl font-bold ${score >= 0 ? 'text-yellow-300' : 'text-red-400'}`}>
+          <p className="text-blue-50 text-lg mb-2">Final Score</p>
+          <p className={`text-5xl font-bold ${score >= 0 ? 'text-white' : 'text-red-400'}`}>
             ${score.toLocaleString()}
           </p>
         </div>

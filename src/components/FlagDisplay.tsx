@@ -12,7 +12,7 @@ const difficultyColors: Record<Difficulty, string> = {
   1: 'bg-retro-neon-green text-white',
   2: 'bg-retro-neon-blue text-white',
   3: 'bg-retro-accent text-retro-text',
-  4: 'bg-orange-500 text-white',
+  4: 'bg-orange-700 text-white',
   5: 'bg-retro-neon-red text-white',
 };
 
