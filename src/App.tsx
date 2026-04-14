@@ -1,26 +1,60 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
-import { Routes, Route, Navigate, Outlet, useNavigate, useParams } from 'react-router-dom';
+import { useState, useEffect, useLayoutEffect, useRef, useCallback, lazy, Suspense } from 'react';
+import { Routes, Route, Navigate, Outlet, useNavigate, useParams, useLocation } from 'react-router-dom';
 import { CelebrationTest } from './components/CelebrationTest';
 import { Onboarding } from './components/Onboarding';
 import { AchievementToast } from './components/journey/AchievementToast';
-import { CountryFlagPage } from './pages/CountryFlagPage';
-import { FlagsDirectoryPage } from './pages/FlagsDirectoryPage';
-import { ContinentFlagsPage } from './pages/ContinentFlagsPage';
-import { QuizLandingPage } from './pages/QuizLandingPage';
-import { ContinentQuizPage } from './pages/ContinentQuizPage';
 import { HomePage } from './pages/HomePage';
 import { SiteLayout } from './layouts/SiteLayout';
 import { GameProvider, useGameContext } from './contexts/GameContext';
 import { useLocalStorage } from './hooks/useLocalStorage';
-import { JourneyScreen } from './routes/JourneyScreen';
-import { ModesRoute } from './routes/ModesRoute';
-import { ArcadeRoute } from './routes/ArcadeRoute';
-import { AroundTheWorldRoute } from './routes/AroundTheWorldRoute';
-import { JeopardyRoute } from './routes/JeopardyRoute';
-import { PresentationRoute } from './routes/PresentationRoute';
-import { FlagRunnerRoute } from './routes/FlagRunnerRoute';
-import { AchievementsRoute } from './routes/AchievementsRoute';
-import { CharactersRoute } from './routes/CharactersRoute';
+import { CONTENT_SLUGS } from './data/contentSlugs';
+
+// Lazy-loaded site pages (SEO/content pages)
+const CountryFlagPage = lazy(() => import('./pages/CountryFlagPage').then(m => ({ default: m.CountryFlagPage })));
+const ContentPage = lazy(() => import('./pages/ContentPage').then(m => ({ default: m.ContentPage })));
+const FlagsDirectoryPage = lazy(() => import('./pages/FlagsDirectoryPage').then(m => ({ default: m.FlagsDirectoryPage })));
+const ContinentFlagsPage = lazy(() => import('./pages/ContinentFlagsPage').then(m => ({ default: m.ContinentFlagsPage })));
+const QuizLandingPage = lazy(() => import('./pages/QuizLandingPage').then(m => ({ default: m.QuizLandingPage })));
+const ContinentQuizPage = lazy(() => import('./pages/ContinentQuizPage').then(m => ({ default: m.ContinentQuizPage })));
+
+// Lazy-loaded game routes
+const JourneyScreen = lazy(() => import('./routes/JourneyScreen').then(m => ({ default: m.JourneyScreen })));
+const ModesRoute = lazy(() => import('./routes/ModesRoute').then(m => ({ default: m.ModesRoute })));
+const ArcadeRoute = lazy(() => import('./routes/ArcadeRoute').then(m => ({ default: m.ArcadeRoute })));
+const AroundTheWorldRoute = lazy(() => import('./routes/AroundTheWorldRoute').then(m => ({ default: m.AroundTheWorldRoute })));
+const JeopardyRoute = lazy(() => import('./routes/JeopardyRoute').then(m => ({ default: m.JeopardyRoute })));
+const PresentationRoute = lazy(() => import('./routes/PresentationRoute').then(m => ({ default: m.PresentationRoute })));
+const FlagRunnerRoute = lazy(() => import('./routes/FlagRunnerRoute').then(m => ({ default: m.FlagRunnerRoute })));
+const AchievementsRoute = lazy(() => import('./routes/AchievementsRoute').then(m => ({ default: m.AchievementsRoute })));
+const CharactersRoute = lazy(() => import('./routes/CharactersRoute').then(m => ({ default: m.CharactersRoute })));
+
+// Minimal loading fallback
+function LoadingFallback() {
+  return (
+    <div className="flex items-center justify-center min-h-[50vh]">
+      <p className="font-retro text-xs text-retro-text animate-blink-arcade">LOADING...</p>
+    </div>
+  );
+}
+
+// Scroll to top on route change — #root is the scroll container (overflow-y: auto),
+// not window, so we scroll that element directly.
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useLayoutEffect(() => {
+    document.getElementById('root')?.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+}
+
+// Route slug to ContentPage or CountryFlagPage
+function FlagSlugRouter() {
+  const { slug } = useParams<{ slug: string }>();
+  if (slug && CONTENT_SLUGS.has(slug)) {
+    return <ContentPage />;
+  }
+  return <CountryFlagPage />;
+}
 
 // One-time migration from old localStorage screen state to URL
 const SCREEN_TO_PATH: Record<string, string> = {
@@ -117,18 +151,8 @@ function GameLayoutInner() {
 }
 
 function GameLayout() {
-  // Callbacks for GameProvider to drive journey phase transitions
-  // These are called when the context needs to signal navigation,
-  // but JourneyScreen manages its own local phase state in-memory.
-  const onNavigateToPlay = useCallback(() => {
-    // Journey play phase is handled within JourneyScreen's local state
-    // No URL change needed — stays at /play
-  }, []);
-
-  const onNavigateToComplete = useCallback(() => {
-    // Journey complete phase is handled within JourneyScreen's local state
-    // No URL change needed — stays at /play
-  }, []);
+  const onNavigateToPlay = useCallback(() => {}, []);
+  const onNavigateToComplete = useCallback(() => {}, []);
 
   return (
     <GameProvider onNavigateToPlay={onNavigateToPlay} onNavigateToComplete={onNavigateToComplete}>
@@ -144,32 +168,35 @@ function ContinentQuizPageWrapper() {
 
 function App() {
   return (
-    <Routes>
-      {/* Site pages with persistent nav */}
-      <Route element={<SiteLayout />}>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/flags" element={<FlagsDirectoryPage />} />
-        <Route path="/flags/continent/:slug" element={<ContinentFlagsPage />} />
-        <Route path="/flags/:slug" element={<CountryFlagPage />} />
-        <Route path="/quiz" element={<QuizLandingPage />} />
-        <Route path="/quiz/:slug" element={<ContinentQuizPageWrapper />} />
-      </Route>
-      {/* Game routes with shared game state */}
-      <Route path="/play" element={<GameLayout />}>
-        <Route index element={<JourneyScreen />} />
-        <Route path="modes" element={<ModesRoute />} />
-        <Route path="arcade" element={<ArcadeRoute />} />
-        <Route path="around-the-world" element={<AroundTheWorldRoute />} />
-        <Route path="jeopardy" element={<JeopardyRoute />} />
-        <Route path="presentation" element={<PresentationRoute />} />
-        <Route path="flag-runner" element={<FlagRunnerRoute />} />
-        <Route path="achievements" element={<AchievementsRoute />} />
-        <Route path="characters" element={<CharactersRoute />} />
-        <Route path="*" element={<Navigate to="/play" replace />} />
-      </Route>
-      {/* Catch-all fallback */}
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+    <Suspense fallback={<LoadingFallback />}>
+      <ScrollToTop />
+      <Routes>
+        {/* Site pages with persistent nav */}
+        <Route element={<SiteLayout />}>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/flags" element={<FlagsDirectoryPage />} />
+          <Route path="/flags/continent/:slug" element={<ContinentFlagsPage />} />
+          <Route path="/flags/:slug" element={<FlagSlugRouter />} />
+          <Route path="/quiz" element={<QuizLandingPage />} />
+          <Route path="/quiz/:slug" element={<ContinentQuizPageWrapper />} />
+        </Route>
+        {/* Game routes with shared game state */}
+        <Route path="/play" element={<GameLayout />}>
+          <Route index element={<JourneyScreen />} />
+          <Route path="modes" element={<ModesRoute />} />
+          <Route path="arcade" element={<ArcadeRoute />} />
+          <Route path="around-the-world" element={<AroundTheWorldRoute />} />
+          <Route path="jeopardy" element={<JeopardyRoute />} />
+          <Route path="presentation" element={<PresentationRoute />} />
+          <Route path="flag-runner" element={<FlagRunnerRoute />} />
+          <Route path="achievements" element={<AchievementsRoute />} />
+          <Route path="characters" element={<CharactersRoute />} />
+          <Route path="*" element={<Navigate to="/play" replace />} />
+        </Route>
+        {/* Catch-all fallback */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </Suspense>
   );
 }
 
