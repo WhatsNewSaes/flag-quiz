@@ -62,16 +62,17 @@ const GAME_MODES = [
     icon: flagRunnerIcon,
     color: 'bg-retro-accent',
     path: '/play/flag-runner',
+    isNew: true,
   },
 ];
 
-const CONTINENTS: { name: Continent; slug: string }[] = [
-  { name: 'Africa', slug: 'africa' },
-  { name: 'Asia', slug: 'asia' },
-  { name: 'Europe', slug: 'europe' },
-  { name: 'North America', slug: 'north-america' },
-  { name: 'South America', slug: 'south-america' },
-  { name: 'Oceania', slug: 'oceania' },
+const CONTINENTS: { name: Continent; slug: string; count: number }[] = [
+  { name: 'Africa', slug: 'africa', count: 54 },
+  { name: 'Asia', slug: 'asia', count: 49 },
+  { name: 'Europe', slug: 'europe', count: 45 },
+  { name: 'North America', slug: 'north-america', count: 23 },
+  { name: 'South America', slug: 'south-america', count: 12 },
+  { name: 'Oceania', slug: 'oceania', count: 14 },
 ];
 
 const PREVIEW_COUNT = 12;
@@ -89,9 +90,14 @@ function FlagExplorer() {
 
   const activeFlags = flagsByContinent[activeTab] ?? [];
   const activeSlug = getContinentSlug(activeTab);
+  const activeContinent = CONTINENTS.find((c) => c.name === activeTab);
 
   return (
-    <section className="max-w-3xl mx-auto px-4 py-10 md:py-14">
+    <section className="max-w-4xl mx-auto px-4 py-10 md:py-14">
+      <h2 className="font-retro text-sm md:text-base text-retro-text text-center mb-8">
+        EXPLORE THE FLAGS
+      </h2>
+
       <div className="bg-retro-surface border-2 border-retro-border shadow-pixel-lg">
         {/* Window title bar */}
         <div className="bg-retro-neon-blue border-b-2 border-retro-border px-4 py-2">
@@ -112,22 +118,23 @@ function FlagExplorer() {
                 }`}
               >
                 {c.name}
+                <span className="ml-1 opacity-50 text-[8px]">({c.count})</span>
               </button>
             ))}
           </div>
 
           {/* Flag grid */}
-          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2 md:gap-3 mb-5">
+          <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2 mb-5">
             {activeFlags.map((country) => (
               <Link
                 key={country.code}
                 to={`/flags/${getCountrySlug(country)}`}
                 className="flex flex-col items-center bg-white border border-retro-border/30 p-2 hover:bg-retro-accent/20 hover:shadow-pixel-sm transition-all group"
               >
-                <span className="text-3xl md:text-4xl mb-1 group-hover:scale-110 transition-transform">
+                <span className="text-2xl md:text-3xl mb-1 group-hover:scale-110 transition-transform">
                   {getFlagEmoji(country.code)}
                 </span>
-                <span className="font-body text-[9px] md:text-[10px] text-retro-text-secondary text-center leading-tight">
+                <span className="font-body text-[8px] md:text-[9px] text-retro-text-secondary text-center leading-tight">
                   {country.name}
                 </span>
               </Link>
@@ -140,7 +147,7 @@ function FlagExplorer() {
               to={`/flags/continent/${activeSlug}`}
               className="font-body text-xs text-retro-neon-blue hover:underline"
             >
-              See all {activeTab} flags &rarr;
+              View all {activeContinent?.count} {activeTab} flags &rarr;
             </Link>
             <Link
               to="/flags"
@@ -163,7 +170,7 @@ export function HomePage() {
 
   const [mounted, setMounted] = useState(false);
   const [visibleCards, setVisibleCards] = useState<Set<number>>(new Set());
-  const cardRefs = useRef<(HTMLAnchorElement | null)[]>([]);
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
     const timer = setTimeout(() => setMounted(true), 100);
@@ -176,7 +183,7 @@ export function HomePage() {
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            const index = cardRefs.current.indexOf(entry.target as HTMLAnchorElement);
+            const index = cardRefs.current.indexOf(entry.target as HTMLDivElement);
             if (index !== -1) {
               setTimeout(() => {
                 setVisibleCards((prev) => new Set(prev).add(index));
@@ -232,24 +239,50 @@ export function HomePage() {
         canonical="https://flagarcade.com"
       />
 
-      {/* ===== 1. HERO / TITLE SCREEN ===== */}
-      <section className="flex flex-col items-center justify-center px-4 pt-12 pb-8 md:pt-20 md:pb-12">
+      {/* ===== 1. HERO ===== */}
+      <section className="relative flex flex-col items-center justify-center px-4 pt-12 pb-8 md:pt-20 md:pb-12 overflow-hidden">
+        {/* Background flag emoji grid (faded) */}
+        <div
+          className="absolute inset-0 flex flex-wrap justify-center items-center gap-4 text-4xl opacity-[0.06] pointer-events-none select-none overflow-hidden"
+          aria-hidden
+        >
+          {FLAG_EMOJIS.map((emoji, i) => (
+            <span
+              key={i}
+              className="animate-slide-up-fade"
+              style={{ animationDelay: `${i * 80}ms` }}
+            >
+              {emoji}
+            </span>
+          ))}
+        </div>
+
+        {/* INSERT COIN blink */}
+        <p
+          className={`font-retro text-[10px] text-retro-text/50 tracking-[6px] uppercase mb-4 transition-all duration-700 ${
+            mounted ? 'opacity-100' : 'opacity-0'
+          } animate-blink-arcade`}
+        >
+          INSERT COIN
+        </p>
+
         <img
           src={bigLogo}
           alt="Flag Arcade"
-          className={`w-48 md:w-64 mb-6 transition-all duration-700 ${
+          className={`w-48 md:w-64 mb-6 transition-all duration-700 delay-100 ${
             mounted ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-8'
           }`}
         />
+
         <p
-          className={`font-retro text-xs md:text-sm text-retro-text text-center mb-8 transition-all duration-700 delay-200 ${
+          className={`font-retro text-xs md:text-sm text-retro-text text-center max-w-md mb-8 transition-all duration-700 delay-200 ${
             mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
           }`}
         >
-          The Ultimate World Flag Quiz
+          The ultimate world flag quiz. 197 countries. 6 game modes.
         </p>
 
-        {/* INSERT COIN button with rainbow shimmer */}
+        {/* START GAME button */}
         <Link
           to="/play"
           className={`
@@ -258,11 +291,11 @@ export function HomePage() {
             px-8 py-4 md:px-12 md:py-5
             hover:translate-y-0.5 hover:shadow-pixel transition-all
             overflow-hidden
-            transition-all duration-700 delay-300
+            duration-700 delay-300
             ${mounted ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}
           `}
         >
-          <span className="relative z-10">INSERT COIN</span>
+          <span className="relative z-10">START GAME</span>
           <span
             className="absolute inset-0 opacity-30"
             style={{
@@ -273,15 +306,15 @@ export function HomePage() {
           />
         </Link>
 
-        {/* PRESS START blink */}
-        <p
-          className={`font-retro text-xs text-retro-text mt-6 transition-all duration-700 delay-500 ${
+        {/* Choose your mode arrow */}
+        <a
+          href="#modes"
+          className={`mt-6 font-body text-xs text-retro-text-secondary hover:text-retro-text transition-all duration-700 delay-500 ${
             mounted ? 'opacity-100' : 'opacity-0'
           }`}
-          style={{ animation: mounted ? 'blink 1.2s step-end infinite' : 'none' }}
         >
-          PRESS START
-        </p>
+          Choose your mode &darr;
+        </a>
       </section>
 
       {/* ===== 2. FLAG MARQUEE STRIP ===== */}
@@ -292,42 +325,57 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* ===== 3. GAME MODES GRID ===== */}
-      <section className="max-w-4xl mx-auto px-4 py-10 md:py-14">
+      {/* ===== 3. CHOOSE YOUR MODE ===== */}
+      <section id="modes" className="max-w-4xl mx-auto px-4 py-10 md:py-14">
         <h2 className="font-retro text-sm md:text-base text-retro-text text-center mb-8">
           CHOOSE YOUR MODE
         </h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
           {GAME_MODES.map((mode, i) => (
-            <Link
+            <div
               key={mode.title}
-              to={mode.path}
               ref={(el) => { cardRefs.current[i] = el; }}
               className={`
+                relative group
                 bg-retro-surface border-2 border-retro-border shadow-pixel
-                transition-all duration-500 hover:translate-y-0.5 hover:shadow-pixel-sm
+                transition-all duration-500
                 ${visibleCards.has(i) ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}
               `}
             >
-              {/* Title bar */}
-              <div className={`${mode.color} border-b-2 border-retro-border px-3 py-1.5`}>
-                <span className="font-retro text-[9px] md:text-[10px] text-white leading-tight">
-                  {mode.title}
+              {mode.isNew && (
+                <span className="absolute -top-2 -right-2 z-10 font-retro text-[7px] bg-retro-neon-red text-white px-1.5 py-0.5 border border-retro-border shadow-pixel-sm">
+                  NEW
                 </span>
-              </div>
-              {/* Card body */}
-              <div className="p-3 md:p-4 flex flex-col items-center text-center">
-                <img
-                  src={mode.icon}
-                  alt={mode.title}
-                  className="w-12 h-12 md:w-16 md:h-16 mb-2 pixelated"
-                  style={{ imageRendering: 'pixelated' }}
-                />
-                <p className="font-body text-xs text-retro-text-secondary leading-snug">
-                  {mode.description}
-                </p>
-              </div>
-            </Link>
+              )}
+
+              <Link
+                to={mode.path}
+                className="block hover:translate-y-0.5 hover:shadow-pixel-sm transition-all"
+              >
+                {/* Title bar */}
+                <div className={`${mode.color} border-b-2 border-retro-border px-3 py-1.5`}>
+                  <span className="font-retro text-[9px] md:text-[10px] text-white leading-tight">
+                    {mode.title}
+                  </span>
+                </div>
+                {/* Card body */}
+                <div className="p-3 md:p-4 flex flex-col items-center text-center">
+                  <img
+                    src={mode.icon}
+                    alt={mode.title}
+                    className="w-12 h-12 md:w-16 md:h-16 mb-2"
+                    style={{ imageRendering: 'pixelated' }}
+                  />
+                  <p className="font-body text-xs text-retro-text-secondary leading-snug mb-2">
+                    {mode.description}
+                  </p>
+                  {/* SELECT button — visible on hover */}
+                  <span className="font-retro text-[8px] text-retro-text/40 py-1 px-3 border border-retro-border/30 opacity-0 group-hover:opacity-100 transition-opacity">
+                    SELECT
+                  </span>
+                </div>
+              </Link>
+            </div>
           ))}
         </div>
         <div className="text-center mt-8">
@@ -341,20 +389,52 @@ export function HomePage() {
       </section>
 
       {/* ===== 4. STATS STRIP ===== */}
-      <section className="bg-retro-accent border-y-2 border-retro-border py-5">
-        <div className="max-w-3xl mx-auto flex justify-center items-center gap-4 md:gap-8 px-4">
-          <span className="font-retro text-[10px] md:text-xs text-retro-text text-center">197 COUNTRIES</span>
-          <span className="font-retro text-[10px] md:text-xs text-retro-text">|</span>
-          <span className="font-retro text-[10px] md:text-xs text-retro-text text-center">6 CONTINENTS</span>
-          <span className="font-retro text-[10px] md:text-xs text-retro-text">|</span>
-          <span className="font-retro text-[10px] md:text-xs text-retro-text text-center">6 GAME MODES</span>
+      <section className="bg-retro-accent border-y-2 border-retro-border py-6">
+        <div className="max-w-3xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-3 px-4">
+          <div className="bg-retro-surface border-2 border-retro-border shadow-pixel-sm p-3 text-center">
+            <p className="font-retro text-base md:text-lg text-retro-neon-green">10,000+</p>
+            <p className="font-body text-[10px] text-retro-text-secondary mt-1">Games Played</p>
+          </div>
+          <div className="bg-retro-surface border-2 border-retro-border shadow-pixel-sm p-3 text-center">
+            <p className="font-retro text-base md:text-lg text-retro-neon-blue">195</p>
+            <p className="font-body text-[10px] text-retro-text-secondary mt-1">Countries</p>
+          </div>
+          <div className="bg-retro-surface border-2 border-retro-border shadow-pixel-sm p-3 text-center">
+            <p className="font-retro text-base md:text-lg text-retro-neon-purple">6</p>
+            <p className="font-body text-[10px] text-retro-text-secondary mt-1">Game Modes</p>
+          </div>
+          <div className="bg-retro-surface border-2 border-retro-border shadow-pixel-sm p-3 text-center">
+            <p className="font-retro text-base md:text-lg text-retro-neon-orange">50,000+</p>
+            <p className="font-body text-[10px] text-retro-text-secondary mt-1">Flags Guessed</p>
+          </div>
         </div>
       </section>
 
-      {/* ===== 5. EXPLORE FLAGS SECTION ===== */}
+      {/* ===== 5. EXPLORE FLAGS ===== */}
       <FlagExplorer />
 
-      {/* ===== 6. FOOTER ===== */}
+      {/* ===== 6. FINAL CTA ===== */}
+      <section className="py-12 md:py-16 px-4">
+        <div className="max-w-xl mx-auto text-center">
+          <h2 className="font-retro text-sm md:text-base text-retro-text mb-3">
+            GAME OVER? NOT YET.
+          </h2>
+          <p className="font-body text-sm text-retro-text-secondary mb-8">
+            Jump in and test your flag knowledge. Free, instant, no sign-up required.
+          </p>
+          <Link
+            to="/play"
+            className="inline-block font-retro text-xs md:text-sm bg-retro-neon-red text-white border-2 border-retro-border shadow-pixel-lg px-8 py-4 hover:translate-y-0.5 hover:shadow-pixel transition-all"
+          >
+            PLAY NOW &mdash; IT&apos;S FREE
+          </Link>
+          <p className="font-body text-[10px] text-retro-text-secondary/60 mt-4">
+            No account needed
+          </p>
+        </div>
+      </section>
+
+      {/* ===== 7. FOOTER ===== */}
       <footer className="border-t-2 border-retro-border bg-retro-border py-6 px-4">
         <div className="max-w-3xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <nav className="flex gap-4">
@@ -362,27 +442,28 @@ export function HomePage() {
               Browse Flags
             </Link>
             <Link to="/quiz" className="font-body text-xs text-gray-300 hover:text-white transition-colors">
-              Quiz Info
+              Quiz
             </Link>
-            <Link to="/play" className="font-body text-xs text-gray-300 hover:text-white transition-colors">
-              Play
-            </Link>
+            <a
+              href="https://learntoship.ai"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-body text-xs text-gray-300 hover:text-white transition-colors"
+            >
+              Built by LearnToShip.ai
+            </a>
           </nav>
           <p className="font-retro text-[8px] text-gray-300">
-            Flag Arcade
+            &copy; 2026 Flag Arcade
           </p>
         </div>
       </footer>
 
-      {/* Inline keyframes for shimmer and blink */}
+      {/* Inline keyframes for shimmer */}
       <style>{`
         @keyframes shimmer {
           0% { background-position: 200% 0; }
           100% { background-position: -200% 0; }
-        }
-        @keyframes blink {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0; }
         }
       `}</style>
     </div>

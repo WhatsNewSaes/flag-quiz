@@ -81,51 +81,56 @@ export function SiteNav() {
 
   return (
     <nav className="sticky top-0 z-30 bg-retro-surface/95 backdrop-blur border-b-2 border-retro-border">
-      <div className="max-w-5xl mx-auto flex items-center justify-between px-4 h-12 md:h-14">
+      <div className="max-w-5xl mx-auto flex items-center justify-between px-4 h-14 md:h-16">
         {/* Logo / brand */}
         <Link to="/" className="flex items-center gap-2 shrink-0">
-          <span className="text-lg" aria-hidden>🌍</span>
-          <span className="font-retro text-[9px] md:text-[10px] text-retro-text leading-none">
+          <span className="text-xl" aria-hidden>🌍</span>
+          <span className="font-retro text-[11px] md:text-xs text-retro-text leading-none">
             Flag Arcade
           </span>
         </Link>
 
         {/* Desktop links */}
-        <div ref={navRef} className="hidden md:flex items-center gap-0.5">
+        <div ref={navRef} className="hidden md:flex items-center gap-1">
           {CONTINENTS.map((c) => (
             <div key={c.slug} className="relative">
               <button
                 onClick={() => toggleDesktop(c.slug)}
-                className={`font-body text-[11px] px-2 py-1.5 rounded transition-colors ${
+                className={`font-body text-sm px-3 py-2 rounded transition-colors flex items-center gap-1 ${
                   isFlags && location.pathname.includes(c.slug)
                     ? 'bg-retro-accent/40 text-retro-text font-bold'
                     : 'text-retro-text-secondary hover:bg-retro-accent/20'
                 }`}
               >
                 {c.name}
-                <span className="ml-0.5 text-[9px]">{openDesktop === c.slug ? '▴' : '▾'}</span>
+                <svg
+                  className={`w-3.5 h-3.5 transition-transform ${openDesktop === c.slug ? 'rotate-180' : ''}`}
+                  fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
               </button>
 
               {openDesktop === c.slug && (
-                <div className="absolute top-full left-0 mt-1 w-52 bg-retro-surface border-2 border-retro-border shadow-pixel z-40">
+                <div className="absolute top-full left-0 mt-1 w-56 bg-retro-surface border-2 border-retro-border shadow-pixel z-40">
                   {c.topCountries.map((country, i) => (
                     <Link
                       key={c.topSlugs[i]}
                       to={`/flags/${c.topSlugs[i]}`}
-                      className="block font-body text-xs px-4 py-2 hover:bg-retro-accent/30 transition-colors"
+                      className="block font-body text-sm px-4 py-2.5 hover:bg-retro-accent/30 transition-colors"
                     >
                       {country}
                     </Link>
                   ))}
                   <Link
                     to={`/flags/continent/${c.slug}`}
-                    className="block font-body text-xs px-4 py-2 hover:bg-retro-accent/30 transition-colors border-t border-retro-border/30 font-semibold text-retro-gold"
+                    className="block font-body text-sm px-4 py-2.5 bg-retro-accent/20 hover:bg-retro-accent/40 transition-colors border-t-2 border-retro-border/30 font-semibold text-retro-gold"
                   >
                     See all {c.fullName ?? c.name} flags →
                   </Link>
                   <Link
                     to={`/quiz/${c.slug}`}
-                    className="block font-body text-xs px-4 py-2 hover:bg-retro-accent/30 transition-colors border-t border-retro-border/30 font-semibold text-retro-neon-green"
+                    className="block font-body text-sm px-4 py-2.5 bg-retro-neon-green/10 hover:bg-retro-neon-green/20 transition-colors border-t-2 border-retro-border/30 font-semibold text-retro-neon-green"
                   >
                     Take {c.name} Quiz →
                   </Link>
@@ -137,7 +142,7 @@ export function SiteNav() {
           {/* Quiz link */}
           <Link
             to="/quiz"
-            className={`font-body text-[11px] px-2 py-1.5 rounded transition-colors ${
+            className={`font-body text-sm px-3 py-2 rounded transition-colors ${
               isQuiz
                 ? 'bg-retro-accent/40 text-retro-text font-bold'
                 : 'text-retro-text-secondary hover:bg-retro-accent/20'
@@ -151,7 +156,7 @@ export function SiteNav() {
         <div className="flex items-center gap-2">
           <Link
             to="/play/modes"
-            className="font-retro text-[8px] md:text-[10px] bg-retro-neon-green text-white border-2 border-retro-border shadow-pixel-sm px-3 py-1.5 md:px-4 md:py-2 hover:translate-y-0.5 hover:shadow-none transition-all"
+            className="font-retro text-[10px] md:text-xs bg-retro-neon-green text-white border-2 border-retro-border shadow-pixel-sm px-4 py-2 md:px-5 md:py-2.5 hover:translate-y-0.5 hover:shadow-none transition-all"
           >
             PLAY
           </Link>
@@ -177,14 +182,19 @@ export function SiteNav() {
               <div key={c.slug}>
                 <button
                   onClick={() => toggleMobile(c.slug)}
-                  className={`font-body text-sm text-left w-full px-3 py-2 rounded transition-colors ${
+                  className={`font-body text-sm text-left w-full px-3 py-2 rounded transition-colors flex items-center justify-between ${
                     isFlags && location.pathname.includes(c.slug)
                       ? 'bg-retro-accent/40 font-bold'
                       : 'hover:bg-retro-accent/20'
                   }`}
                 >
                   {c.name}
-                  <span className="ml-1 text-xs">{openMobile === c.slug ? '▴' : '▾'}</span>
+                  <svg
+                    className={`w-4 h-4 transition-transform ${openMobile === c.slug ? 'rotate-180' : ''}`}
+                    fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                  </svg>
                 </button>
 
                 {openMobile === c.slug && (
@@ -200,13 +210,13 @@ export function SiteNav() {
                     ))}
                     <Link
                       to={`/flags/continent/${c.slug}`}
-                      className="font-body text-xs px-3 py-1.5 rounded hover:bg-retro-accent/20 transition-colors font-semibold text-retro-gold"
+                      className="font-body text-xs px-3 py-1.5 rounded bg-retro-accent/20 hover:bg-retro-accent/40 transition-colors font-semibold text-retro-gold"
                     >
                       See all {c.fullName ?? c.name} flags →
                     </Link>
                     <Link
                       to={`/quiz/${c.slug}`}
-                      className="font-body text-xs px-3 py-1.5 rounded hover:bg-retro-accent/20 transition-colors font-semibold text-retro-neon-green"
+                      className="font-body text-xs px-3 py-1.5 rounded bg-retro-neon-green/10 hover:bg-retro-neon-green/20 transition-colors font-semibold text-retro-neon-green"
                     >
                       Take {c.name} Quiz →
                     </Link>

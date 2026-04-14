@@ -127,17 +127,32 @@ export function NavBar({ variant = 'default' }: NavBarProps) {
         }`}
       >
         <div className="max-w-4xl mx-auto flex items-center justify-between">
-          {/* Left: Game Modes — navigates to mode list */}
-          <button
-            onClick={() => { playMenuSelectSound(); navigate('/play/modes'); }}
-            className={`retro-btn px-4 py-1.5 font-retro text-sm min-h-[44px] ${
-              isDark
-                ? 'bg-yellow-400 text-[#1E3A8A]'
-                : 'bg-retro-accent text-retro-text'
-            }`}
-          >
-            Game Modes
-          </button>
+          {/* Left: Home + Game Modes */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => { playMenuSelectSound(); navigate('/'); }}
+              className={`retro-btn min-h-[44px] min-w-[44px] flex items-center justify-center px-2 py-1.5 ${
+                isDark
+                  ? 'bg-yellow-400 text-[#1E3A8A]'
+                  : 'bg-retro-surface text-retro-text'
+              }`}
+              aria-label="Home"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955a1.126 1.126 0 011.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+              </svg>
+            </button>
+            <button
+              onClick={() => { playMenuSelectSound(); navigate('/play/modes'); }}
+              className={`retro-btn px-4 py-1.5 font-retro text-sm min-h-[44px] ${
+                isDark
+                  ? 'bg-yellow-400 text-[#1E3A8A]'
+                  : 'bg-retro-accent text-retro-text'
+              }`}
+            >
+              Game Modes
+            </button>
+          </div>
 
           {/* Right: Character avatar + hamburger menu */}
           <button

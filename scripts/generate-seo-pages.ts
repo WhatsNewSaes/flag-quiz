@@ -448,9 +448,11 @@ function generateQuizPage(assets: { css: string[]; js: string[] }): string {
 // Sitemap
 // ---------------------------------------------------------------------------
 
-function generateSitemap(urls: { loc: string; priority: string }[]): string {
-  const entries = urls.map(({ loc, priority }) =>
-    `  <url>\n    <loc>${loc}</loc>\n    <priority>${priority}</priority>\n    <changefreq>weekly</changefreq>\n  </url>`
+function generateSitemap(urls: { loc: string; priority: string; changefreq?: string }[]): string {
+  const lastmod = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+
+  const entries = urls.map(({ loc, priority, changefreq = 'weekly' }) =>
+    `  <url>\n    <loc>${loc}</loc>\n    <lastmod>${lastmod}</lastmod>\n    <changefreq>${changefreq}</changefreq>\n    <priority>${priority}</priority>\n  </url>`
   ).join('\n');
 
   return `<?xml version="1.0" encoding="UTF-8"?>
@@ -479,10 +481,13 @@ function main() {
   const assets = getAssets();
   console.log(`Found assets: ${assets.css.length} CSS, ${assets.js.length} JS`);
 
-  const sitemapUrls: { loc: string; priority: string }[] = [];
+  const sitemapUrls: { loc: string; priority: string; changefreq?: string }[] = [];
 
   // Homepage
-  sitemapUrls.push({ loc: SITE_URL, priority: '1.0' });
+  sitemapUrls.push({ loc: SITE_URL, priority: '1.0', changefreq: 'daily' });
+
+  // Play / game modes
+  sitemapUrls.push({ loc: `${SITE_URL}/play/modes`, priority: '0.9', changefreq: 'weekly' });
 
   // Flags directory
   writeFile(path.join(DIST, 'flags', 'index.html'), generateDirectoryPage(assets));
@@ -494,11 +499,12 @@ function main() {
   sitemapUrls.push({ loc: `${SITE_URL}/quiz`, priority: '0.9' });
   console.log('  /quiz');
 
-  // Continent pages
+  // Continent pages (flags + quiz)
   for (const continent of continents) {
     const slug = slugify(continent);
     writeFile(path.join(DIST, 'flags', 'continent', slug, 'index.html'), generateContinentPage(continent, assets));
     sitemapUrls.push({ loc: `${SITE_URL}/flags/continent/${slug}`, priority: '0.8' });
+    sitemapUrls.push({ loc: `${SITE_URL}/quiz/${slug}`, priority: '0.7' });
     console.log(`  /flags/continent/${slug}`);
   }
 
