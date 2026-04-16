@@ -2,6 +2,9 @@ import { useParams, Link } from 'react-router-dom';
 import { countries } from '../data/countries';
 import { flagFeatures, getSimilarFlags } from '../data/flagFeatures';
 import { flagDescriptions } from '../data/flagDescriptions';
+import { getTerritoriesBySovereign, getTerritorySlug } from '../data/territories';
+import { organizations } from '../data/organizations';
+import { organizationMembers } from '../data/organizationMembers';
 import { getFlagEmoji } from '../utils/flagEmoji';
 import { findCountryBySlug, getCountrySlug, getContinentSlug } from '../utils/slugify';
 import { SEOHead } from '../components/seo/SEOHead';
@@ -51,6 +54,11 @@ export function CountryFlagPage() {
   const continentCountries = countries
     .filter((c) => c.continent === country.continent && c.code !== country.code)
     .slice(0, 12);
+  const countryTerritories = getTerritoriesBySovereign(country.code);
+  const countryOrgs = organizations.filter((org) => {
+    const members = organizationMembers[org.slug];
+    return members?.includes(country.code);
+  });
 
   const pageTitle = `${country.name} Flag - Colors, Meaning & History | Flag Arcade`;
   const pageDescription = description?.description
@@ -110,18 +118,36 @@ export function CountryFlagPage() {
             <h2 className="font-retro text-sm mb-3 text-retro-text">Colors & Design</h2>
             <div className="flex flex-wrap gap-2 mb-3">
               {features.colors.map((color) => (
-                <div key={color} className="flex items-center gap-2 font-body text-sm border border-retro-border px-2 py-1">
+                <Link key={color} to={`/flags/with-${color}`} className="flex items-center gap-2 font-body text-sm border border-retro-border px-2 py-1 hover:bg-retro-accent/30 transition-colors">
                   <span
                     className="w-5 h-5 border border-retro-border inline-block"
                     style={{ backgroundColor: colorHex[color] || '#ccc' }}
                   />
                   <span className="capitalize">{color}</span>
-                </div>
+                </Link>
               ))}
             </div>
-            <p className="font-body text-sm text-retro-text-secondary">
-              <strong>Pattern:</strong> {patternLabels[features.pattern] || features.pattern}
-            </p>
+            {(() => {
+              const patternLinks: Record<string, { href: string; emoji: string }> = {
+                'horizontal-stripes': { href: '/flags/horizontal-stripes', emoji: '☰' },
+                'vertical-stripes': { href: '/flags/vertical-stripes', emoji: '▐░▌' },
+                'cross': { href: '/flags/with-crosses', emoji: '✚' },
+                'diagonal': { href: '/flags/diagonal-designs', emoji: '◣' },
+                'canton': { href: '/flags/canton-designs', emoji: '◲' },
+              };
+              const link = patternLinks[features.pattern];
+              const label = patternLabels[features.pattern] || features.pattern;
+              return link ? (
+                <Link to={link.href} className="inline-flex items-center gap-2 font-body text-sm border border-retro-border px-2 py-1 hover:bg-retro-accent/30 transition-colors">
+                  <span>{link.emoji}</span>
+                  <span>{label}</span>
+                </Link>
+              ) : (
+                <p className="font-body text-sm text-retro-text-secondary">
+                  <strong>Pattern:</strong> {label}
+                </p>
+              );
+            })()}
           </section>
         )}
 
@@ -186,38 +212,47 @@ export function CountryFlagPage() {
           </section>
         )}
 
-        {/* Related filter pages */}
-        {features && (
+        {/* Territories */}
+        {countryTerritories.length > 0 && (
           <section className="bg-retro-surface border-2 border-retro-border shadow-pixel p-5 mt-4">
-            <h2 className="font-retro text-sm mb-3 text-retro-text">Explore by Category</h2>
-            <div className="flex flex-wrap gap-2">
-              {features.colors.map((color) => (
+            <h2 className="font-retro text-sm mb-3 text-retro-text">
+              {country.name} Territories ({countryTerritories.length})
+            </h2>
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
+              {countryTerritories.map((t) => (
                 <Link
-                  key={color}
-                  to={`/flags/with-${color}`}
-                  className="font-body text-sm border border-retro-border px-3 py-1.5 hover:bg-retro-accent/30 transition-colors capitalize"
+                  key={t.code}
+                  to={`/flags/territories/${getTerritorySlug(t)}`}
+                  className="flex flex-col items-center gap-1.5 p-3 border border-retro-border/30 hover:bg-retro-accent/20 hover:border-retro-border transition-colors"
                 >
-                  Flags with {color}
+                  <span className="text-4xl">{getFlagEmoji(t.code)}</span>
+                  <span className="font-body text-xs text-retro-text text-center leading-tight">
+                    {t.name}
+                  </span>
                 </Link>
               ))}
-              {features.pattern === 'horizontal-stripes' && (
-                <Link to="/flags/horizontal-stripes" className="font-body text-sm border border-retro-border px-3 py-1.5 hover:bg-retro-accent/30 transition-colors">Horizontal Stripes</Link>
-              )}
-              {features.pattern === 'vertical-stripes' && (
-                <Link to="/flags/vertical-stripes" className="font-body text-sm border border-retro-border px-3 py-1.5 hover:bg-retro-accent/30 transition-colors">Vertical Stripes</Link>
-              )}
-              {features.pattern === 'cross' && (
-                <Link to="/flags/with-crosses" className="font-body text-sm border border-retro-border px-3 py-1.5 hover:bg-retro-accent/30 transition-colors">Flags with Crosses</Link>
-              )}
-              {features.pattern === 'diagonal' && (
-                <Link to="/flags/diagonal-designs" className="font-body text-sm border border-retro-border px-3 py-1.5 hover:bg-retro-accent/30 transition-colors">Diagonal Designs</Link>
-              )}
-              {features.pattern === 'canton' && (
-                <Link to="/flags/canton-designs" className="font-body text-sm border border-retro-border px-3 py-1.5 hover:bg-retro-accent/30 transition-colors">Canton Designs</Link>
-              )}
-              {features.colors.includes('red') && features.colors.includes('white') && features.colors.includes('blue') && (
-                <Link to="/flags/red-white-and-blue-flags" className="font-body text-sm border border-retro-border px-3 py-1.5 hover:bg-retro-accent/30 transition-colors">Red, White & Blue Flags</Link>
-              )}
+            </div>
+          </section>
+        )}
+
+
+        {/* Organizations */}
+        {countryOrgs.length > 0 && (
+          <section className="bg-retro-surface border-2 border-retro-border shadow-pixel p-5 mt-4">
+            <h2 className="font-retro text-sm mb-3 text-retro-text">
+              International Organizations ({countryOrgs.length})
+            </h2>
+            <div className="flex flex-wrap gap-2">
+              {countryOrgs.map((org) => (
+                <Link
+                  key={org.slug}
+                  to={`/organizations/${org.slug}`}
+                  className="flex items-center gap-2 font-body text-sm border border-retro-border px-3 py-1.5 hover:bg-retro-accent/30 transition-colors"
+                >
+                  <span>{org.emoji}</span>
+                  <span>{org.abbreviation}</span>
+                </Link>
+              ))}
             </div>
           </section>
         )}

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { countries, continents, type Continent } from '../data/countries';
+import { territories } from '../data/territories';
 import { getFlagEmoji } from '../utils/flagEmoji';
 import { getCountrySlug, getContinentSlug } from '../utils/slugify';
 import { SEOHead } from '../components/seo/SEOHead';
@@ -93,6 +94,27 @@ export function FlagsDirectoryPage() {
             </div>
           </section>
         ))}
+
+        {/* Territories promo */}
+        <section className="mt-4">
+          <Link
+            to="/flags/territories"
+            className="block bg-retro-surface border-2 border-retro-border shadow-pixel p-5 hover:bg-retro-accent/10 transition-colors"
+          >
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="font-retro text-sm text-retro-text">Dependent Territories</h2>
+              <span className="font-body text-xs text-retro-neon-blue underline">View all →</span>
+            </div>
+            <p className="font-body text-sm text-retro-text-secondary mb-3">
+              Explore flags from {territories.length} dependent territories and non-sovereign entities including Hong Kong, Puerto Rico, Greenland, and more.
+            </p>
+            <div className="flex gap-2 text-3xl">
+              {['HK', 'PR', 'GL', 'BM', 'PF', 'GI', 'AW', 'GU'].map((code) => (
+                <span key={code}>{getFlagEmoji(code)}</span>
+              ))}
+            </div>
+          </Link>
+        </section>
 
         {/* Quiz CTA */}
         <section className="bg-retro-accent border-2 border-retro-border shadow-pixel-lg p-6 mt-6 text-center">

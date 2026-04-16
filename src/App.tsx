@@ -17,6 +17,11 @@ const ContinentFlagsPage = lazy(() => import('./pages/ContinentFlagsPage').then(
 const QuizLandingPage = lazy(() => import('./pages/QuizLandingPage').then(m => ({ default: m.QuizLandingPage })));
 const ContinentQuizPage = lazy(() => import('./pages/ContinentQuizPage').then(m => ({ default: m.ContinentQuizPage })));
 const AboutPage = lazy(() => import('./pages/AboutPage').then(m => ({ default: m.AboutPage })));
+const EmojiFlagsPage = lazy(() => import('./pages/EmojiFlagsPage').then(m => ({ default: m.EmojiFlagsPage })));
+const OrganizationsPage = lazy(() => import('./pages/OrganizationsPage').then(m => ({ default: m.OrganizationsPage })));
+const OrganizationPage = lazy(() => import('./pages/OrganizationPage').then(m => ({ default: m.OrganizationPage })));
+const TerritoriesPage = lazy(() => import('./pages/TerritoriesPage').then(m => ({ default: m.TerritoriesPage })));
+const TerritoryFlagPage = lazy(() => import('./pages/TerritoryFlagPage').then(m => ({ default: m.TerritoryFlagPage })));
 
 // Lazy-loaded game routes
 const JourneyScreen = lazy(() => import('./routes/JourneyScreen').then(m => ({ default: m.JourneyScreen })));
@@ -177,9 +182,14 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/flags" element={<FlagsDirectoryPage />} />
           <Route path="/flags/continent/:slug" element={<ContinentFlagsPage />} />
+          <Route path="/flags/emoji" element={<EmojiFlagsPage />} />
+          <Route path="/flags/territories" element={<TerritoriesPage />} />
+          <Route path="/flags/territories/:slug" element={<TerritoryFlagPage />} />
           <Route path="/flags/:slug" element={<FlagSlugRouter />} />
           <Route path="/quiz" element={<QuizLandingPage />} />
           <Route path="/quiz/:slug" element={<ContinentQuizPageWrapper />} />
+          <Route path="/organizations" element={<OrganizationsPage />} />
+          <Route path="/organizations/:slug" element={<OrganizationPage />} />
           <Route path="/about" element={<AboutPage />} />
         </Route>
         {/* Game routes with shared game state */}

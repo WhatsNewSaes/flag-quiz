@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { organizations } from '../data/organizations';
 
 const CONTINENTS = [
   { name: 'Africa', slug: 'africa' },
@@ -19,20 +20,16 @@ const GAME_MODES = [
   { name: 'Flag Runner', path: '/play/flag-runner', icon: '🏃' },
 ];
 
-const POPULAR_FLAGS = [
-  { name: 'United States', slug: 'united-states', emoji: '🇺🇸' },
-  { name: 'United Kingdom', slug: 'united-kingdom', emoji: '🇬🇧' },
-  { name: 'Japan', slug: 'japan', emoji: '🇯🇵' },
-  { name: 'Canada', slug: 'canada', emoji: '🇨🇦' },
-  { name: 'Brazil', slug: 'brazil', emoji: '🇧🇷' },
-  { name: 'Australia', slug: 'australia', emoji: '🇦🇺' },
-  { name: 'France', slug: 'france', emoji: '🇫🇷' },
-  { name: 'Germany', slug: 'germany', emoji: '🇩🇪' },
-  { name: 'India', slug: 'india', emoji: '🇮🇳' },
-  { name: 'Mexico', slug: 'mexico', emoji: '🇲🇽' },
+const TERRITORY_GROUPS = [
+  { name: 'All Territories', path: '/flags/territories', emoji: '🗺️' },
+  { name: 'U.S. Territories', path: '/flags/territories/puerto-rico', emoji: '🇺🇸' },
+  { name: 'UK Territories', path: '/flags/territories/bermuda', emoji: '🇬🇧' },
+  { name: 'French Territories', path: '/flags/territories/french-polynesia', emoji: '🇫🇷' },
+  { name: 'Hong Kong', path: '/flags/territories/hong-kong', emoji: '🇭🇰' },
+  { name: 'Greenland', path: '/flags/territories/greenland', emoji: '🇬🇱' },
 ];
 
-type DropdownId = 'continents' | 'modes' | 'flags' | null;
+type DropdownId = 'continents' | 'modes' | 'orgs' | 'territories' | null;
 
 function ChevronDown({ open }: { open: boolean }) {
   return (
@@ -93,6 +90,7 @@ export function SiteNav() {
   const mobileItemClass = 'font-body text-xs px-3 py-1.5 rounded hover:bg-retro-accent/20 transition-colors';
 
   const isFlags = location.pathname.startsWith('/flags');
+  const isOrgs = location.pathname.startsWith('/organizations');
 
   return (
     <nav className="sticky top-0 z-30 bg-retro-surface/95 backdrop-blur border-b-2 border-retro-border">
@@ -162,38 +160,62 @@ export function SiteNav() {
             )}
           </div>
 
-          {/* Popular Flags dropdown */}
+          {/* Organizations dropdown */}
           <div className="relative">
             <button
-              onClick={() => toggleDesktop('flags')}
-              className={btnClass(false)}
+              onClick={() => toggleDesktop('orgs')}
+              className={btnClass(isOrgs)}
             >
-              🏁 Popular Flags
-              <ChevronDown open={openDesktop === 'flags'} />
+              🏛️ Organizations
+              <ChevronDown open={openDesktop === 'orgs'} />
             </button>
-            {openDesktop === 'flags' && (
-              <div className={`${dropdownClass} w-56`}>
-                {POPULAR_FLAGS.map((f) => (
+            {openDesktop === 'orgs' && (
+              <div className={`${dropdownClass} w-72 max-h-80 overflow-y-auto`}>
+                {organizations.map((org) => (
                   <Link
-                    key={f.slug}
-                    to={`/flags/${f.slug}`}
+                    key={org.slug}
+                    to={`/organizations/${org.slug}`}
                     className={`${itemClass} flex items-center gap-2`}
                   >
-                    <span className="text-lg">{f.emoji}</span>
-                    {f.name}
+                    <span>{org.emoji}</span>
+                    {org.abbreviation} — {org.name}
+                  </Link>
+                ))}
+                <Link
+                  to="/organizations"
+                  className={`${itemClass} border-t-2 border-retro-border/30 font-semibold text-retro-neon-blue`}
+                >
+                  All Organizations →
+                </Link>
+              </div>
+            )}
+          </div>
+
+          {/* Territories dropdown */}
+          <div className="relative">
+            <button
+              onClick={() => toggleDesktop('territories')}
+              className={btnClass(isFlags && location.pathname.includes('/territories'))}
+            >
+              🏝️ Territories
+              <ChevronDown open={openDesktop === 'territories'} />
+            </button>
+            {openDesktop === 'territories' && (
+              <div className={`${dropdownClass} w-56`}>
+                {TERRITORY_GROUPS.map((t) => (
+                  <Link
+                    key={t.path}
+                    to={t.path}
+                    className={`${itemClass} flex items-center gap-2`}
+                  >
+                    <span>{t.emoji}</span>
+                    {t.name}
                   </Link>
                 ))}
               </div>
             )}
           </div>
 
-          {/* About Us */}
-          <Link
-            to="/about"
-            className={btnClass(location.pathname === '/about')}
-          >
-            ℹ️ About Us
-          </Link>
         </div>
 
         {/* Right side: PLAY CTA + mobile hamburger */}
@@ -256,26 +278,41 @@ export function SiteNav() {
               </div>
             )}
 
-            {/* Popular Flags */}
-            <button onClick={() => toggleMobile('flags')} className={mobileBtnClass(false)}>
-              🏁 Popular Flags
-              <ChevronDown open={openMobile === 'flags'} />
+            {/* Organizations */}
+            <button onClick={() => toggleMobile('orgs')} className={mobileBtnClass(isOrgs)}>
+              🏛️ Organizations
+              <ChevronDown open={openMobile === 'orgs'} />
             </button>
-            {openMobile === 'flags' && (
+            {openMobile === 'orgs' && (
+              <div className="ml-4 flex flex-col gap-0.5 max-h-60 overflow-y-auto">
+                {organizations.map((org) => (
+                  <Link key={org.slug} to={`/organizations/${org.slug}`} className={`${mobileItemClass} flex items-center gap-2`}>
+                    <span>{org.emoji}</span>
+                    {org.abbreviation}
+                  </Link>
+                ))}
+                <Link to="/organizations" className={`${mobileItemClass} font-semibold text-retro-neon-blue`}>
+                  All Organizations →
+                </Link>
+              </div>
+            )}
+
+            {/* Territories */}
+            <button onClick={() => toggleMobile('territories')} className={mobileBtnClass(false)}>
+              🏝️ Territories
+              <ChevronDown open={openMobile === 'territories'} />
+            </button>
+            {openMobile === 'territories' && (
               <div className="ml-4 flex flex-col gap-0.5">
-                {POPULAR_FLAGS.map((f) => (
-                  <Link key={f.slug} to={`/flags/${f.slug}`} className={`${mobileItemClass} flex items-center gap-2`}>
-                    <span className="text-base">{f.emoji}</span>
-                    {f.name}
+                {TERRITORY_GROUPS.map((t) => (
+                  <Link key={t.path} to={t.path} className={`${mobileItemClass} flex items-center gap-2`}>
+                    <span>{t.emoji}</span>
+                    {t.name}
                   </Link>
                 ))}
               </div>
             )}
 
-            {/* About Us */}
-            <Link to="/about" className={mobileBtnClass(location.pathname === '/about')}>
-              ℹ️ About Us
-            </Link>
           </div>
         </div>
       )}

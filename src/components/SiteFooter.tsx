@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { organizations } from '../data/organizations';
 
 const CONTINENTS = [
   { name: 'Africa', slug: 'africa' },
@@ -9,17 +10,17 @@ const CONTINENTS = [
   { name: 'Oceania', slug: 'oceania' },
 ];
 
-const POPULAR_FLAGS = [
-  { name: 'United States', slug: 'united-states' },
-  { name: 'United Kingdom', slug: 'united-kingdom' },
-  { name: 'Japan', slug: 'japan' },
-  { name: 'Canada', slug: 'canada' },
-  { name: 'Brazil', slug: 'brazil' },
-  { name: 'Australia', slug: 'australia' },
-  { name: 'France', slug: 'france' },
-  { name: 'Germany', slug: 'germany' },
-  { name: 'India', slug: 'india' },
-  { name: 'Mexico', slug: 'mexico' },
+const TERRITORY_LINKS = [
+  { name: 'All Territories', path: '/flags/territories', emoji: '🗺️' },
+  { name: 'Puerto Rico', path: '/flags/territories/puerto-rico', emoji: '🇵🇷' },
+  { name: 'Hong Kong', path: '/flags/territories/hong-kong', emoji: '🇭🇰' },
+  { name: 'Greenland', path: '/flags/territories/greenland', emoji: '🇬🇱' },
+  { name: 'Bermuda', path: '/flags/territories/bermuda', emoji: '🇧🇲' },
+  { name: 'French Polynesia', path: '/flags/territories/french-polynesia', emoji: '🇵🇫' },
+  { name: 'Guam', path: '/flags/territories/guam', emoji: '🇬🇺' },
+  { name: 'Aruba', path: '/flags/territories/aruba', emoji: '🇦🇼' },
+  { name: 'Gibraltar', path: '/flags/territories/gibraltar', emoji: '🇬🇮' },
+  { name: 'Cayman Islands', path: '/flags/territories/cayman-islands', emoji: '🇰🇾' },
 ];
 
 const EXPLORE_LINKS = [
@@ -42,7 +43,7 @@ export function SiteFooter() {
   return (
     <footer className="border-t-2 border-retro-border bg-retro-border mt-auto">
       <div className="max-w-5xl mx-auto px-4 py-10">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
           {/* Column 1: Flags by Continent */}
           <div>
             <h3 className={headingClass}>Flags by Continent</h3>
@@ -77,21 +78,38 @@ export function SiteFooter() {
             </ul>
           </div>
 
-          {/* Column 3: Popular Flags */}
+          {/* Column 3: Organizations */}
           <div>
-            <h3 className={headingClass}>Popular Flags</h3>
+            <h3 className={headingClass}>Organizations</h3>
             <ul className="space-y-2">
-              {POPULAR_FLAGS.map((f) => (
-                <li key={f.slug}>
-                  <Link to={`/flags/${f.slug}`} className={linkClass}>
-                    {f.name} Flag
+              <li>
+                <Link to="/organizations" className={linkClass}>All Organizations</Link>
+              </li>
+              {organizations.slice(0, 10).map((org) => (
+                <li key={org.slug}>
+                  <Link to={`/organizations/${org.slug}`} className={linkClass}>
+                    {org.emoji} {org.abbreviation}
                   </Link>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Column 4: Explore */}
+          {/* Column 4: Territories */}
+          <div>
+            <h3 className={headingClass}>Territories</h3>
+            <ul className="space-y-2">
+              {TERRITORY_LINKS.map((t) => (
+                <li key={t.path}>
+                  <Link to={t.path} className={linkClass}>
+                    {t.emoji} {t.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Column 5: Explore */}
           <div>
             <h3 className={headingClass}>Explore</h3>
             <ul className="space-y-2">
@@ -102,6 +120,16 @@ export function SiteFooter() {
               ))}
             </ul>
           </div>
+
+          {/* Column 6: Emoji & More */}
+          <div>
+            <h3 className={headingClass}>More</h3>
+            <ul className="space-y-2">
+              <li><Link to="/flags/emoji" className={linkClass}>Emoji Flags</Link></li>
+              <li><Link to="/about" className={linkClass}>About Us</Link></li>
+              <li><Link to="/play" className={linkClass}>Play Game</Link></li>
+            </ul>
+          </div>
         </div>
 
         {/* Bottom bar */}
@@ -109,6 +137,8 @@ export function SiteFooter() {
           <nav className="flex flex-wrap justify-center gap-4">
             <Link to="/" className={linkClass}>Home</Link>
             <Link to="/flags" className={linkClass}>Browse Flags</Link>
+            <Link to="/organizations" className={linkClass}>Organizations</Link>
+            <Link to="/flags/territories" className={linkClass}>Territories</Link>
             <Link to="/quiz" className={linkClass}>Quiz</Link>
             <Link to="/play" className={linkClass}>Play</Link>
             <a

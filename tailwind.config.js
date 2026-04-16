@@ -14,7 +14,7 @@ export default {
       },
       fontFamily: {
         retro: ['"Press Start 2P"', 'cursive'],
-        body: ['"Space Mono"', 'monospace'],
+        body: ['"Inter"', 'sans-serif'],
       },
       colors: {
         'retro-bg': '#7EC8E3',

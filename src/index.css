@@ -11,7 +11,7 @@ html, body, #root {
 }
 
 body {
-  font-family: 'Space Mono', monospace;
+  font-family: 'Inter', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
@@ -110,7 +110,7 @@ body {
   cursor: pointer;
   color: #3d3529;
   text-shadow: 0 1px 0 rgba(255,255,255,0.5);
-  font-family: 'Space Mono', monospace;
+  font-family: 'Inter', sans-serif;
   padding-left: 8px;
   padding-right: 8px;
   font-size: 0.9rem;
