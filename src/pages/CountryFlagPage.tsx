@@ -6,6 +6,7 @@ import { getFlagEmoji } from '../utils/flagEmoji';
 import { findCountryBySlug, getCountrySlug, getContinentSlug } from '../utils/slugify';
 import { SEOHead } from '../components/seo/SEOHead';
 import { Breadcrumbs } from '../components/seo/Breadcrumbs';
+import { QuizCTA } from '../components/QuizCTA';
 
 const colorHex: Record<string, string> = {
   red: '#EF4444', blue: '#3B82F6', green: '#16A34A', yellow: '#FFD93D',
@@ -51,7 +52,7 @@ export function CountryFlagPage() {
     .filter((c) => c.continent === country.continent && c.code !== country.code)
     .slice(0, 12);
 
-  const pageTitle = `${country.name} Flag - Colors, Meaning & Fun Facts | Flag Arcade`;
+  const pageTitle = `${country.name} Flag - Colors, Meaning & History | Flag Arcade`;
   const pageDescription = description?.description
     || `Learn about the flag of ${country.name}. Explore the colors, meaning, and history, then test your knowledge in our flag quiz!`;
 
@@ -184,19 +185,43 @@ export function CountryFlagPage() {
           </section>
         )}
 
-        {/* Quiz CTA */}
-        <section className="bg-retro-accent border-2 border-retro-border shadow-pixel-lg p-6 mt-4 text-center">
-          <h2 className="font-retro text-sm mb-2 text-retro-text">Test Your Knowledge!</h2>
-          <p className="font-body text-sm text-retro-text-secondary mb-4">
-            Think you can identify the flag of {country.name}? Try our free flag quiz!
-          </p>
-          <Link
-            to="/play"
-            className="inline-block font-retro text-xs bg-retro-neon-green text-white border-2 border-retro-border shadow-pixel px-6 py-3 hover:translate-y-0.5 hover:shadow-pixel-sm transition-all"
-          >
-            Play Flag Quiz
-          </Link>
-        </section>
+        {/* Related filter pages */}
+        {features && (
+          <section className="bg-retro-surface border-2 border-retro-border shadow-pixel p-5 mt-4">
+            <h2 className="font-retro text-sm mb-3 text-retro-text">Explore by Category</h2>
+            <div className="flex flex-wrap gap-2">
+              {features.colors.map((color) => (
+                <Link
+                  key={color}
+                  to={`/flags/with-${color}`}
+                  className="font-body text-sm border border-retro-border px-3 py-1.5 hover:bg-retro-accent/30 transition-colors capitalize"
+                >
+                  Flags with {color}
+                </Link>
+              ))}
+              {features.pattern === 'horizontal-stripes' && (
+                <Link to="/flags/horizontal-stripes" className="font-body text-sm border border-retro-border px-3 py-1.5 hover:bg-retro-accent/30 transition-colors">Horizontal Stripes</Link>
+              )}
+              {features.pattern === 'vertical-stripes' && (
+                <Link to="/flags/vertical-stripes" className="font-body text-sm border border-retro-border px-3 py-1.5 hover:bg-retro-accent/30 transition-colors">Vertical Stripes</Link>
+              )}
+              {features.pattern === 'cross' && (
+                <Link to="/flags/with-crosses" className="font-body text-sm border border-retro-border px-3 py-1.5 hover:bg-retro-accent/30 transition-colors">Flags with Crosses</Link>
+              )}
+              {features.pattern === 'diagonal' && (
+                <Link to="/flags/diagonal-designs" className="font-body text-sm border border-retro-border px-3 py-1.5 hover:bg-retro-accent/30 transition-colors">Diagonal Designs</Link>
+              )}
+              {features.pattern === 'canton' && (
+                <Link to="/flags/canton-designs" className="font-body text-sm border border-retro-border px-3 py-1.5 hover:bg-retro-accent/30 transition-colors">Canton Designs</Link>
+              )}
+              {features.colors.includes('red') && features.colors.includes('white') && features.colors.includes('blue') && (
+                <Link to="/flags/red-white-and-blue-flags" className="font-body text-sm border border-retro-border px-3 py-1.5 hover:bg-retro-accent/30 transition-colors">Red, White & Blue Flags</Link>
+              )}
+            </div>
+          </section>
+        )}
+
+        <QuizCTA countryName={country.name} />
 
         {/* Footer links */}
         <nav className="mt-6 pb-8 text-center space-x-4">

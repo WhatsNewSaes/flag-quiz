@@ -4,6 +4,7 @@ import { flagFeatures, type FlagColor, type FlagPattern } from '../data/flagFeat
 import { getFlagEmoji } from '../utils/flagEmoji';
 import { getCountrySlug } from '../utils/slugify';
 import { SEOHead } from '../components/seo/SEOHead';
+import { QuizCTA } from '../components/QuizCTA';
 
 interface ContentPageConfig {
   title: string;
@@ -183,19 +184,7 @@ export function ContentPage() {
           </div>
         </section>
 
-        {/* Quiz CTA */}
-        <section className="bg-retro-accent border-2 border-retro-border shadow-pixel-lg p-6 mt-6 text-center">
-          <h2 className="font-retro text-sm mb-2 text-retro-text">Can You Identify These Flags?</h2>
-          <p className="font-body text-sm text-retro-text-secondary mb-4">
-            Test your knowledge with our free quiz!
-          </p>
-          <Link
-            to="/play"
-            className="inline-block font-retro text-xs bg-retro-neon-green text-white border-2 border-retro-border shadow-pixel px-6 py-3 hover:translate-y-0.5 hover:shadow-pixel-sm transition-all"
-          >
-            Play Flag Quiz
-          </Link>
-        </section>
+        <QuizCTA />
 
         <nav className="mt-6 pb-8 text-center space-x-4">
           <Link to="/flags" className="font-body text-sm text-retro-neon-blue underline">All Flags</Link>

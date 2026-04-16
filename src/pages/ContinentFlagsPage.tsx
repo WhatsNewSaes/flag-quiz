@@ -5,6 +5,7 @@ import { getFlagEmoji } from '../utils/flagEmoji';
 import { findContinentBySlug, getCountrySlug, getContinentSlug } from '../utils/slugify';
 import { SEOHead } from '../components/seo/SEOHead';
 import { ContinentMap } from '../components/seo/ContinentMap';
+import { QuizCTA } from '../components/QuizCTA';
 
 export function ContinentFlagsPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -131,21 +132,12 @@ export function ContinentFlagsPage() {
           </div>
         </section>
 
-        {/* Quiz CTA */}
-        <section className="bg-retro-accent border-2 border-retro-border shadow-pixel-lg p-6 mt-6 text-center">
-          <h2 className="font-retro text-sm mb-2 text-retro-text">
-            Take the {continent} Flag Quiz!
-          </h2>
-          <p className="font-body text-sm text-retro-text-secondary mb-4">
-            Can you identify all {continentCountries.length} flags from {continent}?
-          </p>
-          <Link
-            to={`/quiz/${getContinentSlug(continent)}`}
-            className="inline-block font-retro text-xs bg-retro-neon-green text-white border-2 border-retro-border shadow-pixel px-6 py-3 hover:translate-y-0.5 hover:shadow-pixel-sm transition-all"
-          >
-            Play Now
-          </Link>
-        </section>
+        <QuizCTA
+          heading={`Take the ${continent} Flag Quiz!`}
+          message={`Can you identify all ${continentCountries.length} flags from ${continent}? Put your knowledge to the test!`}
+          linkTo={`/quiz/${getContinentSlug(continent)}`}
+          buttonLabel="Start Quiz"
+        />
 
         <nav className="mt-6 pb-8 text-center space-x-4">
           <Link to="/flags" className="font-body text-sm text-retro-neon-blue underline">All Flags</Link>

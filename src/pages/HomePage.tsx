@@ -6,12 +6,6 @@ import { countries, type Continent } from '../data/countries';
 import { getFlagEmoji } from '../utils/flagEmoji';
 import { getCountrySlug, getContinentSlug } from '../utils/slugify';
 import bigLogo from '../images/logo/big-logo.svg';
-import journeyIcon from '../images/modes/journey.png';
-import arcadeIcon from '../images/modes/arcade.png';
-import aroundTheWorldIcon from '../images/modes/around-the-world.png';
-import jeopardyIcon from '../images/modes/jeopardy.png';
-import presentationIcon from '../images/modes/practice.png';
-import flagRunnerIcon from '../images/modes/flag-runner.png';
 
 const FLAG_EMOJIS = [
   '🇺🇸','🇬🇧','🇫🇷','🇩🇪','🇯🇵','🇧🇷','🇨🇦','🇦🇺','🇮🇳','🇨🇳',
@@ -24,43 +18,37 @@ const GAME_MODES = [
   {
     title: 'Journey Mode',
     description: 'Progress through worlds of increasing difficulty. Earn stars and unlock achievements.',
-    icon: journeyIcon,
-    color: 'bg-retro-neon-green',
+    image: '/modes/journey.webp',
     path: '/play',
   },
   {
     title: 'Arcade Mode',
     description: 'Free play with all flags. Choose your difficulty and continent.',
-    icon: arcadeIcon,
-    color: 'bg-retro-neon-blue',
+    image: '/modes/arcade.webp',
     path: '/play/arcade',
   },
   {
     title: 'Around the World',
     description: 'Race through flags from every continent in one run.',
-    icon: aroundTheWorldIcon,
-    color: 'bg-retro-neon-blue',
+    image: '/modes/around-the-world.webp',
     path: '/play/around-the-world',
   },
   {
     title: 'Jeopardy Mode',
     description: 'See the country name, pick the correct flag. Five difficulty levels.',
-    icon: jeopardyIcon,
-    color: 'bg-retro-neon-purple',
+    image: '/modes/jeopardy.webp',
     path: '/play/jeopardy',
   },
   {
-    title: 'Presentation Mode',
-    description: 'Perfect for classrooms. Display flags on the big screen.',
-    icon: presentationIcon,
-    color: 'bg-retro-neon-red',
+    title: 'Practice Mode',
+    description: 'Flashcard-style study mode. Reveal answers at your own pace.',
+    image: '/modes/presentation.webp',
     path: '/play/presentation',
   },
   {
     title: 'Flag Runner',
     description: 'A pixel-art platformer where you collect flags while running and jumping.',
-    icon: flagRunnerIcon,
-    color: 'bg-retro-accent',
+    image: '/modes/flag-runner.webp',
     path: '/play/flag-runner',
     isNew: true,
   },
@@ -240,81 +228,66 @@ export function HomePage() {
       />
 
       {/* ===== 1. HERO ===== */}
-      <section className="relative flex flex-col items-center justify-center px-4 pt-12 pb-8 md:pt-20 md:pb-12 overflow-hidden">
-        {/* Background flag emoji grid (faded) */}
+      <section className="relative flex flex-col items-center justify-center px-4 py-20 md:py-32 overflow-hidden">
+        {/* Background image */}
         <div
-          className="absolute inset-0 flex flex-wrap justify-center items-center gap-4 text-4xl opacity-[0.06] pointer-events-none select-none overflow-hidden"
-          aria-hidden
-        >
-          {FLAG_EMOJIS.map((emoji, i) => (
-            <span
-              key={i}
-              className="animate-slide-up-fade"
-              style={{ animationDelay: `${i * 80}ms` }}
-            >
-              {emoji}
-            </span>
-          ))}
-        </div>
-
-        {/* INSERT COIN blink */}
-        <p
-          className={`font-retro text-[10px] text-retro-text/50 tracking-[6px] uppercase mb-4 transition-all duration-700 ${
-            mounted ? 'opacity-100' : 'opacity-0'
-          } animate-blink-arcade`}
-        >
-          INSERT COIN
-        </p>
-
-        <img
-          src={bigLogo}
-          alt="Flag Arcade"
-          className={`w-48 md:w-64 mb-6 transition-all duration-700 delay-100 ${
-            mounted ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-8'
-          }`}
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: 'url(/hero-bg.webp)' }}
         />
+        {/* Dark overlay */}
+        <div className="absolute inset-0 bg-black/50" />
 
-        <p
-          className={`font-retro text-xs md:text-sm text-retro-text text-center max-w-md mb-8 transition-all duration-700 delay-200 ${
-            mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-          }`}
-        >
-          The ultimate world flag quiz. 197 countries. 6 game modes.
-        </p>
-
-        {/* START GAME button */}
-        <Link
-          to="/play"
-          className={`
-            relative font-retro text-sm md:text-base text-white
-            bg-retro-neon-green border-2 border-retro-border shadow-pixel-lg
-            px-8 py-4 md:px-12 md:py-5
-            hover:translate-y-0.5 hover:shadow-pixel transition-all
-            overflow-hidden
-            duration-700 delay-300
-            ${mounted ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}
-          `}
-        >
-          <span className="relative z-10">START GAME</span>
-          <span
-            className="absolute inset-0 opacity-30"
-            style={{
-              background: 'linear-gradient(90deg, #ff0000, #ff7700, #ffff00, #00ff00, #0000ff, #8b00ff, #ff0000)',
-              backgroundSize: '200% 100%',
-              animation: 'shimmer 3s linear infinite',
-            }}
+        {/* Content */}
+        <div className="relative z-10 flex flex-col items-center text-center">
+          <img
+            src={bigLogo}
+            alt="Flag Arcade"
+            className={`w-48 md:w-64 mb-6 drop-shadow-lg invert transition-all duration-700 delay-100 ${
+              mounted ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-8'
+            }`}
           />
-        </Link>
 
-        {/* Choose your mode arrow */}
-        <a
-          href="#modes"
-          className={`mt-6 font-body text-xs text-retro-text-secondary hover:text-retro-text transition-all duration-700 delay-500 ${
-            mounted ? 'opacity-100' : 'opacity-0'
-          }`}
-        >
-          Choose your mode &darr;
-        </a>
+          <p
+            className={`font-retro text-xs md:text-sm text-white text-center max-w-lg mb-3 leading-relaxed drop-shadow-md transition-all duration-700 delay-200 ${
+              mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+            }`}
+          >
+            The ultimate world flag quiz
+          </p>
+
+          <p
+            className={`font-body text-sm md:text-base text-white/80 text-center max-w-md mb-8 drop-shadow-sm transition-all duration-700 delay-300 ${
+              mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+            }`}
+          >
+            197 countries. 6 game modes. 100% free.
+          </p>
+
+          {/* START GAME button */}
+          <Link
+            to="/play"
+            className={`
+              group relative inline-block
+              transition-all duration-700 delay-400
+              ${mounted ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}
+            `}
+          >
+            <span className="absolute inset-0 translate-x-1 translate-y-1 bg-black/60 transition-transform group-hover:translate-x-0.5 group-hover:translate-y-0.5" />
+            <span className="relative flex items-center gap-3 font-retro text-sm md:text-base text-white bg-retro-neon-green border-2 border-retro-border px-8 py-4 md:px-12 md:py-5 transition-transform group-hover:translate-x-0.5 group-hover:translate-y-0.5">
+              START GAME
+            </span>
+          </Link>
+
+          {/* Choose your mode arrow */}
+          <a
+            href="#modes"
+            className={`mt-8 font-body text-xs text-white/60 hover:text-white transition-all duration-700 delay-500 ${
+              mounted ? 'opacity-100' : 'opacity-0'
+            }`}
+          >
+            Choose your mode &darr;
+          </a>
+        </div>
       </section>
 
       {/* ===== 2. FLAG MARQUEE STRIP ===== */}
@@ -330,49 +303,45 @@ export function HomePage() {
         <h2 className="font-retro text-sm md:text-base text-retro-text text-center mb-8">
           CHOOSE YOUR MODE
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-5">
           {GAME_MODES.map((mode, i) => (
             <div
               key={mode.title}
               ref={(el) => { cardRefs.current[i] = el; }}
               className={`
                 relative group
-                bg-retro-surface border-2 border-retro-border shadow-pixel
+                border-2 border-retro-border shadow-pixel overflow-hidden
                 transition-all duration-500
                 ${visibleCards.has(i) ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}
               `}
             >
               {mode.isNew && (
-                <span className="absolute -top-2 -right-2 z-10 font-retro text-[7px] bg-retro-neon-red text-white px-1.5 py-0.5 border border-retro-border shadow-pixel-sm">
+                <span className="absolute top-2 right-2 z-20 font-retro text-[7px] bg-retro-neon-red text-white px-1.5 py-0.5 border border-retro-border shadow-pixel-sm">
                   NEW
                 </span>
               )}
 
               <Link
                 to={mode.path}
-                className="block hover:translate-y-0.5 hover:shadow-pixel-sm transition-all"
+                className="flex flex-col h-full hover:translate-y-0.5 hover:shadow-pixel-sm transition-all"
               >
-                {/* Title bar */}
-                <div className={`${mode.color} border-b-2 border-retro-border px-3 py-1.5`}>
-                  <span className="font-retro text-[9px] md:text-[10px] text-white leading-tight">
-                    {mode.title}
-                  </span>
+                {/* Image */}
+                <div className="relative h-36 md:h-44 overflow-hidden flex-shrink-0">
+                  <img
+                    src={mode.image}
+                    alt={mode.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                 </div>
                 {/* Card body */}
-                <div className="p-3 md:p-4 flex flex-col items-center text-center">
-                  <img
-                    src={mode.icon}
-                    alt={mode.title}
-                    className="w-12 h-12 md:w-16 md:h-16 mb-2"
-                    style={{ imageRendering: 'pixelated' }}
-                  />
-                  <p className="font-body text-xs text-retro-text-secondary leading-snug mb-2">
+                <div className="bg-retro-surface p-3 md:p-4 border-t-2 border-retro-border flex-1">
+                  <h3 className="font-retro text-[10px] md:text-xs text-retro-text mb-1.5">
+                    {mode.title}
+                  </h3>
+                  <p className="font-body text-xs text-retro-text-secondary leading-snug">
                     {mode.description}
                   </p>
-                  {/* SELECT button — visible on hover */}
-                  <span className="font-retro text-[8px] text-retro-text/40 py-1 px-3 border border-retro-border/30 opacity-0 group-hover:opacity-100 transition-opacity">
-                    SELECT
-                  </span>
                 </div>
               </Link>
             </div>
@@ -434,38 +403,6 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* ===== 7. FOOTER ===== */}
-      <footer className="border-t-2 border-retro-border bg-retro-border py-6 px-4">
-        <div className="max-w-3xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <nav className="flex gap-4">
-            <Link to="/flags" className="font-body text-xs text-gray-300 hover:text-white transition-colors">
-              Browse Flags
-            </Link>
-            <Link to="/quiz" className="font-body text-xs text-gray-300 hover:text-white transition-colors">
-              Quiz
-            </Link>
-            <a
-              href="https://learntoship.ai"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-body text-xs text-gray-300 hover:text-white transition-colors"
-            >
-              Built by LearnToShip.ai
-            </a>
-          </nav>
-          <p className="font-retro text-[8px] text-gray-300">
-            &copy; 2026 Flag Arcade
-          </p>
-        </div>
-      </footer>
-
-      {/* Inline keyframes for shimmer */}
-      <style>{`
-        @keyframes shimmer {
-          0% { background-position: 200% 0; }
-          100% { background-position: -200% 0; }
-        }
-      `}</style>
     </div>
   );
 }

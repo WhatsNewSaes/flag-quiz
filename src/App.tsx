@@ -16,6 +16,7 @@ const FlagsDirectoryPage = lazy(() => import('./pages/FlagsDirectoryPage').then(
 const ContinentFlagsPage = lazy(() => import('./pages/ContinentFlagsPage').then(m => ({ default: m.ContinentFlagsPage })));
 const QuizLandingPage = lazy(() => import('./pages/QuizLandingPage').then(m => ({ default: m.QuizLandingPage })));
 const ContinentQuizPage = lazy(() => import('./pages/ContinentQuizPage').then(m => ({ default: m.ContinentQuizPage })));
+const AboutPage = lazy(() => import('./pages/AboutPage').then(m => ({ default: m.AboutPage })));
 
 // Lazy-loaded game routes
 const JourneyScreen = lazy(() => import('./routes/JourneyScreen').then(m => ({ default: m.JourneyScreen })));
@@ -179,6 +180,7 @@ function App() {
           <Route path="/flags/:slug" element={<FlagSlugRouter />} />
           <Route path="/quiz" element={<QuizLandingPage />} />
           <Route path="/quiz/:slug" element={<ContinentQuizPageWrapper />} />
+          <Route path="/about" element={<AboutPage />} />
         </Route>
         {/* Game routes with shared game state */}
         <Route path="/play" element={<GameLayout />}>

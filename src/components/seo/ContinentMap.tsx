@@ -23,6 +23,13 @@ const continentPaths: Record<string, string> = {
     `M673,609.1l-0.3,21.9l-3.7,4.6l4.6,3.1l17.2,-2.2l2.1,-3.1l12.9,-2.5l9.2,2.8l0.6,7.4l7.1,-1.2l-4.3,5.2h4.9l-0.9,10.2l6.4,4.9l3.7,-1.2l1.8,1.9l10.7,-1.5l10.1,-16.4l3.7,-0.9l7.4,-13.6l1.8,-11.7l-4.6,-5.9l1.8,-1.2l-3.7,-11.4l-4,-2.8l0.6,-15.4l-3.7,-2.8l-0.9,-8.7h-1.8l-6.1,20.4l-3.4,0.3l-7.7,-7.7l4.3,-11.4l-8,-1.5l-8.9,2.5l-2.5,7.1l-4,0.9l-0.3,-4.9l-16.3,9.9l-2.2,7.1h-6.1l-13.2,5.6l-4.6,12.4zM804.2,655.7l-0.3,14.8l-4.6,3.4l1.5,9.9l12.6,-10.8v-2.5h-3.1l-4.3,-14.5l-1.8,-0.3zM795,678l2.5,4.6l-6.8,6.5l-0.6,3.4l-4.6,0.6l-7.7,7.1l-7.1,-3.4l-0.6,-2.5l12.9,-5.6l12,-10.8zM752.1,540.2l-0.3,21.1l3,-0.2l4,-4.7l3.4,0.2l2.9,7.9l8.6,3l-5.5,-6.8l-2.2,-10.8l-3.2,-0.1l-0.8,-3.7l-9.9,-6zM798.7,602.6l5.8,8l0.3,-2.2l-6.1,-5.9z`,
 };
 
+// Russia east of the Urals (~60°E). This polygon is drawn ON TOP of the Europe
+// base path so that Siberia can be colored as Asia instead of Europe.
+// Coordinates extracted from the Europe path's first subpath (points 1-66 for the
+// northern coast, a straight Ural-boundary edge, then points 151-194 for the south).
+const russiaAsiaPath =
+  `M722.1,302.2L723.6,307.5L726.6,308.4L729.6,303.6L728.5,297.5L733.1,297.5L732.4,307.6L725.9,323.8L726.3,333.2L740.8,351.6L741,337.2L743.4,335L740.8,329.3L743,326.9L738.2,320.6L735.6,320.8L734.7,310.3L741.4,308.5L741.8,305.4L747.2,306.3L753.7,289.7L759.8,288.2L759.8,284.9L748.9,278.8L751.9,275.3L749.3,269.4L751.5,267.2L754.1,270.7L767.8,273.8L768.7,270.7L765,267L769.1,261.3L759.8,258L757.4,262.8L754.4,258.9L737.2,253L718.5,257.2L722,260.3L721.6,264.5L715.3,261.9L701.4,267.4L699,262.4L689.4,262.4L685,267L669.6,263.5L655.5,266.3L653.8,270.7L656,271.4L655.8,274.7L642.1,276.2L643,280.6L630.4,278.4L633.4,272.7L620.6,272L621.7,277.9L617.6,279.9L614.1,276.6L600,279L594.6,284L594.4,287.1L590.9,287.3L590.5,283.8L601.6,274.2L601.6,267.6L594.4,265.6L585.1,268.7L585.6,382.3L588.6,385.4L596.9,386.3L602.3,378.9L612.9,382.6L616.6,379.3L613.3,377.1L616.1,372.7L624.1,375.3L625.8,378.8L637.3,377.3L644.7,379.3L649.3,374.5L658.6,375.6L661.4,374.5L662.3,369.2L659.5,362.9L662.3,360.5L671.2,360.5L679.7,370.6L690.6,376.7L693.9,376.7L698.2,371.7L698.6,385.9L695.1,386.1L696.7,395.1L705.1,393.9L709,382.5L709.4,368.3L704.4,356.9L698.1,349.2L695.1,349.6L695.1,352L687.7,349.2L692.9,326.9L707.7,320.8L712.9,320.8L712.9,324.7L717.5,319.9L720.1,320.1L719.7,317.3L715.6,316.4L718.4,306.1L722.1,302.6Z`;
+
 interface ContinentMapProps {
   continent: Continent;
   className?: string;
@@ -46,9 +53,18 @@ const continentColors: Record<string, string> = {
   'oceania': '#06B6D4',
 };
 
+function getRussiaAsiaFill(selectedSlug: string): { fill: string; stroke: string; strokeWidth: number; opacity: number } {
+  if (selectedSlug === 'asia') {
+    return { fill: continentColors['asia'], stroke: '#2D2D2D', strokeWidth: 1.5, opacity: 1 };
+  }
+  // When Europe is selected (or any other), show Russia-Asia as unhighlighted
+  return { fill: '#E5E7EB', stroke: '#D1D5DB', strokeWidth: 0.5, opacity: 0.6 };
+}
+
 export function ContinentMap({ continent, className = '' }: ContinentMapProps) {
   const slug = continentSlugMap[continent];
   const highlightColor = continentColors[slug] || '#FFD93D';
+  const russiaStyle = getRussiaAsiaFill(slug);
 
   return (
     <svg
@@ -68,6 +84,14 @@ export function ContinentMap({ continent, className = '' }: ContinentMapProps) {
           opacity={key === slug ? 1 : 0.6}
         />
       ))}
+      {/* Russia-Asia overlay: renders on top of the Europe base path */}
+      <path
+        d={russiaAsiaPath}
+        fill={russiaStyle.fill}
+        stroke={russiaStyle.stroke}
+        strokeWidth={russiaStyle.strokeWidth}
+        opacity={russiaStyle.opacity}
+      />
     </svg>
   );
 }
@@ -77,6 +101,7 @@ export function ContinentMap({ continent, className = '' }: ContinentMapProps) {
  */
 export function getContinentMapSvg(continentSlug: string): string {
   const highlightColor = continentColors[continentSlug] || '#FFD93D';
+  const russiaStyle = getRussiaAsiaFill(continentSlug);
 
   const paths = Object.entries(continentPaths).map(([key, d]) => {
     const isHighlighted = key === continentSlug;
@@ -85,5 +110,6 @@ export function getContinentMapSvg(continentSlug: string): string {
 
   return `<svg viewBox="30 242 784 459" role="img" aria-label="World map" style="width:100%;max-width:480px;height:auto;">
     ${paths}
+    <path d="${russiaAsiaPath}" fill="${russiaStyle.fill}" stroke="${russiaStyle.stroke}" stroke-width="${russiaStyle.strokeWidth}" opacity="${russiaStyle.opacity}"/>
   </svg>`;
 }

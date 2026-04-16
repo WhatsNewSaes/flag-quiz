@@ -1,13 +1,16 @@
 import { useEffect } from 'react';
 
+const DEFAULT_OG_IMAGE = 'https://flagarcade.com/og-image.jpg';
+
 interface SEOHeadProps {
   title: string;
   description: string;
   canonical?: string;
   ogImage?: string;
+  ogType?: string;
 }
 
-export function SEOHead({ title, description, canonical, ogImage }: SEOHeadProps) {
+export function SEOHead({ title, description, canonical, ogImage, ogType }: SEOHeadProps) {
   useEffect(() => {
     document.title = title;
 
@@ -23,10 +26,14 @@ export function SEOHead({ title, description, canonical, ogImage }: SEOHeadProps
     };
 
     setMeta('description', description);
+    setMeta('og:type', ogType || 'website', true);
     setMeta('og:title', title, true);
     setMeta('og:description', description, true);
+    setMeta('og:image', ogImage || DEFAULT_OG_IMAGE, true);
+    setMeta('twitter:card', 'summary_large_image');
     setMeta('twitter:title', title);
     setMeta('twitter:description', description);
+    setMeta('twitter:image', ogImage || DEFAULT_OG_IMAGE);
 
     if (canonical) {
       setMeta('og:url', canonical, true);
@@ -38,12 +45,7 @@ export function SEOHead({ title, description, canonical, ogImage }: SEOHeadProps
       }
       link.setAttribute('href', canonical);
     }
-
-    if (ogImage) {
-      setMeta('og:image', ogImage, true);
-      setMeta('twitter:image', ogImage);
-    }
-  }, [title, description, canonical, ogImage]);
+  }, [title, description, canonical, ogImage, ogType]);
 
   return null;
 }

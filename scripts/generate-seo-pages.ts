@@ -193,6 +193,40 @@ function generateCountryPage(country: Country, assets: { css: string[]; js: stri
       </section>`;
   }
 
+  // Cross-category internal links
+  if (features) {
+    const categoryLinks: string[] = [];
+    const linkStyle = 'display:inline-block;border:1px solid #2D2D2D;padding:4px 12px;text-decoration:none;font-size:13px;font-family:\'Space Mono\',monospace;';
+
+    for (const color of features.colors) {
+      categoryLinks.push(`<a href="/flags/with-${color}" style="${linkStyle}text-transform:capitalize;">Flags with ${color}</a>`);
+    }
+
+    const patternSlugMap: Record<string, string> = {
+      'horizontal-stripes': 'horizontal-stripes',
+      'vertical-stripes': 'vertical-stripes',
+      'cross': 'with-crosses',
+      'diagonal': 'diagonal-designs',
+      'canton': 'canton-designs',
+    };
+    const patternSlug = patternSlugMap[features.pattern];
+    if (patternSlug) {
+      categoryLinks.push(`<a href="/flags/${patternSlug}" style="${linkStyle}">${patternLabels[features.pattern]}</a>`);
+    }
+
+    if (features.colors.includes('red') && features.colors.includes('white') && features.colors.includes('blue')) {
+      categoryLinks.push(`<a href="/flags/red-white-and-blue-flags" style="${linkStyle}">Red, White &amp; Blue Flags</a>`);
+    }
+
+    bodyHtml += `
+      <section style="margin-top:24px;">
+        <h2 style="font-family:'Press Start 2P',cursive;font-size:14px;">Explore by Category</h2>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;">
+          ${categoryLinks.join('\n          ')}
+        </div>
+      </section>`;
+  }
+
   bodyHtml += `
       <section style="margin-top:32px;text-align:center;padding:24px;background:#FFD93D;border:2px solid #2D2D2D;">
         <h2 style="font-family:'Press Start 2P',cursive;font-size:14px;">Test Your Knowledge!</h2>
@@ -224,7 +258,7 @@ function generateCountryPage(country: Country, assets: { css: string[]; js: stri
 
   return buildPage(
     {
-      title: `${country.name} Flag - Colors, Meaning & Fun Facts | Flag Arcade`,
+      title: `${country.name} Flag - Colors, Meaning & History | Flag Arcade`,
       description: pageDescription,
       canonical: `${SITE_URL}/flags/${slug}`,
       jsonLd,
@@ -346,18 +380,49 @@ function generateContinentPage(continent: Continent, assets: { css: string[]; js
       <section style="margin-top:32px;text-align:center;padding:24px;background:#FFD93D;border:2px solid #2D2D2D;">
         <h2 style="font-family:'Press Start 2P',cursive;font-size:14px;">Take the ${escapeHtml(continent)} Flag Quiz!</h2>
         <p style="font-family:'Space Mono',monospace;font-size:14px;margin:8px 0 16px;">Can you identify all ${cc.length} flags?</p>
-        <a href="/play" style="font-family:'Press Start 2P',cursive;font-size:12px;background:#16A34A;color:white;padding:12px 24px;border:2px solid #2D2D2D;text-decoration:none;display:inline-block;">Play Now</a>
+        <a href="/quiz/${slug}" style="font-family:'Press Start 2P',cursive;font-size:12px;background:#16A34A;color:white;padding:12px 24px;border:2px solid #2D2D2D;text-decoration:none;display:inline-block;">Take ${escapeHtml(continent)} Quiz</a>
       </section>
+
+      <section style="margin-top:24px;">
+        <h2 style="font-family:'Press Start 2P',cursive;font-size:12px;">Explore Other Continents</h2>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;">
+          ${continents.filter((c) => c !== continent).map((c) => {
+            const cSlug = slugify(c);
+            const cCount = countries.filter((co) => co.continent === c).length;
+            return `<a href="/flags/continent/${cSlug}" style="border:1px solid #2D2D2D;padding:8px 14px;text-decoration:none;font-family:'Space Mono',monospace;font-size:13px;">${escapeHtml(c)} (${cCount})</a>`;
+          }).join('\n          ')}
+        </div>
+      </section>
+
       <nav style="margin-top:24px;text-align:center;padding-bottom:32px;">
-        <a href="/flags">All Flags</a> &middot; <a href="/quiz">Flag Quiz</a>
+        <a href="/flags">All Flags</a> &middot; <a href="/quiz">Flag Quiz</a> &middot; <a href="/play">Play Game</a>
       </nav>
     </main>`;
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: `${continent} Flags`,
+    description: `Explore all ${cc.length} flags from ${continent}. Learn the colors, meanings, and history of every ${continent.toLowerCase()} country flag.`,
+    url: `${SITE_URL}/flags/continent/${slug}`,
+    numberOfItems: cc.length,
+    publisher: { '@type': 'Organization', name: 'Flag Arcade', url: SITE_URL },
+    breadcrumb: {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
+        { '@type': 'ListItem', position: 2, name: 'Flags', item: `${SITE_URL}/flags` },
+        { '@type': 'ListItem', position: 3, name: continent },
+      ],
+    },
+  };
 
   return buildPage(
     {
       title: `${continent} Flags - All ${cc.length} Country Flags | Flag Arcade`,
       description: `Explore all ${cc.length} flags from ${continent}. Learn the colors, meanings, and history of every ${continent.toLowerCase()} country flag. Test yourself with our flag quiz!`,
       canonical: `${SITE_URL}/flags/continent/${slug}`,
+      jsonLd,
     },
     bodyHtml,
     assets,
@@ -445,6 +510,283 @@ function generateQuizPage(assets: { css: string[]; js: string[] }): string {
 }
 
 // ---------------------------------------------------------------------------
+// Continent quiz page (static HTML for /quiz/{slug})
+// ---------------------------------------------------------------------------
+
+function generateContinentQuizStaticPage(continent: Continent, assets: { css: string[]; js: string[] }): string {
+  const slug = slugify(continent);
+  const cc = countries.filter((c) => c.continent === continent);
+
+  const easyFlags = cc.filter((c) => c.difficulty <= 2);
+  const hardFlags = cc.filter((c) => c.difficulty >= 4);
+
+  let bodyHtml = `
+    <nav aria-label="Breadcrumb" style="padding:8px 16px;font-family:'Space Mono',monospace;font-size:14px;">
+      <a href="/">Home</a> / <a href="/quiz">Quiz</a> / ${escapeHtml(continent)}
+    </nav>
+    <main style="max-width:768px;margin:0 auto;padding:16px;">
+      <div style="text-align:center;">
+        <h1 style="font-family:'Press Start 2P',cursive;margin:16px 0;">${escapeHtml(continent)} Flag Quiz</h1>
+        <p style="font-family:'Space Mono',monospace;font-size:14px;line-height:1.6;max-width:500px;margin:0 auto;">
+          Can you identify all ${cc.length} flags from ${escapeHtml(continent)}? Test your knowledge in this
+          free flag quiz covering every country in ${escapeHtml(continent)}.
+        </p>
+        <a href="/quiz/${slug}" style="display:inline-block;margin-top:24px;font-family:'Press Start 2P',cursive;font-size:14px;background:#16A34A;color:white;padding:16px 32px;border:2px solid #2D2D2D;text-decoration:none;">Start ${escapeHtml(continent)} Quiz</a>
+      </div>
+
+      <section style="margin-top:32px;">
+        <h2 style="font-family:'Press Start 2P',cursive;font-size:14px;">What You'll Be Quizzed On</h2>
+        <p style="font-family:'Space Mono',monospace;font-size:14px;line-height:1.6;">
+          This quiz covers ${cc.length} countries from ${escapeHtml(continent)}. You'll see a flag and need to
+          identify the correct country. Flags are shown in random order with multiple-choice answers.
+        </p>
+      </section>`;
+
+  if (easyFlags.length > 0) {
+    bodyHtml += `
+      <section style="margin-top:24px;">
+        <h2 style="font-family:'Press Start 2P',cursive;font-size:14px;">Easiest ${escapeHtml(continent)} Flags</h2>
+        <p style="font-family:'Space Mono',monospace;font-size:13px;line-height:1.6;">These are the most recognizable flags — start here if you're a beginner:</p>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;">
+          ${easyFlags.slice(0, 8).map((c) =>
+            `<a href="/flags/${slugify(c.name)}" style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border:1px solid #2D2D2D;text-decoration:none;font-size:13px;font-family:'Space Mono',monospace;">${getFlagEmoji(c.code)} ${escapeHtml(c.name)}</a>`
+          ).join('\n          ')}
+        </div>
+      </section>`;
+  }
+
+  if (hardFlags.length > 0) {
+    bodyHtml += `
+      <section style="margin-top:24px;">
+        <h2 style="font-family:'Press Start 2P',cursive;font-size:14px;">Hardest ${escapeHtml(continent)} Flags</h2>
+        <p style="font-family:'Space Mono',monospace;font-size:13px;line-height:1.6;">Think you're an expert? These flags trip up even seasoned players:</p>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;">
+          ${hardFlags.slice(0, 8).map((c) =>
+            `<a href="/flags/${slugify(c.name)}" style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border:1px solid #2D2D2D;text-decoration:none;font-size:13px;font-family:'Space Mono',monospace;">${getFlagEmoji(c.code)} ${escapeHtml(c.name)}</a>`
+          ).join('\n          ')}
+        </div>
+      </section>`;
+  }
+
+  bodyHtml += `
+      <section style="margin-top:24px;">
+        <h2 style="font-family:'Press Start 2P',cursive;font-size:14px;">All ${escapeHtml(continent)} Flags (${cc.length})</h2>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;">
+          ${cc.map((c) =>
+            `<a href="/flags/${slugify(c.name)}" style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border:1px solid #2D2D2D;text-decoration:none;font-size:13px;font-family:'Space Mono',monospace;">${getFlagEmoji(c.code)} ${escapeHtml(c.name)}</a>`
+          ).join('\n          ')}
+        </div>
+      </section>
+
+      <section style="margin-top:24px;">
+        <h2 style="font-family:'Press Start 2P',cursive;font-size:12px;">Quiz Other Continents</h2>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;">
+          ${continents.filter((c) => c !== continent).map((c) => {
+            const cSlug = slugify(c);
+            const cCount = countries.filter((co) => co.continent === c).length;
+            return `<a href="/quiz/${cSlug}" style="border:1px solid #2D2D2D;padding:8px 14px;text-decoration:none;font-family:'Space Mono',monospace;font-size:13px;">${escapeHtml(c)} (${cCount})</a>`;
+          }).join('\n          ')}
+        </div>
+      </section>
+
+      <section style="margin-top:32px;text-align:center;padding:24px;background:#FFD93D;border:2px solid #2D2D2D;">
+        <h2 style="font-family:'Press Start 2P',cursive;font-size:14px;">Ready to Play?</h2>
+        <p style="font-family:'Space Mono',monospace;font-size:14px;margin:8px 0 16px;">Test yourself on all ${cc.length} ${escapeHtml(continent)} flags!</p>
+        <a href="/quiz/${slug}" style="font-family:'Press Start 2P',cursive;font-size:12px;background:#16A34A;color:white;padding:12px 24px;border:2px solid #2D2D2D;text-decoration:none;display:inline-block;">Start Quiz</a>
+      </section>
+      <nav style="margin-top:24px;text-align:center;padding-bottom:32px;">
+        <a href="/flags/continent/${slug}">Browse ${escapeHtml(continent)} Flags</a> &middot; <a href="/quiz">All Quizzes</a> &middot; <a href="/play">Play Game</a>
+      </nav>
+    </main>`;
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Quiz',
+    name: `${continent} Flag Quiz`,
+    description: `Can you identify all ${cc.length} flags from ${continent}? Free online flag quiz.`,
+    url: `${SITE_URL}/quiz/${slug}`,
+    educationalLevel: 'beginner',
+    about: { '@type': 'Thing', name: `${continent} country flags` },
+    provider: { '@type': 'Organization', name: 'Flag Arcade', url: SITE_URL },
+  };
+
+  return buildPage(
+    {
+      title: `${continent} Flag Quiz - Identify All ${cc.length} Flags | Flag Arcade`,
+      description: `Can you identify all ${cc.length} ${continent.toLowerCase()} country flags? Take the free ${continent} flag quiz. Learn and test your knowledge of every flag in ${continent}!`,
+      canonical: `${SITE_URL}/quiz/${slug}`,
+      jsonLd,
+    },
+    bodyHtml,
+    assets,
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Long-tail content pages
+// ---------------------------------------------------------------------------
+
+interface ContentPage {
+  slug: string;
+  title: string;
+  description: string;
+  h1: string;
+  intro: string;
+  getCountries: () => Country[];
+}
+
+function generateContentPage(page: ContentPage, assets: { css: string[]; js: string[] }): string {
+  const matchedCountries = page.getCountries();
+
+  let bodyHtml = `
+    <nav aria-label="Breadcrumb" style="padding:8px 16px;font-family:'Space Mono',monospace;font-size:14px;">
+      <a href="/">Home</a> / <a href="/flags">Flags</a> / ${escapeHtml(page.h1)}
+    </nav>
+    <main style="max-width:960px;margin:0 auto;padding:16px;">
+      <h1 style="font-family:'Press Start 2P',cursive;">${escapeHtml(page.h1)}</h1>
+      <p style="font-family:'Space Mono',monospace;font-size:14px;line-height:1.6;">${escapeHtml(page.intro)}</p>
+
+      <section style="margin-top:24px;">
+        <h2 style="font-family:'Press Start 2P',cursive;font-size:14px;">${matchedCountries.length} Flags</h2>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;">
+          ${matchedCountries.map((c) =>
+            `<a href="/flags/${slugify(c.name)}" style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border:1px solid #2D2D2D;text-decoration:none;font-size:13px;font-family:'Space Mono',monospace;">${getFlagEmoji(c.code)} ${escapeHtml(c.name)}</a>`
+          ).join('\n          ')}
+        </div>
+      </section>
+
+      <section style="margin-top:24px;">
+        <h2 style="font-family:'Press Start 2P',cursive;font-size:14px;">By Continent</h2>
+        <div style="font-family:'Space Mono',monospace;font-size:13px;line-height:2;">
+          ${continents.map((cont) => {
+            const inContinent = matchedCountries.filter((c) => c.continent === cont);
+            if (inContinent.length === 0) return '';
+            return `<p><strong><a href="/flags/continent/${slugify(cont)}">${escapeHtml(cont)}</a></strong> (${inContinent.length}): ${inContinent.map((c) => `<a href="/flags/${slugify(c.name)}">${escapeHtml(c.name)}</a>`).join(', ')}</p>`;
+          }).filter(Boolean).join('\n          ')}
+        </div>
+      </section>
+
+      <section style="margin-top:32px;text-align:center;padding:24px;background:#FFD93D;border:2px solid #2D2D2D;">
+        <h2 style="font-family:'Press Start 2P',cursive;font-size:14px;">Can You Identify These Flags?</h2>
+        <p style="font-family:'Space Mono',monospace;font-size:14px;margin:8px 0 16px;">Test your knowledge with our free quiz!</p>
+        <a href="/play" style="font-family:'Press Start 2P',cursive;font-size:12px;background:#16A34A;color:white;padding:12px 24px;border:2px solid #2D2D2D;text-decoration:none;display:inline-block;">Play Flag Quiz</a>
+      </section>
+      <nav style="margin-top:24px;text-align:center;padding-bottom:32px;">
+        <a href="/flags">All Flags</a> &middot; <a href="/quiz">Flag Quiz</a> &middot; <a href="/play">Play Game</a>
+      </nav>
+    </main>`;
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: page.h1,
+    description: page.description,
+    url: `${SITE_URL}/flags/${page.slug}`,
+    numberOfItems: matchedCountries.length,
+    publisher: { '@type': 'Organization', name: 'Flag Arcade', url: SITE_URL },
+    breadcrumb: {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
+        { '@type': 'ListItem', position: 2, name: 'Flags', item: `${SITE_URL}/flags` },
+        { '@type': 'ListItem', position: 3, name: page.h1 },
+      ],
+    },
+  };
+
+  return buildPage(
+    {
+      title: page.title,
+      description: page.description,
+      canonical: `${SITE_URL}/flags/${page.slug}`,
+      jsonLd,
+    },
+    bodyHtml,
+    assets,
+  );
+}
+
+function getContentPages(): ContentPage[] {
+  const colorPages: ContentPage[] = [
+    { color: 'red', label: 'Red' },
+    { color: 'blue', label: 'Blue' },
+    { color: 'green', label: 'Green' },
+    { color: 'yellow', label: 'Yellow' },
+    { color: 'white', label: 'White' },
+    { color: 'black', label: 'Black' },
+    { color: 'orange', label: 'Orange' },
+  ].map(({ color, label }) => ({
+    slug: `with-${color}`,
+    title: `Flags with ${label} - Country Flags Featuring ${label} | Flag Arcade`,
+    description: `Browse all country flags that feature the color ${color.toLowerCase()}. See which nations use ${color.toLowerCase()} in their flag and learn why.`,
+    h1: `Flags with ${label}`,
+    intro: `These country flags all feature the color ${color.toLowerCase()} prominently in their design. Explore each flag to learn about its colors, meaning, and history.`,
+    getCountries: () => countries.filter((c) => flagFeatures[c.code]?.colors.includes(color as any)),
+  }));
+
+  const patternPages: ContentPage[] = [
+    { pattern: 'horizontal-stripes', label: 'Horizontal Stripes', slug: 'horizontal-stripes' },
+    { pattern: 'vertical-stripes', label: 'Vertical Stripes', slug: 'vertical-stripes' },
+    { pattern: 'cross', label: 'Crosses', slug: 'with-crosses' },
+    { pattern: 'diagonal', label: 'Diagonal Designs', slug: 'diagonal-designs' },
+    { pattern: 'canton', label: 'Canton Designs', slug: 'canton-designs' },
+  ].map(({ pattern, label, slug }) => ({
+    slug,
+    title: `Flags with ${label} - ${label} Flag Designs | Flag Arcade`,
+    description: `Browse all country flags featuring ${label.toLowerCase()} in their design. Compare flags that share similar patterns.`,
+    h1: `Flags with ${label}`,
+    intro: `These country flags all use a ${label.toLowerCase()} pattern. Many flags around the world share this design element — can you tell them apart?`,
+    getCountries: () => countries.filter((c) => flagFeatures[c.code]?.pattern === pattern),
+  }));
+
+  const specialPages: ContentPage[] = [
+    {
+      slug: 'hardest-flags',
+      title: 'Hardest Flags to Identify - Most Difficult Country Flags | Flag Arcade',
+      description: 'Think you know your flags? These are the hardest country flags to identify. Most players can\'t get them all right. See how many you know!',
+      h1: 'Hardest Flags to Identify',
+      intro: 'These flags are rated as the most difficult to identify. They\'re the ones that trip up even experienced flag enthusiasts. How many can you get right?',
+      getCountries: () => countries.filter((c) => c.difficulty >= 4).sort((a, b) => b.difficulty - a.difficulty),
+    },
+    {
+      slug: 'easiest-flags',
+      title: 'Easiest Flags to Identify - Most Recognizable Country Flags | Flag Arcade',
+      description: 'Start with the easiest flags! These are the most recognizable country flags in the world. Perfect for beginners learning world flags.',
+      h1: 'Easiest Flags to Identify',
+      intro: 'These are the most recognizable flags in the world. If you\'re just starting to learn flags, begin here — you probably already know most of these!',
+      getCountries: () => countries.filter((c) => c.difficulty <= 2).sort((a, b) => a.difficulty - b.difficulty),
+    },
+    {
+      slug: 'red-white-and-blue-flags',
+      title: 'Red, White, and Blue Flags - Countries with Red White Blue Flags | Flag Arcade',
+      description: 'Which countries have red, white, and blue flags? Browse all flags featuring this popular color combination and learn what the colors represent.',
+      h1: 'Red, White, and Blue Flags',
+      intro: 'Red, white, and blue is one of the most popular color combinations in national flags. These countries all feature this classic trio — but can you tell them apart?',
+      getCountries: () => countries.filter((c) => {
+        const f = flagFeatures[c.code];
+        return f && f.colors.includes('red') && f.colors.includes('white') && f.colors.includes('blue');
+      }),
+    },
+    {
+      slug: 'similar-looking-flags',
+      title: 'Flags That Look Alike - Similar Country Flags | Flag Arcade',
+      description: 'Many country flags look surprisingly similar! Explore flags that share the same colors and patterns. Can you tell them apart?',
+      h1: 'Flags That Look Alike',
+      intro: 'Did you know many countries have nearly identical flags? These flags share similar colors and patterns, making them easy to confuse. Learning the subtle differences is the key to mastering flag identification.',
+      getCountries: () => {
+        // Get countries with the most common color combo (green, yellow, red)
+        return countries.filter((c) => {
+          const f = flagFeatures[c.code];
+          return f && f.colors.includes('green') && f.colors.includes('yellow') && f.colors.includes('red');
+        });
+      },
+    },
+  ];
+
+  return [...colorPages, ...patternPages, ...specialPages];
+}
+
+// ---------------------------------------------------------------------------
 // Sitemap
 // ---------------------------------------------------------------------------
 
@@ -504,8 +846,10 @@ function main() {
     const slug = slugify(continent);
     writeFile(path.join(DIST, 'flags', 'continent', slug, 'index.html'), generateContinentPage(continent, assets));
     sitemapUrls.push({ loc: `${SITE_URL}/flags/continent/${slug}`, priority: '0.8' });
+
+    writeFile(path.join(DIST, 'quiz', slug, 'index.html'), generateContinentQuizStaticPage(continent, assets));
     sitemapUrls.push({ loc: `${SITE_URL}/quiz/${slug}`, priority: '0.7' });
-    console.log(`  /flags/continent/${slug}`);
+    console.log(`  /flags/continent/${slug} + /quiz/${slug}`);
   }
 
   // Country pages
@@ -516,6 +860,15 @@ function main() {
   }
   console.log(`  ${countries.length} country pages`);
 
+  // Long-tail content pages
+  const contentPages = getContentPages();
+  for (const page of contentPages) {
+    const generated = generateContentPage(page, assets);
+    writeFile(path.join(DIST, 'flags', page.slug, 'index.html'), generated);
+    sitemapUrls.push({ loc: `${SITE_URL}/flags/${page.slug}`, priority: '0.6' });
+  }
+  console.log(`  ${contentPages.length} content pages`);
+
   // Sitemap
   writeFile(path.join(DIST, 'sitemap.xml'), generateSitemap(sitemapUrls));
   console.log('  sitemap.xml');
@@ -524,7 +877,7 @@ function main() {
   writeFile(path.join(DIST, 'robots.txt'), `User-agent: *\nAllow: /\n\nSitemap: ${SITE_URL}/sitemap.xml\n`);
   console.log('  robots.txt');
 
-  const totalPages = 1 + 1 + continents.length + countries.length; // directory + quiz + continents + countries
+  const totalPages = 1 + 1 + continents.length * 2 + countries.length + contentPages.length;
   console.log(`\nDone! Generated ${totalPages} SEO pages + sitemap + robots.txt`);
 }
 
