@@ -35,8 +35,12 @@ export function OrganizationsPage() {
               className="block bg-retro-surface border-2 border-retro-border shadow-pixel p-5 hover:bg-retro-accent/10 transition-colors"
             >
               <div className="flex items-start gap-4">
-                {/* Emoji/icon */}
-                <div className="text-5xl flex-shrink-0 mt-1">{org.emoji}</div>
+                <img
+                  src={`/flag-images/flag-${org.slug}.svg`}
+                  alt={`Flag of ${org.name}`}
+                  className="w-20 h-14 object-contain flex-shrink-0 mt-1"
+                  loading="lazy"
+                />
 
                 {/* Details */}
                 <div className="flex-1 min-w-0">

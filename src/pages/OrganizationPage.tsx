@@ -46,7 +46,12 @@ export function OrganizationPage() {
         {/* Header */}
         <div className="bg-retro-surface border-2 border-retro-border shadow-pixel-lg p-6 mt-4">
           <div className="flex items-start gap-4">
-            <div className="text-5xl flex-shrink-0">{org.emoji}</div>
+            <img
+              src={`/flag-images/flag-${org.slug}.svg`}
+              alt={`Flag of ${org.name}`}
+              className="w-24 h-16 object-contain flex-shrink-0"
+              loading="lazy"
+            />
             <div className="flex-1">
               <div className="flex items-baseline gap-2 flex-wrap">
                 <h1 className="font-retro text-lg md:text-xl text-retro-text">{org.name}</h1>
@@ -107,9 +112,15 @@ export function OrganizationPage() {
               <Link
                 key={o.slug}
                 to={`/organizations/${o.slug}`}
-                className="font-body text-xs border border-retro-border px-3 py-1.5 bg-white hover:bg-retro-accent/30 transition-colors"
+                className="font-body text-xs border border-retro-border/40 hover:border-retro-border px-3 py-1.5 bg-white hover:bg-retro-accent/30 transition-colors flex items-center gap-2"
               >
-                {o.emoji} {o.abbreviation}
+                <img
+                  src={`/flag-images/flag-${o.slug}.svg`}
+                  alt=""
+                  className="w-5 h-3.5 object-contain"
+                  loading="lazy"
+                />
+                {o.abbreviation}
               </Link>
             ))}
           </div>

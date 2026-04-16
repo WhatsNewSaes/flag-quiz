@@ -1,5 +1,5 @@
 import { useState, useEffect, useLayoutEffect, useRef, useCallback, lazy, Suspense } from 'react';
-import { Routes, Route, Navigate, Outlet, useNavigate, useParams, useLocation } from 'react-router-dom';
+import { Routes, Route, Navigate, Outlet, useNavigate, useNavigationType, useParams, useLocation } from 'react-router-dom';
 import { CelebrationTest } from './components/CelebrationTest';
 import { Onboarding } from './components/Onboarding';
 import { AchievementToast } from './components/journey/AchievementToast';
@@ -22,6 +22,9 @@ const OrganizationsPage = lazy(() => import('./pages/OrganizationsPage').then(m 
 const OrganizationPage = lazy(() => import('./pages/OrganizationPage').then(m => ({ default: m.OrganizationPage })));
 const TerritoriesPage = lazy(() => import('./pages/TerritoriesPage').then(m => ({ default: m.TerritoriesPage })));
 const TerritoryFlagPage = lazy(() => import('./pages/TerritoryFlagPage').then(m => ({ default: m.TerritoryFlagPage })));
+const PatternsPage = lazy(() => import('./pages/PatternsPage').then(m => ({ default: m.PatternsPage })));
+const ReligionPage = lazy(() => import('./pages/ReligionPage').then(m => ({ default: m.ReligionPage })));
+const ReligionsIndexPage = lazy(() => import('./pages/ReligionsIndexPage').then(m => ({ default: m.ReligionsIndexPage })));
 
 // Lazy-loaded game routes
 const JourneyScreen = lazy(() => import('./routes/JourneyScreen').then(m => ({ default: m.JourneyScreen })));
@@ -43,13 +46,39 @@ function LoadingFallback() {
   );
 }
 
-// Scroll to top on route change — #root is the scroll container (overflow-y: auto),
-// not window, so we scroll that element directly.
-function ScrollToTop() {
-  const { pathname } = useLocation();
+// Scroll manager — #root is the scroll container (overflow-y: auto), not window.
+// Forward nav (PUSH/REPLACE) → scroll to top. Back/forward (POP) → restore saved.
+// We save the scroll continuously on scroll events so the latest position is
+// always captured before the user navigates away.
+function ScrollManager() {
+  const location = useLocation();
+  const navType = useNavigationType();
+  const positionsRef = useRef<Map<string, number>>(new Map());
+  const currentKeyRef = useRef<string>(location.key);
+
+  // Track scrolling of the #root element and save under the current key.
+  useEffect(() => {
+    const root = document.getElementById('root');
+    if (!root) return;
+    const onScroll = () => {
+      positionsRef.current.set(currentKeyRef.current, root.scrollTop);
+    };
+    root.addEventListener('scroll', onScroll, { passive: true });
+    return () => root.removeEventListener('scroll', onScroll);
+  }, []);
+
   useLayoutEffect(() => {
-    document.getElementById('root')?.scrollTo(0, 0);
-  }, [pathname]);
+    const root = document.getElementById('root');
+    if (!root) return;
+    currentKeyRef.current = location.key;
+    if (navType === 'POP') {
+      const saved = positionsRef.current.get(location.key) ?? 0;
+      root.scrollTo(0, saved);
+    } else {
+      root.scrollTo(0, 0);
+    }
+  }, [location.key, navType]);
+
   return null;
 }
 
@@ -175,7 +204,7 @@ function ContinentQuizPageWrapper() {
 function App() {
   return (
     <Suspense fallback={<LoadingFallback />}>
-      <ScrollToTop />
+      <ScrollManager />
       <Routes>
         {/* Site pages with persistent nav */}
         <Route element={<SiteLayout />}>
@@ -190,6 +219,9 @@ function App() {
           <Route path="/quiz/:slug" element={<ContinentQuizPageWrapper />} />
           <Route path="/organizations" element={<OrganizationsPage />} />
           <Route path="/organizations/:slug" element={<OrganizationPage />} />
+          <Route path="/patterns" element={<PatternsPage />} />
+          <Route path="/religions" element={<ReligionsIndexPage />} />
+          <Route path="/religions/:slug" element={<ReligionPage />} />
           <Route path="/about" element={<AboutPage />} />
         </Route>
         {/* Game routes with shared game state */}

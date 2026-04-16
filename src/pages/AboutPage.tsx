@@ -39,6 +39,13 @@ export function AboutPage() {
               Play Flag Arcade
             </Link>
           </div>
+
+          <div className="mt-8 pt-6 border-t-2 border-retro-border/20 text-center space-x-4">
+            <Link to="/flags" className="font-body text-sm text-retro-neon-blue underline">All Flags</Link>
+            <Link to="/patterns" className="font-body text-sm text-retro-neon-blue underline">Patterns</Link>
+            <Link to="/organizations" className="font-body text-sm text-retro-neon-blue underline">Organizations</Link>
+            <Link to="/religions" className="font-body text-sm text-retro-neon-blue underline">Religions</Link>
+          </div>
         </div>
       </div>
     </div>

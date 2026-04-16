@@ -1,6 +1,40 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { organizations } from '../data/organizations';
+import { countries } from '../data/countries';
+import { territories, getTerritorySlug } from '../data/territories';
+import { flagPatternInfos } from '../data/flagPatterns';
+import { getFlagEmoji } from '../utils/flagEmoji';
+import { getCountrySlug } from '../utils/slugify';
+
+type SearchItem =
+  | { kind: 'country'; code: string; name: string; href: string }
+  | { kind: 'territory'; code: string; name: string; href: string; sovereignName: string }
+  | { kind: 'organization'; slug: string; name: string; abbreviation: string; emoji: string; href: string };
+
+const SEARCH_INDEX: SearchItem[] = [
+  ...countries.map<SearchItem>((c) => ({
+    kind: 'country',
+    code: c.code,
+    name: c.name,
+    href: `/flags/${getCountrySlug(c)}`,
+  })),
+  ...territories.map<SearchItem>((t) => ({
+    kind: 'territory',
+    code: t.code,
+    name: t.name,
+    href: `/flags/territories/${getTerritorySlug(t)}`,
+    sovereignName: t.sovereignName,
+  })),
+  ...organizations.map<SearchItem>((o) => ({
+    kind: 'organization',
+    slug: o.slug,
+    name: o.name,
+    abbreviation: o.abbreviation,
+    emoji: o.emoji,
+    href: `/organizations/${o.slug}`,
+  })),
+];
 
 const CONTINENTS = [
   { name: 'Africa', slug: 'africa' },
@@ -29,7 +63,7 @@ const TERRITORY_GROUPS = [
   { name: 'Greenland', path: '/flags/territories/greenland', emoji: '🇬🇱' },
 ];
 
-type DropdownId = 'continents' | 'modes' | 'orgs' | 'territories' | null;
+type DropdownId = 'continents' | 'modes' | 'orgs' | 'territories' | 'patterns' | null;
 
 function ChevronDown({ open }: { open: boolean }) {
   return (
@@ -44,16 +78,88 @@ function ChevronDown({ open }: { open: boolean }) {
 
 export function SiteNav() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openDesktop, setOpenDesktop] = useState<DropdownId>(null);
   const [openMobile, setOpenMobile] = useState<DropdownId>(null);
   const navRef = useRef<HTMLDivElement>(null);
 
-  // Close desktop dropdown on outside click
+  const [query, setQuery] = useState('');
+  const [searchFocused, setSearchFocused] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const searchRef = useRef<HTMLDivElement>(null);
+  const mobileSearchRef = useRef<HTMLDivElement>(null);
+  const desktopSearchInputRef = useRef<HTMLInputElement>(null);
+  const mobileSearchInputRef = useRef<HTMLInputElement>(null);
+
+  const searchResults = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return [];
+    return SEARCH_INDEX
+      .filter((item) => {
+        if (item.name.toLowerCase().includes(q)) return true;
+        if (item.kind === 'organization' && item.abbreviation.toLowerCase().includes(q)) return true;
+        return false;
+      })
+      .sort((a, b) => {
+        const aStarts = a.name.toLowerCase().startsWith(q);
+        const bStarts = b.name.toLowerCase().startsWith(q);
+        if (aStarts && !bStarts) return -1;
+        if (!aStarts && bStarts) return 1;
+        return a.name.localeCompare(b.name);
+      })
+      .slice(0, 8);
+  }, [query]);
+
+  // Reset highlight when results change
+  useEffect(() => {
+    setSelectedIndex(0);
+  }, [query]);
+
+  // Global hotkey: "/" or Cmd/Ctrl+K focuses the search input
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      const target = e.target as HTMLElement | null;
+      const inEditable =
+        target instanceof HTMLInputElement ||
+        target instanceof HTMLTextAreaElement ||
+        (target && target.isContentEditable);
+      const isCmdK = (e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k';
+      const isSlash = e.key === '/' && !inEditable;
+      if (!isCmdK && !isSlash) return;
+      // Prefer the visible desktop input; fall back to mobile by opening the menu
+      if (desktopSearchInputRef.current && desktopSearchInputRef.current.offsetParent !== null) {
+        e.preventDefault();
+        desktopSearchInputRef.current.focus();
+        desktopSearchInputRef.current.select();
+        setSearchFocused(true);
+      } else if (mobileSearchInputRef.current) {
+        e.preventDefault();
+        setMobileOpen(true);
+        // Defer focus until after the mobile panel renders
+        requestAnimationFrame(() => {
+          mobileSearchInputRef.current?.focus();
+          mobileSearchInputRef.current?.select();
+          setSearchFocused(true);
+        });
+      }
+    }
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
+  // Close desktop dropdown / search results on outside click
   useEffect(() => {
     function handleClick(e: MouseEvent) {
-      if (navRef.current && !navRef.current.contains(e.target as Node)) {
+      const target = e.target as Node;
+      if (navRef.current && !navRef.current.contains(target)) {
         setOpenDesktop(null);
+      }
+      if (
+        searchRef.current && !searchRef.current.contains(target) &&
+        mobileSearchRef.current && !mobileSearchRef.current.contains(target)
+      ) {
+        setSearchFocused(false);
       }
     }
     document.addEventListener('mousedown', handleClick);
@@ -65,7 +171,73 @@ export function SiteNav() {
     setMobileOpen(false);
     setOpenMobile(null);
     setOpenDesktop(null);
+    setQuery('');
+    setSearchFocused(false);
   }, [location.pathname]);
+
+  function handleSearchKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === 'ArrowDown' && searchResults.length > 0) {
+      e.preventDefault();
+      setSearchFocused(true);
+      setSelectedIndex((i) => (i + 1) % searchResults.length);
+    } else if (e.key === 'ArrowUp' && searchResults.length > 0) {
+      e.preventDefault();
+      setSearchFocused(true);
+      setSelectedIndex((i) => (i - 1 + searchResults.length) % searchResults.length);
+    } else if (e.key === 'Enter' && searchResults.length > 0) {
+      e.preventDefault();
+      const idx = Math.min(selectedIndex, searchResults.length - 1);
+      navigate(searchResults[idx].href);
+    } else if (e.key === 'Escape') {
+      setQuery('');
+      setSearchFocused(false);
+      (e.target as HTMLInputElement).blur();
+    }
+  }
+
+  function renderSearchResults(idPrefix: string) {
+    if (!searchFocused || !query.trim()) return null;
+    if (searchResults.length === 0) {
+      return (
+        <div className="absolute top-full left-0 right-0 mt-1 bg-retro-surface border-2 border-retro-border shadow-pixel z-40 px-3 py-2 font-body text-sm text-retro-text-secondary">
+          No flags match "{query}"
+        </div>
+      );
+    }
+    return (
+      <ul className="absolute top-full left-0 right-0 mt-1 bg-retro-surface border-2 border-retro-border shadow-pixel z-40 max-h-80 overflow-y-auto">
+        {searchResults.map((item, i) => {
+          const key = item.kind === 'organization' ? item.slug : item.code;
+          const icon = item.kind === 'organization' ? item.emoji : getFlagEmoji(item.code);
+          const tag =
+            item.kind === 'territory'
+              ? `Territory · ${item.sovereignName}`
+              : item.kind === 'organization'
+                ? `Organization · ${item.abbreviation}`
+                : null;
+          return (
+            <li key={`${idPrefix}-${item.kind}-${key}`}>
+              <Link
+                to={item.href}
+                onMouseEnter={() => setSelectedIndex(i)}
+                className={`flex items-center gap-2 px-3 py-2 font-body text-sm transition-colors ${
+                  i === selectedIndex ? 'bg-retro-accent/40' : 'hover:bg-retro-accent/30'
+                }`}
+              >
+                <span className="text-lg" aria-hidden="true">{icon}</span>
+                <span className="flex-1">{item.name}</span>
+                {tag && (
+                  <span className="font-body text-[10px] uppercase tracking-wide text-retro-text-secondary/70">
+                    {tag}
+                  </span>
+                )}
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
+    );
+  }
 
   const toggleDesktop = useCallback((id: DropdownId) => {
     setOpenDesktop((prev) => (prev === id ? null : id));
@@ -91,10 +263,11 @@ export function SiteNav() {
 
   const isFlags = location.pathname.startsWith('/flags');
   const isOrgs = location.pathname.startsWith('/organizations');
+  const isPatterns = location.pathname.startsWith('/patterns');
 
   return (
     <nav className="sticky top-0 z-30 bg-retro-surface/95 backdrop-blur border-b-2 border-retro-border">
-      <div className="max-w-5xl mx-auto flex items-center justify-between px-4 h-14 md:h-16">
+      <div className="w-full flex items-center justify-between px-4 h-14 md:h-16">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 shrink-0">
           <span className="text-xl" aria-hidden>🌍</span>
@@ -130,6 +303,37 @@ export function SiteNav() {
                   className={`${itemClass} border-t-2 border-retro-border/30 font-semibold text-retro-neon-blue`}
                 >
                   All Flags →
+                </Link>
+              </div>
+            )}
+          </div>
+
+          {/* Patterns dropdown */}
+          <div className="relative">
+            <button
+              onClick={() => toggleDesktop('patterns')}
+              className={btnClass(isPatterns)}
+            >
+              ▦ Patterns
+              <ChevronDown open={openDesktop === 'patterns'} />
+            </button>
+            {openDesktop === 'patterns' && (
+              <div className={`${dropdownClass} w-60`}>
+                {flagPatternInfos.map((p) => (
+                  <Link
+                    key={p.slug}
+                    to={`/flags/${p.slug}`}
+                    className={`${itemClass} flex items-center gap-2`}
+                  >
+                    <span className="w-5 text-center">{p.emoji}</span>
+                    {p.name}
+                  </Link>
+                ))}
+                <Link
+                  to="/patterns"
+                  className={`${itemClass} border-t-2 border-retro-border/30 font-semibold text-retro-neon-blue`}
+                >
+                  All Patterns →
                 </Link>
               </div>
             )}
@@ -177,7 +381,12 @@ export function SiteNav() {
                     to={`/organizations/${org.slug}`}
                     className={`${itemClass} flex items-center gap-2`}
                   >
-                    <span>{org.emoji}</span>
+                    <img
+                      src={`/flag-images/flag-${org.slug}.svg`}
+                      alt=""
+                      className="w-6 h-4 object-contain flex-shrink-0"
+                      loading="lazy"
+                    />
                     {org.abbreviation} — {org.name}
                   </Link>
                 ))}
@@ -218,13 +427,39 @@ export function SiteNav() {
 
         </div>
 
-        {/* Right side: PLAY CTA + mobile hamburger */}
+        {/* Right side: search + PLAY CTA + mobile hamburger */}
         <div className="flex items-center gap-2">
+          {/* Desktop search */}
+          <div ref={searchRef} className="relative hidden md:block">
+            <input
+              ref={desktopSearchInputRef}
+              type="search"
+              value={query}
+              onChange={(e) => { setQuery(e.target.value); setSearchFocused(true); }}
+              onFocus={() => setSearchFocused(true)}
+              onKeyDown={handleSearchKeyDown}
+              placeholder="Search flags"
+              aria-label="Search country flags"
+              className="font-body text-sm text-retro-text placeholder:text-retro-text/70 border-2 border-retro-border bg-retro-surface pl-9 pr-3 py-1.5 w-44 lg:w-56 outline-none focus:border-retro-neon-blue"
+            />
+            {!query && !searchFocused && (
+              <kbd
+                aria-hidden="true"
+                className="absolute left-2 top-1/2 -translate-y-1/2 pointer-events-none font-mono text-[11px] text-retro-text/70 bg-[#EBE0C2] border border-retro-border shadow-pixel-sm px-1.5 py-0.5 leading-none"
+              >
+                /
+              </kbd>
+            )}
+            {renderSearchResults('desktop')}
+          </div>
+
+          <span className="hidden md:block h-7 w-px bg-retro-border/40 mx-1" aria-hidden="true" />
+
           <Link
             to="/play/modes"
             className="font-retro text-[10px] md:text-xs bg-retro-neon-green text-white border-2 border-retro-border shadow-pixel-sm px-4 py-2 md:px-5 md:py-2.5 hover:translate-y-0.5 hover:shadow-none transition-all"
           >
-            PLAY
+            ▶ PLAY
           </Link>
 
           {/* Mobile hamburger */}
@@ -244,6 +479,33 @@ export function SiteNav() {
       {mobileOpen && (
         <div className="md:hidden border-t-2 border-retro-border bg-retro-surface">
           <div className="px-4 py-3 flex flex-col gap-1">
+            {/* Mobile search */}
+            <div ref={mobileSearchRef} className="relative mb-2">
+              <input
+                ref={mobileSearchInputRef}
+                type="search"
+                value={query}
+                onChange={(e) => { setQuery(e.target.value); setSearchFocused(true); }}
+                onFocus={() => setSearchFocused(true)}
+                onKeyDown={handleSearchKeyDown}
+                placeholder="Search flags…"
+                aria-label="Search country flags"
+                className="w-full font-body text-sm text-retro-text placeholder:text-retro-text/60 border-2 border-retro-border bg-retro-bg/60 pl-9 pr-3 py-2 outline-none focus:border-retro-neon-blue focus:bg-retro-surface"
+              />
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2.5}
+                className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-retro-text/60 pointer-events-none"
+              >
+                <circle cx="11" cy="11" r="7" />
+                <path strokeLinecap="round" d="M20 20l-3.5-3.5" />
+              </svg>
+              {renderSearchResults('mobile')}
+            </div>
+
             {/* Continents */}
             <button onClick={() => toggleMobile('continents')} className={mobileBtnClass(false)}>
               🌎 Continents
@@ -258,6 +520,25 @@ export function SiteNav() {
                 ))}
                 <Link to="/flags" className={`${mobileItemClass} font-semibold text-retro-neon-blue`}>
                   All Flags →
+                </Link>
+              </div>
+            )}
+
+            {/* Patterns */}
+            <button onClick={() => toggleMobile('patterns')} className={mobileBtnClass(isPatterns)}>
+              ▦ Patterns
+              <ChevronDown open={openMobile === 'patterns'} />
+            </button>
+            {openMobile === 'patterns' && (
+              <div className="ml-4 flex flex-col gap-0.5">
+                {flagPatternInfos.map((p) => (
+                  <Link key={p.slug} to={`/flags/${p.slug}`} className={`${mobileItemClass} flex items-center gap-2`}>
+                    <span className="w-5 text-center">{p.emoji}</span>
+                    {p.name}
+                  </Link>
+                ))}
+                <Link to="/patterns" className={`${mobileItemClass} font-semibold text-retro-neon-blue`}>
+                  All Patterns →
                 </Link>
               </div>
             )}
@@ -287,7 +568,12 @@ export function SiteNav() {
               <div className="ml-4 flex flex-col gap-0.5 max-h-60 overflow-y-auto">
                 {organizations.map((org) => (
                   <Link key={org.slug} to={`/organizations/${org.slug}`} className={`${mobileItemClass} flex items-center gap-2`}>
-                    <span>{org.emoji}</span>
+                    <img
+                      src={`/flag-images/flag-${org.slug}.svg`}
+                      alt=""
+                      className="w-6 h-4 object-contain flex-shrink-0"
+                      loading="lazy"
+                    />
                     {org.abbreviation}
                   </Link>
                 ))}

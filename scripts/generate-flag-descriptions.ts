@@ -6,6 +6,7 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { countries } from '../src/data/countries';
+import { territories } from '../src/data/territories';
 import { flagFeatures } from '../src/data/flagFeatures';
 
 const patternDescriptions: Record<string, string> = {
@@ -181,6 +182,145 @@ const richDescriptions: Record<string, { description: string; meaning: string; f
   },
 };
 
+// Hand-written, source-verified flag descriptions for dependent territories.
+// Anti-hallucination rules (see .claude/skills/territory-data-enrichment.md):
+//   • Every claim must be verifiable against a mainstream source.
+//   • If adopted year is disputed or unknown → 'unknown'.
+//   • If symbolism of a color/pattern is contested → omit rather than invent.
+//   • No fun facts sourced from folklore, blog posts, or AI memory alone.
+// Territories without a rich entry here emit no flagDescriptions row — the
+// About This Flag section then gracefully collapses to features-only.
+interface TerritoryEntry {
+  description: string;
+  meaning: string;
+  adopted: string;
+  funFacts: string[];
+  capital: string;
+}
+const territoryDescriptions: Record<string, TerritoryEntry> = {
+  // Batch 1 — data-rich, well-documented territories (10).
+  PR: {
+    description: "The flag of Puerto Rico consists of five equal horizontal stripes alternating red and white, with a blue equilateral triangle on the hoist side bearing a single white five-pointed star. The design mirrors the flag of Cuba with the colors of the triangle and stripes reversed, reflecting the shared 19th-century independence movement that linked the two Caribbean islands. Originally designed in 1895 by members of the Puerto Rican Revolutionary Committee in New York, it was flown by separatist forces during the 1898 Intentona de Yauco uprising against Spanish rule. The flag was officially adopted by the Commonwealth of Puerto Rico on July 25, 1952 — the same day the Commonwealth constitution took effect.",
+    meaning: "The three red stripes represent the blood that nourishes the three branches of government. The two white stripes symbolize individual liberty and the rights that keep the government in balance. The blue triangle stands for the three branches of government themselves, and the single white star represents the Commonwealth of Puerto Rico.",
+    adopted: "1952",
+    funFacts: [
+      "From 1948 to 1957 it was illegal under Puerto Rican Law 53 (the gag law) to own or display the Puerto Rican flag — the law was aimed at suppressing the independence movement and was repealed in 1957.",
+      "The design was modeled on the Cuban flag because Puerto Rican and Cuban revolutionaries shared the same anti-Spanish coalition in the 1890s.",
+      "The original 1895 flag used a sky-blue triangle; the darker navy blue now in common use was not officially standardized until 1995 by Governor Pedro Rosselló.",
+      "Before the 1952 adoption, displaying the flag was treated as a declaration of sedition — it only became legal on the same day the Commonwealth was established.",
+    ],
+    capital: "San Juan",
+  },
+  GL: {
+    description: "The flag of Greenland, called Erfalasorput (\"our flag\"), features two equal horizontal bands — white on top and red below — with a large counter-shaded disc positioned slightly to the hoist side of center. The top half of the disc is red and sits on the white band; the bottom half is white and sits on the red band. Designed by Greenlandic artist Thue Christiansen, it was chosen from among 555 submissions and adopted on June 21, 1985, the sixth anniversary of Greenland Home Rule, after being passed by the Landsting by a single vote (14–11).",
+    meaning: "The white band represents Greenland's ice cap and glaciers. The red band represents the sea and the midnight sun of summer. The disc evokes the sun setting into the ocean, a familiar sight in Arctic summers, and the red-and-white color scheme ties Greenland visually to the Nordic flag family and to Denmark.",
+    adopted: "1985",
+    funFacts: [
+      "Greenland is the only Nordic territory whose flag does not use a Scandinavian cross — a deliberate break from the pattern to emphasize Greenlandic identity.",
+      "Flag Day is celebrated on June 21, coinciding with the summer solstice and the anniversary of Home Rule.",
+      "The winning design beat a competing proposal for a green-and-white Nordic cross by a single vote in the Landsting.",
+      "Thue Christiansen, the flag's designer, was a teacher and member of the Greenlandic parliament when he submitted the design.",
+    ],
+    capital: "Nuuk",
+  },
+  HK: {
+    description: "The flag of Hong Kong is a red field with a stylized white five-petal Bauhinia blakeana flower (the Hong Kong orchid tree) in the center. Each petal contains a small red five-pointed star and a red trace suggesting a stamen. The flag was adopted on July 1, 1997, the day sovereignty over Hong Kong transferred from the United Kingdom to the People's Republic of China, replacing the British blue ensign that had flown since 1959. The design is defined in the Basic Law of the Hong Kong Special Administrative Region.",
+    meaning: "Red mirrors the color of the national flag of China and represents the motherland; white stands for Hong Kong as a distinct social and economic system under \"one country, two systems.\" The five petals each carrying a small red star symbolize Hong Kongers loving their nation, and the five stars echo those on the PRC flag.",
+    adopted: "1997",
+    funFacts: [
+      "Bauhinia blakeana, the flower on the flag, was discovered in Hong Kong in 1880 and every specimen is a clone of one original tree — it is a sterile hybrid that cannot reproduce from seed.",
+      "The flag's specifications are written into Article 10 of the Basic Law, meaning any change would require amending Hong Kong's constitutional document.",
+      "The design was selected in 1990 from more than 7,000 entries submitted to a public design competition.",
+      "Use, design and display of the flag are governed by the Regional Flag and Regional Emblem Ordinance, which criminalizes desecration.",
+    ],
+    capital: "City of Victoria",
+  },
+  MO: {
+    description: "The flag of Macao is a green field bearing a stylized white lotus flower with three blooms, floating above a white depiction of the Governador Nobre de Carvalho Bridge and stylized ocean waves. An arc of five gold five-pointed stars — one large star with four smaller ones — sits above the lotus. The flag was adopted on December 20, 1999, when sovereignty transferred from Portugal to the People's Republic of China, and is defined in the Basic Law of the Macao Special Administrative Region.",
+    meaning: "Green represents peace and harmony. The lotus is Macao's official floral emblem; its three blooms represent Macao's three main land areas (the Macao Peninsula, Taipa, and Coloane). The bridge and water situate the lotus in Macao's maritime geography. The five gold stars — one larger with four smaller — echo the arrangement on the national flag of the People's Republic of China.",
+    adopted: "1999",
+    funFacts: [
+      "Macao's flag and Hong Kong's were both adopted within two-and-a-half years of each other as each region returned to Chinese sovereignty after more than a century of European rule.",
+      "The Governador Nobre de Carvalho Bridge shown on the flag connects the Macao Peninsula to Taipa and was the first permanent link between them when it opened in 1974.",
+      "The specifications for the flag — including exact shades, proportions, and symbol placement — are laid down in Annex III of Macao's Basic Law.",
+      "Public mistreatment of the flag is a criminal offense under Macao's Law on the National Flag, National Emblem and National Anthem.",
+    ],
+    capital: "Macao",
+  },
+  FO: {
+    description: "The flag of the Faroe Islands, called Merkið (\"the banner\"), is a white field charged with an off-center red Nordic cross outlined in blue. Like other Nordic cross flags, the vertical arm is shifted toward the hoist. Designed in 1919 by three Faroese students — Jens Oliver Lisberg, Janus Øssursson, and Pauli Dahl — while they were studying in Copenhagen, the flag was first raised in the village of Fámjin. It was formally recognized for Faroese use by the British occupying forces on April 25, 1940, and officially adopted by the Faroese government when Home Rule took effect in 1948.",
+    meaning: "White represents the foam of the ocean waves and the clear sky of the islands. Red and blue are traditional colors used in Faroese folk dress and, together with white, place the flag in the Nordic cross family alongside those of Denmark, Norway, Sweden, Finland, and Iceland.",
+    adopted: "1948",
+    funFacts: [
+      "Flag Day (Flaggdagur) is celebrated every April 25, commemorating the day in 1940 that British forces — who had occupied the islands to prevent a Nazi invasion — authorized Merkið in place of the Danish Dannebrog.",
+      "The original 1919 flag is preserved in the church of Fámjin on the island of Suðuroy, where one of its designers, Jens Oliver Lisberg, is buried.",
+      "Before 1940, public display of Merkið was discouraged by Danish authorities; wartime occupation gave Faroese nationalists the opening to establish it in daily use.",
+      "Merkið flies independently of Denmark's flag on Faroese government buildings, a privilege won through Home Rule in 1948.",
+    ],
+    capital: "Tórshavn",
+  },
+  GI: {
+    description: "The flag of Gibraltar consists of two horizontal bands — a wider white band on top and a narrower red band below, in roughly 2:1 proportion — with a red three-towered castle centered on the white band and a single gold key hanging from the central tower down into the red band. The design is drawn directly from the Royal Warrant issued by Isabella I of Castile on July 10, 1502, which granted Gibraltar its coat of arms. The banner version was officially adopted on November 8, 1982.",
+    meaning: "The red castle represents the Rock of Gibraltar and its fortifications — a central element of Gibraltar's identity since the Moorish period. The gold key symbolizes Gibraltar's strategic role as the \"Key to the Mediterranean,\" commanding the strait between Europe and Africa. Red and white are the colors of the Castilian arms granted by Queen Isabella.",
+    adopted: "1982",
+    funFacts: [
+      "Gibraltar's coat of arms is among the oldest still in continuous use anywhere — its design dates to the original 1502 Royal Warrant from Queen Isabella I of Castile.",
+      "Gibraltar is unusual among British Overseas Territories in not using the standard blue ensign format; its banner uses the territory's own heraldry instead.",
+      "The flag was officially adopted on November 8, 1982, by a decree from the Governor — just weeks before the frontier with Spain, closed since 1969, was reopened to pedestrians.",
+      "The three castle towers in the flag are rendered as masoned (showing individual blocks), a heraldic convention preserved from the 1502 grant.",
+    ],
+    capital: "Gibraltar",
+  },
+  BM: {
+    description: "The civil flag of Bermuda is a British Red Ensign — a red field with the Union Jack in the upper-hoist canton — defaced with the Bermudian coat of arms on the fly. The arms show a red lion rampant holding a shield that depicts the wreck of the Sea Venture, the English ship whose 1609 grounding on Bermuda's reefs led to the first English settlement of the islands. Bermuda is the only British Overseas Territory whose civil ensign uses a red rather than blue field — a choice made when the current design was adopted on October 4, 1910.",
+    meaning: "The Union Jack reflects Bermuda's status as a British Overseas Territory. The red lion — a symbol of England — holds a shield commemorating the Sea Venture, the founding event of Bermudian settlement. The red field distinguishes Bermuda's flag from the blue ensigns used by most other British territories.",
+    adopted: "1910",
+    funFacts: [
+      "The shield on the coat of arms shows the Sea Venture, wrecked on Bermuda's reefs in July 1609 while carrying settlers to the Jamestown colony; survivors built new ships from the wreckage and eventually reached Virginia.",
+      "The shipwreck of the Sea Venture is widely believed to have inspired William Shakespeare's play The Tempest, written around 1610–1611.",
+      "Bermuda's use of the red ensign is shared with only a handful of British merchant navy traditions and is a rare deviation from the blue-ensign default for overseas territories.",
+      "The full coat of arms was granted in 1910, the same year the current flag design was adopted.",
+    ],
+    capital: "Hamilton",
+  },
+  KY: {
+    description: "The flag of the Cayman Islands is a British Blue Ensign — a blue field with the Union Jack in the upper-hoist canton — defaced with the Cayman Islands coat of arms on the fly. The arms show a shield divided by wavy lines representing the sea, bearing three green five-pointed stars (one for each of the three islands: Grand Cayman, Cayman Brac, and Little Cayman). Above the shield sits a gold English lion; below, on a scroll, the motto \"He hath founded it upon the seas\" (Psalm 24:2). The flag was first adopted on May 14, 1958.",
+    meaning: "The Union Jack reflects the territory's status as a British Overseas Territory. The three green stars represent the three main Cayman Islands. The wavy blue-and-white bars symbolize the Caribbean Sea. The lion above the shield is a traditional symbol of England. The motto references the islands' maritime heritage.",
+    adopted: "1959",
+    funFacts: [
+      "The coat of arms includes a crest with a green sea turtle atop a pineapple and a thatch-palm rope — all items historically significant to Cayman culture.",
+      "The flag's motto \"He hath founded it upon the seas\" is drawn from Psalm 24:2 in the King James Bible.",
+      "The three stars on the flag correspond directly to the three inhabited islands; Little Cayman is the smallest with a population of under 200.",
+      "Cayman's current flag dates to 1958, but the version formally granted by Royal Warrant came in 1959 and has been modified slightly since.",
+    ],
+    capital: "George Town",
+  },
+  AW: {
+    description: "The flag of Aruba features a light blue field with two narrow parallel yellow horizontal stripes across the lower third and a red four-pointed star outlined in white in the upper hoist. The flag was adopted on March 18, 1976 — a date now celebrated as Flag Day (Dia di Himno y Bandera) — during Aruba's period of increasing autonomy from the Netherlands Antilles, nine years before the island gained its Status Aparte within the Kingdom of the Netherlands in 1986.",
+    meaning: "The light blue represents the sea and sky surrounding the island. The two yellow stripes represent the island's wealth, freedom, and motion (and are also associated with Aruba's indigenous wanglo and kibrahacha flowers). The red four-pointed star represents the four cardinal points from which Aruba's people have come; its white outline symbolizes purity and peace, and the star itself evokes the island's red soil.",
+    adopted: "1976",
+    funFacts: [
+      "Aruba's Flag Day, March 18, is a national holiday celebrated with the national anthem \"Aruba Dushi Tera\" and public ceremonies.",
+      "The flag was designed as part of a deliberate campaign to build a distinct Aruban identity ahead of Status Aparte, which Aruba secured from the Netherlands Antilles in 1986.",
+      "Aruba adopted its flag while still part of the Netherlands Antilles — it is one of the few constituent units to have adopted a flag before formally separating.",
+      "The light-blue background is officially specified by a precise color sample and is lighter than the blues seen on most Caribbean flags.",
+    ],
+    capital: "Oranjestad",
+  },
+  CK: {
+    description: "The flag of the Cook Islands is a British Blue Ensign — a blue field with the Union Jack in the upper-hoist canton — with fifteen white five-pointed stars arranged in a circle on the fly, one for each of the fifteen islands that make up the country. Adopted on August 4, 1979, it replaced a short-lived 1973–1979 green flag that had also used fifteen stars.",
+    meaning: "The Union Jack reflects the Cook Islands' historical ties to Britain and its continuing free association with New Zealand, which is itself a Commonwealth realm. The fifteen white stars arranged in a ring represent the fifteen islands of the Cook Islands united in equal circle, with no island placed above another.",
+    adopted: "1979",
+    funFacts: [
+      "Between 1973 and 1979 the Cook Islands used a green flag with 15 gold stars arranged in an oval — it was replaced after a change of government.",
+      "The fifteen stars form a perfect circle to signal that no island is senior to another, a conscious design choice reflecting the country's decentralized geography.",
+      "The Cook Islands is in free association with New Zealand — New Zealand handles most foreign affairs and defense, but the Cook Islands maintains its own flag and passport equivalents.",
+      "The flag's proportions and star layout are specified in the Cook Islands Flag Act and have not changed since 1979.",
+    ],
+    capital: "Avarua",
+  },
+};
+
 function capitalize(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
@@ -208,7 +348,9 @@ function generateEntry(code: string, name: string, continent: string) {
   }
 
   const colorList = features ? formatColorList(features.colors) : 'various colors';
-  const pattern = features ? patternDescriptions[features.pattern] || features.pattern : 'a distinctive design';
+  const pattern = features
+    ? features.patterns.map((p) => patternDescriptions[p] || p).join(' and ')
+    : 'a distinctive design';
 
   const description = `The flag of ${name} features ${pattern} in ${colorList}. It is a distinctive symbol representing the nation located in ${continent}.`;
   const meaning = `The colors of the ${name} flag reflect the nation's history, values, and cultural identity.`;
@@ -243,8 +385,26 @@ for (const country of countries) {
   output += `  },\n`;
 }
 
+// Territories: emit entries ONLY for codes with hand-written, source-verified
+// content in territoryDescriptions. Territories without a rich entry are
+// intentionally skipped so the page falls back to features-only rendering
+// rather than displaying template-generated prose.
+let territoriesWritten = 0;
+for (const territory of territories) {
+  const entry = territoryDescriptions[territory.code];
+  if (!entry) continue;
+  output += `  ${territory.code}: {\n`;
+  output += `    description: ${JSON.stringify(entry.description)},\n`;
+  output += `    meaning: ${JSON.stringify(entry.meaning)},\n`;
+  output += `    adopted: ${JSON.stringify(entry.adopted)},\n`;
+  output += `    funFacts: ${JSON.stringify(entry.funFacts)},\n`;
+  output += `    capitalCity: ${JSON.stringify(entry.capital)},\n`;
+  output += `  },\n`;
+  territoriesWritten++;
+}
+
 output += `};\n`;
 
 const outPath = path.resolve(import.meta.dirname, '..', 'src', 'data', 'flagDescriptions.ts');
 fs.writeFileSync(outPath, output, 'utf-8');
-console.log(`Wrote ${countries.length} entries to ${outPath}`);
+console.log(`Wrote ${countries.length} country + ${territoriesWritten} territory entries to ${outPath}`);

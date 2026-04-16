@@ -1,4 +1,4 @@
-import type { Continent } from './countries';
+import type { Continent, Difficulty } from './countries';
 
 export interface Territory {
   name: string;
@@ -6,6 +6,8 @@ export interface Territory {
   continent: Continent;
   sovereignCode: string;
   sovereignName: string;
+  difficulty?: Difficulty;
+  alternateNames?: string[];
 }
 
 function slugify(name: string): string {

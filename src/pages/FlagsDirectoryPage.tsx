@@ -43,7 +43,7 @@ export function FlagsDirectoryPage() {
           <div className="flex flex-wrap gap-2 mb-6">
             <button
               onClick={() => setFilter('all')}
-              className={`font-body text-xs border border-retro-border px-3 py-1.5 shadow-pixel-sm transition-colors ${
+              className={`font-body text-base border border-retro-border px-3 py-1.5 shadow-pixel-sm transition-colors ${
                 filter === 'all' ? 'bg-retro-accent text-retro-text' : 'bg-white text-retro-text-secondary hover:bg-retro-accent/30'
               }`}
             >
@@ -55,7 +55,7 @@ export function FlagsDirectoryPage() {
                 <button
                   key={cont}
                   onClick={() => setFilter(cont)}
-                  className={`font-body text-xs border border-retro-border px-3 py-1.5 shadow-pixel-sm transition-colors ${
+                  className={`font-body text-base border border-retro-border px-3 py-1.5 shadow-pixel-sm transition-colors ${
                     filter === cont ? 'bg-retro-accent text-retro-text' : 'bg-white text-retro-text-secondary hover:bg-retro-accent/30'
                   }`}
                 >
@@ -84,10 +84,10 @@ export function FlagsDirectoryPage() {
                   <Link
                     key={country.code}
                     to={`/flags/${getCountrySlug(country)}`}
-                    className="flex flex-col items-center gap-1 p-2 border border-retro-border hover:bg-retro-accent/30 transition-colors"
+                    className="flex flex-col items-center gap-1 p-2 border border-retro-border/40 hover:border-retro-border hover:bg-retro-accent/30 transition-colors"
                   >
-                    <span className="text-3xl">{getFlagEmoji(country.code)}</span>
-                    <span className="font-body text-xs text-retro-text text-center leading-tight">{country.name}</span>
+                    <span className="text-5xl">{getFlagEmoji(country.code)}</span>
+                    <span className="font-body text-sm text-retro-text text-center">{country.name}</span>
                   </Link>
                 ))}
               </div>

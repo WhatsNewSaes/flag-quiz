@@ -1,30 +1,15 @@
-import { useState, useRef, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { countries, continents } from '../data/countries';
 import { getFlagEmoji } from '../utils/flagEmoji';
 import { findContinentBySlug, getCountrySlug, getContinentSlug } from '../utils/slugify';
 import { SEOHead } from '../components/seo/SEOHead';
+import { Breadcrumbs } from '../components/seo/Breadcrumbs';
 import { ContinentMap } from '../components/seo/ContinentMap';
 import { QuizCTA } from '../components/QuizCTA';
 
 export function ContinentFlagsPage() {
   const { slug } = useParams<{ slug: string }>();
   const continent = findContinentBySlug(slug || '');
-  const navigate = useNavigate();
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setDropdownOpen(false);
-      }
-    }
-    if (dropdownOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
-    }
-  }, [dropdownOpen]);
 
   if (!continent) {
     return (
@@ -48,51 +33,16 @@ export function ContinentFlagsPage() {
       />
 
       <div className="max-w-4xl mx-auto px-4 py-6">
-        <nav aria-label="Breadcrumb" className="px-4 py-2 font-body text-sm text-retro-text-secondary">
-          <ol className="flex flex-wrap items-center gap-1">
-            <li className="flex items-center gap-1">
-              <Link to="/" className="underline hover:text-retro-text">Home</Link>
-            </li>
-            <li className="flex items-center gap-1">
-              <span aria-hidden="true">/</span>
-              <Link to="/flags" className="underline hover:text-retro-text">Flags</Link>
-            </li>
-            <li className="flex items-center gap-1">
-              <span aria-hidden="true">/</span>
-              <div className="relative" ref={dropdownRef}>
-                <button
-                  onClick={() => setDropdownOpen(!dropdownOpen)}
-                  className="text-retro-text font-body text-sm inline-flex items-center gap-1 underline hover:text-retro-neon-blue transition-colors cursor-pointer"
-                >
-                  {continent}
-                  <svg className={`w-3.5 h-3.5 transition-transform flex-shrink-0 ${dropdownOpen ? 'rotate-180' : ''}`} viewBox="0 0 12 12" fill="none">
-                    <path d="M3 5l3 3 3-3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </button>
-                {dropdownOpen && (
-                  <div className="absolute top-full left-0 mt-1 bg-retro-surface border-2 border-retro-border shadow-pixel z-50 min-w-[160px]">
-                    {continents.map((c) => (
-                      <button
-                        key={c}
-                        onClick={() => {
-                          setDropdownOpen(false);
-                          navigate(`/flags/continent/${getContinentSlug(c)}`);
-                        }}
-                        className={`block w-full text-left px-3 py-2 font-body text-sm transition-colors ${
-                          c === continent
-                            ? 'bg-retro-accent/40 text-retro-text font-bold'
-                            : 'text-retro-text-secondary hover:bg-retro-accent/20 hover:text-retro-text'
-                        }`}
-                      >
-                        {c}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </li>
-          </ol>
-        </nav>
+        <Breadcrumbs items={[
+          { label: 'Home', href: '/' },
+          { label: 'Flags', href: '/flags' },
+          {
+            label: continent,
+            dropdown: continents
+              .filter((c) => c !== continent)
+              .map((c) => ({ label: c, href: `/flags/continent/${getContinentSlug(c)}` })),
+          },
+        ]} />
 
         <div className="bg-retro-surface border-2 border-retro-border shadow-pixel-lg p-6 mt-4">
           <div className="flex flex-col sm:flex-row items-center gap-4">
@@ -123,7 +73,7 @@ export function ContinentFlagsPage() {
               <Link
                 key={country.code}
                 to={`/flags/${getCountrySlug(country)}`}
-                className="flex items-center gap-2 p-2 border border-retro-border hover:bg-retro-accent/30 transition-colors"
+                className="flex items-center gap-2 p-2 border border-retro-border/40 hover:border-retro-border hover:bg-retro-accent/30 transition-colors"
               >
                 <span className="text-5xl flex-shrink-0">{getFlagEmoji(country.code)}</span>
                 <span className="font-body text-base text-retro-text">{country.name}</span>

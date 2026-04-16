@@ -72,15 +72,15 @@ export function TerritoriesPage() {
                 </h2>
               </div>
 
-              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3">
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
                 {group.territories.map((territory) => (
                   <Link
                     key={territory.code}
                     to={`/flags/territories/${getTerritorySlug(territory)}`}
-                    className="flex flex-col items-center gap-1.5 p-3 border border-retro-border/30 hover:bg-retro-accent/20 hover:border-retro-border transition-colors"
+                    className="flex flex-col items-center gap-1 p-2 border border-retro-border/40 hover:border-retro-border hover:bg-retro-accent/30 transition-colors"
                   >
                     <span className="text-5xl">{getFlagEmoji(territory.code)}</span>
-                    <span className="font-body text-xs text-retro-text text-center leading-tight">
+                    <span className="font-body text-base text-retro-text text-center">
                       {territory.name}
                     </span>
                   </Link>

@@ -11,11 +11,15 @@ import * as path from 'node:path';
 // Import data files directly (they're pure TS with no React deps)
 import { countries, continents, difficultyLabels, type Country, type Continent } from '../src/data/countries';
 import { flagFeatures, getSimilarFlags, type FlagFeatures } from '../src/data/flagFeatures';
+import { flagPatternInfos } from '../src/data/flagPatterns';
 import { flagDescriptions, type FlagDescription } from '../src/data/flagDescriptions';
 import { organizations } from '../src/data/organizations';
 import { organizationMembers } from '../src/data/organizationMembers';
 import { territories } from '../src/data/territories';
+import { countryFacts, type CountryFacts } from '../src/data/countryFacts';
+import { religions, getCountriesForReligion, type Religion } from '../src/data/religions';
 import { getContinentMapSvg } from '../src/components/seo/ContinentMap';
+import { splitIntoParagraphs } from '../src/utils/splitParagraphs';
 
 const DIST = path.resolve(import.meta.dirname, '..', 'dist');
 const SITE_URL = 'https://flagarcade.com';
@@ -57,6 +61,147 @@ const patternLabels: Record<string, string> = {
   'diagonal': 'Diagonal Design', 'cross': 'Cross Design', 'canton': 'Canton Design',
   'solid': 'Solid Field', 'complex': 'Complex Design',
 };
+
+// ---------------------------------------------------------------------------
+// Quick Facts (SSG)
+// ---------------------------------------------------------------------------
+
+const RELIGION_COLORS = [
+  '#3B82F6', '#16A34A', '#F59E0B', '#7F1D1D', '#1F2937',
+  '#8B5CF6', '#EC4899', '#06B6D4', '#84CC16', '#DC2626',
+  '#92400E', '#A16207',
+];
+
+function formatNumber(n: number): string {
+  return n.toLocaleString('en-US');
+}
+
+function buildQuickFactsHtml(facts: CountryFacts, flagAdopted?: string): string {
+  const rows: { label: string; value: string }[] = [];
+  if (facts.capital) rows.push({ label: 'Capital', value: facts.capital });
+  if (flagAdopted) rows.push({ label: 'Flag adopted', value: flagAdopted });
+  if (facts.population !== undefined) rows.push({ label: 'Population', value: formatNumber(facts.population) });
+  if (facts.area !== undefined) rows.push({ label: 'Area', value: `${formatNumber(facts.area)} km²` });
+  if (facts.languages?.length) rows.push({ label: 'Languages', value: facts.languages.join(', ') });
+  if (facts.currencies?.length) {
+    rows.push({
+      label: 'Currency',
+      value: facts.currencies
+        .map((c) => `${c.name}${c.symbol ? ` (${c.symbol})` : ''} — ${c.code}`)
+        .join(', '),
+    });
+  }
+  if (facts.demonym) rows.push({ label: 'Demonym', value: facts.demonym });
+  if (facts.governmentType) rows.push({ label: 'Government', value: facts.governmentType });
+  if (facts.subregion) rows.push({ label: 'Subregion', value: facts.subregion });
+  if (facts.drivingSide) {
+    rows.push({
+      label: 'Driving side',
+      value: facts.drivingSide.charAt(0).toUpperCase() + facts.drivingSide.slice(1),
+    });
+  }
+  if (facts.timezones?.length) {
+    const first = facts.timezones.slice(0, 2).join(', ');
+    const extra = facts.timezones.length > 2 ? ` +${facts.timezones.length - 2} more` : '';
+    rows.push({ label: 'Timezones', value: first + extra });
+  }
+  if (facts.independence) rows.push({ label: 'Independence', value: facts.independence });
+
+  const hasReligions = facts.religions && facts.religions.length > 0;
+  if (rows.length === 0 && !hasReligions) return '';
+
+  const grid = rows.length > 0
+    ? `<dl style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px 24px;font-family:'Space Mono',monospace;font-size:14px;">
+        ${rows
+          .map(
+            (r) => `<div style="display:flex;flex-direction:column;">
+            <dt style="font-size:11px;text-transform:uppercase;letter-spacing:0.04em;color:#6B7280;">${escapeHtml(r.label)}</dt>
+            <dd style="margin:0;color:#2D2D2D;">${escapeHtml(r.value)}</dd>
+          </div>`,
+          )
+          .join('\n        ')}
+      </dl>`
+    : '';
+
+  let religionsHtml = '';
+  if (hasReligions) {
+    const withPct = facts.religions!
+      .filter((r) => typeof r.percent === 'number')
+      .slice()
+      .sort((a, b) => (b.percent ?? 0) - (a.percent ?? 0));
+    if (withPct.length > 0) {
+      const total = withPct.reduce((sum, r) => sum + (r.percent ?? 0), 0);
+      const norm = total > 0 ? 100 / total : 1;
+      const segments = withPct
+        .map(
+          (r, i) =>
+            `<div style="width:${(r.percent ?? 0) * norm}%;background:${RELIGION_COLORS[i % RELIGION_COLORS.length]};" title="${escapeHtml(r.name)}: ${r.percent}%"></div>`,
+        )
+        .join('');
+      const legend = withPct
+        .map(
+          (r, i) =>
+            `<li style="display:flex;align-items:center;gap:6px;">
+            <span style="display:inline-block;width:12px;height:12px;border:1px solid #2D2D2D;background:${RELIGION_COLORS[i % RELIGION_COLORS.length]};"></span>
+            <span style="text-transform:capitalize;">${escapeHtml(r.name)}</span>
+            <span>${r.percent}%</span>
+          </li>`,
+        )
+        .join('\n          ');
+      religionsHtml = `
+      <div style="margin-top:16px;">
+        <h3 style="font-family:'Press Start 2P',cursive;font-size:11px;margin:0 0 8px 0;">Religions</h3>
+        <div style="display:flex;width:100%;height:20px;border:1px solid #2D2D2D;overflow:hidden;">${segments}</div>
+        <ul style="margin:8px 0 0 0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:4px 16px;font-family:'Space Mono',monospace;font-size:13px;color:#6B7280;">
+          ${legend}
+        </ul>
+      </div>`;
+    }
+  }
+
+  return `
+      <section style="margin-top:24px;">
+        <h2 style="font-family:'Press Start 2P',cursive;font-size:14px;">Quick Facts</h2>
+        ${grid}
+        ${religionsHtml}
+      </section>`;
+}
+
+function buildBorderingCountriesHtml(borderCodes: string[]): string {
+  const borderCountries = borderCodes
+    .map((code) => countries.find((c) => c.code === code))
+    .filter((c): c is Country => Boolean(c));
+  if (borderCountries.length === 0) return '';
+  const pills = borderCountries
+    .map(
+      (c) =>
+        `<a href="/flags/${slugify(c.name)}" style="display:inline-flex;align-items:center;gap:6px;padding:4px 8px;border:1px solid #2D2D2D;text-decoration:none;font-size:13px;font-family:'Space Mono',monospace;color:#2D2D2D;">${getFlagEmoji(c.code)} ${escapeHtml(c.name)}</a>`,
+    )
+    .join('\n        ');
+  return `
+      <section style="margin-top:24px;">
+        <h2 style="font-family:'Press Start 2P',cursive;font-size:14px;">Bordering countries (${borderCountries.length})</h2>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;">
+        ${pills}
+        </div>
+      </section>`;
+}
+
+function buildFlagActionsHtml(emoji: string, flagFilename: string, countryName: string): string {
+  // Copy button is rendered as a non-functional placeholder — React replaces it
+  // on hydration with a working clipboard-copy button. The download <a> is
+  // fully functional pre-hydration since it's a native browser download.
+  const btn = "display:inline-flex;align-items:center;gap:6px;font-family:'Space Mono',monospace;font-size:14px;border:1px solid rgba(45,45,45,0.4);background:transparent;padding:6px 12px;text-decoration:none;color:#2D2D2D;cursor:pointer;";
+  return `
+        <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:12px;">
+          <button type="button" aria-label="Copy ${escapeHtml(countryName)} flag emoji" style="${btn}">
+            <span aria-hidden="true">${emoji}</span><span>Copy</span>
+          </button>
+          <a href="/flag-images/${flagFilename}" download="${flagFilename}" aria-label="Download ${escapeHtml(countryName)} flag SVG" style="${btn}">
+            <span aria-hidden="true">⬇</span><span>Download SVG</span>
+          </a>
+        </div>`;
+}
 
 // ---------------------------------------------------------------------------
 // HTML template
@@ -129,6 +274,12 @@ function generateCountryPage(country: Country, assets: { css: string[]; js: stri
   const pageDescription = desc?.description
     || `Learn about the flag of ${country.name}. Explore the colors, meaning, and history, then test your knowledge in our flag quiz!`;
 
+  const facts = countryFacts[country.code];
+  const flagFilename = `flag-${slug}.svg`;
+  const quickFactsHtml = facts ? buildQuickFactsHtml(facts, desc?.adopted) : '';
+  const flagActionsHtml = buildFlagActionsHtml(emoji, flagFilename, country.name);
+  const borderingHtml = facts?.borders?.length ? buildBorderingCountriesHtml(facts.borders) : '';
+
   let bodyHtml = `
     <nav aria-label="Breadcrumb" style="padding:8px 16px;font-family:'Space Mono',monospace;font-size:14px;">
       <a href="/">Home</a> / <a href="/flags">Flags</a> / <a href="/flags/continent/${continentSlug}">${escapeHtml(country.continent)}</a> / ${escapeHtml(country.name)}
@@ -139,28 +290,46 @@ function generateCountryPage(country: Country, assets: { css: string[]; js: stri
       <p style="text-align:center;font-family:'Space Mono',monospace;font-size:14px;color:#6B7280;">
         ${escapeHtml(country.continent)}
       </p>
+      ${flagActionsHtml}
+      ${quickFactsHtml}
 
       <section style="margin-top:24px;">
         <h2 style="font-family:'Press Start 2P',cursive;font-size:14px;">About This Flag</h2>
-        <p style="font-family:'Space Mono',monospace;font-size:14px;line-height:1.6;">${escapeHtml(descriptionText)}</p>
-        ${desc?.capitalCity ? `<p style="font-family:'Space Mono',monospace;font-size:13px;"><strong>Capital:</strong> ${escapeHtml(desc.capitalCity)}</p>` : ''}
-        ${desc?.adopted ? `<p style="font-family:'Space Mono',monospace;font-size:13px;"><strong>Current flag adopted:</strong> ${escapeHtml(desc.adopted)}</p>` : ''}
-      </section>`;
-
-  if (features) {
-    const colorChips = features.colors.map((c) =>
-      `<span style="display:inline-flex;align-items:center;gap:4px;border:1px solid #2D2D2D;padding:2px 8px;font-size:13px;font-family:'Space Mono',monospace;">
-        <span style="display:inline-block;width:16px;height:16px;background:${colorHex[c] || '#ccc'};border:1px solid #2D2D2D;"></span> ${c}
-      </span>`
-    ).join(' ');
-
-    bodyHtml += `
-      <section style="margin-top:24px;">
-        <h2 style="font-family:'Press Start 2P',cursive;font-size:14px;">Colors & Design</h2>
-        <div style="display:flex;flex-wrap:wrap;gap:8px;margin:8px 0;">${colorChips}</div>
-        <p style="font-family:'Space Mono',monospace;font-size:13px;"><strong>Pattern:</strong> ${patternLabels[features.pattern] || features.pattern}</p>
-      </section>`;
-  }
+        ${splitIntoParagraphs(descriptionText)
+          .map(
+            (para) =>
+              `<p style="font-family:'Space Mono',monospace;font-size:14px;line-height:1.6;margin:0 0 12px 0;">${escapeHtml(para)}</p>`,
+          )
+          .join('\n        ')}
+        ${
+          desc?.meaning
+            ? `<div style="margin-top:16px;border-left:4px solid #3B82F6;background:rgba(255,217,61,0.2);padding:16px;">
+          <h3 style="font-family:'Press Start 2P',cursive;font-size:11px;margin:0 0 8px 0;">What the colors & design mean</h3>
+          <p style="font-family:'Space Mono',monospace;font-size:13px;line-height:1.6;margin:0;">${escapeHtml(desc.meaning)}</p>
+        </div>`
+            : ''
+        }
+        ${
+          features
+            ? (() => {
+                const colorChips = features.colors
+                  .map(
+                    (c) =>
+                      `<span style="display:inline-flex;align-items:center;gap:4px;border:1px solid #2D2D2D;padding:2px 8px;font-size:13px;font-family:'Space Mono',monospace;">
+            <span style="display:inline-block;width:16px;height:16px;background:${colorHex[c] || '#ccc'};border:1px solid #2D2D2D;"></span> ${c}
+          </span>`,
+                  )
+                  .join(' ');
+                const patternLabelStr = features.patterns.map((p) => patternLabels[p] || p).join(', ');
+                return `<div style="margin-top:16px;">
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin:8px 0;">${colorChips}</div>
+          <p style="font-family:'Space Mono',monospace;font-size:13px;margin:0;"><strong>Pattern:</strong> ${patternLabelStr}</p>
+        </div>`;
+              })()
+            : ''
+        }
+      </section>
+      ${borderingHtml}`;
 
   if (desc?.funFacts && desc.funFacts.length > 0) {
     bodyHtml += `
@@ -175,7 +344,7 @@ function generateCountryPage(country: Country, assets: { css: string[]; js: stri
   if (similarNames.length > 0) {
     bodyHtml += `
       <section style="margin-top:24px;">
-        <h2 style="font-family:'Press Start 2P',cursive;font-size:14px;">Similar Flags</h2>
+        <h2 style="font-family:'Press Start 2P',cursive;font-size:14px;">Similar looking flags</h2>
         <p style="font-family:'Space Mono',monospace;font-size:13px;">These flags share similar colors and patterns:</p>
         <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;">
           ${similarNames.join('\n          ')}
@@ -185,7 +354,7 @@ function generateCountryPage(country: Country, assets: { css: string[]; js: stri
 
   // More from continent
   if (continentCountries.length > 0) {
-    const links = continentCountries.slice(0, 12).map((c) =>
+    const links = continentCountries.slice(0, 8).map((c) =>
       `<a href="/flags/${slugify(c.name)}" style="text-decoration:none;">${getFlagEmoji(c.code)} ${escapeHtml(c.name)}</a>`
     ).join(' &middot; ');
 
@@ -213,9 +382,11 @@ function generateCountryPage(country: Country, assets: { css: string[]; js: stri
       'diagonal': 'diagonal-designs',
       'canton': 'canton-designs',
     };
-    const patternSlug = patternSlugMap[features.pattern];
-    if (patternSlug) {
-      categoryLinks.push(`<a href="/flags/${patternSlug}" style="${linkStyle}">${patternLabels[features.pattern]}</a>`);
+    for (const p of features.patterns) {
+      const patternSlug = patternSlugMap[p];
+      if (patternSlug) {
+        categoryLinks.push(`<a href="/flags/${patternSlug}" style="${linkStyle}">${patternLabels[p]}</a>`);
+      }
     }
 
     if (features.colors.includes('red') && features.colors.includes('white') && features.colors.includes('blue')) {
@@ -637,6 +808,7 @@ interface ContentPage {
   description: string;
   h1: string;
   intro: string;
+  body?: string;
   getCountries: () => Country[];
 }
 
@@ -649,7 +821,16 @@ function generateContentPage(page: ContentPage, assets: { css: string[]; js: str
     </nav>
     <main style="max-width:960px;margin:0 auto;padding:16px;">
       <h1 style="font-family:'Press Start 2P',cursive;">${escapeHtml(page.h1)}</h1>
-      <p style="font-family:'Space Mono',monospace;font-size:14px;line-height:1.6;">${escapeHtml(page.intro)}</p>
+      ${
+        page.body
+          ? splitIntoParagraphs(page.body)
+              .map(
+                (para) =>
+                  `<p style="font-family:'Space Mono',monospace;font-size:14px;line-height:1.6;margin:0 0 12px 0;">${escapeHtml(para)}</p>`,
+              )
+              .join('\n      ')
+          : `<p style="font-family:'Space Mono',monospace;font-size:14px;line-height:1.6;">${escapeHtml(page.intro)}</p>`
+      }
 
       <section style="margin-top:24px;">
         <h2 style="font-family:'Press Start 2P',cursive;font-size:14px;">${matchedCountries.length} Flags</h2>
@@ -729,19 +910,39 @@ function getContentPages(): ContentPage[] {
     getCountries: () => countries.filter((c) => flagFeatures[c.code]?.colors.includes(color as any)),
   }));
 
+  const patternBodies: Partial<Record<string, string>> = {
+    'horizontal-stripes':
+      "The horizontal tricolor is the single most common flag design on Earth. Its modern career began with the Dutch Statenvlag in the 1570s — orange, white, and blue bands that signaled rebellion against Spanish rule and later evolved into the red-white-blue Prinsenvlag still used today. Russia adopted a Dutch-style tricolor under Peter the Great in 1696, and the pattern became the visual shorthand for European republics across the next three centuries. The horizontal tricolor traveled the world through revolution and decolonization. Newly independent African states in the 1950s and 60s adopted the Pan-African colors of red, gold, and green in horizontal bands, following Ethiopia's example. Latin America inherited Gran Colombia's yellow-blue-red horizontal scheme, still visible today in the flags of Colombia, Venezuela, and Ecuador. Even when the colors differ, the underlying grammar — three equal bands stacked top to bottom — links Germany, India, Hungary, and dozens of others into the same visual family.",
+    'vertical-stripes':
+      "The vertical tricolor is the second-most common pattern in world vexillology, and almost every example traces back to revolutionary France. The 1794 French tricolor — blue at the hoist, white in the center, red at the fly — was deliberately designed by the painter Jacques-Louis David and the National Convention as a republican counterpoint to royal banners. Within two decades, the pattern had spread to every territory France touched, directly or by influence. Italy adopted vertical green-white-red bands in 1797, Belgium followed in 1831, and the Republic of Ireland's green-white-orange tricolor was first flown in 1848. Newly independent African states such as Mali, Senegal, Guinea, and Côte d'Ivoire all chose vertical tricolors in the early 1960s, layering the Pan-African colors onto a French structural template. The vertical band remains a marker of republican lineage and, often, a quiet acknowledgment of France's role in shaping modern statehood.",
+    'with-crosses':
+      "The cross is the oldest enduring motif in European vexillology. Most cross flags trace to the medieval crusades, when each Christian kingdom adopted a distinctive cross color to identify its troops on shared battlefields — England the red cross of St. George, Scotland the white saltire of St. Andrew, Denmark the white cross of the Dannebrog. The Dannebrog, in continuous use since at least 1370, is the oldest national flag still flown today. The off-center Nordic cross — vertical bar shifted toward the hoist — defines a regional family of its own. Denmark's pattern was copied by Sweden, Norway, Iceland, Finland, and the Faroe Islands, each substituting national colors but preserving the cross's exact proportions and offset. Outside Scandinavia, crosses appear on Switzerland's bold square white cross on red, Georgia's five-cross flag derived from medieval Georgian heraldry, and the British Union Jack — itself a layered combination of three crosses representing the union of England, Scotland, and Ireland.",
+    'diagonal-designs':
+      "Diagonal flags are a relatively modern invention, almost entirely a product of twentieth-century decolonization. Where stripes and crosses lock the eye into stable horizontal or vertical reading, a diagonal band suggests motion, division, or the sweep of a horizon — themes well suited to nations defining themselves at independence. Tanzania's flag, adopted in 1964 to mark the union of Tanganyika and Zanzibar, uses a black diagonal stripe to literally bridge the two former colonies' colors. Many other diagonal flags carry similar symbolism. The Democratic Republic of the Congo's yellow band cuts across a sky-blue field as a marker of national unity, while the Republic of the Congo, Trinidad and Tobago, and Namibia all use diagonals to represent rivers, the equator, or paths to nationhood. Pacific nations including the Solomon Islands, Marshall Islands, and Papua New Guinea favor diagonals because the angled line reads naturally as the horizon at sea, rooting each flag in the maritime geography of its people.",
+    'canton-designs':
+      "In vexillology, a canton is the upper-hoist quarter of a flag — the rectangle nearest the flagpole. The term comes from heraldry, where a small square in the chief corner of a shield was used to layer a secondary symbol over the main design. The most influential canton in the world is the blue field of fifty white stars on the United States flag, adopted in its first form in 1777. Its formula — a striped field with a star-filled canton — was deliberately echoed by Liberia in 1847 and Malaysia in 1950, both signaling political kinship with the American republic. A second great canton tradition comes from the British Union Jack, which still appears in the upper-hoist corner of Australia, New Zealand, Fiji, and Tuvalu as a marker of historical sovereignty layered onto each nation's own symbols.",
+    'solid-designs':
+      "A solid-field flag is the simplest possible vexillological statement: a single block of color, sometimes carrying a central emblem, with no stripes or divisions to break the field. The simplicity is intentional. A single dominant color reads at any distance, resists confusion with neighboring nations, and gives a central symbol — a sun, a crescent, an eagle, or a written inscription — maximum visual weight. Japan's white field with a single red disc, adopted in 1870 and reaffirmed in 1999, is the clearest expression of this idea. Several of the world's most recognizable flags fall in this category. China's red field with five gold stars, adopted in 1949, sets the smaller stars in orbit around a larger one to symbolize the people united around the Communist Party. Saudi Arabia's green flag carries the shahada in white Arabic calligraphy and is treated as so sacred that it is never flown at half-mast. Switzerland's square white cross on red — one of only two square national flags in the world — and Vietnam's red flag with a single yellow star round out a category that proves restraint can carry as much meaning as elaboration.",
+    'complex-designs':
+      "Complex flags are the outliers of national vexillology — designs that refuse to fit a single stripe, cross, or canton convention. Often they layer multiple geometric elements, carry detailed central emblems, or break flag-design rules entirely. South Africa's 1994 post-apartheid flag is the canonical example: six colors arranged into a horizontal Y that converges at the hoist, deliberately designed to represent the merging of diverse paths into a single nation. Nepal stands alone as the world's only non-rectangular national flag, formed by two stacked crimson pennants edged in blue, with a stylized white sun and moon at their centers. The current shape was codified in the 1962 constitution but the underlying double-pennant design has been used by Nepali rulers for centuries. Other complex flags include Sri Lanka, which encloses a golden lion holding a sword within bordering panels of green and orange; Bhutan, with its white thunder dragon clutching jewels across a yellow-and-orange diagonal field; and tiny Antigua and Barbuda, whose rising-sun motif sits inside a black, blue, and white V on a red field.",
+  };
+
   const patternPages: ContentPage[] = [
     { pattern: 'horizontal-stripes', label: 'Horizontal Stripes', slug: 'horizontal-stripes' },
     { pattern: 'vertical-stripes', label: 'Vertical Stripes', slug: 'vertical-stripes' },
     { pattern: 'cross', label: 'Crosses', slug: 'with-crosses' },
     { pattern: 'diagonal', label: 'Diagonal Designs', slug: 'diagonal-designs' },
     { pattern: 'canton', label: 'Canton Designs', slug: 'canton-designs' },
+    { pattern: 'solid', label: 'Solid Fields', slug: 'solid-designs' },
+    { pattern: 'complex', label: 'Complex Designs', slug: 'complex-designs' },
   ].map(({ pattern, label, slug }) => ({
     slug,
     title: `Flags with ${label} - ${label} Flag Designs | Flag Arcade`,
     description: `Browse all country flags featuring ${label.toLowerCase()} in their design. Compare flags that share similar patterns.`,
     h1: `Flags with ${label}`,
     intro: `These country flags all use a ${label.toLowerCase()} pattern. Many flags around the world share this design element — can you tell them apart?`,
-    getCountries: () => countries.filter((c) => flagFeatures[c.code]?.pattern === pattern),
+    body: patternBodies[slug],
+    getCountries: () => countries.filter((c) => flagFeatures[c.code]?.patterns.includes(pattern)),
   }));
 
   const specialPages: ContentPage[] = [
@@ -789,6 +990,200 @@ function getContentPages(): ContentPage[] {
   ];
 
   return [...colorPages, ...patternPages, ...specialPages];
+}
+
+// ---------------------------------------------------------------------------
+// Patterns index page
+// ---------------------------------------------------------------------------
+
+function generatePatternsIndexPage(assets: { css: string[]; js: string[] }): string {
+  const patternCards = flagPatternInfos.map((info) => {
+    const count = countries.filter((c) => flagFeatures[c.code]?.patterns.includes(info.pattern)).length;
+    return `
+    <a href="/flags/${info.slug}" style="display:block;border:2px solid #2D2D2D;padding:18px;text-decoration:none;background:#FFF8E7;box-shadow:3px 3px 0 #2D2D2D;">
+      <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;">
+        <span style="font-family:'Press Start 2P',cursive;font-size:13px;color:#2D2D2D;">${info.emoji} ${escapeHtml(info.name)}</span>
+        <span style="font-family:'Inter',sans-serif;font-size:12px;color:#6B7280;">${count} flag${count === 1 ? '' : 's'}</span>
+      </div>
+      <p style="font-family:'Inter',sans-serif;font-size:14px;color:#2D2D2D;line-height:1.6;margin:10px 0 0;">${escapeHtml(info.shortDescription)}</p>
+      <p style="font-family:'Inter',sans-serif;font-size:13px;color:#4B5563;line-height:1.6;margin:8px 0 0;">${escapeHtml(info.longDescription)}</p>
+    </a>`;
+  }).join('\n');
+
+  const bodyHtml = `
+    <nav aria-label="Breadcrumb" style="padding:8px 16px;font-family:'Inter',sans-serif;font-size:14px;">
+      <a href="/">Home</a> / Patterns
+    </nav>
+    <main style="max-width:960px;margin:0 auto;padding:16px;">
+      <h1 style="font-family:'Press Start 2P',cursive;">Flag Design Patterns</h1>
+      <p style="font-family:'Inter',sans-serif;font-size:15px;line-height:1.7;">
+        Almost every national flag in the world fits into one of seven structural patterns. Stripes, crosses, and cantons are the visual building blocks of vexillology — and once you can spot them, you can read any flag at a glance.
+      </p>
+      <p style="font-family:'Inter',sans-serif;font-size:15px;line-height:1.7;">
+        Browse each pattern below to see its history, the countries that share the design family, and how it spread around the world.
+      </p>
+      <section style="margin-top:24px;display:grid;grid-template-columns:1fr;gap:14px;">
+      ${patternCards}
+      </section>
+      <section style="margin-top:32px;text-align:center;padding:24px;background:#FFD93D;border:2px solid #2D2D2D;">
+        <h2 style="font-family:'Press Start 2P',cursive;font-size:14px;">Test Your Pattern Knowledge</h2>
+        <p style="font-family:'Inter',sans-serif;font-size:14px;margin:8px 0 16px;">Can you spot the canton, the cross, or the diagonal at a glance?</p>
+        <a href="/quiz" style="font-family:'Press Start 2P',cursive;font-size:12px;background:#16A34A;color:white;padding:12px 24px;border:2px solid #2D2D2D;text-decoration:none;display:inline-block;">Play Flag Quiz</a>
+      </section>
+      <nav style="margin-top:24px;text-align:center;padding-bottom:32px;">
+        <a href="/flags">All Flags</a> &middot; <a href="/organizations">Organizations</a> &middot; <a href="/quiz">Flag Quiz</a>
+      </nav>
+    </main>`;
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'Flag Design Patterns',
+    description: 'Explore the seven structural patterns that define almost every national flag: horizontal stripes, vertical stripes, crosses, diagonals, cantons, solid fields, and complex designs.',
+    url: `${SITE_URL}/patterns`,
+    numberOfItems: flagPatternInfos.length,
+    publisher: { '@type': 'Organization', name: 'Flag Arcade', url: SITE_URL },
+  };
+
+  return buildPage(
+    {
+      title: 'Flag Design Patterns - Stripes, Crosses, Cantons & More | Flag Arcade',
+      description: 'Explore the visual grammar of world flags. Browse country flags by design pattern: horizontal stripes, vertical stripes, crosses, diagonals, cantons, solid fields, and complex designs.',
+      canonical: `${SITE_URL}/patterns`,
+      jsonLd,
+    },
+    bodyHtml,
+    assets,
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Religions index page + detail pages
+// ---------------------------------------------------------------------------
+
+function generateReligionsIndexPage(assets: { css: string[]; js: string[] }): string {
+  const entries = religions
+    .map((r) => ({ religion: r, count: getCountriesForReligion(r).length }))
+    .sort((a, b) => a.religion.name.localeCompare(b.religion.name));
+
+  const cards = entries.map(({ religion, count }) => `
+    <a href="/religions/${religion.slug}" style="display:flex;gap:16px;align-items:flex-start;border:2px solid #2D2D2D;padding:14px;text-decoration:none;background:#FFF8E7;box-shadow:3px 3px 0 #2D2D2D;">
+      <div style="font-size:2rem;line-height:1;flex-shrink:0;" aria-hidden="true">${religion.emoji}</div>
+      <div style="flex:1;min-width:0;">
+        <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;">
+          <span style="font-family:'Press Start 2P',cursive;font-size:12px;color:#2D2D2D;">${escapeHtml(religion.name)}</span>
+          <span style="font-family:'Inter',sans-serif;font-size:12px;color:#6B7280;">${count} ${count === 1 ? 'country' : 'countries'}</span>
+        </div>
+        <p style="font-family:'Inter',sans-serif;font-size:14px;color:#2D2D2D;line-height:1.6;margin:8px 0 0;">${escapeHtml(religion.tagline)}</p>
+      </div>
+    </a>`).join('\n');
+
+  const bodyHtml = `
+    <nav aria-label="Breadcrumb" style="padding:8px 16px;font-family:'Inter',sans-serif;font-size:14px;">
+      <a href="/">Home</a> / Religions
+    </nav>
+    <main style="max-width:960px;margin:0 auto;padding:16px;">
+      <h1 style="font-family:'Press Start 2P',cursive;">World Religions</h1>
+      <p style="font-family:'Inter',sans-serif;font-size:15px;line-height:1.7;">
+        Every flag carries the story of the people who fly it &mdash; and religion is often a big part of that story. Browse the major faiths below for a factual overview and a ranked list of the countries where each tradition is most widely practiced.
+      </p>
+      <section style="margin-top:24px;display:grid;grid-template-columns:1fr;gap:12px;">
+      ${cards}
+      </section>
+      <nav style="margin-top:24px;text-align:center;padding-bottom:32px;">
+        <a href="/flags">All Flags</a> &middot; <a href="/quiz">Flag Quiz</a>
+      </nav>
+    </main>`;
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'World Religions',
+    description: 'Browse the world\'s major religions and see the countries where each is practiced.',
+    url: `${SITE_URL}/religions`,
+    numberOfItems: religions.length,
+    publisher: { '@type': 'Organization', name: 'Flag Arcade', url: SITE_URL },
+  };
+
+  return buildPage(
+    {
+      title: 'World Religions - Countries & Beliefs | Flag Arcade',
+      description: 'Browse the world\'s major religions and see the countries where each is practiced. Factual overviews of Christianity, Islam, Hinduism, Buddhism, Judaism, and more.',
+      canonical: `${SITE_URL}/religions`,
+      jsonLd,
+    },
+    bodyHtml,
+    assets,
+  );
+}
+
+function generateReligionPage(religion: Religion, assets: { css: string[]; js: string[] }): string {
+  const adherents = getCountriesForReligion(religion);
+
+  const rows = adherents.map((a, i) => {
+    const country = countries.find((c) => c.code === a.code);
+    if (!country) return '';
+    const slug = slugify(country.name);
+    return `
+      <li>
+        <a href="/flags/${slug}" style="display:flex;align-items:center;gap:12px;padding:8px;border:1px solid rgba(45,45,45,0.3);text-decoration:none;color:#2D2D2D;">
+          <span style="font-family:'Press Start 2P',cursive;font-size:11px;color:#6B7280;width:28px;text-align:right;">${i + 1}.</span>
+          <span style="font-size:1.8rem;line-height:1;">${getFlagEmoji(country.code)}</span>
+          <span style="font-family:'Inter',sans-serif;font-size:14px;flex:1;">${escapeHtml(country.name)}</span>
+          <span style="font-family:'Inter',sans-serif;font-size:14px;color:#6B7280;font-variant-numeric:tabular-nums;">${a.percent}%</span>
+        </a>
+      </li>`;
+  }).join('\n');
+
+  const listHtml = adherents.length === 0
+    ? `<p style="font-family:'Inter',sans-serif;font-size:14px;color:#6B7280;">No countries currently report ${escapeHtml(religion.name)} adherence in our data set.</p>`
+    : `<ol style="list-style:none;padding:0;margin:12px 0 0;display:flex;flex-direction:column;gap:8px;">${rows}</ol>`;
+
+  const noteHtml = religion.undercount && adherents.length > 0
+    ? `<p style="font-family:'Inter',sans-serif;font-size:12px;color:#6B7280;margin:16px 0 0;padding-top:12px;border-top:1px solid rgba(45,45,45,0.3);line-height:1.6;"><strong>Note:</strong> This list reflects only countries where the CIA World Factbook &mdash; our data source &mdash; explicitly uses the &ldquo;${escapeHtml(religion.name)}&rdquo; label. Adherents in many other countries are rolled into broader buckets such as Protestant, Evangelical, or country-specific denominations, so this ranking undercounts global presence.</p>`
+    : '';
+
+  const bodyHtml = `
+    <nav aria-label="Breadcrumb" style="padding:8px 16px;font-family:'Inter',sans-serif;font-size:14px;">
+      <a href="/">Home</a> / <a href="/religions">Religions</a> / ${escapeHtml(religion.name)}
+    </nav>
+    <main style="max-width:960px;margin:0 auto;padding:16px;">
+      <section style="border:2px solid #2D2D2D;padding:24px;background:#FFF8E7;box-shadow:3px 3px 0 #2D2D2D;">
+        <h1 style="font-family:'Press Start 2P',cursive;font-size:16px;margin:0 0 12px;">${escapeHtml(religion.name)}</h1>
+        <p style="font-family:'Inter',sans-serif;font-size:15px;line-height:1.7;margin:0;color:#2D2D2D;">${escapeHtml(religion.blurb)}</p>
+      </section>
+
+      <section style="margin-top:16px;border:2px solid #2D2D2D;padding:20px;background:#FFF8E7;box-shadow:3px 3px 0 #2D2D2D;">
+        <h2 style="font-family:'Press Start 2P',cursive;font-size:12px;margin:0;">Countries by ${escapeHtml(religion.name)} Population (${adherents.length})</h2>
+        ${listHtml}
+        ${noteHtml}
+      </section>
+
+      <nav style="margin-top:24px;text-align:center;padding-bottom:32px;">
+        <a href="/religions">All Religions</a> &middot; <a href="/flags">All Flags</a> &middot; <a href="/quiz">Flag Quiz</a>
+      </nav>
+    </main>`;
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: religion.name,
+    description: religion.tagline,
+    about: religion.name,
+    url: `${SITE_URL}/religions/${religion.slug}`,
+    publisher: { '@type': 'Organization', name: 'Flag Arcade', url: SITE_URL },
+  };
+
+  return buildPage(
+    {
+      title: `${religion.name} - Countries & Beliefs | Flag Arcade`,
+      description: `Learn about ${religion.name} and see the flags of the ${adherents.length} countries where it's practiced, ranked by share of population.`,
+      canonical: `${SITE_URL}/religions/${religion.slug}`,
+      jsonLd,
+    },
+    bodyHtml,
+    assets,
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -1019,16 +1414,59 @@ function generateTerritoryPage(territory: typeof territories[number], assets: { 
   const sovereignCountry = countries.find((c) => c.code === territory.sovereignCode);
   const sovereignSlug = sovereignCountry ? slugify(sovereignCountry.name) : null;
   const siblings = territories.filter((t) => t.sovereignCode === territory.sovereignCode && t.code !== territory.code);
+  const continentSlug = slugify(territory.continent);
+
+  const features = flagFeatures[territory.code];
+  const desc = flagDescriptions[territory.code];
+
+  // Unified pool: countries + territories for similar flags
+  const allCodes = [...countries.map((c) => c.code), ...territories.map((t) => t.code)];
+  const similar = features ? getSimilarFlags(territory.code, allCodes) : [];
+
+  type PeerEntry = { code: string; name: string; href: string; isTerritory: boolean };
+  const resolveEntry = (code: string): PeerEntry | null => {
+    const c = countries.find((x) => x.code === code);
+    if (c) return { code, name: c.name, href: `/flags/${slugify(c.name)}`, isTerritory: false };
+    const t = territories.find((x) => x.code === code);
+    if (t) return { code, name: t.name, href: `/flags/territories/${slugify(t.name)}`, isTerritory: true };
+    return null;
+  };
+
+  const similarEntries = similar.slice(0, 5)
+    .map(resolveEntry)
+    .filter((e): e is PeerEntry => e !== null);
+
+  // Mixed continent peers (countries + territories)
+  const continentPeers: PeerEntry[] = [];
+  for (const c of countries) {
+    if (c.continent === territory.continent && c.code !== territory.code) {
+      continentPeers.push({ code: c.code, name: c.name, href: `/flags/${slugify(c.name)}`, isTerritory: false });
+    }
+  }
+  for (const t of territories) {
+    if (t.continent === territory.continent && t.code !== territory.code) {
+      continentPeers.push({ code: t.code, name: t.name, href: `/flags/territories/${slugify(t.name)}`, isTerritory: true });
+    }
+  }
 
   const siblingLinks = siblings.map((t) =>
     `<a href="/flags/territories/${slugify(t.name)}" style="display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border:1px solid #2D2D2D;text-decoration:none;font-size:13px;font-family:'Inter',sans-serif;background:#FFF8E7;">${getFlagEmoji(t.code)} ${escapeHtml(t.name)}</a>`
   ).join('\n        ');
 
-  const description = territory.sovereignName === 'None'
+  const fallbackDescription = territory.sovereignName === 'None'
     ? `${territory.name} is a territory in ${territory.continent} with its own distinct flag.`
     : `${territory.name} is a dependent territory of ${territory.sovereignName} located in ${territory.continent}. It has its own distinct flag and governance.`;
+  const descriptionText = desc?.description || fallbackDescription;
+  const pageDescription = desc?.description
+    || `Learn about the flag of ${territory.name}, a dependent territory of ${territory.sovereignName} located in ${territory.continent}.`;
 
-  const bodyHtml = `
+  const facts = countryFacts[territory.code];
+  const flagFilename = `flag-${slug}.svg`;
+  const quickFactsHtml = facts ? buildQuickFactsHtml(facts, desc?.adopted) : '';
+  const flagActionsHtml = buildFlagActionsHtml(emoji, flagFilename, territory.name);
+  const borderingHtml = facts?.borders?.length ? buildBorderingCountriesHtml(facts.borders) : '';
+
+  let bodyHtml = `
     <nav aria-label="Breadcrumb" style="padding:8px 16px;font-family:'Inter',sans-serif;font-size:14px;">
       <a href="/">Home</a> / <a href="/flags">Flags</a> / <a href="/flags/territories">Territories</a> / ${escapeHtml(territory.name)}
     </nav>
@@ -1036,21 +1474,114 @@ function generateTerritoryPage(territory: typeof territories[number], assets: { 
       <div style="text-align:center;font-size:8rem;line-height:1;">${emoji}</div>
       <h1 style="font-family:'Press Start 2P',cursive;text-align:center;margin:16px 0;">Flag of ${escapeHtml(territory.name)}</h1>
       <p style="text-align:center;font-family:'Inter',sans-serif;font-size:14px;color:#6B7280;">${escapeHtml(territory.continent)}</p>
+      ${flagActionsHtml}
+      ${quickFactsHtml}
+
+      ${sovereignCountry && sovereignSlug ? `
+      <section style="margin-top:24px;background:#FFF8E7;border:2px solid #2D2D2D;padding:20px;">
+        <p style="font-family:'Space Mono',monospace;font-size:14px;line-height:1.6;margin:0 0 16px 0;text-align:center;">
+          <strong>${escapeHtml(territory.name)}</strong> is a dependent territory of <strong>${escapeHtml(territory.sovereignName)}</strong>.
+        </p>
+        <div style="display:flex;align-items:center;justify-content:center;gap:20px;">
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0;">
+            <span style="font-size:3.5rem;line-height:1;">${emoji}</span>
+            <span style="font-family:'Space Mono',monospace;font-size:12px;text-align:center;">${escapeHtml(territory.name)}</span>
+            <span style="font-family:'Space Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.05em;color:#6B7280;">Territory</span>
+          </div>
+          <div style="font-family:'Press Start 2P',cursive;font-size:56px;line-height:1;color:#6B7280;flex-shrink:0;margin-top:-20px;" aria-hidden="true">&rarr;</div>
+          <a href="/flags/${sovereignSlug}" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0;text-decoration:none;">
+            <span style="font-size:3.5rem;line-height:1;">${getFlagEmoji(sovereignCountry.code)}</span>
+            <span style="font-family:'Space Mono',monospace;font-size:12px;text-align:center;color:#2D2D2D;">${escapeHtml(sovereignCountry.name)}</span>
+            <span style="font-family:'Space Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.05em;color:#6B7280;">Sovereign</span>
+          </a>
+        </div>
+      </section>` : ''}
 
       <section style="margin-top:24px;">
         <h2 style="font-family:'Press Start 2P',cursive;font-size:14px;">About This Flag</h2>
-        <p style="font-family:'Inter',sans-serif;font-size:15px;line-height:1.7;">${escapeHtml(description)}</p>
-        ${sovereignCountry && sovereignSlug ? `<p style="font-family:'Inter',sans-serif;font-size:15px;line-height:1.7;">Parent country: <a href="/flags/${sovereignSlug}">${getFlagEmoji(sovereignCountry.code)} ${escapeHtml(sovereignCountry.name)}</a></p>` : ''}
+        ${splitIntoParagraphs(descriptionText)
+          .map(
+            (para) =>
+              `<p style="font-family:'Space Mono',monospace;font-size:14px;line-height:1.6;margin:0 0 12px 0;">${escapeHtml(para)}</p>`,
+          )
+          .join('\n        ')}
+        ${
+          desc?.meaning
+            ? `<div style="margin-top:16px;border-left:4px solid #3B82F6;background:rgba(255,217,61,0.2);padding:16px;">
+          <h3 style="font-family:'Press Start 2P',cursive;font-size:11px;margin:0 0 8px 0;">What the colors & design mean</h3>
+          <p style="font-family:'Space Mono',monospace;font-size:13px;line-height:1.6;margin:0;">${escapeHtml(desc.meaning)}</p>
+        </div>`
+            : ''
+        }
+        ${
+          features
+            ? (() => {
+                const colorChips = features.colors
+                  .map(
+                    (c) =>
+                      `<span style="display:inline-flex;align-items:center;gap:4px;border:1px solid #2D2D2D;padding:2px 8px;font-size:13px;font-family:'Space Mono',monospace;">
+            <span style="display:inline-block;width:16px;height:16px;background:${colorHex[c] || '#ccc'};border:1px solid #2D2D2D;"></span> ${c}
+          </span>`,
+                  )
+                  .join(' ');
+                const patternLabelStr = features.patterns.map((p) => patternLabels[p] || p).join(', ');
+                return `<div style="margin-top:16px;">
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin:8px 0;">${colorChips}</div>
+          <p style="font-family:'Space Mono',monospace;font-size:13px;margin:0;"><strong>Pattern:</strong> ${patternLabelStr}</p>
+        </div>`;
+              })()
+            : ''
+        }
       </section>
+      ${borderingHtml}`;
 
-      ${siblings.length > 0 ? `
+  if (desc?.funFacts && desc.funFacts.length > 0) {
+    bodyHtml += `
+      <section style="margin-top:24px;">
+        <h2 style="font-family:'Press Start 2P',cursive;font-size:14px;">Fun Facts</h2>
+        <ul style="font-family:'Space Mono',monospace;font-size:14px;line-height:1.6;padding-left:20px;">
+          ${desc.funFacts.map((f) => `<li>${escapeHtml(f)}</li>`).join('\n          ')}
+        </ul>
+      </section>`;
+  }
+
+  if (similarEntries.length > 0) {
+    const similarLinks = similarEntries.map((e) =>
+      `<a href="${e.href}" style="text-decoration:none;">${getFlagEmoji(e.code)} ${escapeHtml(e.name)}${e.isTerritory ? ' <span style="color:#6B7280;font-size:10px;text-transform:uppercase;">· Territory</span>' : ''}</a>`
+    ).join('\n          ');
+    bodyHtml += `
+      <section style="margin-top:24px;">
+        <h2 style="font-family:'Press Start 2P',cursive;font-size:14px;">Similar looking flags</h2>
+        <p style="font-family:'Space Mono',monospace;font-size:13px;">These flags share similar colors and patterns:</p>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;">
+          ${similarLinks}
+        </div>
+      </section>`;
+  }
+
+  if (siblings.length > 0) {
+    bodyHtml += `
       <section style="margin-top:24px;">
         <h2 style="font-family:'Press Start 2P',cursive;font-size:14px;">Other ${escapeHtml(territory.sovereignName)} Territories</h2>
         <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;">
         ${siblingLinks}
         </div>
-      </section>` : ''}
+      </section>`;
+  }
 
+  if (continentPeers.length > 0) {
+    const peerLinks = continentPeers.slice(0, 8).map((e) =>
+      `<a href="${e.href}" style="text-decoration:none;">${getFlagEmoji(e.code)} ${escapeHtml(e.name)}${e.isTerritory ? ' <span style="color:#6B7280;font-size:10px;text-transform:uppercase;">(Territory)</span>' : ''}</a>`
+    ).join(' &middot; ');
+    bodyHtml += `
+      <section style="margin-top:24px;">
+        <h2 style="font-family:'Press Start 2P',cursive;font-size:14px;">More ${escapeHtml(territory.continent)} Flags</h2>
+        <p style="font-family:'Space Mono',monospace;font-size:13px;line-height:2;">${peerLinks}</p>
+        <p><a href="/flags/continent/${continentSlug}">View all ${escapeHtml(territory.continent)} flags &rarr;</a></p>
+      </section>`;
+  }
+
+  bodyHtml += `
       <section style="margin-top:32px;text-align:center;padding:24px;background:#FFD93D;border:2px solid #2D2D2D;">
         <h2 style="font-family:'Press Start 2P',cursive;font-size:14px;">Test Your Knowledge!</h2>
         <p style="font-family:'Inter',sans-serif;font-size:14px;margin:8px 0 16px;">Identify country flags in our quiz.</p>
@@ -1066,7 +1597,7 @@ function generateTerritoryPage(territory: typeof territories[number], assets: { 
     '@context': 'https://schema.org',
     '@type': 'Article',
     name: `Flag of ${territory.name}`,
-    description,
+    description: pageDescription,
     url: `${SITE_URL}/flags/territories/${slug}`,
     publisher: { '@type': 'Organization', name: 'Flag Arcade', url: SITE_URL },
     breadcrumb: {
@@ -1082,8 +1613,8 @@ function generateTerritoryPage(territory: typeof territories[number], assets: { 
 
   return buildPage(
     {
-      title: `${territory.name} Flag - Territory of ${territory.sovereignName} | Flag Arcade`,
-      description: `Learn about the ${territory.name} flag. ${description}`,
+      title: `Flag of ${territory.name} - ${territory.sovereignName} Territory | Flag Arcade`,
+      description: pageDescription,
       canonical: `${SITE_URL}/flags/territories/${slug}`,
       jsonLd,
     },
@@ -1280,6 +1811,11 @@ function main() {
   }
   console.log(`  ${contentPages.length} content pages`);
 
+  // Patterns landing page
+  writeFile(path.join(DIST, 'patterns', 'index.html'), generatePatternsIndexPage(assets));
+  sitemapUrls.push({ loc: `${SITE_URL}/patterns`, priority: '0.8' });
+  console.log('  /patterns');
+
   // Organizations
   writeFile(path.join(DIST, 'organizations', 'index.html'), generateOrganizationsIndexPage(assets));
   sitemapUrls.push({ loc: `${SITE_URL}/organizations`, priority: '0.8' });
@@ -1303,6 +1839,15 @@ function main() {
   writeFile(path.join(DIST, 'flags', 'emoji', 'index.html'), generateEmojiFlagsPage(assets));
   sitemapUrls.push({ loc: `${SITE_URL}/flags/emoji`, priority: '0.7' });
   console.log('  /flags/emoji');
+
+  // Religions
+  writeFile(path.join(DIST, 'religions', 'index.html'), generateReligionsIndexPage(assets));
+  sitemapUrls.push({ loc: `${SITE_URL}/religions`, priority: '0.6' });
+  for (const religion of religions) {
+    writeFile(path.join(DIST, 'religions', religion.slug, 'index.html'), generateReligionPage(religion, assets));
+    sitemapUrls.push({ loc: `${SITE_URL}/religions/${religion.slug}`, priority: '0.6' });
+  }
+  console.log(`  /religions + ${religions.length} religion pages`);
 
   // About
   writeFile(path.join(DIST, 'about', 'index.html'), generateAboutPage(assets));

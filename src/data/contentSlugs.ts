@@ -17,6 +17,8 @@ export const CONTENT_SLUGS = new Set([
   'with-crosses',
   'diagonal-designs',
   'canton-designs',
+  'solid-designs',
+  'complex-designs',
   // Special
   'hardest-flags',
   'easiest-flags',

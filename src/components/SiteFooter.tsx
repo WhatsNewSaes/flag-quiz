@@ -87,8 +87,14 @@ export function SiteFooter() {
               </li>
               {organizations.slice(0, 10).map((org) => (
                 <li key={org.slug}>
-                  <Link to={`/organizations/${org.slug}`} className={linkClass}>
-                    {org.emoji} {org.abbreviation}
+                  <Link to={`/organizations/${org.slug}`} className={`${linkClass} flex items-center gap-2`}>
+                    <img
+                      src={`/flag-images/flag-${org.slug}.svg`}
+                      alt=""
+                      className="w-5 h-3.5 object-contain"
+                      loading="lazy"
+                    />
+                    {org.abbreviation}
                   </Link>
                 </li>
               ))}
