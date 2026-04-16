@@ -224,7 +224,7 @@ export function HomePage() {
       <SEOHead
         title="Flag Arcade - The Ultimate World Flag Quiz Game"
         description="Test your knowledge of flags from 197 countries! Free retro-style flag quiz with 6 game modes: Journey, Arcade, Around the World, Jeopardy, Presentation, and Flag Runner."
-        canonical="https://flagarcade.com"
+        canonical="https://flagarcade.com/"
       />
 
       {/* ===== 1. HERO ===== */}
