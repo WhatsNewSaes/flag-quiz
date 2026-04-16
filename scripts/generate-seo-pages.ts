@@ -13,6 +13,7 @@ import { countries, continents, difficultyLabels, type Country, type Continent }
 import { flagFeatures, getSimilarFlags, type FlagFeatures } from '../src/data/flagFeatures';
 import { flagDescriptions, type FlagDescription } from '../src/data/flagDescriptions';
 import { organizations } from '../src/data/organizations';
+import { organizationMembers } from '../src/data/organizationMembers';
 import { territories } from '../src/data/territories';
 import { getContinentMapSvg } from '../src/components/seo/ContinentMap';
 
@@ -791,6 +792,412 @@ function getContentPages(): ContentPage[] {
 }
 
 // ---------------------------------------------------------------------------
+// Organizations index page
+// ---------------------------------------------------------------------------
+
+function generateOrganizationsIndexPage(assets: { css: string[]; js: string[] }): string {
+  const orgCards = organizations.map((o) => `
+    <a href="/organizations/${o.slug}" style="display:block;border:2px solid #2D2D2D;padding:14px;text-decoration:none;background:#FFF8E7;box-shadow:3px 3px 0 #2D2D2D;">
+      <div style="font-size:2rem;line-height:1;">${o.emoji}</div>
+      <div style="font-family:'Press Start 2P',cursive;font-size:11px;margin-top:8px;">${escapeHtml(o.abbreviation)}</div>
+      <div style="font-family:'Inter',sans-serif;font-size:13px;margin-top:4px;color:#2D2D2D;">${escapeHtml(o.name)}</div>
+      <div style="font-family:'Inter',sans-serif;font-size:12px;margin-top:6px;color:#6B7280;">${o.members} members &middot; founded ${escapeHtml(o.founded)}</div>
+    </a>`).join('\n      ');
+
+  const bodyHtml = `
+    <nav aria-label="Breadcrumb" style="padding:8px 16px;font-family:'Inter',sans-serif;font-size:14px;">
+      <a href="/">Home</a> / Organizations
+    </nav>
+    <main style="max-width:960px;margin:0 auto;padding:16px;">
+      <h1 style="font-family:'Press Start 2P',cursive;">International Organizations &amp; Their Flags</h1>
+      <p style="font-family:'Inter',sans-serif;font-size:15px;line-height:1.6;">
+        Browse the flags of ${organizations.length} major international organizations — the United Nations, NATO, the European Union, ASEAN, and more. Each organization page lists its member countries, when it was founded, and where it's headquartered.
+      </p>
+      <p style="font-family:'Inter',sans-serif;font-size:15px;line-height:1.6;">
+        These flags appear regularly in news coverage, diplomatic events, and global summits. Knowing them is a great way to understand world affairs at a glance.
+      </p>
+      <section style="margin-top:24px;display:grid;grid-template-columns:repeat(auto-fill, minmax(220px, 1fr));gap:16px;">
+      ${orgCards}
+      </section>
+      <section style="margin-top:32px;text-align:center;padding:24px;background:#FFD93D;border:2px solid #2D2D2D;">
+        <h2 style="font-family:'Press Start 2P',cursive;font-size:14px;">Test Your Flag Knowledge</h2>
+        <p style="font-family:'Inter',sans-serif;font-size:14px;margin:8px 0 16px;">Recognize country flags from every continent in our quiz.</p>
+        <a href="/quiz" style="font-family:'Press Start 2P',cursive;font-size:12px;background:#16A34A;color:white;padding:12px 24px;border:2px solid #2D2D2D;text-decoration:none;display:inline-block;">Play Flag Quiz</a>
+      </section>
+      <nav style="margin-top:24px;text-align:center;padding-bottom:32px;">
+        <a href="/flags">All Flags</a> &middot; <a href="/flags/territories">Territories</a> &middot; <a href="/quiz">Flag Quiz</a>
+      </nav>
+    </main>`;
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'International Organizations and Their Flags',
+    description: `Browse flags of ${organizations.length} major international organizations including the UN, NATO, EU, ASEAN, and African Union.`,
+    url: `${SITE_URL}/organizations`,
+    numberOfItems: organizations.length,
+    publisher: { '@type': 'Organization', name: 'Flag Arcade', url: SITE_URL },
+  };
+
+  return buildPage(
+    {
+      title: `International Organization Flags - UN, NATO, EU & ${organizations.length - 3} More | Flag Arcade`,
+      description: `Explore flags of ${organizations.length} international organizations — UN, NATO, EU, ASEAN, African Union, and more. See member countries, founding year, and headquarters for each.`,
+      canonical: `${SITE_URL}/organizations`,
+      jsonLd,
+    },
+    bodyHtml,
+    assets,
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Individual organization page
+// ---------------------------------------------------------------------------
+
+function generateOrganizationPage(org: typeof organizations[number], assets: { css: string[]; js: string[] }): string {
+  const memberCodes = organizationMembers[org.slug] || [];
+  const memberCountries = memberCodes
+    .map((code) => countries.find((c) => c.code === code))
+    .filter((c): c is Country => Boolean(c));
+
+  const memberLinks = memberCountries.map((c) =>
+    `<a href="/flags/${slugify(c.name)}" style="display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border:1px solid #2D2D2D;text-decoration:none;font-size:13px;font-family:'Inter',sans-serif;background:#FFF8E7;">${getFlagEmoji(c.code)} ${escapeHtml(c.name)}</a>`
+  ).join('\n        ');
+
+  const otherOrgs = organizations.filter((o) => o.slug !== org.slug).slice(0, 8).map((o) =>
+    `<a href="/organizations/${o.slug}" style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid #2D2D2D;text-decoration:none;font-size:13px;font-family:'Inter',sans-serif;">${o.emoji} ${escapeHtml(o.abbreviation)}</a>`
+  ).join(' ');
+
+  const bodyHtml = `
+    <nav aria-label="Breadcrumb" style="padding:8px 16px;font-family:'Inter',sans-serif;font-size:14px;">
+      <a href="/">Home</a> / <a href="/organizations">Organizations</a> / ${escapeHtml(org.name)}
+    </nav>
+    <main style="max-width:960px;margin:0 auto;padding:16px;">
+      <div style="text-align:center;font-size:6rem;line-height:1;">${org.emoji}</div>
+      <h1 style="font-family:'Press Start 2P',cursive;text-align:center;margin:16px 0;">${escapeHtml(org.name)} (${escapeHtml(org.abbreviation)})</h1>
+      <p style="font-family:'Inter',sans-serif;font-size:15px;line-height:1.7;max-width:720px;margin:0 auto 24px;">${escapeHtml(org.description)}</p>
+
+      <section style="margin-top:24px;display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;font-family:'Inter',sans-serif;font-size:14px;">
+        <div style="border:1px solid #2D2D2D;padding:12px;background:#FFF8E7;"><strong>Founded</strong><br>${escapeHtml(org.founded)}</div>
+        <div style="border:1px solid #2D2D2D;padding:12px;background:#FFF8E7;"><strong>Headquarters</strong><br>${escapeHtml(org.headquarters)}</div>
+        <div style="border:1px solid #2D2D2D;padding:12px;background:#FFF8E7;"><strong>Members</strong><br>${org.members}</div>
+        <div style="border:1px solid #2D2D2D;padding:12px;background:#FFF8E7;"><strong>Website</strong><br>${escapeHtml(org.website)}</div>
+      </section>
+
+      ${memberCountries.length > 0 ? `
+      <section style="margin-top:32px;">
+        <h2 style="font-family:'Press Start 2P',cursive;font-size:14px;">Member Country Flags (${memberCountries.length})</h2>
+        <p style="font-family:'Inter',sans-serif;font-size:14px;color:#6B7280;">Click any flag to learn about that country.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;">
+        ${memberLinks}
+        </div>
+      </section>` : ''}
+
+      <section style="margin-top:32px;text-align:center;padding:24px;background:#FFD93D;border:2px solid #2D2D2D;">
+        <h2 style="font-family:'Press Start 2P',cursive;font-size:14px;">Can You Identify Every ${escapeHtml(org.abbreviation)} Member?</h2>
+        <p style="font-family:'Inter',sans-serif;font-size:14px;margin:8px 0 16px;">Test yourself in our flag quiz.</p>
+        <a href="/quiz" style="font-family:'Press Start 2P',cursive;font-size:12px;background:#16A34A;color:white;padding:12px 24px;border:2px solid #2D2D2D;text-decoration:none;display:inline-block;">Play Flag Quiz</a>
+      </section>
+
+      <section style="margin-top:24px;">
+        <h2 style="font-family:'Press Start 2P',cursive;font-size:12px;">Other Organizations</h2>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;">${otherOrgs}</div>
+      </section>
+
+      <nav style="margin-top:24px;text-align:center;padding-bottom:32px;">
+        <a href="/organizations">All Organizations</a> &middot; <a href="/flags">All Flags</a> &middot; <a href="/quiz">Flag Quiz</a>
+      </nav>
+    </main>`;
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: org.name,
+    alternateName: org.abbreviation,
+    description: org.description,
+    foundingDate: org.founded,
+    url: `${SITE_URL}/organizations/${org.slug}`,
+    sameAs: [`https://${org.website}`],
+  };
+
+  return buildPage(
+    {
+      title: `${org.name} (${org.abbreviation}) Flag - ${org.members} Member Countries | Flag Arcade`,
+      description: `Learn about the ${org.name} flag, its ${org.members} member countries, founding history (${org.founded}), and headquarters in ${org.headquarters}.`,
+      canonical: `${SITE_URL}/organizations/${org.slug}`,
+      jsonLd,
+    },
+    bodyHtml,
+    assets,
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Territories index page
+// ---------------------------------------------------------------------------
+
+function generateTerritoriesIndexPage(assets: { css: string[]; js: string[] }): string {
+  // Group by sovereign
+  const groups = new Map<string, typeof territories>();
+  for (const t of territories) {
+    const key = t.sovereignName;
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key)!.push(t);
+  }
+  const sortedGroups = [...groups.entries()].sort((a, b) => {
+    if (a[0] === 'None') return 1;
+    if (b[0] === 'None') return -1;
+    return a[0].localeCompare(b[0]);
+  });
+
+  const groupsHtml = sortedGroups.map(([sovereign, list]) => {
+    const links = list.map((t) =>
+      `<a href="/flags/territories/${slugify(t.name)}" style="display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border:1px solid #2D2D2D;text-decoration:none;font-size:13px;font-family:'Inter',sans-serif;background:#FFF8E7;">${getFlagEmoji(t.code)} ${escapeHtml(t.name)}</a>`
+    ).join('\n        ');
+    return `
+      <section style="margin-top:24px;">
+        <h2 style="font-family:'Press Start 2P',cursive;font-size:13px;">${escapeHtml(sovereign === 'None' ? 'Other / Disputed' : sovereign)} (${list.length})</h2>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;">
+        ${links}
+        </div>
+      </section>`;
+  }).join('\n');
+
+  const bodyHtml = `
+    <nav aria-label="Breadcrumb" style="padding:8px 16px;font-family:'Inter',sans-serif;font-size:14px;">
+      <a href="/">Home</a> / <a href="/flags">Flags</a> / Territories
+    </nav>
+    <main style="max-width:960px;margin:0 auto;padding:16px;">
+      <h1 style="font-family:'Press Start 2P',cursive;">Flags of Dependent Territories</h1>
+      <p style="font-family:'Inter',sans-serif;font-size:15px;line-height:1.7;">
+        Beyond the world's ${countries.length} sovereign countries, there are ${territories.length} dependent territories with their own distinct flags — places like Puerto Rico, Hong Kong, Greenland, and French Polynesia. Each is associated with a parent country but maintains its own flag, government, and cultural identity.
+      </p>
+      <p style="font-family:'Inter',sans-serif;font-size:15px;line-height:1.7;">
+        Browse them grouped by their sovereign nation below.
+      </p>
+      ${groupsHtml}
+      <section style="margin-top:32px;text-align:center;padding:24px;background:#FFD93D;border:2px solid #2D2D2D;">
+        <h2 style="font-family:'Press Start 2P',cursive;font-size:14px;">Master the World's Flags</h2>
+        <p style="font-family:'Inter',sans-serif;font-size:14px;margin:8px 0 16px;">Test your knowledge in the Flag Arcade quiz.</p>
+        <a href="/quiz" style="font-family:'Press Start 2P',cursive;font-size:12px;background:#16A34A;color:white;padding:12px 24px;border:2px solid #2D2D2D;text-decoration:none;display:inline-block;">Play Flag Quiz</a>
+      </section>
+      <nav style="margin-top:24px;text-align:center;padding-bottom:32px;">
+        <a href="/flags">All Country Flags</a> &middot; <a href="/organizations">Organizations</a> &middot; <a href="/quiz">Flag Quiz</a>
+      </nav>
+    </main>`;
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'Flags of Dependent Territories',
+    description: `Browse flags of ${territories.length} dependent territories around the world.`,
+    url: `${SITE_URL}/flags/territories`,
+    numberOfItems: territories.length,
+    publisher: { '@type': 'Organization', name: 'Flag Arcade', url: SITE_URL },
+  };
+
+  return buildPage(
+    {
+      title: `Dependent Territory Flags - All ${territories.length} Territories | Flag Arcade`,
+      description: `Explore flags of ${territories.length} dependent territories — Puerto Rico, Hong Kong, Greenland, French Polynesia, Bermuda, and more. Grouped by sovereign nation.`,
+      canonical: `${SITE_URL}/flags/territories`,
+      jsonLd,
+    },
+    bodyHtml,
+    assets,
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Individual territory page
+// ---------------------------------------------------------------------------
+
+function generateTerritoryPage(territory: typeof territories[number], assets: { css: string[]; js: string[] }): string {
+  const slug = slugify(territory.name);
+  const emoji = getFlagEmoji(territory.code);
+  const sovereignCountry = countries.find((c) => c.code === territory.sovereignCode);
+  const sovereignSlug = sovereignCountry ? slugify(sovereignCountry.name) : null;
+  const siblings = territories.filter((t) => t.sovereignCode === territory.sovereignCode && t.code !== territory.code);
+
+  const siblingLinks = siblings.map((t) =>
+    `<a href="/flags/territories/${slugify(t.name)}" style="display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border:1px solid #2D2D2D;text-decoration:none;font-size:13px;font-family:'Inter',sans-serif;background:#FFF8E7;">${getFlagEmoji(t.code)} ${escapeHtml(t.name)}</a>`
+  ).join('\n        ');
+
+  const description = territory.sovereignName === 'None'
+    ? `${territory.name} is a territory in ${territory.continent} with its own distinct flag.`
+    : `${territory.name} is a dependent territory of ${territory.sovereignName} located in ${territory.continent}. It has its own distinct flag and governance.`;
+
+  const bodyHtml = `
+    <nav aria-label="Breadcrumb" style="padding:8px 16px;font-family:'Inter',sans-serif;font-size:14px;">
+      <a href="/">Home</a> / <a href="/flags">Flags</a> / <a href="/flags/territories">Territories</a> / ${escapeHtml(territory.name)}
+    </nav>
+    <main style="max-width:768px;margin:0 auto;padding:16px;">
+      <div style="text-align:center;font-size:8rem;line-height:1;">${emoji}</div>
+      <h1 style="font-family:'Press Start 2P',cursive;text-align:center;margin:16px 0;">Flag of ${escapeHtml(territory.name)}</h1>
+      <p style="text-align:center;font-family:'Inter',sans-serif;font-size:14px;color:#6B7280;">${escapeHtml(territory.continent)}</p>
+
+      <section style="margin-top:24px;">
+        <h2 style="font-family:'Press Start 2P',cursive;font-size:14px;">About This Flag</h2>
+        <p style="font-family:'Inter',sans-serif;font-size:15px;line-height:1.7;">${escapeHtml(description)}</p>
+        ${sovereignCountry && sovereignSlug ? `<p style="font-family:'Inter',sans-serif;font-size:15px;line-height:1.7;">Parent country: <a href="/flags/${sovereignSlug}">${getFlagEmoji(sovereignCountry.code)} ${escapeHtml(sovereignCountry.name)}</a></p>` : ''}
+      </section>
+
+      ${siblings.length > 0 ? `
+      <section style="margin-top:24px;">
+        <h2 style="font-family:'Press Start 2P',cursive;font-size:14px;">Other ${escapeHtml(territory.sovereignName)} Territories</h2>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;">
+        ${siblingLinks}
+        </div>
+      </section>` : ''}
+
+      <section style="margin-top:32px;text-align:center;padding:24px;background:#FFD93D;border:2px solid #2D2D2D;">
+        <h2 style="font-family:'Press Start 2P',cursive;font-size:14px;">Test Your Knowledge!</h2>
+        <p style="font-family:'Inter',sans-serif;font-size:14px;margin:8px 0 16px;">Identify country flags in our quiz.</p>
+        <a href="/quiz" style="font-family:'Press Start 2P',cursive;font-size:12px;background:#16A34A;color:white;padding:12px 24px;border:2px solid #2D2D2D;text-decoration:none;display:inline-block;">Play Flag Quiz</a>
+      </section>
+
+      <nav style="margin-top:24px;text-align:center;padding-bottom:32px;">
+        <a href="/flags/territories">All Territories</a> &middot; <a href="/flags">All Flags</a>
+      </nav>
+    </main>`;
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    name: `Flag of ${territory.name}`,
+    description,
+    url: `${SITE_URL}/flags/territories/${slug}`,
+    publisher: { '@type': 'Organization', name: 'Flag Arcade', url: SITE_URL },
+    breadcrumb: {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
+        { '@type': 'ListItem', position: 2, name: 'Flags', item: `${SITE_URL}/flags` },
+        { '@type': 'ListItem', position: 3, name: 'Territories', item: `${SITE_URL}/flags/territories` },
+        { '@type': 'ListItem', position: 4, name: territory.name },
+      ],
+    },
+  };
+
+  return buildPage(
+    {
+      title: `${territory.name} Flag - Territory of ${territory.sovereignName} | Flag Arcade`,
+      description: `Learn about the ${territory.name} flag. ${description}`,
+      canonical: `${SITE_URL}/flags/territories/${slug}`,
+      jsonLd,
+    },
+    bodyHtml,
+    assets,
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Emoji flags page
+// ---------------------------------------------------------------------------
+
+function generateEmojiFlagsPage(assets: { css: string[]; js: string[] }): string {
+  const grid = countries.map((c) =>
+    `<a href="/flags/${slugify(c.name)}" title="${escapeHtml(c.name)}" style="display:inline-flex;flex-direction:column;align-items:center;gap:4px;padding:8px;border:1px solid #2D2D2D;text-decoration:none;background:#FFF8E7;font-family:'Inter',sans-serif;font-size:11px;color:#2D2D2D;width:80px;text-align:center;">
+      <span style="font-size:1.6rem;line-height:1;">${getFlagEmoji(c.code)}</span>
+      <span>${c.code}</span>
+    </a>`
+  ).join('\n      ');
+
+  const bodyHtml = `
+    <nav aria-label="Breadcrumb" style="padding:8px 16px;font-family:'Inter',sans-serif;font-size:14px;">
+      <a href="/">Home</a> / <a href="/flags">Flags</a> / Emoji Flags
+    </nav>
+    <main style="max-width:960px;margin:0 auto;padding:16px;">
+      <h1 style="font-family:'Press Start 2P',cursive;">Country Flag Emojis - All ${countries.length} Flags</h1>
+      <p style="font-family:'Inter',sans-serif;font-size:15px;line-height:1.7;">
+        Every country flag rendered as a Unicode emoji. Each flag emoji is built from two regional indicator characters that map to a country's ISO 3166-1 alpha-2 code (for example, 🇺🇸 = US, 🇯🇵 = JP).
+      </p>
+      <p style="font-family:'Inter',sans-serif;font-size:15px;line-height:1.7;">
+        Click any flag to learn about that country's flag colors, meaning, and history. Codes shown below each flag are the ISO codes you'd use in URLs, software, or shipping forms.
+      </p>
+      <section style="margin-top:24px;display:flex;flex-wrap:wrap;gap:8px;">
+      ${grid}
+      </section>
+      <section style="margin-top:32px;text-align:center;padding:24px;background:#FFD93D;border:2px solid #2D2D2D;">
+        <h2 style="font-family:'Press Start 2P',cursive;font-size:14px;">How Many Can You Name?</h2>
+        <p style="font-family:'Inter',sans-serif;font-size:14px;margin:8px 0 16px;">Take the flag quiz and find out.</p>
+        <a href="/quiz" style="font-family:'Press Start 2P',cursive;font-size:12px;background:#16A34A;color:white;padding:12px 24px;border:2px solid #2D2D2D;text-decoration:none;display:inline-block;">Play Flag Quiz</a>
+      </section>
+      <nav style="margin-top:24px;text-align:center;padding-bottom:32px;">
+        <a href="/flags">All Country Flags</a> &middot; <a href="/flags/territories">Territories</a> &middot; <a href="/organizations">Organizations</a>
+      </nav>
+    </main>`;
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'Country Flag Emojis',
+    description: `All ${countries.length} country flag emojis with ISO 3166-1 codes.`,
+    url: `${SITE_URL}/flags/emoji`,
+    numberOfItems: countries.length,
+    publisher: { '@type': 'Organization', name: 'Flag Arcade', url: SITE_URL },
+  };
+
+  return buildPage(
+    {
+      title: `Flag Emojis - All ${countries.length} Country Flag Emojis | Flag Arcade`,
+      description: `Every country flag as a Unicode emoji. Browse all ${countries.length} flag emojis with their ISO country codes. Click any flag for full details.`,
+      canonical: `${SITE_URL}/flags/emoji`,
+      jsonLd,
+    },
+    bodyHtml,
+    assets,
+  );
+}
+
+// ---------------------------------------------------------------------------
+// About page
+// ---------------------------------------------------------------------------
+
+function generateAboutPage(assets: { css: string[]; js: string[] }): string {
+  const bodyHtml = `
+    <nav aria-label="Breadcrumb" style="padding:8px 16px;font-family:'Inter',sans-serif;font-size:14px;">
+      <a href="/">Home</a> / About
+    </nav>
+    <main style="max-width:720px;margin:0 auto;padding:16px;">
+      <h1 style="font-family:'Press Start 2P',cursive;">About Flag Arcade</h1>
+      <p style="font-family:'Inter',sans-serif;font-size:15px;line-height:1.7;">
+        Flag Arcade is a free, retro-styled site for learning the world's flags. We cover all ${countries.length} sovereign country flags, ${territories.length} dependent territory flags, and ${organizations.length} international organization flags — with quizzes, game modes, and reference pages for each one.
+      </p>
+      <h2 style="font-family:'Press Start 2P',cursive;font-size:14px;margin-top:24px;">What you'll find here</h2>
+      <ul style="font-family:'Inter',sans-serif;font-size:15px;line-height:1.8;">
+        <li><a href="/flags">Country flag pages</a> with colors, meaning, history, and fun facts</li>
+        <li><a href="/quiz">Flag quizzes</a> by continent and difficulty</li>
+        <li><a href="/play">Six game modes</a> — Journey, Arcade, Around the World, Jeopardy, Practice, and Flag Runner</li>
+        <li><a href="/organizations">Organization flags</a> for the UN, NATO, EU, ASEAN, African Union, and more</li>
+        <li><a href="/flags/territories">Territory flags</a> for Puerto Rico, Hong Kong, Greenland, and dozens more</li>
+        <li><a href="/flags/emoji">Flag emojis</a> for every country with their ISO codes</li>
+      </ul>
+      <h2 style="font-family:'Press Start 2P',cursive;font-size:14px;margin-top:24px;">Why flags?</h2>
+      <p style="font-family:'Inter',sans-serif;font-size:15px;line-height:1.7;">
+        Flags are visual shorthand for an entire nation's history, geography, and values. Recognizing them sharpens your understanding of world events, helps you in trivia and travel, and is a surprisingly addictive way to learn geography.
+      </p>
+      <p style="font-family:'Inter',sans-serif;font-size:15px;line-height:1.7;">
+        Built with care by the team at <a href="https://learntoship.ai" rel="noopener noreferrer">LearnToShip.ai</a>.
+      </p>
+      <nav style="margin-top:32px;text-align:center;padding-bottom:32px;">
+        <a href="/">Home</a> &middot; <a href="/flags">Browse Flags</a> &middot; <a href="/quiz">Quiz</a> &middot; <a href="/play">Play</a>
+      </nav>
+    </main>`;
+
+  return buildPage(
+    {
+      title: `About Flag Arcade - Free Flag Quiz & Reference Site`,
+      description: `Flag Arcade is a free, retro-styled site for learning every world flag — ${countries.length} country flags, ${territories.length} territory flags, and ${organizations.length} international organization flags, plus six quiz game modes.`,
+      canonical: `${SITE_URL}/about`,
+    },
+    bodyHtml,
+    assets,
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Sitemap
 // ---------------------------------------------------------------------------
 
@@ -874,25 +1281,31 @@ function main() {
   console.log(`  ${contentPages.length} content pages`);
 
   // Organizations
+  writeFile(path.join(DIST, 'organizations', 'index.html'), generateOrganizationsIndexPage(assets));
   sitemapUrls.push({ loc: `${SITE_URL}/organizations`, priority: '0.8' });
   for (const org of organizations) {
+    writeFile(path.join(DIST, 'organizations', org.slug, 'index.html'), generateOrganizationPage(org, assets));
     sitemapUrls.push({ loc: `${SITE_URL}/organizations/${org.slug}`, priority: '0.7' });
   }
-  console.log(`  ${organizations.length} organization pages`);
+  console.log(`  /organizations + ${organizations.length} organization pages`);
 
   // Territories
+  writeFile(path.join(DIST, 'flags', 'territories', 'index.html'), generateTerritoriesIndexPage(assets));
   sitemapUrls.push({ loc: `${SITE_URL}/flags/territories`, priority: '0.8' });
   for (const territory of territories) {
     const slug = slugify(territory.name);
+    writeFile(path.join(DIST, 'flags', 'territories', slug, 'index.html'), generateTerritoryPage(territory, assets));
     sitemapUrls.push({ loc: `${SITE_URL}/flags/territories/${slug}`, priority: '0.7' });
   }
-  console.log(`  ${territories.length} territory pages`);
+  console.log(`  /flags/territories + ${territories.length} territory pages`);
 
   // Emoji flags
+  writeFile(path.join(DIST, 'flags', 'emoji', 'index.html'), generateEmojiFlagsPage(assets));
   sitemapUrls.push({ loc: `${SITE_URL}/flags/emoji`, priority: '0.7' });
   console.log('  /flags/emoji');
 
   // About
+  writeFile(path.join(DIST, 'about', 'index.html'), generateAboutPage(assets));
   sitemapUrls.push({ loc: `${SITE_URL}/about`, priority: '0.5' });
   console.log('  /about');
 
