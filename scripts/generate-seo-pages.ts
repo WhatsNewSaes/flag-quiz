@@ -12,6 +12,8 @@ import * as path from 'node:path';
 import { countries, continents, difficultyLabels, type Country, type Continent } from '../src/data/countries';
 import { flagFeatures, getSimilarFlags, type FlagFeatures } from '../src/data/flagFeatures';
 import { flagDescriptions, type FlagDescription } from '../src/data/flagDescriptions';
+import { organizations } from '../src/data/organizations';
+import { territories } from '../src/data/territories';
 import { getContinentMapSvg } from '../src/components/seo/ContinentMap';
 
 const DIST = path.resolve(import.meta.dirname, '..', 'dist');
@@ -871,6 +873,29 @@ function main() {
   }
   console.log(`  ${contentPages.length} content pages`);
 
+  // Organizations
+  sitemapUrls.push({ loc: `${SITE_URL}/organizations`, priority: '0.8' });
+  for (const org of organizations) {
+    sitemapUrls.push({ loc: `${SITE_URL}/organizations/${org.slug}`, priority: '0.7' });
+  }
+  console.log(`  ${organizations.length} organization pages`);
+
+  // Territories
+  sitemapUrls.push({ loc: `${SITE_URL}/flags/territories`, priority: '0.8' });
+  for (const territory of territories) {
+    const slug = slugify(territory.name);
+    sitemapUrls.push({ loc: `${SITE_URL}/flags/territories/${slug}`, priority: '0.7' });
+  }
+  console.log(`  ${territories.length} territory pages`);
+
+  // Emoji flags
+  sitemapUrls.push({ loc: `${SITE_URL}/flags/emoji`, priority: '0.7' });
+  console.log('  /flags/emoji');
+
+  // About
+  sitemapUrls.push({ loc: `${SITE_URL}/about`, priority: '0.5' });
+  console.log('  /about');
+
   // Sitemap
   writeFile(path.join(DIST, 'sitemap.xml'), generateSitemap(sitemapUrls));
   console.log('  sitemap.xml');
@@ -880,7 +905,8 @@ function main() {
   console.log('  robots.txt');
 
   const totalPages = 1 + 1 + continents.length * 2 + countries.length + contentPages.length;
-  console.log(`\nDone! Generated ${totalPages} SEO pages + sitemap + robots.txt`);
+  const totalSitemapUrls = sitemapUrls.length;
+  console.log(`\nDone! Generated ${totalPages} SEO pages + sitemap (${totalSitemapUrls} URLs) + robots.txt`);
 }
 
 main();
