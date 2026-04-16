@@ -63,6 +63,7 @@ interface PageMeta {
   title: string;
   description: string;
   canonical: string;
+  ogImage?: string;
   jsonLd?: object;
 }
 
@@ -84,11 +85,11 @@ function buildPage(meta: PageMeta, bodyHtml: string, assets: { css: string[]; js
   <meta property="og:title" content="${escapeHtml(meta.title)}">
   <meta property="og:description" content="${escapeHtml(meta.description)}">
   <meta property="og:url" content="${meta.canonical}">
-  <meta property="og:image" content="${SITE_URL}/og-image.jpg">
+  <meta property="og:image" content="${meta.ogImage || `${SITE_URL}/og-image.jpg`}">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="${escapeHtml(meta.title)}">
   <meta name="twitter:description" content="${escapeHtml(meta.description)}">
-  <meta name="twitter:image" content="${SITE_URL}/og-image.jpg">
+  <meta name="twitter:image" content="${meta.ogImage || `${SITE_URL}/og-image.jpg`}">
   ${jsonLdTag}
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   ${assets.css.map((href) => `<link rel="stylesheet" href="${href}">`).join('\n  ')}
@@ -261,6 +262,7 @@ function generateCountryPage(country: Country, assets: { css: string[]; js: stri
       title: `${country.name} Flag - Colors, Meaning & History | Flag Arcade`,
       description: pageDescription,
       canonical: `${SITE_URL}/flags/${slug}`,
+      ogImage: `${SITE_URL}/og/${slug}.jpg`,
       jsonLd,
     },
     bodyHtml,

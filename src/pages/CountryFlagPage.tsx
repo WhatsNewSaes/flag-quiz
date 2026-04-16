@@ -62,6 +62,7 @@ export function CountryFlagPage() {
         title={pageTitle}
         description={pageDescription}
         canonical={`https://flagarcade.com/flags/${getCountrySlug(country)}`}
+        ogImage={`https://flagarcade.com/og/${getCountrySlug(country)}.jpg`}
       />
 
       <div className="max-w-3xl mx-auto px-4 py-6">
