@@ -13,6 +13,7 @@ import { CONTENT_SLUGS } from './data/contentSlugs';
 const CountryFlagPage = lazy(() => import('./pages/CountryFlagPage').then(m => ({ default: m.CountryFlagPage })));
 const ContentPage = lazy(() => import('./pages/ContentPage').then(m => ({ default: m.ContentPage })));
 const FlagsDirectoryPage = lazy(() => import('./pages/FlagsDirectoryPage').then(m => ({ default: m.FlagsDirectoryPage })));
+const FlagsTablePage = lazy(() => import('./pages/FlagsTablePage').then(m => ({ default: m.FlagsTablePage })));
 const ContinentFlagsPage = lazy(() => import('./pages/ContinentFlagsPage').then(m => ({ default: m.ContinentFlagsPage })));
 const QuizLandingPage = lazy(() => import('./pages/QuizLandingPage').then(m => ({ default: m.QuizLandingPage })));
 const ContinentQuizPage = lazy(() => import('./pages/ContinentQuizPage').then(m => ({ default: m.ContinentQuizPage })));
@@ -210,6 +211,7 @@ function App() {
         <Route element={<SiteLayout />}>
           <Route path="/" element={<HomePage />} />
           <Route path="/flags" element={<FlagsDirectoryPage />} />
+          <Route path="/flags/table" element={<FlagsTablePage />} />
           <Route path="/flags/continent/:slug" element={<ContinentFlagsPage />} />
           <Route path="/flags/emoji" element={<EmojiFlagsPage />} />
           <Route path="/flags/territories" element={<TerritoriesPage />} />

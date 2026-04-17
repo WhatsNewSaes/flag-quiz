@@ -88,9 +88,7 @@ export function SiteNav() {
   const [searchFocused, setSearchFocused] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const searchRef = useRef<HTMLDivElement>(null);
-  const mobileSearchRef = useRef<HTMLDivElement>(null);
   const desktopSearchInputRef = useRef<HTMLInputElement>(null);
-  const mobileSearchInputRef = useRef<HTMLInputElement>(null);
 
   const searchResults = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -127,21 +125,11 @@ export function SiteNav() {
       const isCmdK = (e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k';
       const isSlash = e.key === '/' && !inEditable;
       if (!isCmdK && !isSlash) return;
-      // Prefer the visible desktop input; fall back to mobile by opening the menu
-      if (desktopSearchInputRef.current && desktopSearchInputRef.current.offsetParent !== null) {
+      if (desktopSearchInputRef.current) {
         e.preventDefault();
         desktopSearchInputRef.current.focus();
         desktopSearchInputRef.current.select();
         setSearchFocused(true);
-      } else if (mobileSearchInputRef.current) {
-        e.preventDefault();
-        setMobileOpen(true);
-        // Defer focus until after the mobile panel renders
-        requestAnimationFrame(() => {
-          mobileSearchInputRef.current?.focus();
-          mobileSearchInputRef.current?.select();
-          setSearchFocused(true);
-        });
       }
     }
     window.addEventListener('keydown', onKey);
@@ -155,10 +143,7 @@ export function SiteNav() {
       if (navRef.current && !navRef.current.contains(target)) {
         setOpenDesktop(null);
       }
-      if (
-        searchRef.current && !searchRef.current.contains(target) &&
-        mobileSearchRef.current && !mobileSearchRef.current.contains(target)
-      ) {
+      if (searchRef.current && !searchRef.current.contains(target)) {
         setSearchFocused(false);
       }
     }
@@ -271,13 +256,13 @@ export function SiteNav() {
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 shrink-0">
           <span className="text-xl" aria-hidden>🌍</span>
-          <span className="font-retro text-[11px] md:text-xs text-retro-text leading-none">
+          <span className="hidden sm:inline font-retro text-[11px] md:text-xs text-retro-text leading-none">
             Flag Arcade
           </span>
         </Link>
 
         {/* Desktop links */}
-        <div ref={navRef} className="hidden md:flex items-center gap-1">
+        <div ref={navRef} className="hidden lg:flex items-center gap-1">
           {/* Continents dropdown */}
           <div className="relative">
             <button
@@ -427,37 +412,11 @@ export function SiteNav() {
 
         </div>
 
-        {/* Right side: search + PLAY CTA + mobile hamburger */}
+        {/* Right side: PLAY CTA + mobile hamburger */}
         <div className="flex items-center gap-2">
-          {/* Desktop search */}
-          <div ref={searchRef} className="relative hidden md:block">
-            <input
-              ref={desktopSearchInputRef}
-              type="search"
-              value={query}
-              onChange={(e) => { setQuery(e.target.value); setSearchFocused(true); }}
-              onFocus={() => setSearchFocused(true)}
-              onKeyDown={handleSearchKeyDown}
-              placeholder="Search flags"
-              aria-label="Search country flags"
-              className="font-body text-sm text-retro-text placeholder:text-retro-text/70 border-2 border-retro-border bg-retro-surface pl-9 pr-3 py-1.5 w-44 lg:w-56 outline-none focus:border-retro-neon-blue"
-            />
-            {!query && !searchFocused && (
-              <kbd
-                aria-hidden="true"
-                className="absolute left-2 top-1/2 -translate-y-1/2 pointer-events-none font-mono text-[11px] text-retro-text/70 bg-[#EBE0C2] border border-retro-border shadow-pixel-sm px-1.5 py-0.5 leading-none"
-              >
-                /
-              </kbd>
-            )}
-            {renderSearchResults('desktop')}
-          </div>
-
-          <span className="hidden md:block h-7 w-px bg-retro-border/40 mx-1" aria-hidden="true" />
-
           <Link
             to="/play/modes"
-            className="font-retro text-[10px] md:text-xs bg-retro-neon-green text-white border-2 border-retro-border shadow-pixel-sm px-4 py-2 md:px-5 md:py-2.5 hover:translate-y-0.5 hover:shadow-none transition-all"
+            className="font-retro text-[10px] lg:text-xs bg-retro-neon-green text-white border-2 border-retro-border shadow-pixel-sm px-4 py-2 lg:px-5 lg:py-2.5 hover:translate-y-0.5 hover:shadow-none transition-all"
           >
             ▶ PLAY
           </Link>
@@ -465,47 +424,64 @@ export function SiteNav() {
           {/* Mobile hamburger */}
           <button
             onClick={() => setMobileOpen((v) => !v)}
-            className="md:hidden flex flex-col justify-center items-center w-8 h-8 gap-1"
-            aria-label="Toggle menu"
+            className="lg:hidden flex justify-center items-center w-8 h-8 text-retro-text focus:outline-none focus-visible:ring-2 focus-visible:ring-retro-neon-blue/40 rounded"
+            aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={mobileOpen}
           >
-            <span className={`block w-5 h-0.5 bg-retro-text transition-transform ${mobileOpen ? 'rotate-45 translate-y-[3px]' : ''}`} />
-            <span className={`block w-5 h-0.5 bg-retro-text transition-opacity ${mobileOpen ? 'opacity-0' : ''}`} />
-            <span className={`block w-5 h-0.5 bg-retro-text transition-transform ${mobileOpen ? '-rotate-45 -translate-y-[3px]' : ''}`} />
+            {mobileOpen ? (
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M6 6l12 12M6 18L18 6" />
+              </svg>
+            ) : (
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M4 7h16M4 12h16M4 17h16" />
+              </svg>
+            )}
           </button>
+        </div>
+      </div>
+
+      {/* Search row — sits outside the nav row, beige band */}
+      <div ref={searchRef} className="relative border-t-2 border-retro-border bg-retro-bg/40">
+        <div className="max-w-3xl mx-auto px-4 py-2 relative">
+          <svg
+            aria-hidden="true"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2.5}
+            className="absolute left-7 top-1/2 -translate-y-1/2 w-4 h-4 text-retro-text/60 pointer-events-none"
+          >
+            <circle cx="11" cy="11" r="7" />
+            <path strokeLinecap="round" d="M20 20l-3.5-3.5" />
+          </svg>
+          <input
+            ref={desktopSearchInputRef}
+            type="search"
+            value={query}
+            onChange={(e) => { setQuery(e.target.value); setSearchFocused(true); }}
+            onFocus={() => setSearchFocused(true)}
+            onKeyDown={handleSearchKeyDown}
+            placeholder="Search flags…"
+            aria-label="Search country flags"
+            className="w-full font-body text-sm text-retro-text placeholder:text-retro-text/60 border-2 border-retro-border bg-[#EBE0C2] pl-9 pr-10 py-2 outline-none focus:border-retro-neon-blue"
+          />
+          {!query && !searchFocused && (
+            <kbd
+              aria-hidden="true"
+              className="hidden md:inline-block absolute right-7 top-1/2 -translate-y-1/2 pointer-events-none font-mono text-[11px] text-retro-text/70 bg-retro-surface border border-retro-border shadow-pixel-sm px-1.5 py-0.5 leading-none"
+            >
+              /
+            </kbd>
+          )}
+          {renderSearchResults('search')}
         </div>
       </div>
 
       {/* Mobile slide-out */}
       {mobileOpen && (
-        <div className="md:hidden border-t-2 border-retro-border bg-retro-surface">
+        <div className="lg:hidden border-t-2 border-retro-border bg-retro-surface">
           <div className="px-4 py-3 flex flex-col gap-1">
-            {/* Mobile search */}
-            <div ref={mobileSearchRef} className="relative mb-2">
-              <input
-                ref={mobileSearchInputRef}
-                type="search"
-                value={query}
-                onChange={(e) => { setQuery(e.target.value); setSearchFocused(true); }}
-                onFocus={() => setSearchFocused(true)}
-                onKeyDown={handleSearchKeyDown}
-                placeholder="Search flags…"
-                aria-label="Search country flags"
-                className="w-full font-body text-sm text-retro-text placeholder:text-retro-text/60 border-2 border-retro-border bg-retro-bg/60 pl-9 pr-3 py-2 outline-none focus:border-retro-neon-blue focus:bg-retro-surface"
-              />
-              <svg
-                aria-hidden="true"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2.5}
-                className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-retro-text/60 pointer-events-none"
-              >
-                <circle cx="11" cy="11" r="7" />
-                <path strokeLinecap="round" d="M20 20l-3.5-3.5" />
-              </svg>
-              {renderSearchResults('mobile')}
-            </div>
-
             {/* Continents */}
             <button onClick={() => toggleMobile('continents')} className={mobileBtnClass(false)}>
               🌎 Continents

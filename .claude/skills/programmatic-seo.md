@@ -1,21 +1,22 @@
 # FlagArcade SEO Optimization — PRD
 
-**Last updated:** April 14, 2026
-**Status:** Draft
+**Last updated:** April 16, 2026
+**Status:** Active
 **Site:** flagarcade.com
 
 ---
 
 ## Context
 
-FlagArcade is a brand-new site with 200+ pages submitted to Google and a sitemap indexing. The site targets low-difficulty flag and geography keywords with an eventual AdSense monetization model. We're currently in the Google sandbox period (months 1-3) with zero domain authority.
+FlagArcade is a brand-new site with 250+ pages submitted to Google and a sitemap indexing. The site targets low-difficulty flag and geography keywords with an eventual AdSense monetization model. We're currently in the Google sandbox period (months 1-3) with zero domain authority.
 
 The keyword landscape is unusually favorable — multiple terms with 10K+ monthly searches at KD 1-5. The goal of this work is to maximize the SEO foundation so the site is positioned to rank as soon as Google begins trusting the domain.
 
-This PRD covers two workstreams:
+This PRD covers three workstreams:
 
-1. **Optimize existing pages** — Audit and fix title tags, meta descriptions, content depth, and internal linking across 200+ pages
+1. **Optimize existing pages** — Audit and fix title tags, meta descriptions, content depth, and internal linking across 250+ pages
 2. **Build gap pages** — Create new pages targeting high-value keywords we don't currently serve
+3. **Color-combo filter pages** — 14 new pages targeting "X and Y flag" queries (combined ~375K/mo, mostly KD 1-5) — **DONE**
 
 ---
 
@@ -350,20 +351,94 @@ This is more of a product/tool page than a content page. The interactive functio
 
 ---
 
-## Priority & Sequencing
+---
 
-| Priority | Work Item | Impact | Effort |
+## Workstream 3: Color-Combo Filter Pages — DONE (April 16, 2026)
+
+14 new color-combination filter pages added, targeting ~375K/mo combined volume at KD 1-5. These pages are programmatically generated from `flagFeatures.ts` data.
+
+| Slug | Target Keyword | Volume/mo | KD |
 |---|---|---|---|
-| 1 | Audit & fix existing page templates (title tags, meta, H1s) | High — affects 200+ pages | Medium |
-| 2 | Add content depth to country pages (if currently thin) | High — prevents "thin content" signals | High |
-| 3 | Build internal linking across all page types | High — distributes authority | Medium |
-| 4 | Build Flag Colors Meaning page | Medium — trending keyword, linkable asset | Low |
-| 5 | Build US State Flag Quiz | Medium — new content silo | Medium |
-| 6 | Build Flag Trivia page | Low-Medium — KD 3, easy win | Low |
-| 7 | Build Latin America Flag Quiz | Low — small incremental volume | Low |
-| 8 | Build Flag Identifier tool | Low (short-term) — KD 50, needs authority | High |
+| `green-white-and-red-flags` | green white and red flag | 60,500 | 2-4 |
+| `red-and-white-flags` | red and white flag | 49,500 | 1 |
+| `red-yellow-and-green-flags` | red yellow and green flag | 49,500 | — |
+| `blue-and-white-flags` | blue and white flag | 40,500 | — |
+| `blue-and-yellow-flags` | blue and yellow flag | 40,500 | — |
+| `orange-white-and-green-flags` | orange white and green flag | 27,100 | — |
+| `black-red-and-yellow-flags` | black red and yellow flag | 27,100 | 1 |
+| `red-white-and-black-flags` | red white and black flag | 22,200 | 3 |
+| `green-and-white-flags` | green and white flag | 18,100 | — |
+| `red-and-yellow-flags` | red and yellow flag | 14,800 | — |
+| `red-black-white-and-green-flags` | red black white green flag | 14,800 | 1-2 |
+| `black-and-white-flags` | black and white flag | 4,400 | — |
+| `green-and-yellow-flags` | green and yellow flag | 4,400 | — |
+| ~~`red-white-and-blue-flags`~~ | _(already existed, moved to combo group)_ | 22,200 | — |
 
-Items 1-3 are the foundation. Items 4-8 can be built in parallel but the template-level fixes should come first since they affect every page on the site.
+Long-tail support keywords also captured: "countries with red and white flags" (6,600/mo, KD 2), "what flag is red white and green" (5,400/mo, +50% YoY), "green red and white flag country" (1,300/mo, KD 1).
+
+**Files changed:** `src/data/contentSlugs.ts`, `src/pages/ContentPage.tsx`, `scripts/generate-seo-pages.ts`.
+
+---
+
+## Keyword Research: "flag {country}" Pattern (April 16, 2026)
+
+DataForSEO Labs pull revealed that `flag {country}` (without "country" in the query) is often the **highest-volume** search pattern for individual country pages, and frequently has lower KD than the `{country} country flags` pattern we originally tracked.
+
+### Top "flag {country}" Keywords (all pages exist)
+
+| Keyword | Volume/mo | KD | YoY Trend |
+|---|---|---|---|
+| flag mexico | 673,000 | 19 | +122% |
+| flag italy | 301,000 | **3** | +22% |
+| flag france | 301,000 | 17 | +50% |
+| flag germany | 201,000 | 32 | +49% |
+| flag japan | 165,000 | 15 | +83% |
+| flag colombia | 165,000 | — | +50% |
+| flag india | 135,000 | **10** | +22% |
+| flag brazil | 135,000 | 15 | +82% |
+| flag greece | 110,000 | 19 | +82% |
+| flag jamaica | 90,500 | 15 | +22% |
+| flag korea | 74,000 | 25 | +22% |
+| flag norway | 74,000 | — | +122% |
+| flag sweden | 74,000 | — | +123% |
+| flag philippines | 74,000 | **4** | +22% |
+| flag thailand | 60,500 | **10** | +22% |
+| flag turkey | 60,500 | 19 | +22% |
+| flag egypt | 49,500 | **5** | +49% |
+| flag nepal | 49,500 | — | +49% |
+| flag nigeria | 49,500 | **2** | +49% |
+| flag south africa | 49,500 | 13 | +49% |
+
+### Actionable insight
+
+Title tags on country pages should include both patterns: `Italy Flag — Colors, Meaning & History | Flag Arcade` captures "flag italy" (301K, KD 3) and "italy flag" simultaneously. The current template already does this for most pages. Priority countries to audit title tags: Italy (KD 3), Philippines (KD 4), Nigeria (KD 2), Egypt (KD 5), India (KD 10).
+
+### Sub-national "flag of" searches
+
+| Keyword | Volume/mo | KD |
+|---|---|---|
+| flag of puerto rico | 246,000 | 11 |
+| flag of texas | 165,000 | 12 |
+
+Puerto Rico is covered by territory pages. Texas supports the future US state flags expansion.
+
+---
+
+## Priority & Sequencing (updated April 16, 2026)
+
+| Priority | Work Item | Impact | Effort | Status |
+|---|---|---|---|---|
+| 1 | ~~Color-combo filter pages (14 new pages)~~ | High — 375K/mo combined | Low | **DONE** |
+| 2 | Title tag audit for "flag {country}" pattern | High — affects 195 country pages | Low | TODO |
+| 3 | Add content depth to country pages (if currently thin) | High — prevents "thin content" signals | High | Partial (enrichment PRDs active) |
+| 4 | Build internal linking across all page types | High — distributes authority | Medium | TODO |
+| 5 | Build Flag Colors Meaning page | Medium — 3,600/mo trending +184%, linkable asset | Low | TODO |
+| 6 | Build Flag Trivia page | Low-Medium — 1,000/mo, KD 3, easy win | Low | TODO |
+| 7 | Build US State Flag Quiz | Medium — 1,900/mo, new content silo | Medium | Future |
+| 8 | Build Latin America Flag Quiz | Low — 720/mo | Low | TODO |
+| 9 | Build Flag Identifier tool | Low (short-term) — 1,900/mo, KD 50, needs authority | High | Future |
+
+Items 2-4 are the current foundation priorities. Items 5-6 are quick wins. Items 7-9 are future expansion.
 
 ## Measuring Success
 

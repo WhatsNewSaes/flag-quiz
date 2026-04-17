@@ -35,8 +35,15 @@ export function FlagsDirectoryPage() {
 
         <div className="bg-retro-surface border-2 border-retro-border shadow-pixel-lg p-6 mt-4">
           <h1 className="font-retro text-lg md:text-xl text-retro-text mb-2">Flags of the World</h1>
-          <p className="font-body text-retro-text-secondary mb-4">
+          <p className="font-body text-retro-text-secondary mb-3">
             Explore all {countries.length} country flags from every continent. Click any flag to learn about its colors, meaning, and history.
+          </p>
+          <p className="font-body text-sm text-retro-text-secondary mb-4">
+            Prefer to compare data side by side?{' '}
+            <Link to="/flags/table" className="text-retro-neon-blue underline">
+              Browse the flag data table
+            </Link>
+            {' '}— sort by population, area, capital, religion, and more.
           </p>
 
           {/* Continent filter */}

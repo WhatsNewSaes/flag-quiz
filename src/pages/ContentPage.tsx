@@ -77,6 +77,154 @@ const patternPages: [string, ContentPageConfig][] = (
   },
 ]);
 
+const comboFilter = (c: { code: string }, ...colors: FlagColor[]) => {
+  const f = flagFeatures[c.code];
+  return f ? colors.every((col) => f.colors.includes(col)) : false;
+};
+
+const comboPages: [string, ContentPageConfig][] = [
+  [
+    'red-white-and-blue-flags',
+    {
+      title: 'Red, White, and Blue Flags — Countries List | Flag Arcade',
+      h1: 'Red, White, and Blue Flags',
+      description: 'Which countries have red, white, and blue flags? Browse all flags featuring this popular color combination and learn what the colors represent.',
+      intro: 'Red, white, and blue is one of the most popular color combinations in national flags. These countries all feature this classic trio — but can you tell them apart?',
+      getCountries: () => countries.filter((c) => comboFilter(c, 'red', 'white', 'blue')),
+    },
+  ],
+  [
+    'green-white-and-red-flags',
+    {
+      title: 'Green, White, and Red Flags — Countries List | Flag Arcade',
+      h1: 'Green, White, and Red Flags',
+      description: 'Which countries have green, white, and red flags? See all national flags with this color combination — from Italy and Mexico to Hungary and Iran.',
+      intro: 'Green, white, and red is a striking color trio shared by flags across multiple continents. From European tricolors to Middle Eastern banners, these flags all feature this bold combination.',
+      getCountries: () => countries.filter((c) => comboFilter(c, 'green', 'white', 'red')),
+    },
+  ],
+  [
+    'red-and-white-flags',
+    {
+      title: 'Red and White Flags — Countries with Red & White Flags | Flag Arcade',
+      h1: 'Red and White Flags',
+      description: 'Browse all country flags featuring red and white. From Japan and Canada to Turkey and Switzerland — see every red and white flag in the world.',
+      intro: 'Red and white is one of the most common two-color combinations in world flags. These countries all prominently feature red and white in their national flag.',
+      getCountries: () => countries.filter((c) => comboFilter(c, 'red', 'white')),
+    },
+  ],
+  [
+    'red-yellow-and-green-flags',
+    {
+      title: 'Red, Yellow, and Green Flags — Countries List | Flag Arcade',
+      h1: 'Red, Yellow, and Green Flags',
+      description: 'Which countries have red, yellow, and green flags? These Pan-African colors appear on flags across Africa and beyond. See the full list.',
+      intro: 'Red, yellow, and green — the Pan-African colors — appear on more national flags than almost any other trio. Rooted in the Ethiopian flag, this combination spread across Africa during decolonization and beyond.',
+      getCountries: () => countries.filter((c) => comboFilter(c, 'red', 'yellow', 'green')),
+    },
+  ],
+  [
+    'blue-and-white-flags',
+    {
+      title: 'Blue and White Flags — Countries with Blue & White Flags | Flag Arcade',
+      h1: 'Blue and White Flags',
+      description: 'Browse all country flags featuring blue and white. From Greece and Finland to Argentina and Israel — see every blue and white flag.',
+      intro: 'Blue and white flags evoke sky, sea, and peace. These countries all feature blue and white prominently in their national flag designs.',
+      getCountries: () => countries.filter((c) => comboFilter(c, 'blue', 'white')),
+    },
+  ],
+  [
+    'blue-and-yellow-flags',
+    {
+      title: 'Blue and Yellow Flags — Countries with Blue & Yellow Flags | Flag Arcade',
+      h1: 'Blue and Yellow Flags',
+      description: 'Which countries have blue and yellow flags? From Ukraine and Sweden to Palau and Kazakhstan — browse all blue and yellow national flags.',
+      intro: 'Blue and yellow is a vivid contrast seen on flags around the world. These countries all feature blue and yellow prominently in their national flag.',
+      getCountries: () => countries.filter((c) => comboFilter(c, 'blue', 'yellow')),
+    },
+  ],
+  [
+    'orange-white-and-green-flags',
+    {
+      title: 'Orange, White, and Green Flags — Countries List | Flag Arcade',
+      h1: 'Orange, White, and Green Flags',
+      description: 'Which countries have orange, white, and green flags? See all national flags featuring this color combination, including Ireland and India.',
+      intro: 'Orange, white, and green is an instantly recognizable color combination. From Ireland to India, these flags share a vibrant palette with distinct cultural meanings in each nation.',
+      getCountries: () => countries.filter((c) => comboFilter(c, 'orange', 'white', 'green')),
+    },
+  ],
+  [
+    'black-red-and-yellow-flags',
+    {
+      title: 'Black, Red, and Yellow Flags — Countries List | Flag Arcade',
+      h1: 'Black, Red, and Yellow Flags',
+      description: 'Which countries have black, red, and yellow flags? From Germany and Belgium to Uganda and Angola — see all flags with this color combo.',
+      intro: 'Black, red, and yellow is a bold combination found on flags across Europe and Africa. Germany\'s iconic tricolor is the most famous, but several other nations share this palette.',
+      getCountries: () => countries.filter((c) => comboFilter(c, 'black', 'red', 'yellow')),
+    },
+  ],
+  [
+    'red-white-and-black-flags',
+    {
+      title: 'Red, White, and Black Flags — Countries List | Flag Arcade',
+      h1: 'Red, White, and Black Flags',
+      description: 'Which countries have red, white, and black flags? Browse all national flags featuring this Pan-Arab color combination.',
+      intro: 'Red, white, and black form the Pan-Arab colors, appearing on flags across the Middle East and North Africa. These colors trace back to historical Arab dynasties and the Arab Revolt.',
+      getCountries: () => countries.filter((c) => comboFilter(c, 'red', 'white', 'black')),
+    },
+  ],
+  [
+    'green-and-white-flags',
+    {
+      title: 'Green and White Flags — Countries with Green & White Flags | Flag Arcade',
+      h1: 'Green and White Flags',
+      description: 'Browse all country flags featuring green and white. From Nigeria and Pakistan to Saudi Arabia — see every green and white national flag.',
+      intro: 'Green and white flags often carry associations with Islam, nature, or peace. These countries all feature green and white prominently in their national flag.',
+      getCountries: () => countries.filter((c) => comboFilter(c, 'green', 'white')),
+    },
+  ],
+  [
+    'red-and-yellow-flags',
+    {
+      title: 'Red and Yellow Flags — Countries with Red & Yellow Flags | Flag Arcade',
+      h1: 'Red and Yellow Flags',
+      description: 'Which countries have red and yellow flags? From China and Spain to Vietnam and Macedonia — browse all red and yellow national flags.',
+      intro: 'Red and yellow create a high-contrast, eye-catching combination used on flags across Asia, Europe, and beyond. These countries all prominently feature red and yellow.',
+      getCountries: () => countries.filter((c) => comboFilter(c, 'red', 'yellow')),
+    },
+  ],
+  [
+    'red-black-white-and-green-flags',
+    {
+      title: 'Red, Black, White, and Green Flags — Countries List | Flag Arcade',
+      h1: 'Red, Black, White, and Green Flags',
+      description: 'Which countries have red, black, white, and green flags? These four Pan-Arab colors appear together on flags across the Middle East and Africa.',
+      intro: 'Red, black, white, and green together form the complete set of Pan-Arab colors. Flags carrying all four trace their symbolism to the Arab Revolt of 1916 and the historical dynasties they represent.',
+      getCountries: () => countries.filter((c) => comboFilter(c, 'red', 'black', 'white', 'green')),
+    },
+  ],
+  [
+    'black-and-white-flags',
+    {
+      title: 'Black and White Flags — Countries with Black & White Flags | Flag Arcade',
+      h1: 'Black and White Flags',
+      description: 'Browse all country flags featuring black and white. See which nations use this striking monochrome combination on their national flags.',
+      intro: 'Black and white flags are bold and distinctive. These countries all feature black and white prominently in their national flag designs.',
+      getCountries: () => countries.filter((c) => comboFilter(c, 'black', 'white')),
+    },
+  ],
+  [
+    'green-and-yellow-flags',
+    {
+      title: 'Green and Yellow Flags — Countries with Green & Yellow Flags | Flag Arcade',
+      h1: 'Green and Yellow Flags',
+      description: 'Which countries have green and yellow flags? From Brazil and Jamaica to Senegal and Mauritania — browse all green and yellow national flags.',
+      intro: 'Green and yellow flags evoke tropical landscapes, agriculture, and natural wealth. These countries all feature green and yellow prominently in their national flag.',
+      getCountries: () => countries.filter((c) => comboFilter(c, 'green', 'yellow')),
+    },
+  ],
+];
+
 const specialPages: [string, ContentPageConfig][] = [
   [
     'hardest-flags',
@@ -99,20 +247,6 @@ const specialPages: [string, ContentPageConfig][] = [
     },
   ],
   [
-    'red-white-and-blue-flags',
-    {
-      title: 'Red, White, and Blue Flags - Countries with Red White Blue Flags | Flag Arcade',
-      h1: 'Red, White, and Blue Flags',
-      description: 'Which countries have red, white, and blue flags? Browse all flags featuring this popular color combination and learn what the colors represent.',
-      intro: 'Red, white, and blue is one of the most popular color combinations in national flags. These countries all feature this classic trio — but can you tell them apart?',
-      getCountries: () =>
-        countries.filter((c) => {
-          const f = flagFeatures[c.code];
-          return f && f.colors.includes('red') && f.colors.includes('white') && f.colors.includes('blue');
-        }),
-    },
-  ],
-  [
     'similar-looking-flags',
     {
       title: 'Flags That Look Alike - Similar Country Flags | Flag Arcade',
@@ -131,6 +265,7 @@ const specialPages: [string, ContentPageConfig][] = [
 const CONTENT_PAGES = new Map<string, ContentPageConfig>([
   ...colorPages,
   ...patternPages,
+  ...comboPages,
   ...specialPages,
 ]);
 

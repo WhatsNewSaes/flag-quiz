@@ -95,6 +95,60 @@ These represent the highest-volume individual country flag searches. All are ser
 | country flags egypt | 49,500 | 12 | LOW |
 | country flags scotland | 40,500 | 7 | LOW |
 
+## Color-Combo Filter Pages (BUILT April 16, 2026)
+
+14 new pages targeting color-combination queries. Combined volume ~375K/mo.
+
+| Keyword | Volume | KD | Page |
+|---|---|---|---|
+| green white and red flag | 60,500 | 2-4 | `/flags/green-white-and-red-flags` |
+| red and white flag | 49,500 | 1 | `/flags/red-and-white-flags` |
+| red yellow and green flag | 49,500 | -- | `/flags/red-yellow-and-green-flags` |
+| blue and white flag | 40,500 | -- | `/flags/blue-and-white-flags` |
+| blue and yellow flag | 40,500 | -- | `/flags/blue-and-yellow-flags` |
+| orange white and green flag | 27,100 | -- | `/flags/orange-white-and-green-flags` |
+| black red and yellow flag | 27,100 | 1 | `/flags/black-red-and-yellow-flags` |
+| red white and black flag | 22,200 | 3 | `/flags/red-white-and-black-flags` |
+| green and white flag | 18,100 | -- | `/flags/green-and-white-flags` |
+| red and yellow flag | 14,800 | -- | `/flags/red-and-yellow-flags` |
+| red black white green flag | 14,800 | 1-2 | `/flags/red-black-white-and-green-flags` |
+| black and white flag | 4,400 | -- | `/flags/black-and-white-flags` |
+| green and yellow flag | 4,400 | -- | `/flags/green-and-yellow-flags` |
+
+Supporting long-tail keywords captured by these pages:
+- "countries with red and white flags" — 6,600/mo, KD 2
+- "what flag is red white and green" — 5,400/mo, +50% YoY
+- "green red and white flag country" — 1,300/mo, KD 1
+
+## "flag {country}" Pattern (April 16, 2026)
+
+DataForSEO Labs pull. This pattern often has **higher volume** than "{country} country flags".
+
+| Keyword | Volume | KD | YoY |
+|---|---|---|---|
+| flag mexico | 673,000 | 19 | +122% |
+| flag italy | 301,000 | 3 | +22% |
+| flag france | 301,000 | 17 | +50% |
+| flag germany | 201,000 | 32 | +49% |
+| flag japan | 165,000 | 15 | +83% |
+| flag colombia | 165,000 | -- | +50% |
+| flag india | 135,000 | 10 | +22% |
+| flag brazil | 135,000 | 15 | +82% |
+| flag greece | 110,000 | 19 | +82% |
+| flag jamaica | 90,500 | 15 | +22% |
+| flag korea | 74,000 | 25 | +22% |
+| flag norway | 74,000 | -- | +122% |
+| flag sweden | 74,000 | -- | +123% |
+| flag philippines | 74,000 | 4 | +22% |
+| flag thailand | 60,500 | 10 | +22% |
+| flag turkey | 60,500 | 19 | +22% |
+| flag egypt | 49,500 | 5 | +49% |
+| flag nepal | 49,500 | -- | +49% |
+| flag nigeria | 49,500 | 2 | +49% |
+| flag south africa | 49,500 | 13 | +49% |
+
+Sub-national: "flag of puerto rico" 246K (KD 11), "flag of texas" 165K (KD 12).
+
 ## Content Gaps / New Page Opportunities
 
 Keywords with meaningful volume that we don't currently target with dedicated pages:

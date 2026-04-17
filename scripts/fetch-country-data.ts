@@ -34,6 +34,8 @@ interface CountryFacts {
   independence?: string;
   governmentType?: string;
   religions?: { name: string; percent?: number }[];
+  medianAge?: number; // years, Factbook "Median age" (total)
+  fertilityRate?: number; // children born per woman, Factbook "Total fertility rate"
 }
 
 // ---------------------------------------------------------------------------
@@ -417,6 +419,8 @@ interface FactbookData {
   governmentType?: string;
   religions?: { name: string; percent?: number }[];
   independence?: string;
+  medianAge?: number;
+  fertilityRate?: number;
 }
 
 function parseReligions(text: string): { name: string; percent?: number }[] {
@@ -594,6 +598,13 @@ function parseIndependence(text: string): string | undefined {
   return m ? m[1] : undefined;
 }
 
+function parseLeadingNumber(text: string): number | undefined {
+  const m = text.match(/-?\d+(?:\.\d+)?/);
+  if (!m) return undefined;
+  const n = parseFloat(m[0]);
+  return Number.isFinite(n) ? n : undefined;
+}
+
 function cleanGovernmentType(text: string): string {
   // Take only the first sentence/clause and strip trailing notes
   const firstClause = text.split(/[;.\n]/)[0].trim();
@@ -625,6 +636,20 @@ async function fetchFactbookEntry(region: string, slug: string): Promise<Factboo
     if (typeof indep === 'string' && indep.trim()) {
       const year = parseIndependence(indep);
       if (year) out.independence = year;
+    }
+
+    // Median age is structured as { total: { text }, male: { text }, female: { text } }.
+    // We only use the aggregate total.
+    const medianAgeRaw = data?.['People and Society']?.['Median age']?.total?.text;
+    if (typeof medianAgeRaw === 'string') {
+      const v = parseLeadingNumber(medianAgeRaw);
+      if (v !== undefined) out.medianAge = v;
+    }
+
+    const fertilityRaw = data?.['People and Society']?.['Total fertility rate']?.text;
+    if (typeof fertilityRaw === 'string') {
+      const v = parseLeadingNumber(fertilityRaw);
+      if (v !== undefined) out.fertilityRate = v;
     }
 
     return out;
@@ -684,6 +709,8 @@ function serializeFacts(facts: CountryFacts): string {
   if (facts.independence) lines.push(`    independence: ${JSON.stringify(facts.independence)}`);
   if (facts.governmentType) lines.push(`    governmentType: ${JSON.stringify(facts.governmentType)}`);
   if (facts.religions) lines.push(`    religions: ${JSON.stringify(facts.religions)}`);
+  if (facts.medianAge !== undefined) lines.push(`    medianAge: ${facts.medianAge}`);
+  if (facts.fertilityRate !== undefined) lines.push(`    fertilityRate: ${facts.fertilityRate}`);
   return lines.join(',\n');
 }
 
@@ -718,6 +745,8 @@ async function main() {
     if (fb?.governmentType) facts.governmentType = fb.governmentType;
     if (fb?.religions) facts.religions = fb.religions;
     if (fb?.independence) facts.independence = fb.independence;
+    if (fb?.medianAge !== undefined) facts.medianAge = fb.medianAge;
+    if (fb?.fertilityRate !== undefined) facts.fertilityRate = fb.fertilityRate;
     merged.set(upper, facts);
   }
 
@@ -750,6 +779,8 @@ export interface CountryFacts {
   independence?: string;
   governmentType?: string;
   religions?: { name: string; percent?: number }[];
+  medianAge?: number; // years, Factbook "Median age" (total)
+  fertilityRate?: number; // children born per woman, Factbook "Total fertility rate"
 }
 
 export const countryFacts: Record<string, CountryFacts> = {
