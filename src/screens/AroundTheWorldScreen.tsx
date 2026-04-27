@@ -15,7 +15,6 @@ export function AroundTheWorldScreen({ onBack }: AroundTheWorldScreenProps) {
   const [showCelebration, setShowCelebration] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
   const atw = useAroundTheWorld();
-  const emptyMap = useState(() => new Map<string, boolean>())[0];
 
   const handleAnswer = useCallback((answer: typeof atw.options[0]) => {
     const isCorrect = atw.checkAnswer(answer);
