@@ -1879,8 +1879,7 @@ function main() {
   // Homepage
   sitemapUrls.push({ loc: SITE_URL, priority: '1.0', changefreq: 'daily' });
 
-  // Play / game modes
-  sitemapUrls.push({ loc: `${SITE_URL}/play/modes`, priority: '0.9', changefreq: 'weekly' });
+  // Play / game modes — client-side only, no pre-rendered page; omitted from sitemap
 
   // Flags directory
   writeFile(path.join(DIST, 'flags', 'index.html'), generateDirectoryPage(assets));

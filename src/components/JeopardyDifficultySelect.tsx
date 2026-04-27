@@ -12,7 +12,7 @@ export function JeopardyDifficultySelect({ onSelect, onBack }: JeopardyQuizModeS
     <div className="min-h-screen bg-[#1E3A8A] flex items-center justify-center p-4">
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
-          <div className="text-5xl mb-4">🎰</div>
+          <img src="/modes/jeopardy.webp" alt="Jeopardy Mode" className="w-full max-w-sm mx-auto rounded-lg pixel-border mb-4" />
           <h1 className="text-3xl font-bold text-white mb-2">Flag Jeopardy</h1>
           <p className="text-white">Choose your quiz mode</p>
         </div>

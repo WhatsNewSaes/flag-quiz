@@ -50,6 +50,7 @@ export function ArcadeScreen({ onBack }: ArcadeScreenProps) {
         <div className="flex-1 flex items-center justify-center">
         <div className="max-w-md w-full">
           <div className="text-center mb-8">
+            <img src="/modes/arcade.webp" alt="Arcade Mode" className="w-full max-w-sm mx-auto rounded-lg pixel-border mb-4" />
             <h1 className="font-retro text-lg text-retro-text mb-2">Arcade Mode</h1>
             <p className="font-body text-sm text-retro-text-secondary">
               Test your flag knowledge! Score points with streaks and difficulty bonuses.

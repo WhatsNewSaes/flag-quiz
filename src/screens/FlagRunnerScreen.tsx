@@ -153,6 +153,7 @@ export function FlagRunnerScreen({ onBack }: FlagRunnerScreenProps) {
         <div className="flex-1 flex items-center justify-center">
           <div className="max-w-md w-full">
             <div className="text-center mb-8">
+              <img src="/modes/flag-runner.webp" alt="Flag Runner" className="w-full max-w-sm mx-auto rounded-lg pixel-border mb-4" />
               <h1 className="font-retro text-lg text-retro-text mb-2">Flag Runner</h1>
               <p className="font-body text-sm text-retro-text-secondary">
                 Dodge wrong flags, collect correct ones! Use arrow keys or tap lanes.

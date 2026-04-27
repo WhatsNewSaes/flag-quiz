@@ -48,15 +48,8 @@ export function AroundTheWorldScreen({ onBack }: AroundTheWorldScreenProps) {
         )}
         <div className="flex-1 flex items-center justify-center">
         <div className="max-w-md w-full">
-          {/* Preview map */}
-          <div className="mb-4 rounded-xl overflow-hidden pointer-events-none opacity-90">
-            <WorldMap
-              highlightedCountry="BR"
-              answeredCountries={emptyMap}
-            />
-          </div>
-
           <div className="text-center mb-8">
+            <img src="/modes/around-the-world.webp" alt="Around the World" className="w-full max-w-sm mx-auto rounded-lg pixel-border mb-4" />
             <h1 className="font-retro text-lg text-retro-text mb-2">Around the World</h1>
             <p className="font-body text-sm text-retro-text-secondary">
               Identify highlighted countries on a world map. Fill in the globe!

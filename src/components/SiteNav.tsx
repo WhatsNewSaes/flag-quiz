@@ -46,7 +46,7 @@ const CONTINENTS = [
 ];
 
 const GAME_MODES = [
-  { name: 'Journey Mode', path: '/play', icon: '🗺️' },
+  { name: 'Journey Mode', path: '/play/journey', icon: '🗺️' },
   { name: 'Arcade Mode', path: '/play/arcade', icon: '🕹️' },
   { name: 'Around the World', path: '/play/around-the-world', icon: '🌍' },
   { name: 'Jeopardy Mode', path: '/play/jeopardy', icon: '❓' },

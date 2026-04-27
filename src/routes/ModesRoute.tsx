@@ -18,7 +18,7 @@ export function ModesRoute() {
       <NavBar />
       <GameModeSelect
         onSelectMode={handleSelectMode}
-        onJourney={() => navigate('/play')}
+        onJourney={() => navigate('/play/journey')}
       />
     </>
   );

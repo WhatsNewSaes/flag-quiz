@@ -94,7 +94,7 @@ function FlagSlugRouter() {
 
 // One-time migration from old localStorage screen state to URL
 const SCREEN_TO_PATH: Record<string, string> = {
-  'journey-map': '/play',
+  'journey-map': '/play/journey',
   'mode-select': '/play/modes',
   'arcade': '/play/arcade',
   'free-play': '/play/arcade',
@@ -162,7 +162,7 @@ function GameLayoutInner() {
         onBack={() => setShowTestPage(false)}
         onNavigate={(screen) => {
           setShowTestPage(false);
-          const path = SCREEN_TO_PATH[screen] || '/play';
+          const path = SCREEN_TO_PATH[screen] || '/play/modes';
           navigate(path);
         }}
       />
@@ -228,7 +228,8 @@ function App() {
         </Route>
         {/* Game routes with shared game state */}
         <Route path="/play" element={<GameLayout />}>
-          <Route index element={<JourneyScreen />} />
+          <Route index element={<ModesRoute />} />
+          <Route path="journey" element={<JourneyScreen />} />
           <Route path="modes" element={<ModesRoute />} />
           <Route path="arcade" element={<ArcadeRoute />} />
           <Route path="around-the-world" element={<AroundTheWorldRoute />} />
@@ -237,7 +238,7 @@ function App() {
           <Route path="flag-runner" element={<FlagRunnerRoute />} />
           <Route path="achievements" element={<AchievementsRoute />} />
           <Route path="characters" element={<CharactersRoute />} />
-          <Route path="*" element={<Navigate to="/play" replace />} />
+          <Route path="*" element={<Navigate to="/play/modes" replace />} />
         </Route>
         {/* Catch-all fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
