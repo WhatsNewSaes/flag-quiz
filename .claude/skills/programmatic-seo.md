@@ -82,7 +82,7 @@ The title tag for each country page should follow whichever pattern has higher v
 - `Flags With Crosses — All Countries | Flag Arcade`
 
 ### Meta Description Requirements
-
+whe
 Meta descriptions don't directly affect rankings but control click-through rate from search results. Each should:
 - Be 150-160 characters
 - Include the primary keyword naturally

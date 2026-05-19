@@ -10,6 +10,7 @@ import { FlagPicker } from '../components/FlagPicker';
 import { TypeAhead } from '../components/TypeAhead';
 import { Celebration } from '../components/Celebration';
 import { ModeToggle } from '../components/ModeToggle';
+import { JourneyModeCallout } from '../components/JourneyModeCallout';
 import { useArcade, difficultyLabels } from '../hooks/useArcade';
 import { playCorrectSound, playIncorrectSound } from '../utils/sounds';
 
@@ -316,6 +317,8 @@ function ContinentQuizInner({
             )}
           </div>
         </main>
+
+        <JourneyModeCallout />
       </div>
 
       <Celebration streak={arcade.streak} show={showCelebration} />

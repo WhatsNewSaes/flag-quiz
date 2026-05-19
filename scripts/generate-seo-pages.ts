@@ -1967,7 +1967,10 @@ function main() {
   console.log('  sitemap.xml');
 
   // Robots.txt
-  writeFile(path.join(DIST, 'robots.txt'), `User-agent: *\nAllow: /\n\nSitemap: ${SITE_URL}/sitemap.xml\n`);
+  writeFile(
+    path.join(DIST, 'robots.txt'),
+    `User-agent: *\nAllow: /\n\n# Allow major SEO crawlers\nUser-agent: Screaming Frog SEO Spider\nAllow: /\n\nUser-agent: SemrushBot\nAllow: /\n\nUser-agent: SemrushBot-SA\nAllow: /\n\nSitemap: ${SITE_URL}/sitemap.xml\n`
+  );
   console.log('  robots.txt');
 
   const totalPages = 1 + 1 + continents.length * 2 + countries.length + contentPages.length;

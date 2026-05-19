@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useGameContext } from '../contexts/GameContext';
+import { useLocalStorage } from '../hooks/useLocalStorage';
 import { NavBar } from '../components/NavBar';
+import { Onboarding } from '../components/Onboarding';
 import { OverworldMap } from '../components/journey/OverworldMap';
 import { JourneyLevelPlay } from '../components/journey/JourneyLevelPlay';
 import { LevelCompleteFlow } from '../components/journey/LevelCompleteFlow';
@@ -19,7 +21,19 @@ export function JourneyScreen() {
     handleNextLevel, handleRetryLevel,
   } = useGameContext();
 
+  const [onboardingComplete, setOnboardingComplete] = useLocalStorage<string>('onboarding-complete', '');
+  const [, setSelectedCharacter] = useLocalStorage<string>('selected-character', '');
+  const [, setFavoriteFlag] = useLocalStorage<string>('favorite-flag', '');
+
   const [journeyPhase, setJourneyPhase] = useState<JourneyPhase>('map');
+
+  const handleOnboardingComplete = useCallback((character: string, flag: string) => {
+    setSelectedCharacter(character);
+    setFavoriteFlag(flag);
+    setOnboardingComplete('true');
+    handleSelectLevel(allLevels[0]);
+    setJourneyPhase('play');
+  }, [setSelectedCharacter, setFavoriteFlag, setOnboardingComplete, handleSelectLevel, allLevels]);
 
   // Wrap handleSelectLevel to also transition phase
   const onSelectLevel = useCallback((level: Parameters<typeof handleSelectLevel>[0]) => {
@@ -57,6 +71,10 @@ export function JourneyScreen() {
       setJourneyPhase('complete');
     }
   }, [journeyPhase, journeyGame.isComplete, completionResult, handleJourneyComplete]);
+
+  if (!onboardingComplete) {
+    return <Onboarding onComplete={handleOnboardingComplete} />;
+  }
 
   if (journeyPhase === 'play') {
     if (!selectedLevel || !journeyGame.currentCountry) {

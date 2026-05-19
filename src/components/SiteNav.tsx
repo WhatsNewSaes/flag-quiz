@@ -45,15 +45,6 @@ const CONTINENTS = [
   { name: 'Oceania', slug: 'oceania' },
 ];
 
-const GAME_MODES = [
-  { name: 'Journey Mode', path: '/play/journey', icon: '🗺️' },
-  { name: 'Arcade Mode', path: '/play/arcade', icon: '🕹️' },
-  { name: 'Around the World', path: '/play/around-the-world', icon: '🌍' },
-  { name: 'Jeopardy Mode', path: '/play/jeopardy', icon: '❓' },
-  { name: 'Practice Mode', path: '/play/presentation', icon: '📖' },
-  { name: 'Flag Runner', path: '/play/flag-runner', icon: '🏃' },
-];
-
 const TERRITORY_GROUPS = [
   { name: 'All Territories', path: '/flags/territories', emoji: '🗺️' },
   { name: 'U.S. Territories', path: '/flags/territories/puerto-rico', emoji: '🇺🇸' },
@@ -63,7 +54,7 @@ const TERRITORY_GROUPS = [
   { name: 'Greenland', path: '/flags/territories/greenland', emoji: '🇬🇱' },
 ];
 
-type DropdownId = 'continents' | 'modes' | 'orgs' | 'territories' | 'patterns' | null;
+type DropdownId = 'continents' | 'orgs' | 'territories' | 'patterns' | null;
 
 function ChevronDown({ open }: { open: boolean }) {
   return (
@@ -143,7 +134,8 @@ export function SiteNav() {
       if (navRef.current && !navRef.current.contains(target)) {
         setOpenDesktop(null);
       }
-      if (searchRef.current && !searchRef.current.contains(target)) {
+      const inSearch = searchRef.current?.contains(target) ?? false;
+      if (!inSearch) {
         setSearchFocused(false);
       }
     }
@@ -233,7 +225,7 @@ export function SiteNav() {
   }, []);
 
   const btnClass = (active: boolean) =>
-    `font-body text-sm px-3 py-2 rounded transition-colors flex items-center gap-1 ${
+    `font-body text-sm px-1 py-1 xl:py-2 rounded transition-colors flex items-center gap-1 ${
       active ? 'bg-retro-accent/40 text-retro-text font-bold' : 'text-retro-text-secondary hover:bg-retro-accent/20'
     }`;
 
@@ -262,7 +254,7 @@ export function SiteNav() {
         </Link>
 
         {/* Desktop links */}
-        <div ref={navRef} className="hidden lg:flex items-center gap-1">
+        <div ref={navRef} className="hidden lg:flex flex-1 items-center justify-around gap-1 px-2">
           {/* Continents dropdown */}
           <div className="relative">
             <button
@@ -320,31 +312,6 @@ export function SiteNav() {
                 >
                   All Patterns →
                 </Link>
-              </div>
-            )}
-          </div>
-
-          {/* Game Modes dropdown */}
-          <div className="relative">
-            <button
-              onClick={() => toggleDesktop('modes')}
-              className={btnClass(location.pathname.startsWith('/play'))}
-            >
-              🕹️ Game Modes
-              <ChevronDown open={openDesktop === 'modes'} />
-            </button>
-            {openDesktop === 'modes' && (
-              <div className={`${dropdownClass} w-56`}>
-                {GAME_MODES.map((m) => (
-                  <Link
-                    key={m.path}
-                    to={m.path}
-                    className={`${itemClass} flex items-center gap-2`}
-                  >
-                    <span>{m.icon}</span>
-                    {m.name}
-                  </Link>
-                ))}
               </div>
             )}
           </div>
@@ -412,13 +379,48 @@ export function SiteNav() {
 
         </div>
 
-        {/* Right side: PLAY CTA + mobile hamburger */}
+        {/* Inline search (mobile + desktop) */}
+        <div ref={searchRef} className="relative flex-1 max-w-xs mx-2 lg:mx-3">
+          <svg
+            aria-hidden="true"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2.5}
+            className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-retro-text/60 pointer-events-none"
+          >
+            <circle cx="11" cy="11" r="7" />
+            <path strokeLinecap="round" d="M20 20l-3.5-3.5" />
+          </svg>
+          <input
+            ref={desktopSearchInputRef}
+            type="search"
+            value={query}
+            onChange={(e) => { setQuery(e.target.value); setSearchFocused(true); }}
+            onFocus={() => setSearchFocused(true)}
+            onKeyDown={handleSearchKeyDown}
+            placeholder="Search flags…"
+            aria-label="Search country flags"
+            className="w-full h-9 lg:h-10 font-body text-sm text-retro-text placeholder:text-retro-text/60 border-2 border-retro-border bg-[#EBE0C2] pl-9 pr-8 outline-none focus:border-retro-neon-blue"
+          />
+          {!query && !searchFocused && (
+            <kbd
+              aria-hidden="true"
+              className="hidden lg:inline-block absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none font-mono text-[11px] text-retro-text/70 bg-retro-surface border border-retro-border shadow-pixel-sm px-1.5 py-0.5 leading-none"
+            >
+              /
+            </kbd>
+          )}
+          {renderSearchResults('search-desktop')}
+        </div>
+
+        {/* Right side: Game Modes CTA + mobile hamburger */}
         <div className="flex items-center gap-2">
           <Link
             to="/play/modes"
-            className="font-retro text-[10px] lg:text-xs bg-retro-neon-green text-white border-2 border-retro-border shadow-pixel-sm px-4 py-2 lg:px-5 lg:py-2.5 hover:translate-y-0.5 hover:shadow-none transition-all"
+            className="inline-flex items-center font-retro text-[10px] lg:text-xs bg-retro-neon-green text-white border-2 border-retro-border shadow-pixel-sm h-9 lg:h-10 px-2.5 lg:px-5 hover:translate-y-0.5 hover:shadow-none transition-all whitespace-nowrap"
           >
-            ▶ PLAY
+            🕹️ Game Modes
           </Link>
 
           {/* Mobile hamburger */}
@@ -438,43 +440,6 @@ export function SiteNav() {
               </svg>
             )}
           </button>
-        </div>
-      </div>
-
-      {/* Search row — sits outside the nav row, beige band */}
-      <div ref={searchRef} className="relative border-t-2 border-retro-border bg-retro-bg/40">
-        <div className="max-w-3xl mx-auto px-4 py-2 relative">
-          <svg
-            aria-hidden="true"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={2.5}
-            className="absolute left-7 top-1/2 -translate-y-1/2 w-4 h-4 text-retro-text/60 pointer-events-none"
-          >
-            <circle cx="11" cy="11" r="7" />
-            <path strokeLinecap="round" d="M20 20l-3.5-3.5" />
-          </svg>
-          <input
-            ref={desktopSearchInputRef}
-            type="search"
-            value={query}
-            onChange={(e) => { setQuery(e.target.value); setSearchFocused(true); }}
-            onFocus={() => setSearchFocused(true)}
-            onKeyDown={handleSearchKeyDown}
-            placeholder="Search flags…"
-            aria-label="Search country flags"
-            className="w-full font-body text-sm text-retro-text placeholder:text-retro-text/60 border-2 border-retro-border bg-[#EBE0C2] pl-9 pr-10 py-2 outline-none focus:border-retro-neon-blue"
-          />
-          {!query && !searchFocused && (
-            <kbd
-              aria-hidden="true"
-              className="hidden md:inline-block absolute right-7 top-1/2 -translate-y-1/2 pointer-events-none font-mono text-[11px] text-retro-text/70 bg-retro-surface border border-retro-border shadow-pixel-sm px-1.5 py-0.5 leading-none"
-            >
-              /
-            </kbd>
-          )}
-          {renderSearchResults('search')}
         </div>
       </div>
 
@@ -516,22 +481,6 @@ export function SiteNav() {
                 <Link to="/patterns" className={`${mobileItemClass} font-semibold text-retro-neon-blue`}>
                   All Patterns →
                 </Link>
-              </div>
-            )}
-
-            {/* Game Modes */}
-            <button onClick={() => toggleMobile('modes')} className={mobileBtnClass(false)}>
-              🕹️ Game Modes
-              <ChevronDown open={openMobile === 'modes'} />
-            </button>
-            {openMobile === 'modes' && (
-              <div className="ml-4 flex flex-col gap-0.5">
-                {GAME_MODES.map((m) => (
-                  <Link key={m.path} to={m.path} className={`${mobileItemClass} flex items-center gap-2`}>
-                    <span>{m.icon}</span>
-                    {m.name}
-                  </Link>
-                ))}
               </div>
             )}
 

@@ -1,12 +1,10 @@
 import { useState, useEffect, useLayoutEffect, useRef, useCallback, lazy, Suspense } from 'react';
 import { Routes, Route, Navigate, Outlet, useNavigate, useNavigationType, useParams, useLocation } from 'react-router-dom';
 import { CelebrationTest } from './components/CelebrationTest';
-import { Onboarding } from './components/Onboarding';
 import { AchievementToast } from './components/journey/AchievementToast';
 import { HomePage } from './pages/HomePage';
 import { SiteLayout } from './layouts/SiteLayout';
 import { GameProvider, useGameContext } from './contexts/GameContext';
-import { useLocalStorage } from './hooks/useLocalStorage';
 import { CONTENT_SLUGS } from './data/contentSlugs';
 
 // Lazy-loaded site pages (SEO/content pages)
@@ -111,12 +109,7 @@ const SCREEN_TO_PATH: Record<string, string> = {
 
 function GameLayoutInner() {
   const navigate = useNavigate();
-  const { pendingAchievements, setPendingAchievements, allLevels, handleSelectLevel } = useGameContext();
-
-  // Onboarding state
-  const [onboardingComplete, setOnboardingComplete] = useLocalStorage<string>('onboarding-complete', '');
-  const [, setSelectedCharacter] = useLocalStorage<string>('selected-character', '');
-  const [, setFavoriteFlag] = useLocalStorage<string>('favorite-flag', '');
+  const { pendingAchievements, setPendingAchievements } = useGameContext();
 
   // Hidden test page — type "devmode" anywhere to toggle
   const [showTestPage, setShowTestPage] = useState(false);
@@ -149,13 +142,6 @@ function GameLayoutInner() {
     }
   }, [navigate]);
 
-  const handleOnboardingComplete = useCallback((character: string, flag: string) => {
-    setSelectedCharacter(character);
-    setFavoriteFlag(flag);
-    setOnboardingComplete('true');
-    handleSelectLevel(allLevels[0]);
-  }, [setSelectedCharacter, setFavoriteFlag, setOnboardingComplete, handleSelectLevel, allLevels]);
-
   if (showTestPage) {
     return (
       <CelebrationTest
@@ -167,10 +153,6 @@ function GameLayoutInner() {
         }}
       />
     );
-  }
-
-  if (!onboardingComplete) {
-    return <Onboarding onComplete={handleOnboardingComplete} />;
   }
 
   return (

@@ -6,6 +6,8 @@ import { countries, type Continent } from '../data/countries';
 import { getFlagEmoji } from '../utils/flagEmoji';
 import { getCountrySlug, getContinentSlug } from '../utils/slugify';
 import bigLogo from '../images/logo/big-logo.svg';
+import { HeroJourneyFlow } from '../components/home/HeroJourneyFlow';
+import { CHARACTER_IMAGES, type HumanCharacterKey } from '../components/onboarding/CharacterSelect';
 
 const FLAG_EMOJIS = [
   '🇺🇸','🇬🇧','🇫🇷','🇩🇪','🇯🇵','🇧🇷','🇨🇦','🇦🇺','🇮🇳','🇨🇳',
@@ -19,7 +21,7 @@ const GAME_MODES = [
     title: 'Journey Mode',
     description: 'Progress through worlds of increasing difficulty. Earn stars and unlock achievements.',
     image: '/modes/journey.webp',
-    path: '/play',
+    path: '/play/journey',
   },
   {
     title: 'Arcade Mode',
@@ -89,7 +91,7 @@ function FlagExplorer() {
       <div className="bg-retro-surface border-2 border-retro-border shadow-pixel-lg">
         {/* Window title bar */}
         <div className="bg-retro-neon-blue border-b-2 border-retro-border px-4 py-2">
-          <span className="font-retro text-[10px] md:text-xs text-white">EXPLORE FLAGS</span>
+          <span className="font-retro text-xs md:text-sm text-white">EXPLORE FLAGS</span>
         </div>
 
         <div className="p-4 md:p-6">
@@ -99,14 +101,14 @@ function FlagExplorer() {
               <button
                 key={c.slug}
                 onClick={() => setActiveTab(c.name)}
-                className={`font-body text-[10px] md:text-xs px-2.5 py-1.5 border-2 transition-colors ${
+                className={`font-body text-sm md:text-base px-3 py-2 border-2 transition-colors ${
                   activeTab === c.name
                     ? 'bg-retro-neon-blue text-white border-retro-border shadow-pixel-sm'
                     : 'bg-white text-retro-text-secondary border-retro-border/40 hover:bg-retro-accent/20'
                 }`}
               >
                 {c.name}
-                <span className="ml-1 opacity-50 text-[8px]">({c.count})</span>
+                <span className="ml-1 opacity-50 text-xs">({c.count})</span>
               </button>
             ))}
           </div>
@@ -122,7 +124,7 @@ function FlagExplorer() {
                 <span className="text-2xl md:text-3xl mb-1 group-hover:scale-110 transition-transform">
                   {getFlagEmoji(country.code)}
                 </span>
-                <span className="font-body text-[8px] md:text-[9px] text-retro-text-secondary text-center leading-tight">
+                <span className="font-body text-[11px] md:text-xs text-retro-text-secondary text-center leading-tight">
                   {country.name}
                 </span>
               </Link>
@@ -133,16 +135,126 @@ function FlagExplorer() {
           <div className="flex flex-wrap gap-3 items-center">
             <Link
               to={`/flags/continent/${activeSlug}`}
-              className="font-body text-xs text-retro-neon-blue hover:underline"
+              className="font-body text-sm md:text-base text-retro-neon-blue hover:underline"
             >
               View all {activeContinent?.count} {activeTab} flags &rarr;
             </Link>
             <Link
               to="/flags"
-              className="inline-block font-retro text-[10px] md:text-xs bg-retro-neon-blue text-white border-2 border-retro-border shadow-pixel px-5 py-2.5 hover:translate-y-0.5 hover:shadow-pixel-sm transition-all"
+              className="inline-block font-retro text-xs md:text-sm bg-retro-neon-blue text-white border-2 border-retro-border shadow-pixel px-5 py-2.5 hover:translate-y-0.5 hover:shadow-pixel-sm transition-all"
             >
               Browse All {countries.length} Flags
             </Link>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function isReturningUser(): boolean {
+  try {
+    const raw = window.localStorage.getItem('onboarding-complete');
+    if (!raw) return false;
+    return JSON.parse(raw) === 'true';
+  } catch {
+    return false;
+  }
+}
+
+function readJourneySnapshot() {
+  let character: HumanCharacterKey = 'boy';
+  let totalStars = 0;
+  let levelsCompleted = 0;
+  try {
+    const c = window.localStorage.getItem('selected-character')?.replace(/^"|"$/g, '');
+    if (c && c in CHARACTER_IMAGES) character = c as HumanCharacterKey;
+    const raw = window.localStorage.getItem('journey-progress');
+    if (raw) {
+      const p = JSON.parse(raw);
+      totalStars = Number(p?.totalStars) || 0;
+      levelsCompleted = Object.keys(p?.levelResults ?? {}).length;
+    }
+  } catch {
+    // ignore — fall back to defaults
+  }
+  return { character, totalStars, levelsCompleted };
+}
+
+function ReturningUserContinue() {
+  const { character, totalStars, levelsCompleted } = readJourneySnapshot();
+
+  return (
+    <section className="relative border-b-2 border-retro-border bg-gradient-to-br from-pink-200/40 via-yellow-100/40 to-sky-200/40 py-6 sm:py-8">
+      {/* Decorative pixel flag emojis floating in background */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20" aria-hidden="true">
+        <span className="absolute top-3 left-[8%] text-2xl">🇯🇵</span>
+        <span className="absolute top-6 right-[12%] text-2xl">🇧🇷</span>
+        <span className="absolute bottom-4 left-[15%] text-2xl">🇰🇪</span>
+        <span className="absolute bottom-3 right-[8%] text-2xl">🇫🇷</span>
+      </div>
+
+      <div className="relative max-w-2xl mx-auto px-4">
+        <div className="bg-retro-surface border-2 border-retro-border shadow-pixel-lg overflow-hidden">
+          {/* Rainbow title bar */}
+          <div
+            className="border-b-2 border-retro-border px-3 py-1.5 flex items-center justify-between"
+            style={{
+              backgroundImage:
+                'linear-gradient(90deg, #ef4444 0%, #f97316 20%, #facc15 40%, #22c55e 60%, #3b82f6 80%, #a855f7 100%)',
+            }}
+          >
+            <span
+              className="font-retro text-[10px] sm:text-xs text-white"
+              style={{ textShadow: '1px 1px 0 rgba(0,0,0,0.5)' }}
+            >
+              ★ WELCOME BACK, ADVENTURER ★
+            </span>
+            <span
+              className="hidden sm:inline font-retro text-[10px] text-white"
+              style={{ textShadow: '1px 1px 0 rgba(0,0,0,0.5)' }}
+            >
+              SAVE 01
+            </span>
+          </div>
+
+          <div className="p-3 sm:p-5 flex items-center gap-3 sm:gap-5">
+            {/* Character portrait */}
+            <div className="relative flex-shrink-0 bg-retro-accent/40 border-2 border-retro-border shadow-pixel-sm p-1 sm:p-2">
+              <img
+                src={CHARACTER_IMAGES[character]}
+                alt="Your character"
+                className="w-12 h-12 sm:w-20 sm:h-20 block"
+                style={{ imageRendering: 'pixelated' }}
+              />
+            </div>
+
+            {/* Stats + CTA */}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 sm:gap-3 mb-1.5 font-retro text-[10px] sm:text-xs text-retro-text whitespace-nowrap">
+                <span className="inline-flex items-center gap-1">
+                  <span className="text-retro-gold">★</span>
+                  {totalStars} stars
+                </span>
+                <span className="text-retro-text-secondary">·</span>
+                <span className="inline-flex items-center gap-1">
+                  <span>🗺️</span>
+                  {levelsCompleted} {levelsCompleted === 1 ? 'level' : 'levels'}
+                </span>
+              </div>
+              <p className="font-body text-[11px] sm:text-sm text-retro-text-secondary mb-3 leading-snug whitespace-nowrap">
+                Pick up where you left off.
+              </p>
+              <Link
+                to="/play/journey"
+                className="group relative inline-block"
+              >
+                <span className="absolute inset-0 translate-x-1 translate-y-1 bg-black/60 transition-transform group-hover:translate-x-0.5 group-hover:translate-y-0.5" />
+                <span className="relative inline-flex items-center gap-2 font-retro text-xs sm:text-sm text-white bg-retro-neon-green border-2 border-retro-border px-4 py-2 sm:px-5 sm:py-2.5 transition-transform group-hover:translate-x-0.5 group-hover:translate-y-0.5">
+                  Continue Journey &rarr;
+                </span>
+              </Link>
+            </div>
           </div>
         </div>
       </div>
@@ -156,6 +268,8 @@ export function HomePage() {
     return <Navigate to="/play" replace />;
   }
 
+  // Read synchronously to avoid flash between new-user game and returning-user CTA
+  const [returning] = useState(() => isReturningUser());
   const [mounted, setMounted] = useState(false);
   const [visibleCards, setVisibleCards] = useState<Set<number>>(new Set());
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -226,6 +340,9 @@ export function HomePage() {
         description="Test your knowledge of flags from 197 countries! Free retro-style flag quiz with 6 game modes: Journey, Arcade, Around the World, Jeopardy, Presentation, and Flag Runner."
         canonical="https://flagarcade.com/"
       />
+
+      {/* ===== 0. PLAYABLE LEVEL 1 (new users) or CONTINUE CTA (returning) ===== */}
+      {returning ? <ReturningUserContinue /> : <HeroJourneyFlow />}
 
       {/* ===== 1. HERO ===== */}
       <section className="relative flex flex-col items-center justify-center px-4 py-20 md:py-32 overflow-hidden">
