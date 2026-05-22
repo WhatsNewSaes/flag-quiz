@@ -1,5 +1,6 @@
 import { useParams, Link, Navigate } from 'react-router-dom';
-import { findReligionBySlug, getCountriesForReligion } from '../data/religions';
+import { findReligionBySlug } from '../data/religions';
+import { getCountriesForReligion } from '../data/religionCountries';
 import { countries } from '../data/countries';
 import { getFlagEmoji } from '../utils/flagEmoji';
 import { getCountrySlug } from '../utils/slugify';

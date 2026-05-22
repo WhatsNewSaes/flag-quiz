@@ -6,7 +6,8 @@
  */
 import { countries } from '../src/data/countries';
 import { territories } from '../src/data/territories';
-import { religions, getCountriesForReligion } from '../src/data/religions';
+import { religions } from '../src/data/religions';
+import { getCountriesForReligion } from '../src/data/religionCountries';
 import { organizations } from '../src/data/organizations';
 import { organizationMembers } from '../src/data/organizationMembers';
 import { pickWithinLimit, TITLE_MAX, DESCRIPTION_MAX } from '../src/utils/seo';

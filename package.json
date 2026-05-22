@@ -4,9 +4,12 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
+    "predev": "tsx scripts/split-country-data.ts",
     "dev": "vite",
+    "prebuild": "tsx scripts/split-country-data.ts",
     "build": "tsc && vite build && tsx scripts/generate-seo-pages.ts",
     "build:seo": "tsx scripts/generate-seo-pages.ts",
+    "split-data": "tsx scripts/split-country-data.ts",
     "sync-data": "tsx scripts/fetch-country-data.ts",
     "sync-flags": "tsx scripts/fetch-flag-images.ts",
     "preview": "vite preview",

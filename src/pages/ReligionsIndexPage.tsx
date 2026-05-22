@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
-import { religions, getCountriesForReligion } from '../data/religions';
+import { religions } from '../data/religions';
+import { getCountriesForReligion } from '../data/religionCountries';
 import { SEOHead } from '../components/seo/SEOHead';
 import { Breadcrumbs } from '../components/seo/Breadcrumbs';
 

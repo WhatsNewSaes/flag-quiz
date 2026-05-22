@@ -1,6 +1,5 @@
 import { useParams, Link } from 'react-router-dom';
 import { flagFeatures, getSimilarFlags } from '../data/flagFeatures';
-import { flagDescriptions } from '../data/flagDescriptions';
 import { getTerritoriesBySovereign, getTerritorySlug } from '../data/territories';
 import { organizations } from '../data/organizations';
 import { organizationMembers } from '../data/organizationMembers';
@@ -16,12 +15,14 @@ import { QuickFacts } from '../components/QuickFacts';
 import { AboutThisFlag } from '../components/AboutThisFlag';
 import { BorderingCountries } from '../components/BorderingCountries';
 import { FlagActions } from '../components/FlagActions';
-import { getCountryFacts } from '../data/countryFacts';
+import { useCountryFacts, useFlagDescription } from '../hooks/useCountryData';
 import { getCountryAdjective } from '../utils/adjective';
 
 export function CountryFlagPage() {
   const { slug } = useParams<{ slug: string }>();
   const country = findCountryBySlug(slug || '');
+  const description = useFlagDescription(country?.code);
+  const facts = useCountryFacts(country?.code);
 
   if (!country) {
     return (
@@ -36,8 +37,6 @@ export function CountryFlagPage() {
   }
 
   const features = flagFeatures[country.code];
-  const description = flagDescriptions[country.code];
-  const facts = getCountryFacts(country.code);
   const emoji = getFlagEmoji(country.code);
   const countrySlug = getCountrySlug(country);
   const flagFilename = `flag-${countrySlug}.svg`;
@@ -117,7 +116,7 @@ export function CountryFlagPage() {
         )}
 
         {/* About This Flag */}
-        <AboutThisFlag description={description} features={features} />
+        <AboutThisFlag description={description ?? undefined} features={features} />
 
         {/* Bordering countries */}
         {facts?.borders && facts.borders.length > 0 && (

@@ -2,7 +2,6 @@ import { useParams, Link, Navigate } from 'react-router-dom';
 import { findTerritoryBySlug, getTerritorySlug, getTerritoriesBySovereign } from '../data/territories';
 import { countries } from '../data/countries';
 import { flagFeatures, getSimilarFlags } from '../data/flagFeatures';
-import { flagDescriptions } from '../data/flagDescriptions';
 import { getFlagEmoji } from '../utils/flagEmoji';
 import { getCountrySlug, getContinentSlug } from '../utils/slugify';
 import { allFlagCodes, flagEntriesByContinent, resolveFlagEntry } from '../utils/flagEntry';
@@ -15,12 +14,14 @@ import { QuickFacts } from '../components/QuickFacts';
 import { AboutThisFlag } from '../components/AboutThisFlag';
 import { BorderingCountries } from '../components/BorderingCountries';
 import { FlagActions } from '../components/FlagActions';
-import { getCountryFacts } from '../data/countryFacts';
+import { useCountryFacts, useFlagDescription } from '../hooks/useCountryData';
 import { getCountryAdjective } from '../utils/adjective';
 
 export function TerritoryFlagPage() {
   const { slug } = useParams<{ slug: string }>();
   const territory = findTerritoryBySlug(slug || '');
+  const facts = useCountryFacts(territory?.code);
+  const description = useFlagDescription(territory?.code);
 
   if (!territory) {
     return <Navigate to="/flags/territories" replace />;
@@ -34,9 +35,7 @@ export function TerritoryFlagPage() {
     ? getTerritoriesBySovereign(territory.sovereignCode).filter((t) => t.code !== territory.code)
     : [];
 
-  const facts = getCountryFacts(territory.code);
   const features = flagFeatures[territory.code];
-  const description = flagDescriptions[territory.code];
   const territorySlug = getTerritorySlug(territory);
   const flagFilename = `flag-${territorySlug}.svg`;
   const emoji = getFlagEmoji(territory.code);
@@ -148,7 +147,7 @@ export function TerritoryFlagPage() {
         )}
 
         {/* About This Flag (description + colors/patterns) */}
-        <AboutThisFlag description={description} features={features} />
+        <AboutThisFlag description={description ?? undefined} features={features} />
 
         {/* Bordering */}
         {facts?.borders && facts.borders.length > 0 && (

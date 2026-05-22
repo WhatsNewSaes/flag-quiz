@@ -17,7 +17,8 @@ import { organizations } from '../src/data/organizations';
 import { organizationMembers } from '../src/data/organizationMembers';
 import { territories } from '../src/data/territories';
 import { countryFacts, type CountryFacts } from '../src/data/countryFacts';
-import { religions, getCountriesForReligion, type Religion } from '../src/data/religions';
+import { religions, type Religion } from '../src/data/religions';
+import { getCountriesForReligion } from '../src/data/religionCountries';
 import { getContinentMapSvg } from '../src/components/seo/ContinentMap';
 import { splitIntoParagraphs } from '../src/utils/splitParagraphs';
 
@@ -213,11 +214,17 @@ interface PageMeta {
   canonical: string;
   ogImage?: string;
   jsonLd?: object;
+  // When set, inlined as a <script id="__flag_data__"> so the client hook
+  // can render the country/territory page without an initial fetch.
+  flagData?: { code: string; description?: object; facts?: object };
 }
 
 function buildPage(meta: PageMeta, bodyHtml: string, assets: { css: string[]; js: string[] }): string {
   const jsonLdTag = meta.jsonLd
     ? `<script type="application/ld+json">${JSON.stringify(meta.jsonLd)}</script>`
+    : '';
+  const flagDataTag = meta.flagData
+    ? `<script id="__flag_data__" type="application/json">${JSON.stringify(meta.flagData)}</script>`
     : '';
 
   return `<!DOCTYPE html>
@@ -239,8 +246,11 @@ function buildPage(meta: PageMeta, bodyHtml: string, assets: { css: string[]; js
   <meta name="twitter:description" content="${escapeHtml(meta.description)}">
   <meta name="twitter:image" content="${meta.ogImage || `${SITE_URL}/og-image.jpg`}">
   ${jsonLdTag}
+  ${flagDataTag}
   <link rel="preload" as="font" type="font/woff2" href="/fonts/inter-latin.woff2" crossorigin>
   <link rel="preload" as="font" type="font/woff2" href="/fonts/press-start-2p-400.woff2" crossorigin>
+  <link rel="preload" as="font" type="font/woff2" href="/fonts/space-mono-400.woff2" crossorigin>
+  <link rel="preload" as="font" type="font/woff2" href="/fonts/space-mono-700.woff2" crossorigin>
   ${assets.css.map((href) => `<link rel="stylesheet" href="${href}">`).join('\n  ')}
 </head>
 <body>
@@ -439,6 +449,11 @@ function generateCountryPage(country: Country, assets: { css: string[]; js: stri
       canonical: `${SITE_URL}/flags/${slug}`,
       ogImage: `${SITE_URL}/og/${slug}.jpg`,
       jsonLd,
+      flagData: {
+        code: country.code,
+        ...(desc ? { description: desc } : {}),
+        ...(facts ? { facts } : {}),
+      },
     },
     bodyHtml,
     assets,
@@ -1727,6 +1742,11 @@ function generateTerritoryPage(territory: typeof territories[number], assets: { 
       description: pageDescription,
       canonical: `${SITE_URL}/flags/territories/${slug}`,
       jsonLd,
+      flagData: {
+        code: territory.code,
+        ...(desc ? { description: desc } : {}),
+        ...(facts ? { facts } : {}),
+      },
     },
     bodyHtml,
     assets,

@@ -4,6 +4,9 @@ node_modules/
 # Build output
 dist/
 
+# Generated per-country JSON splits (predev/prebuild regenerates)
+public/data/
+
 # IDE
 .vscode/
 .idea/
