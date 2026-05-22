@@ -23,7 +23,7 @@ export function FlagsDirectoryPage() {
     <div className="min-h-screen bg-retro-bg">
       <SEOHead
         title="Flags of the World - All 197 Country Flags | Flag Arcade"
-        description="Browse all 197 country flags of the world organized by continent. Learn flag colors, meanings, and fun facts. Play our free flag quiz to test your knowledge!"
+        description="Browse all 197 country flags organized by continent. Learn colors, meanings, and fun facts — then play our free flag quiz."
         canonical="https://flagarcade.com/flags"
       />
 

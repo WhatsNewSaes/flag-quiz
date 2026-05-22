@@ -43,7 +43,7 @@ export function EmojiFlagsPage() {
   return (
     <div className="min-h-screen bg-retro-bg">
       <SEOHead
-        title="Flag Emojis - Copy & Paste All Country Flag Emojis | Flag Arcade"
+        title="Flag Emojis - Copy & Paste Country Flags | Flag Arcade"
         description="Copy and paste flag emojis for all 197 countries. Find any country's flag emoji with Unicode code points. Click to copy instantly!"
         canonical="https://flagarcade.com/flags/emoji"
       />

@@ -14,8 +14,8 @@ export function PatternsPage() {
   return (
     <div className="min-h-screen bg-retro-bg">
       <SEOHead
-        title="Flag Design Patterns - Stripes, Crosses, Cantons & More | Flag Arcade"
-        description="Explore the visual grammar of world flags. Browse country flags by design pattern: horizontal stripes, vertical stripes, crosses, diagonals, cantons, solid fields, and complex designs."
+        title="Flag Design Patterns - Stripes, Crosses & More | Flag Arcade"
+        description="Browse country flags by design pattern — horizontal and vertical stripes, crosses, diagonals, cantons, solid fields, and complex designs."
         canonical="https://flagarcade.com/patterns"
       />
 

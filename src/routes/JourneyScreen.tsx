@@ -7,6 +7,7 @@ import { OverworldMap } from '../components/journey/OverworldMap';
 import { JourneyLevelPlay } from '../components/journey/JourneyLevelPlay';
 import { LevelCompleteFlow } from '../components/journey/LevelCompleteFlow';
 import { JourneyPractice } from '../components/journey/JourneyPractice';
+import { SEOHead } from '../components/seo/SEOHead';
 
 type JourneyPhase = 'map' | 'play' | 'complete' | 'practice';
 
@@ -143,6 +144,11 @@ export function JourneyScreen() {
   // Default: map phase
   return (
     <>
+      <SEOHead
+        title="Journey Mode - Flag Quiz Adventure | Flag Arcade"
+        description="Progress through worlds of increasing difficulty. Earn stars, unlock characters, and master every country flag in our free Journey mode."
+        canonical="https://flagarcade.com/play/journey"
+      />
       <NavBar />
       <OverworldMap
         regions={regions}

@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect, useRef } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { Capacitor } from '@capacitor/core';
 import { SEOHead } from '../components/seo/SEOHead';
+import { JsonLd } from '../components/seo/JsonLd';
 import { countries, type Continent } from '../data/countries';
 import { getFlagEmoji } from '../utils/flagEmoji';
 import { getCountrySlug, getContinentSlug } from '../utils/slugify';
@@ -279,6 +280,22 @@ export function HomePage() {
     return () => clearTimeout(timer);
   }, []);
 
+  // Most home-page visitors click START GAME — prefetch the /play chunks on idle
+  // so the navigation feels instant. Failures are silent (offline, blocked, etc).
+  useEffect(() => {
+    const prefetch = () => {
+      import('../routes/ModesRoute').catch(() => {});
+      import('../routes/JourneyScreen').catch(() => {});
+    };
+    const ric = (window as { requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number }).requestIdleCallback;
+    const handle = ric ? ric(prefetch, { timeout: 4000 }) : window.setTimeout(prefetch, 2500);
+    return () => {
+      const cic = (window as { cancelIdleCallback?: (h: number) => void }).cancelIdleCallback;
+      if (ric && cic) cic(handle as number);
+      else window.clearTimeout(handle as number);
+    };
+  }, []);
+
   // IntersectionObserver for game mode cards
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -304,41 +321,38 @@ export function HomePage() {
     return () => observer.disconnect();
   }, []);
 
-  // JSON-LD structured data
-  useEffect(() => {
-    const jsonLd = {
-      '@context': 'https://schema.org',
-      '@type': 'WebApplication',
-      name: 'Flag Arcade',
-      description: 'Free online flag quiz game. Learn and identify flags from 197 countries across 6 game modes.',
-      url: 'https://flagarcade.com',
-      applicationCategory: 'GameApplication',
-      operatingSystem: 'Any',
-      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
-    };
-
-    let script = document.querySelector('script[data-homepage-ld]') as HTMLScriptElement | null;
-    if (!script) {
-      script = document.createElement('script');
-      script.setAttribute('type', 'application/ld+json');
-      script.setAttribute('data-homepage-ld', '');
-      document.head.appendChild(script);
-    }
-    script.textContent = JSON.stringify(jsonLd);
-
-    return () => {
-      script?.remove();
-    };
-  }, []);
-
   const marqueeStrip = FLAG_EMOJIS.join(' ');
 
   return (
     <div className="min-h-screen bg-retro-bg">
       <SEOHead
         title="Flag Arcade - The Ultimate World Flag Quiz Game"
-        description="Test your knowledge of flags from 197 countries! Free retro-style flag quiz with 6 game modes: Journey, Arcade, Around the World, Jeopardy, Presentation, and Flag Runner."
+        description="Free retro-style flag quiz with 6 game modes. Test your knowledge of all 197 country flags — Journey, Arcade, Jeopardy, and more."
         canonical="https://flagarcade.com/"
+      />
+      <JsonLd
+        id="webapp"
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'WebApplication',
+          name: 'Flag Arcade',
+          description: 'Free online flag quiz game. Learn and identify flags from 197 countries across 6 game modes.',
+          url: 'https://flagarcade.com',
+          applicationCategory: 'GameApplication',
+          operatingSystem: 'Any',
+          offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+        }}
+      />
+      <JsonLd
+        id="organization"
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'Organization',
+          name: 'Flag Arcade',
+          url: 'https://flagarcade.com',
+          logo: 'https://flagarcade.com/og-image.jpg',
+          description: 'Flag Arcade is a free, retro-styled flag quiz site covering every country flag, dependent territory, and international organization.',
+        }}
       />
 
       {/* ===== 0. PLAYABLE LEVEL 1 (new users) or CONTINUE CTA (returning) ===== */}
@@ -346,10 +360,19 @@ export function HomePage() {
 
       {/* ===== 1. HERO ===== */}
       <section className="relative flex flex-col items-center justify-center px-4 py-20 md:py-32 overflow-hidden">
-        {/* Background image */}
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: 'url(/hero-bg.webp)' }}
+        {/* Background image (LCP) */}
+        <img
+          src="/hero-bg-640.webp"
+          srcSet="/hero-bg-640.webp 640w, /hero-bg-960.webp 960w, /hero-bg.webp 1280w"
+          sizes="100vw"
+          width={1280}
+          height={549}
+          alt=""
+          aria-hidden="true"
+          // @ts-expect-error - fetchpriority is a valid HTML attribute but not yet typed by React
+          fetchpriority="high"
+          decoding="async"
+          className="absolute inset-0 w-full h-full object-cover object-center"
         />
         {/* Dark overlay */}
         <div className="absolute inset-0 bg-black/50" />
@@ -447,6 +470,10 @@ export function HomePage() {
                   <img
                     src={mode.image}
                     alt={mode.title}
+                    width={760}
+                    height={507}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />

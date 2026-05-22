@@ -30,7 +30,7 @@ const colorPages: [string, ContentPageConfig][] = (
 ).map(([color, label]) => [
   `with-${color}`,
   {
-    title: `Flags with ${label} - Country Flags Featuring ${label} | Flag Arcade`,
+    title: `Flags with ${label} - Country Flags | Flag Arcade`,
     h1: `Flags with ${label}`,
     description: `Browse all country flags that feature the color ${color}. See which nations use ${color} in their flag and learn why.`,
     intro: `These country flags all feature the color ${color} prominently in their design. Explore each flag to learn about its colors, meaning, and history.`,
@@ -68,7 +68,7 @@ const patternPages: [string, ContentPageConfig][] = (
 ).map(([slug, pattern, label]) => [
   slug,
   {
-    title: `Flags with ${label} - ${label} Flag Designs | Flag Arcade`,
+    title: `Flags with ${label} - Designs | Flag Arcade`,
     h1: `Flags with ${label}`,
     description: `Browse all country flags featuring ${label.toLowerCase()} in their design. Compare flags that share similar patterns.`,
     intro: `These country flags all use a ${label.toLowerCase()} pattern. Many flags around the world share this design element — can you tell them apart?`,
@@ -106,7 +106,7 @@ const comboPages: [string, ContentPageConfig][] = [
   [
     'red-and-white-flags',
     {
-      title: 'Red and White Flags — Countries with Red & White Flags | Flag Arcade',
+      title: 'Red and White Flags - Countries List | Flag Arcade',
       h1: 'Red and White Flags',
       description: 'Browse all country flags featuring red and white. From Japan and Canada to Turkey and Switzerland — see every red and white flag in the world.',
       intro: 'Red and white is one of the most common two-color combinations in world flags. These countries all prominently feature red and white in their national flag.',
@@ -126,7 +126,7 @@ const comboPages: [string, ContentPageConfig][] = [
   [
     'blue-and-white-flags',
     {
-      title: 'Blue and White Flags — Countries with Blue & White Flags | Flag Arcade',
+      title: 'Blue and White Flags - Countries List | Flag Arcade',
       h1: 'Blue and White Flags',
       description: 'Browse all country flags featuring blue and white. From Greece and Finland to Argentina and Israel — see every blue and white flag.',
       intro: 'Blue and white flags evoke sky, sea, and peace. These countries all feature blue and white prominently in their national flag designs.',
@@ -136,7 +136,7 @@ const comboPages: [string, ContentPageConfig][] = [
   [
     'blue-and-yellow-flags',
     {
-      title: 'Blue and Yellow Flags — Countries with Blue & Yellow Flags | Flag Arcade',
+      title: 'Blue and Yellow Flags - Countries List | Flag Arcade',
       h1: 'Blue and Yellow Flags',
       description: 'Which countries have blue and yellow flags? From Ukraine and Sweden to Palau and Kazakhstan — browse all blue and yellow national flags.',
       intro: 'Blue and yellow is a vivid contrast seen on flags around the world. These countries all feature blue and yellow prominently in their national flag.',
@@ -146,7 +146,7 @@ const comboPages: [string, ContentPageConfig][] = [
   [
     'orange-white-and-green-flags',
     {
-      title: 'Orange, White, and Green Flags — Countries List | Flag Arcade',
+      title: 'Orange, White, Green Flags - Countries | Flag Arcade',
       h1: 'Orange, White, and Green Flags',
       description: 'Which countries have orange, white, and green flags? See all national flags featuring this color combination, including Ireland and India.',
       intro: 'Orange, white, and green is an instantly recognizable color combination. From Ireland to India, these flags share a vibrant palette with distinct cultural meanings in each nation.',
@@ -176,7 +176,7 @@ const comboPages: [string, ContentPageConfig][] = [
   [
     'green-and-white-flags',
     {
-      title: 'Green and White Flags — Countries with Green & White Flags | Flag Arcade',
+      title: 'Green and White Flags - Countries List | Flag Arcade',
       h1: 'Green and White Flags',
       description: 'Browse all country flags featuring green and white. From Nigeria and Pakistan to Saudi Arabia — see every green and white national flag.',
       intro: 'Green and white flags often carry associations with Islam, nature, or peace. These countries all feature green and white prominently in their national flag.',
@@ -186,7 +186,7 @@ const comboPages: [string, ContentPageConfig][] = [
   [
     'red-and-yellow-flags',
     {
-      title: 'Red and Yellow Flags — Countries with Red & Yellow Flags | Flag Arcade',
+      title: 'Red and Yellow Flags - Countries List | Flag Arcade',
       h1: 'Red and Yellow Flags',
       description: 'Which countries have red and yellow flags? From China and Spain to Vietnam and Macedonia — browse all red and yellow national flags.',
       intro: 'Red and yellow create a high-contrast, eye-catching combination used on flags across Asia, Europe, and beyond. These countries all prominently feature red and yellow.',
@@ -196,7 +196,7 @@ const comboPages: [string, ContentPageConfig][] = [
   [
     'red-black-white-and-green-flags',
     {
-      title: 'Red, Black, White, and Green Flags — Countries List | Flag Arcade',
+      title: 'Red, Black, White, Green Flags - Countries | Flag Arcade',
       h1: 'Red, Black, White, and Green Flags',
       description: 'Which countries have red, black, white, and green flags? These four Pan-Arab colors appear together on flags across the Middle East and Africa.',
       intro: 'Red, black, white, and green together form the complete set of Pan-Arab colors. Flags carrying all four trace their symbolism to the Arab Revolt of 1916 and the historical dynasties they represent.',
@@ -206,7 +206,7 @@ const comboPages: [string, ContentPageConfig][] = [
   [
     'black-and-white-flags',
     {
-      title: 'Black and White Flags — Countries with Black & White Flags | Flag Arcade',
+      title: 'Black and White Flags - Countries List | Flag Arcade',
       h1: 'Black and White Flags',
       description: 'Browse all country flags featuring black and white. See which nations use this striking monochrome combination on their national flags.',
       intro: 'Black and white flags are bold and distinctive. These countries all feature black and white prominently in their national flag designs.',
@@ -216,7 +216,7 @@ const comboPages: [string, ContentPageConfig][] = [
   [
     'green-and-yellow-flags',
     {
-      title: 'Green and Yellow Flags — Countries with Green & Yellow Flags | Flag Arcade',
+      title: 'Green and Yellow Flags - Countries List | Flag Arcade',
       h1: 'Green and Yellow Flags',
       description: 'Which countries have green and yellow flags? From Brazil and Jamaica to Senegal and Mauritania — browse all green and yellow national flags.',
       intro: 'Green and yellow flags evoke tropical landscapes, agriculture, and natural wealth. These countries all feature green and yellow prominently in their national flag.',
@@ -229,7 +229,7 @@ const specialPages: [string, ContentPageConfig][] = [
   [
     'hardest-flags',
     {
-      title: 'Hardest Flags to Identify - Most Difficult Country Flags | Flag Arcade',
+      title: 'Hardest Flags to Identify - Tough Quiz | Flag Arcade',
       h1: 'Hardest Flags to Identify',
       description: "Think you know your flags? These are the hardest country flags to identify. Most players can't get them all right. See how many you know!",
       intro: "These flags are rated as the most difficult to identify. They're the ones that trip up even experienced flag enthusiasts. How many can you get right?",
@@ -239,7 +239,7 @@ const specialPages: [string, ContentPageConfig][] = [
   [
     'easiest-flags',
     {
-      title: 'Easiest Flags to Identify - Most Recognizable Country Flags | Flag Arcade',
+      title: 'Easiest Flags to Identify - For Beginners | Flag Arcade',
       h1: 'Easiest Flags to Identify',
       description: 'Start with the easiest flags! These are the most recognizable country flags in the world. Perfect for beginners learning world flags.',
       intro: "These are the most recognizable flags in the world. If you're just starting to learn flags, begin here — you probably already know most of these!",

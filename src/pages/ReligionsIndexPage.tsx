@@ -12,7 +12,7 @@ export function ReligionsIndexPage() {
     <div className="min-h-screen bg-retro-bg">
       <SEOHead
         title="World Religions - Countries & Beliefs | Flag Arcade"
-        description="Browse the world's major religions and see the countries where each is practiced. Factual overviews of Christianity, Islam, Hinduism, Buddhism, Judaism, and more."
+        description="Browse the world's major religions and see the countries where each is practiced — Christianity, Islam, Hinduism, Buddhism, Judaism, and more."
         canonical="https://flagarcade.com/religions"
       />
 

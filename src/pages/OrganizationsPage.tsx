@@ -8,7 +8,7 @@ export function OrganizationsPage() {
   return (
     <div className="min-h-screen bg-retro-bg">
       <SEOHead
-        title="International Organization Flags - UN, EU, NATO & More | Flag Arcade"
+        title="International Organization Flags | Flag Arcade"
         description="Explore flags and details of major international organizations including the United Nations, European Union, NATO, African Union, ASEAN, and more."
         canonical="https://flagarcade.com/organizations"
       />

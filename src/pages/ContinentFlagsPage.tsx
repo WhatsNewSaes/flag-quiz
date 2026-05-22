@@ -28,7 +28,7 @@ export function ContinentFlagsPage() {
     <div className="min-h-screen bg-retro-bg">
       <SEOHead
         title={`${continent} Flags - All ${continentCountries.length} Country Flags | Flag Arcade`}
-        description={`Explore all ${continentCountries.length} flags from ${continent}. Learn the colors, meanings, and history of every ${continent.toLowerCase()}n country flag. Test yourself with our ${continent.toLowerCase()} flag quiz!`}
+        description={`Explore all ${continentCountries.length} country flags of ${continent}. Learn the colors, meanings, and history — then test yourself with our flag quiz.`}
         canonical={`https://flagarcade.com/flags/continent/${getContinentSlug(continent)}`}
       />
 

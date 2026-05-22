@@ -239,7 +239,8 @@ function buildPage(meta: PageMeta, bodyHtml: string, assets: { css: string[]; js
   <meta name="twitter:description" content="${escapeHtml(meta.description)}">
   <meta name="twitter:image" content="${meta.ogImage || `${SITE_URL}/og-image.jpg`}">
   ${jsonLdTag}
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="preload" as="font" type="font/woff2" href="/fonts/inter-latin.woff2" crossorigin>
+  <link rel="preload" as="font" type="font/woff2" href="/fonts/press-start-2p-400.woff2" crossorigin>
   ${assets.css.map((href) => `<link rel="stylesheet" href="${href}">`).join('\n  ')}
 </head>
 <body>
@@ -1879,7 +1880,24 @@ function main() {
   // Homepage
   sitemapUrls.push({ loc: SITE_URL, priority: '1.0', changefreq: 'daily' });
 
-  // Play / game modes — client-side only, no pre-rendered page; omitted from sitemap
+  // Play / game modes — client-side only, no pre-rendered HTML, but listed so
+  // crawlers can discover them. Vercel's SPA rewrite serves index.html and
+  // each route injects its own canonical/title/description via SEOHead.
+  const playRoutes: { path: string; priority: string }[] = [
+    { path: '/play/modes', priority: '0.7' },
+    { path: '/play/journey', priority: '0.7' },
+    { path: '/play/arcade', priority: '0.7' },
+    { path: '/play/around-the-world', priority: '0.6' },
+    { path: '/play/jeopardy', priority: '0.6' },
+    { path: '/play/presentation', priority: '0.6' },
+    { path: '/play/flag-runner', priority: '0.6' },
+    { path: '/play/achievements', priority: '0.4' },
+    { path: '/play/characters', priority: '0.4' },
+  ];
+  for (const { path: p, priority } of playRoutes) {
+    sitemapUrls.push({ loc: `${SITE_URL}${p}`, priority });
+  }
+  console.log(`  ${playRoutes.length} /play routes added to sitemap`);
 
   // Flags directory
   writeFile(path.join(DIST, 'flags', 'index.html'), generateDirectoryPage(assets));

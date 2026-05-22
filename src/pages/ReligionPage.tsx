@@ -4,6 +4,7 @@ import { countries } from '../data/countries';
 import { getFlagEmoji } from '../utils/flagEmoji';
 import { getCountrySlug } from '../utils/slugify';
 import { SEOHead } from '../components/seo/SEOHead';
+import { JsonLd, breadcrumbListSchema } from '../components/seo/JsonLd';
 import { Breadcrumbs } from '../components/seo/Breadcrumbs';
 
 export function ReligionPage() {
@@ -26,10 +27,19 @@ export function ReligionPage() {
         description={pageDescription}
         canonical={`https://flagarcade.com/religions/${religion.slug}`}
       />
+      <JsonLd
+        id="breadcrumbs"
+        data={breadcrumbListSchema([
+          { name: 'Home', url: '/' },
+          { name: 'Religions', url: '/religions' },
+          { name: religion.name, url: `/religions/${religion.slug}` },
+        ])}
+      />
 
       <div className="max-w-4xl mx-auto px-4 py-6">
         <Breadcrumbs items={[
           { label: 'Home', href: '/' },
+          { label: 'Religions', href: '/religions' },
           { label: religion.name },
         ]} />
 

@@ -5,6 +5,8 @@ import { countries } from '../data/countries';
 import { getFlagEmoji } from '../utils/flagEmoji';
 import { getCountrySlug } from '../utils/slugify';
 import { SEOHead } from '../components/seo/SEOHead';
+import { JsonLd, breadcrumbListSchema } from '../components/seo/JsonLd';
+import { pickWithinLimit, TITLE_MAX, DESCRIPTION_MAX } from '../utils/seo';
 import { Breadcrumbs } from '../components/seo/Breadcrumbs';
 import { QuizCTA } from '../components/QuizCTA';
 
@@ -25,8 +27,17 @@ export function OrganizationPage() {
   // Find other organizations to link to
   const otherOrgs = organizations.filter((o) => o.slug !== org.slug);
 
-  const pageTitle = `${org.name} (${org.abbreviation}) - Member Flags & Info | Flag Arcade`;
-  const pageDescription = `${org.description} Explore the flags of all ${memberCountries.length} ${org.abbreviation} member countries.`;
+  const pageTitle = pickWithinLimit([
+    `${org.name} (${org.abbreviation}) - Member Flags & Info | Flag Arcade`,
+    `${org.name} (${org.abbreviation}) - Member Flags | Flag Arcade`,
+    `${org.abbreviation} Member Flags & Info | Flag Arcade`,
+    `${org.abbreviation} Member Flags | Flag Arcade`,
+  ], TITLE_MAX);
+  const pageDescription = pickWithinLimit([
+    `Flags of all ${memberCountries.length} ${org.abbreviation} (${org.name}) member countries, with details on each nation's flag and membership.`,
+    `Flags of all ${memberCountries.length} ${org.abbreviation} member countries — ${org.name}. See each nation's flag and details.`,
+    `Flags of all ${memberCountries.length} ${org.abbreviation} member countries. See each nation's flag and details.`,
+  ], DESCRIPTION_MAX);
 
   return (
     <div className="min-h-screen bg-retro-bg">
@@ -34,6 +45,14 @@ export function OrganizationPage() {
         title={pageTitle}
         description={pageDescription}
         canonical={`https://flagarcade.com/organizations/${org.slug}`}
+      />
+      <JsonLd
+        id="breadcrumbs"
+        data={breadcrumbListSchema([
+          { name: 'Home', url: '/' },
+          { name: 'Organizations', url: '/organizations' },
+          { name: org.abbreviation, url: `/organizations/${org.slug}` },
+        ])}
       />
 
       <div className="max-w-4xl mx-auto px-4 py-6">

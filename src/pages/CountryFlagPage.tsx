@@ -8,6 +8,8 @@ import { getFlagEmoji } from '../utils/flagEmoji';
 import { findCountryBySlug, getCountrySlug, getContinentSlug } from '../utils/slugify';
 import { allFlagCodes, flagEntriesByContinent, resolveFlagEntry } from '../utils/flagEntry';
 import { SEOHead } from '../components/seo/SEOHead';
+import { JsonLd, breadcrumbListSchema } from '../components/seo/JsonLd';
+import { pickWithinLimit, TITLE_MAX } from '../utils/seo';
 import { Breadcrumbs } from '../components/seo/Breadcrumbs';
 import { QuizCTA } from '../components/QuizCTA';
 import { QuickFacts } from '../components/QuickFacts';
@@ -51,9 +53,12 @@ export function CountryFlagPage() {
     return members?.includes(country.code);
   });
 
-  const pageTitle = `${country.name} Flag - Colors, Meaning & History | Flag Arcade`;
-  const pageDescription = description?.description
-    || `Learn about the flag of ${country.name}. Explore the colors, meaning, and history, then test your knowledge in our flag quiz!`;
+  const pageTitle = pickWithinLimit([
+    `${country.name} Flag - Colors, Meaning & History | Flag Arcade`,
+    `${country.name} Flag - Meaning & History | Flag Arcade`,
+    `${country.name} Flag | Flag Arcade`,
+  ], TITLE_MAX);
+  const pageDescription = `Learn about the flag of ${country.name} — colors, meaning, and history. Then test your knowledge in our free flag quiz.`;
 
   return (
     <div className="min-h-screen bg-retro-bg">
@@ -62,6 +67,15 @@ export function CountryFlagPage() {
         description={pageDescription}
         canonical={`https://flagarcade.com/flags/${getCountrySlug(country)}`}
         ogImage={`https://flagarcade.com/og/${getCountrySlug(country)}.jpg`}
+      />
+      <JsonLd
+        id="breadcrumbs"
+        data={breadcrumbListSchema([
+          { name: 'Home', url: '/' },
+          { name: 'Flags', url: '/flags' },
+          { name: country.continent, url: `/flags/continent/${getContinentSlug(country.continent)}` },
+          { name: country.name, url: `/flags/${getCountrySlug(country)}` },
+        ])}
       />
 
       <div className="max-w-3xl mx-auto px-4 py-6">

@@ -7,6 +7,8 @@ import { getFlagEmoji } from '../utils/flagEmoji';
 import { getCountrySlug, getContinentSlug } from '../utils/slugify';
 import { allFlagCodes, flagEntriesByContinent, resolveFlagEntry } from '../utils/flagEntry';
 import { SEOHead } from '../components/seo/SEOHead';
+import { JsonLd, breadcrumbListSchema } from '../components/seo/JsonLd';
+import { pickWithinLimit, TITLE_MAX } from '../utils/seo';
 import { Breadcrumbs } from '../components/seo/Breadcrumbs';
 import { QuizCTA } from '../components/QuizCTA';
 import { QuickFacts } from '../components/QuickFacts';
@@ -47,9 +49,12 @@ export function TerritoryFlagPage() {
 
   const continentPeers = flagEntriesByContinent(territory.continent, territory.code).slice(0, 8);
 
-  const pageTitle = `Flag of ${territory.name} - ${territory.sovereignName} Territory | Flag Arcade`;
-  const pageDescription = description?.description
-    || `Learn about the flag of ${territory.name}, a dependent territory of ${territory.sovereignName} located in ${territory.continent}.`;
+  const pageTitle = pickWithinLimit([
+    `${territory.name} Flag - ${territory.sovereignName} Territory | Flag Arcade`,
+    `${territory.name} Flag - ${territory.sovereignName} | Flag Arcade`,
+    `${territory.name} Flag | Flag Arcade`,
+  ], TITLE_MAX);
+  const pageDescription = `Flag of ${territory.name}, a ${territory.sovereignName} territory in ${territory.continent}. See colors, meaning, and history.`;
 
   return (
     <div className="min-h-screen bg-retro-bg">
@@ -57,6 +62,15 @@ export function TerritoryFlagPage() {
         title={pageTitle}
         description={pageDescription}
         canonical={`https://flagarcade.com/flags/territories/${territorySlug}`}
+      />
+      <JsonLd
+        id="breadcrumbs"
+        data={breadcrumbListSchema([
+          { name: 'Home', url: '/' },
+          { name: 'Flags', url: '/flags' },
+          { name: 'Territories', url: '/flags/territories' },
+          { name: territory.name, url: `/flags/territories/${territorySlug}` },
+        ])}
       />
 
       <div className="max-w-3xl mx-auto px-4 py-6">

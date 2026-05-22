@@ -42,7 +42,7 @@ export function QuizLandingPage() {
     <div className="min-h-screen bg-retro-bg">
       <SEOHead
         title="Flag Quiz - Free Online Flag Guessing Game | Flag Arcade"
-        description="Play the ultimate free flag quiz! Guess flags from 197 countries across 6 game modes. Journey mode, arcade, jeopardy, and more. Learn world flags the fun way!"
+        description="Free flag quiz with 6 game modes — Journey, Arcade, Jeopardy, and more. Guess flags from all 197 countries and learn world flags the fun way."
         canonical="https://flagarcade.com/quiz"
       />
 

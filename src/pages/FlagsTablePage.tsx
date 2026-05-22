@@ -191,8 +191,8 @@ export function FlagsTablePage() {
   return (
     <div className="min-h-screen bg-retro-bg">
       <SEOHead
-        title="Flag Data Table - Compare Countries by Population, Area, Religion | Flag Arcade"
-        description="Sortable, filterable table of every country and territory flag with population, area, capital, languages, main religion, and difficulty. Compare nations side by side."
+        title="Flag Data Table - Compare Every Country | Flag Arcade"
+        description="Sortable table of every country and territory flag with population, area, capital, languages, religion, and difficulty. Compare nations side by side."
         canonical="https://flagarcade.com/flags/table"
       />
 
