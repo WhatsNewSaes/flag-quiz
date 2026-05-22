@@ -4,7 +4,18 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌍</text></svg>" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Press+Start+2P&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <link
+      rel="preload"
+      as="image"
+      href="/hero-bg-640.webp"
+      imagesrcset="/hero-bg-640.webp 640w, /hero-bg-960.webp 960w, /hero-bg.webp 1280w"
+      imagesizes="100vw"
+      fetchpriority="high"
+    />
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/inter-latin.woff2" crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/press-start-2p-400.woff2" crossorigin />
+
     <title>Flag Arcade - The Ultimate World Flag Quiz Game</title>
     <link rel="canonical" href="https://flagarcade.com/" />
 
