@@ -109,7 +109,7 @@ function FlagExplorer() {
                 }`}
               >
                 {c.name}
-                <span className="ml-1 opacity-50 text-xs">({c.count})</span>
+                <span className="ml-1 opacity-70 text-xs">({c.count})</span>
               </button>
             ))}
           </div>
@@ -431,10 +431,10 @@ export function HomePage() {
       </section>
 
       {/* ===== 2. FLAG MARQUEE STRIP ===== */}
-      <section className="border-y-2 border-retro-border bg-retro-border overflow-hidden py-3">
+      <section aria-hidden="true" className="border-y-2 border-retro-border bg-retro-border overflow-hidden py-3">
         <div className="flex whitespace-nowrap animate-marquee">
-          <span className="text-2xl md:text-3xl tracking-widest px-4">{marqueeStrip}</span>
-          <span className="text-2xl md:text-3xl tracking-widest px-4">{marqueeStrip}</span>
+          <span className="text-2xl md:text-3xl tracking-widest px-4 text-white">{marqueeStrip}</span>
+          <span className="text-2xl md:text-3xl tracking-widest px-4 text-white">{marqueeStrip}</span>
         </div>
       </section>
 
@@ -541,7 +541,7 @@ export function HomePage() {
           >
             PLAY NOW &mdash; IT&apos;S FREE
           </Link>
-          <p className="font-body text-[10px] text-retro-text-secondary/60 mt-4">
+          <p className="font-body text-[10px] text-retro-text-secondary mt-4">
             No account needed
           </p>
         </div>
