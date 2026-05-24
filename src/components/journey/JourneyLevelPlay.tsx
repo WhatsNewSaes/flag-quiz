@@ -88,7 +88,7 @@ export function JourneyLevelPlay({
         </div>
 
         {/* Question area */}
-        <main>
+        <section>
           {quizMode === 'flag-picker' ? (
             <div className="flex flex-col items-center justify-center min-h-[200px] sm:min-h-[240px]">
               <h2
@@ -129,7 +129,7 @@ export function JourneyLevelPlay({
               />
             )}
           </div>
-        </main>
+        </section>
       </div>
 
       <Celebration streak={1} show={showCelebration} />

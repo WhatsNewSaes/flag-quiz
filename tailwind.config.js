@@ -23,7 +23,7 @@ export default {
         'retro-gold': '#946A08',
         'retro-neon-green': '#15803D',
         'retro-neon-red': '#DC2626',
-        'retro-neon-blue': '#2563EB',
+        'retro-neon-blue': '#1E40AF',
         'retro-neon-orange': '#B45309',
         'retro-neon-purple': '#7C3AED',
         'retro-border': '#2D2D2D',

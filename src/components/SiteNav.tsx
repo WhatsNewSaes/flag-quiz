@@ -246,7 +246,7 @@ export function SiteNav() {
     <nav className="sticky top-0 z-30 bg-retro-surface/95 backdrop-blur border-b-2 border-retro-border">
       <div className="w-full flex items-center justify-between px-4 h-14 md:h-16">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2 shrink-0">
+        <Link to="/" aria-label="Flag Arcade home" className="flex items-center gap-2 shrink-0">
           <span className="text-xl" aria-hidden>🌍</span>
           <span className="hidden sm:inline font-retro text-[11px] md:text-xs text-retro-text leading-none">
             Flag Arcade

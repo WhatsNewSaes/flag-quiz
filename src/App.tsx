@@ -1,13 +1,15 @@
 import { useState, useEffect, useLayoutEffect, useRef, useCallback, lazy, Suspense } from 'react';
 import { Routes, Route, Navigate, Outlet, useNavigate, useNavigationType, useParams, useLocation } from 'react-router-dom';
-import { CelebrationTest } from './components/CelebrationTest';
 import { AchievementToast } from './components/journey/AchievementToast';
-import { HomePage } from './pages/HomePage';
 import { SiteLayout } from './layouts/SiteLayout';
 import { GameProvider, useGameContext } from './contexts/GameContext';
 import { CONTENT_SLUGS } from './data/contentSlugs';
 
+// Devmode-only — never on the critical path for real users.
+const CelebrationTest = lazy(() => import('./components/CelebrationTest').then(m => ({ default: m.CelebrationTest })));
+
 // Lazy-loaded site pages (SEO/content pages)
+const HomePage = lazy(() => import('./pages/HomePage').then(m => ({ default: m.HomePage })));
 const CountryFlagPage = lazy(() => import('./pages/CountryFlagPage').then(m => ({ default: m.CountryFlagPage })));
 const ContentPage = lazy(() => import('./pages/ContentPage').then(m => ({ default: m.ContentPage })));
 const FlagsDirectoryPage = lazy(() => import('./pages/FlagsDirectoryPage').then(m => ({ default: m.FlagsDirectoryPage })));
@@ -157,7 +159,9 @@ function GameLayoutInner() {
 
   return (
     <>
-      <Outlet />
+      <main>
+        <Outlet />
+      </main>
       {pendingAchievements.length > 0 && (
         <AchievementToast
           achievementIds={pendingAchievements}

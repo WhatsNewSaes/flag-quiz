@@ -253,7 +253,7 @@ function ContinentQuizInner({
         )}
 
         {/* Question area */}
-        <main>
+        <section>
           {arcade.quizMode === 'flag-picker' ? (
             <div className="flex flex-col items-center justify-center min-h-[200px] sm:min-h-[240px]">
               <h2
@@ -316,7 +316,7 @@ function ContinentQuizInner({
               />
             )}
           </div>
-        </main>
+        </section>
 
         <JourneyModeCallout />
       </div>

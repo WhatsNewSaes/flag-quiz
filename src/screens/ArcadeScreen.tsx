@@ -322,7 +322,7 @@ export function ArcadeScreen({ onBack }: ArcadeScreenProps) {
         )}
 
         {/* Question area */}
-        <main>
+        <section>
           {arcade.quizMode === 'flag-picker' ? (
             <div className="flex flex-col items-center justify-center min-h-[200px] sm:min-h-[240px]">
               <h2
@@ -385,7 +385,7 @@ export function ArcadeScreen({ onBack }: ArcadeScreenProps) {
               />
             )}
           </div>
-        </main>
+        </section>
       </div>
 
       <Celebration streak={arcade.streak} show={showCelebration} />

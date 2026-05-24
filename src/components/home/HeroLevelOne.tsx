@@ -95,7 +95,7 @@ export function HeroLevelOne({ onComplete }: HeroLevelOneProps) {
           />
         </div>
 
-        <main>
+        <section>
           {game.currentQuizMode === 'flag-picker' ? (
             <div className="flex flex-col items-center justify-center min-h-[140px] sm:min-h-[180px] mb-3">
               <h2
@@ -138,7 +138,7 @@ export function HeroLevelOne({ onComplete }: HeroLevelOneProps) {
               />
             )}
           </div>
-        </main>
+        </section>
       </div>
 
       <Celebration streak={streak} show={showCelebration} />

@@ -44,12 +44,36 @@ function escapeHtml(s: string): string {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-// Extract CSS/JS asset paths from the built index.html
-function getAssets(): { css: string[]; js: string[] } {
+type Assets = {
+  css: string[];
+  js: string[];
+  modulePreloads: string[];
+};
+
+// Extract CSS/JS asset paths from the built index.html. Also pulls Vite's
+// modulepreload hints so SEO pages can preload vendor (and other static deps)
+// in parallel with the entry script instead of waiting for it to parse.
+function getAssets(): Assets {
   const html = fs.readFileSync(path.join(DIST, 'index.html'), 'utf-8');
   const css = [...html.matchAll(/href="(\/assets\/[^"]+\.css)"/g)].map((m) => m[1]);
-  const js = [...html.matchAll(/src="(\/assets\/[^"]+\.js)"/g)].map((m) => m[1]);
-  return { css, js };
+  const js = [...html.matchAll(/<script[^>]*src="(\/assets\/[^"]+\.js)"/g)].map((m) => m[1]);
+  const modulePreloads = [...html.matchAll(/<link[^>]*rel="modulepreload"[^>]*href="(\/assets\/[^"]+\.js)"/g)].map((m) => m[1]);
+  return { css, js, modulePreloads };
+}
+
+// Resolve a route chunk filename by its module prefix (e.g. "ContentPage" →
+// "/assets/ContentPage-D-spXxf_.js"). Returns null if no matching chunk
+// exists — e.g. after experimentalMinChunkSize merges a small route into a
+// parent — so callers degrade gracefully.
+const _assetsDirCache: { files?: string[] } = {};
+function findChunk(prefix: string): string | null {
+  if (!_assetsDirCache.files) {
+    _assetsDirCache.files = fs.readdirSync(path.join(DIST, 'assets'));
+  }
+  const match = _assetsDirCache.files.find(
+    (f) => f.startsWith(prefix + '-') && f.endsWith('.js')
+  );
+  return match ? `/assets/${match}` : null;
 }
 
 const colorHex: Record<string, string> = {
@@ -219,13 +243,31 @@ interface PageMeta {
   flagData?: { code: string; description?: object; facts?: object };
 }
 
-function buildPage(meta: PageMeta, bodyHtml: string, assets: { css: string[]; js: string[] }): string {
+function buildPage(
+  meta: PageMeta,
+  bodyHtml: string,
+  assets: Assets,
+  routeChunk?: string,
+): string {
   const jsonLdTag = meta.jsonLd
     ? `<script type="application/ld+json">${JSON.stringify(meta.jsonLd)}</script>`
     : '';
   const flagDataTag = meta.flagData
     ? `<script id="__flag_data__" type="application/json">${JSON.stringify(meta.flagData)}</script>`
     : '';
+
+  // Preload static deps of the entry (vendor, etc.) so they download in
+  // parallel with the entry chunk instead of being discovered after parse.
+  // Also preload this route's lazy chunk so it races the vendor download
+  // instead of waiting for the main bundle to trigger the dynamic import.
+  const routeChunkHref = routeChunk ? findChunk(routeChunk) : null;
+  const preloadHrefs = [
+    ...assets.modulePreloads,
+    ...(routeChunkHref ? [routeChunkHref] : []),
+  ];
+  const modulePreloadTags = preloadHrefs
+    .map((href) => `<link rel="modulepreload" crossorigin href="${href}">`)
+    .join('\n  ');
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -251,13 +293,14 @@ function buildPage(meta: PageMeta, bodyHtml: string, assets: { css: string[]; js
   <link rel="preload" as="font" type="font/woff2" href="/fonts/press-start-2p-400.woff2" crossorigin>
   <link rel="preload" as="font" type="font/woff2" href="/fonts/space-mono-400.woff2" crossorigin>
   <link rel="preload" as="font" type="font/woff2" href="/fonts/space-mono-700.woff2" crossorigin>
-  ${assets.css.map((href) => `<link rel="stylesheet" href="${href}">`).join('\n  ')}
+  ${assets.js.map((src) => `<script type="module" crossorigin src="${src}"></script>`).join('\n  ')}
+  ${modulePreloadTags}
+  ${assets.css.map((href) => `<link rel="stylesheet" crossorigin href="${href}">`).join('\n  ')}
 </head>
 <body>
   <div id="root">
     ${bodyHtml}
   </div>
-  ${assets.js.map((src) => `<script type="module" src="${src}"></script>`).join('\n  ')}
 </body>
 </html>`;
 }
@@ -266,7 +309,7 @@ function buildPage(meta: PageMeta, bodyHtml: string, assets: { css: string[]; js
 // Country flag page
 // ---------------------------------------------------------------------------
 
-function generateCountryPage(country: Country, assets: { css: string[]; js: string[] }): string {
+function generateCountryPage(country: Country, assets: Assets): string {
   const slug = slugify(country.name);
   const emoji = getFlagEmoji(country.code);
   const features = flagFeatures[country.code];
@@ -457,6 +500,7 @@ function generateCountryPage(country: Country, assets: { css: string[]; js: stri
     },
     bodyHtml,
     assets,
+    'CountryFlagPage',
   );
 }
 
@@ -464,7 +508,7 @@ function generateCountryPage(country: Country, assets: { css: string[]; js: stri
 // Flags directory page
 // ---------------------------------------------------------------------------
 
-function generateDirectoryPage(assets: { css: string[]; js: string[] }): string {
+function generateDirectoryPage(assets: Assets): string {
   let bodyHtml = `
     <nav aria-label="Breadcrumb" style="padding:8px 16px;font-family:'Space Mono',monospace;font-size:14px;">
       <a href="/">Home</a> / Flags
@@ -518,6 +562,7 @@ function generateDirectoryPage(assets: { css: string[]; js: string[] }): string 
     },
     bodyHtml,
     assets,
+    'FlagsDirectoryPage',
   );
 }
 
@@ -525,7 +570,7 @@ function generateDirectoryPage(assets: { css: string[]; js: string[] }): string 
 // Continent page
 // ---------------------------------------------------------------------------
 
-function generateContinentPage(continent: Continent, assets: { css: string[]; js: string[] }): string {
+function generateContinentPage(continent: Continent, assets: Assets): string {
   const slug = slugify(continent);
   const cc = countries.filter((c) => c.continent === continent);
 
@@ -618,6 +663,7 @@ function generateContinentPage(continent: Continent, assets: { css: string[]; js
     },
     bodyHtml,
     assets,
+    'ContinentFlagsPage',
   );
 }
 
@@ -625,7 +671,7 @@ function generateContinentPage(continent: Continent, assets: { css: string[]; js
 // Quiz landing page
 // ---------------------------------------------------------------------------
 
-function generateQuizPage(assets: { css: string[]; js: string[] }): string {
+function generateQuizPage(assets: Assets): string {
   const bodyHtml = `
     <nav aria-label="Breadcrumb" style="padding:8px 16px;font-family:'Space Mono',monospace;font-size:14px;">
       <a href="/">Home</a> / Flag Quiz
@@ -698,6 +744,7 @@ function generateQuizPage(assets: { css: string[]; js: string[] }): string {
     },
     bodyHtml,
     assets,
+    'QuizLandingPage',
   );
 }
 
@@ -705,7 +752,7 @@ function generateQuizPage(assets: { css: string[]; js: string[] }): string {
 // Continent quiz page (static HTML for /quiz/{slug})
 // ---------------------------------------------------------------------------
 
-function generateContinentQuizStaticPage(continent: Continent, assets: { css: string[]; js: string[] }): string {
+function generateContinentQuizStaticPage(continent: Continent, assets: Assets): string {
   const slug = slugify(continent);
   const cc = countries.filter((c) => c.continent === continent);
 
@@ -811,6 +858,7 @@ function generateContinentQuizStaticPage(continent: Continent, assets: { css: st
     },
     bodyHtml,
     assets,
+    'ContinentQuizPage',
   );
 }
 
@@ -828,7 +876,7 @@ interface ContentPage {
   getCountries: () => Country[];
 }
 
-function generateContentPage(page: ContentPage, assets: { css: string[]; js: string[] }): string {
+function generateContentPage(page: ContentPage, assets: Assets): string {
   const matchedCountries = page.getCountries();
 
   let bodyHtml = `
@@ -905,6 +953,7 @@ function generateContentPage(page: ContentPage, assets: { css: string[]; js: str
     },
     bodyHtml,
     assets,
+    'ContentPage',
   );
 }
 
@@ -1121,7 +1170,7 @@ function getContentPages(): ContentPage[] {
 // Patterns index page
 // ---------------------------------------------------------------------------
 
-function generatePatternsIndexPage(assets: { css: string[]; js: string[] }): string {
+function generatePatternsIndexPage(assets: Assets): string {
   const patternCards = flagPatternInfos.map((info) => {
     const count = countries.filter((c) => flagFeatures[c.code]?.patterns.includes(info.pattern)).length;
     return `
@@ -1179,6 +1228,7 @@ function generatePatternsIndexPage(assets: { css: string[]; js: string[] }): str
     },
     bodyHtml,
     assets,
+    'PatternsPage',
   );
 }
 
@@ -1186,7 +1236,7 @@ function generatePatternsIndexPage(assets: { css: string[]; js: string[] }): str
 // Religions index page + detail pages
 // ---------------------------------------------------------------------------
 
-function generateReligionsIndexPage(assets: { css: string[]; js: string[] }): string {
+function generateReligionsIndexPage(assets: Assets): string {
   const entries = religions
     .map((r) => ({ religion: r, count: getCountriesForReligion(r).length }))
     .sort((a, b) => a.religion.name.localeCompare(b.religion.name));
@@ -1239,10 +1289,11 @@ function generateReligionsIndexPage(assets: { css: string[]; js: string[] }): st
     },
     bodyHtml,
     assets,
+    'ReligionsIndexPage',
   );
 }
 
-function generateReligionPage(religion: Religion, assets: { css: string[]; js: string[] }): string {
+function generateReligionPage(religion: Religion, assets: Assets): string {
   const adherents = getCountriesForReligion(religion);
 
   const rows = adherents.map((a, i) => {
@@ -1308,6 +1359,7 @@ function generateReligionPage(religion: Religion, assets: { css: string[]; js: s
     },
     bodyHtml,
     assets,
+    'ReligionPage',
   );
 }
 
@@ -1315,7 +1367,7 @@ function generateReligionPage(religion: Religion, assets: { css: string[]; js: s
 // Organizations index page
 // ---------------------------------------------------------------------------
 
-function generateOrganizationsIndexPage(assets: { css: string[]; js: string[] }): string {
+function generateOrganizationsIndexPage(assets: Assets): string {
   const orgCards = organizations.map((o) => `
     <a href="/organizations/${o.slug}" style="display:block;border:2px solid #2D2D2D;padding:14px;text-decoration:none;background:#FFF8E7;box-shadow:3px 3px 0 #2D2D2D;">
       <div style="font-size:2rem;line-height:1;">${o.emoji}</div>
@@ -1368,6 +1420,7 @@ function generateOrganizationsIndexPage(assets: { css: string[]; js: string[] })
     },
     bodyHtml,
     assets,
+    'OrganizationsPage',
   );
 }
 
@@ -1375,7 +1428,7 @@ function generateOrganizationsIndexPage(assets: { css: string[]; js: string[] })
 // Individual organization page
 // ---------------------------------------------------------------------------
 
-function generateOrganizationPage(org: typeof organizations[number], assets: { css: string[]; js: string[] }): string {
+function generateOrganizationPage(org: typeof organizations[number], assets: Assets): string {
   const memberCodes = organizationMembers[org.slug] || [];
   const memberCountries = memberCodes
     .map((code) => countries.find((c) => c.code === code))
@@ -1450,6 +1503,7 @@ function generateOrganizationPage(org: typeof organizations[number], assets: { c
     },
     bodyHtml,
     assets,
+    'OrganizationPage',
   );
 }
 
@@ -1457,7 +1511,7 @@ function generateOrganizationPage(org: typeof organizations[number], assets: { c
 // Territories index page
 // ---------------------------------------------------------------------------
 
-function generateTerritoriesIndexPage(assets: { css: string[]; js: string[] }): string {
+function generateTerritoriesIndexPage(assets: Assets): string {
   // Group by sovereign
   const groups = new Map<string, typeof territories>();
   for (const t of territories) {
@@ -1526,6 +1580,7 @@ function generateTerritoriesIndexPage(assets: { css: string[]; js: string[] }): 
     },
     bodyHtml,
     assets,
+    'TerritoriesPage',
   );
 }
 
@@ -1533,7 +1588,7 @@ function generateTerritoriesIndexPage(assets: { css: string[]; js: string[] }): 
 // Individual territory page
 // ---------------------------------------------------------------------------
 
-function generateTerritoryPage(territory: typeof territories[number], assets: { css: string[]; js: string[] }): string {
+function generateTerritoryPage(territory: typeof territories[number], assets: Assets): string {
   const slug = slugify(territory.name);
   const emoji = getFlagEmoji(territory.code);
   const sovereignCountry = countries.find((c) => c.code === territory.sovereignCode);
@@ -1750,6 +1805,7 @@ function generateTerritoryPage(territory: typeof territories[number], assets: { 
     },
     bodyHtml,
     assets,
+    'TerritoryFlagPage',
   );
 }
 
@@ -1757,7 +1813,7 @@ function generateTerritoryPage(territory: typeof territories[number], assets: { 
 // Emoji flags page
 // ---------------------------------------------------------------------------
 
-function generateEmojiFlagsPage(assets: { css: string[]; js: string[] }): string {
+function generateEmojiFlagsPage(assets: Assets): string {
   const grid = countries.map((c) =>
     `<a href="/flags/${slugify(c.name)}" title="${escapeHtml(c.name)}" style="display:inline-flex;flex-direction:column;align-items:center;gap:4px;padding:8px;border:1px solid #2D2D2D;text-decoration:none;background:#FFF8E7;font-family:'Inter',sans-serif;font-size:11px;color:#2D2D2D;width:80px;text-align:center;">
       <span style="font-size:1.6rem;line-height:1;">${getFlagEmoji(c.code)}</span>
@@ -1809,6 +1865,7 @@ function generateEmojiFlagsPage(assets: { css: string[]; js: string[] }): string
     },
     bodyHtml,
     assets,
+    'EmojiFlagsPage',
   );
 }
 
@@ -1816,7 +1873,7 @@ function generateEmojiFlagsPage(assets: { css: string[]; js: string[] }): string
 // About page
 // ---------------------------------------------------------------------------
 
-function generateAboutPage(assets: { css: string[]; js: string[] }): string {
+function generateAboutPage(assets: Assets): string {
   const bodyHtml = `
     <nav aria-label="Breadcrumb" style="padding:8px 16px;font-family:'Inter',sans-serif;font-size:14px;">
       <a href="/">Home</a> / About
@@ -1855,6 +1912,7 @@ function generateAboutPage(assets: { css: string[]; js: string[] }): string {
     },
     bodyHtml,
     assets,
+    'AboutPage',
   );
 }
 
@@ -1884,6 +1942,25 @@ function writeFile(filePath: string, content: string) {
   fs.writeFileSync(filePath, content, 'utf-8');
 }
 
+// Inject a modulepreload hint for the HomePage chunk into the SPA shell HTML
+// (dist/index.html). HomePage is lazy-loaded so it doesn't bloat the main
+// bundle on /flags/* visits, but visitors landing on `/` shouldn't pay an
+// extra round-trip for it.
+function injectHomePagePreload() {
+  const shellPath = path.join(DIST, 'index.html');
+  const homePageChunk = findChunk('HomePage');
+  if (!homePageChunk) return;
+  let html = fs.readFileSync(shellPath, 'utf-8');
+  const tag = `<link rel="modulepreload" crossorigin href="${homePageChunk}">`;
+  if (html.includes(tag)) return;
+  // Insert alongside Vite's existing modulepreload tags (or before </head>).
+  html = html.includes('rel="modulepreload"')
+    ? html.replace(/(<link rel="modulepreload"[^>]*>)/, `$1\n    ${tag}`)
+    : html.replace('</head>', `    ${tag}\n  </head>`);
+  fs.writeFileSync(shellPath, html, 'utf-8');
+  console.log(`  Injected HomePage modulepreload into SPA shell: ${homePageChunk}`);
+}
+
 function main() {
   console.log('Generating SEO pages...');
 
@@ -1892,8 +1969,12 @@ function main() {
     process.exit(1);
   }
 
+  // Read assets BEFORE injecting the HomePage preload so SEO pages (which
+  // don't render HomePage) don't end up preloading it unnecessarily.
   const assets = getAssets();
   console.log(`Found assets: ${assets.css.length} CSS, ${assets.js.length} JS`);
+
+  injectHomePagePreload();
 
   const sitemapUrls: { loc: string; priority: string; changefreq?: string }[] = [];
 
