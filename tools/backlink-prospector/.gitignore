@@ -1,0 +1,11 @@
+.venv/
+data/*.db
+data/*.db-journal
+logs/*.log
+output/*.csv
+output/*.md
+output/*.html
+__pycache__/
+*.pyc
+.crm_password.local
+.vercel
