@@ -1897,7 +1897,7 @@ function generateAboutPage(assets: Assets): string {
         Flags are visual shorthand for an entire nation's history, geography, and values. Recognizing them sharpens your understanding of world events, helps you in trivia and travel, and is a surprisingly addictive way to learn geography.
       </p>
       <p style="font-family:'Inter',sans-serif;font-size:15px;line-height:1.7;">
-        Built with care by the team at <a href="https://learntoship.ai" rel="noopener noreferrer">LearnToShip.ai</a>.
+        Built with care by the team at <a href="https://uxcabin.com" rel="noopener noreferrer">UX Cabin</a>.
       </p>
       <nav style="margin-top:32px;text-align:center;padding-bottom:32px;">
         <a href="/">Home</a> &middot; <a href="/flags">Browse Flags</a> &middot; <a href="/quiz">Quiz</a> &middot; <a href="/play">Play</a>

@@ -43,7 +43,7 @@ export function Breadcrumbs({ items }: BreadcrumbsProps) {
 
   return (
     <nav ref={navRef} aria-label="Breadcrumb" className="px-1 py-2">
-      <ol className="flex flex-wrap items-center gap-1.5">
+      <ol className="flex flex-wrap items-center gap-x-1.5 gap-y-2">
         {items.map((item, i) => {
           const isLast = i === items.length - 1;
           const isHome = i === 0 && (item.label === 'Home' || item.href === '/');
@@ -57,7 +57,7 @@ export function Breadcrumbs({ items }: BreadcrumbsProps) {
           );
 
           const chipBase =
-            'font-retro text-[10px] md:text-[11px] uppercase tracking-wider border-2 border-retro-border shadow-pixel-sm px-2.5 py-1 transition-all';
+            'font-retro text-[9px] sm:text-[10px] md:text-[11px] uppercase tracking-wider border-2 border-retro-border px-1.5 py-0.5 sm:px-2.5 sm:py-1 sm:shadow-pixel-sm transition-all';
           const linkChip = `${chipBase} bg-retro-surface text-retro-text hover:translate-y-0.5 hover:shadow-none hover:bg-retro-accent/40`;
           const currentChip = `${chipBase} bg-retro-neon-green text-white`;
 

@@ -148,12 +148,12 @@ export function SiteFooter() {
             <Link to="/quiz" className={linkClass}>Quiz</Link>
             <Link to="/play" className={linkClass}>Play</Link>
             <a
-              href="https://learntoship.ai"
+              href="https://uxcabin.com"
               target="_blank"
               rel="noopener noreferrer"
               className={linkClass}
             >
-              Built by LearnToShip.ai
+              Built by UX Cabin
             </a>
           </nav>
           <p className="font-retro text-[8px] text-gray-400">
