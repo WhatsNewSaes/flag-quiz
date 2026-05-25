@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useFlagRunner } from '../hooks/useFlagRunner';
-import { getFlagEmoji } from '../utils/flagEmoji';
+import { FlagImage } from '../components/FlagImage';
 import { Celebration } from '../components/Celebration';
 import { ContinentFilter } from '../components/ContinentFilter';
 import { Difficulty, difficultyLabels } from '../data/countries';
@@ -308,7 +308,7 @@ export function FlagRunnerScreen({ onBack }: FlagRunnerScreenProps) {
                   className="flex-1 flex items-center justify-center"
                 >
                   <div className="text-4xl sm:text-5xl drop-shadow-lg">
-                    {getFlagEmoji(country.code)}
+                    <FlagImage code={country.code} name={country.name} />
                   </div>
                 </div>
               ))}

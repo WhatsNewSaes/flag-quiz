@@ -1,6 +1,6 @@
 import { useParams, Link } from 'react-router-dom';
 import { countries, continents } from '../data/countries';
-import { getFlagEmoji } from '../utils/flagEmoji';
+import { FlagImage } from '../components/FlagImage';
 import { findContinentBySlug, getCountrySlug, getContinentSlug } from '../utils/slugify';
 import { SEOHead } from '../components/seo/SEOHead';
 import { Breadcrumbs } from '../components/seo/Breadcrumbs';
@@ -75,7 +75,7 @@ export function ContinentFlagsPage() {
                 to={`/flags/${getCountrySlug(country)}`}
                 className="flex items-center gap-2 p-2 border border-retro-border/40 hover:border-retro-border hover:bg-retro-accent/30 transition-colors"
               >
-                <span className="text-5xl flex-shrink-0">{getFlagEmoji(country.code)}</span>
+                <FlagImage code={country.code} name={country.name} className="text-5xl flex-shrink-0" />
                 <span className="font-body text-base text-retro-text">{country.name}</span>
               </Link>
             ))}

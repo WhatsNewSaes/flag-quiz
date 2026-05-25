@@ -2,7 +2,7 @@ import { useParams, Link, Navigate } from 'react-router-dom';
 import { findOrgBySlug, organizations } from '../data/organizations';
 import { organizationMembers } from '../data/organizationMembers';
 import { countries } from '../data/countries';
-import { getFlagEmoji } from '../utils/flagEmoji';
+import { FlagImage } from '../components/FlagImage';
 import { getCountrySlug } from '../utils/slugify';
 import { SEOHead } from '../components/seo/SEOHead';
 import { JsonLd, breadcrumbListSchema } from '../components/seo/JsonLd';
@@ -109,7 +109,7 @@ export function OrganizationPage() {
                 to={`/flags/${getCountrySlug(country!)}`}
                 className="flex flex-col items-center gap-1.5 p-3 border border-retro-border/30 hover:bg-retro-accent/20 hover:border-retro-border transition-colors"
               >
-                <span className="text-5xl">{getFlagEmoji(country!.code)}</span>
+                <FlagImage code={country!.code} name={country!.name} className="text-5xl" />
                 <span className="font-body text-xs text-retro-text text-center leading-tight">
                   {country!.name}
                 </span>

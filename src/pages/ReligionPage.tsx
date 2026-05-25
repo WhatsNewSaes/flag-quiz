@@ -2,7 +2,7 @@ import { useParams, Link, Navigate } from 'react-router-dom';
 import { findReligionBySlug } from '../data/religions';
 import { getCountriesForReligion } from '../data/religionCountries';
 import { countries } from '../data/countries';
-import { getFlagEmoji } from '../utils/flagEmoji';
+import { FlagImage } from '../components/FlagImage';
 import { getCountrySlug } from '../utils/slugify';
 import { SEOHead } from '../components/seo/SEOHead';
 import { JsonLd, breadcrumbListSchema } from '../components/seo/JsonLd';
@@ -71,7 +71,7 @@ export function ReligionPage() {
                       className="flex items-center gap-3 p-2 border border-retro-border/30 hover:bg-retro-accent/20 hover:border-retro-border transition-colors"
                     >
                       <span className="font-retro text-xs text-retro-text-secondary w-6 text-right">{i + 1}.</span>
-                      <span className="text-3xl">{getFlagEmoji(country.code)}</span>
+                      <FlagImage code={country.code} name={country.name} className="text-3xl" />
                       <span className="font-body text-sm text-retro-text flex-1">{country.name}</span>
                       <span className="font-body text-sm text-retro-text-secondary tabular-nums">{a.percent}%</span>
                     </Link>

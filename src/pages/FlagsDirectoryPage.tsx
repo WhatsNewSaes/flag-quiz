@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { countries, continents, type Continent } from '../data/countries';
 import { territories } from '../data/territories';
-import { getFlagEmoji } from '../utils/flagEmoji';
+import { FlagImage } from '../components/FlagImage';
 import { getCountrySlug, getContinentSlug } from '../utils/slugify';
 import { SEOHead } from '../components/seo/SEOHead';
 import { Breadcrumbs } from '../components/seo/Breadcrumbs';
@@ -93,7 +93,7 @@ export function FlagsDirectoryPage() {
                     to={`/flags/${getCountrySlug(country)}`}
                     className="flex flex-col items-center gap-1 p-2 border border-retro-border/40 hover:border-retro-border hover:bg-retro-accent/30 transition-colors"
                   >
-                    <span className="text-5xl">{getFlagEmoji(country.code)}</span>
+                    <FlagImage code={country.code} name={country.name} className="text-5xl" />
                     <span className="font-body text-sm text-retro-text text-center">{country.name}</span>
                   </Link>
                 ))}
@@ -117,7 +117,7 @@ export function FlagsDirectoryPage() {
             </p>
             <div className="flex gap-2 text-3xl">
               {['HK', 'PR', 'GL', 'BM', 'PF', 'GI', 'AW', 'GU'].map((code) => (
-                <span key={code}>{getFlagEmoji(code)}</span>
+                <FlagImage key={code} code={code} />
               ))}
             </div>
           </Link>

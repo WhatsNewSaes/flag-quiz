@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useGameContext } from '../contexts/GameContext';
 import { playMenuSelectSound } from '../utils/sounds';
-import { getFlagEmoji } from '../utils/flagEmoji';
+import { FlagImage } from './FlagImage';
 import { CharacterKey } from '../data/characters';
 
 import boySouth from '../images/character/boy-south.png';
@@ -214,7 +214,7 @@ export function NavBar({ variant = 'default' }: NavBarProps) {
                   className="flex items-center gap-1.5 group"
                 >
                   {favoriteFlag && (
-                    <span className="text-base">{getFlagEmoji(favoriteFlag)}</span>
+                    <FlagImage code={favoriteFlag} className="text-base" />
                   )}
                   <span className="font-retro text-sm text-retro-text truncate">
                     {displayName}

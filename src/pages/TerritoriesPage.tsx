@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { territories, getTerritorySlug } from '../data/territories';
-import { getFlagEmoji } from '../utils/flagEmoji';
+import { FlagImage } from '../components/FlagImage';
 import { SEOHead } from '../components/seo/SEOHead';
 import { Breadcrumbs } from '../components/seo/Breadcrumbs';
 import { QuizCTA } from '../components/QuizCTA';
@@ -62,7 +62,7 @@ export function TerritoriesPage() {
             <div className="bg-retro-surface border-2 border-retro-border shadow-pixel p-5">
               <div className="flex items-center gap-2 mb-4">
                 {group.sovereignCode && (
-                  <span className="text-3xl">{getFlagEmoji(group.sovereignCode)}</span>
+                  <FlagImage code={group.sovereignCode} name={group.sovereignName} className="text-3xl" />
                 )}
                 <h2 className="font-retro text-sm text-retro-text">
                   {group.sovereignName}
@@ -79,7 +79,7 @@ export function TerritoriesPage() {
                     to={`/flags/territories/${getTerritorySlug(territory)}`}
                     className="flex flex-col items-center gap-1 p-2 border border-retro-border/40 hover:border-retro-border hover:bg-retro-accent/30 transition-colors"
                   >
-                    <span className="text-5xl">{getFlagEmoji(territory.code)}</span>
+                    <FlagImage code={territory.code} name={territory.name} className="text-5xl" />
                     <span className="font-body text-base text-retro-text text-center">
                       {territory.name}
                     </span>

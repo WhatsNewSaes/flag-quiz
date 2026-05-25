@@ -3,7 +3,7 @@ import { JourneyLevel, JourneyRegion, REGION_THEMES } from '../../data/journeyLe
 import { LevelResult } from '../../hooks/useJourneyProgress';
 import { StarDisplay } from './StarDisplay';
 import { PixelCharacter } from './PixelCharacter';
-import { getFlagEmoji } from '../../utils/flagEmoji';
+import { FlagImage } from '../FlagImage';
 
 import greenMeadowsImg from '../../images/worlds/green meadows.png';
 import sandyShoresImg from '../../images/worlds/sandy shores.png';
@@ -186,7 +186,7 @@ export function OverworldMap({
                                   className="absolute text-xs"
                                   style={{ top: 22, right: 10 }}
                                 >
-                                  {getFlagEmoji(favoriteFlag)}
+                                  <FlagImage code={favoriteFlag} alt="" />
                                 </span>
                               )}
                             </div>

@@ -3,7 +3,7 @@ import { ContinentFilter } from '../components/ContinentFilter';
 import { usePresentation } from '../hooks/usePresentation';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { Continent, continents, Difficulty, difficultyLabels } from '../data/countries';
-import { getFlagEmoji } from '../utils/flagEmoji';
+import { FlagImage } from '../components/FlagImage';
 
 export function PresentationScreen() {
   const [presentationContinents, setPresentationContinents] = useLocalStorage<Continent[]>(
@@ -168,7 +168,7 @@ export function PresentationScreen() {
                 {difficultyLabels[currentCountry.difficulty]}
               </span>
               <div className="text-[120px] sm:text-[160px] leading-none">
-                {getFlagEmoji(currentCountry.code)}
+                <FlagImage code={currentCountry.code} name={currentCountry.name} />
               </div>
               <div className="h-[50px] flex items-center justify-center mt-4">
                 {presentation.revealed ? (
@@ -200,9 +200,7 @@ export function PresentationScreen() {
               </h2>
               <div className="text-[120px] sm:text-[160px] leading-none">
                 {presentation.revealed ? (
-                  <span className="animate-bounce-in inline-block">
-                    {getFlagEmoji(currentCountry.code)}
-                  </span>
+                  <FlagImage code={currentCountry.code} name={currentCountry.name} className="animate-bounce-in" />
                 ) : (
                   <span className="text-gray-200">🏳️</span>
                 )}

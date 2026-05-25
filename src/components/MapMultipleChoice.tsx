@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Country } from '../data/countries';
-import { getFlagEmoji } from '../utils/flagEmoji';
+import { FlagImage } from './FlagImage';
 
 interface MapMultipleChoiceProps {
   options: Country[];
@@ -66,7 +66,7 @@ export function MapMultipleChoice({
             <span className="absolute top-1 left-2.5 sm:top-1.5 sm:left-3 font-mono opacity-70" style={{ fontSize: '11px' }}>
               {index + 1}
             </span>
-            <span className="text-xl lg:text-2xl">{getFlagEmoji(option.code)}</span>
+            <FlagImage code={option.code} name={option.name} className="text-xl lg:text-2xl" />
             <span className="text-xs lg:text-base truncate">{option.name}</span>
           </button>
         ))}

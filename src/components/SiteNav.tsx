@@ -4,7 +4,7 @@ import { organizations } from '../data/organizations';
 import { countries } from '../data/countries';
 import { territories, getTerritorySlug } from '../data/territories';
 import { flagPatternInfos } from '../data/flagPatterns';
-import { getFlagEmoji } from '../utils/flagEmoji';
+import { FlagImage } from './FlagImage';
 import { getCountrySlug } from '../utils/slugify';
 
 type SearchItem =
@@ -185,7 +185,6 @@ export function SiteNav() {
       <ul className="absolute top-full left-0 right-0 mt-1 bg-retro-surface border-2 border-retro-border shadow-pixel z-40 max-h-80 overflow-y-auto">
         {searchResults.map((item, i) => {
           const key = item.kind === 'organization' ? item.slug : item.code;
-          const icon = item.kind === 'organization' ? item.emoji : getFlagEmoji(item.code);
           const tag =
             item.kind === 'territory'
               ? `Territory · ${item.sovereignName}`
@@ -201,7 +200,11 @@ export function SiteNav() {
                   i === selectedIndex ? 'bg-retro-accent/40' : 'hover:bg-retro-accent/30'
                 }`}
               >
-                <span className="text-lg" aria-hidden="true">{icon}</span>
+                {item.kind === 'organization' ? (
+                  <span className="text-lg" aria-hidden="true">{item.emoji}</span>
+                ) : (
+                  <FlagImage code={item.code} name={item.name} className="text-lg" alt="" />
+                )}
                 <span className="flex-1">{item.name}</span>
                 {tag && (
                   <span className="font-body text-[10px] uppercase tracking-wide text-retro-text-secondary/70">

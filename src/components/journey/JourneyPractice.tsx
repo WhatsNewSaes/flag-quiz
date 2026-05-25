@@ -2,7 +2,7 @@ import { useState, useCallback, useMemo } from 'react';
 import { JourneyLevel } from '../../data/journeyLevels';
 import { countries, Country } from '../../data/countries';
 import { shuffle } from '../../utils/shuffle';
-import { getFlagEmoji } from '../../utils/flagEmoji';
+import { FlagImage } from '../FlagImage';
 
 interface JourneyPracticeProps {
   level: JourneyLevel;
@@ -104,7 +104,7 @@ export function JourneyPractice({ level, onBack, onRetry }: JourneyPracticeProps
           {mode === 'flag-to-name' ? (
             <>
               <div className="text-[100px] sm:text-[140px] leading-none mb-4">
-                {getFlagEmoji(currentCountry.code)}
+                <FlagImage code={currentCountry.code} name={currentCountry.name} />
               </div>
               <div className="h-[50px] flex items-center justify-center">
                 {revealed ? (
@@ -123,9 +123,7 @@ export function JourneyPractice({ level, onBack, onRetry }: JourneyPracticeProps
               </h2>
               <div className="text-[100px] sm:text-[140px] leading-none">
                 {revealed ? (
-                  <span className="animate-bounce-in inline-block">
-                    {getFlagEmoji(currentCountry.code)}
-                  </span>
+                  <FlagImage code={currentCountry.code} name={currentCountry.name} className="animate-bounce-in" />
                 ) : (
                   <span className="text-gray-600">{'\u{1F3F3}\u{FE0F}'}</span>
                 )}

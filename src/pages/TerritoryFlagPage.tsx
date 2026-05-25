@@ -3,6 +3,7 @@ import { findTerritoryBySlug, getTerritorySlug, getTerritoriesBySovereign } from
 import { countries } from '../data/countries';
 import { flagFeatures, getSimilarFlags } from '../data/flagFeatures';
 import { getFlagEmoji } from '../utils/flagEmoji';
+import { FlagImage } from '../components/FlagImage';
 import { getCountrySlug, getContinentSlug } from '../utils/slugify';
 import { allFlagCodes, flagEntriesByContinent, resolveFlagEntry } from '../utils/flagEntry';
 import { SEOHead } from '../components/seo/SEOHead';
@@ -82,9 +83,7 @@ export function TerritoryFlagPage() {
 
         {/* Flag display */}
         <div className="bg-retro-surface border-2 border-retro-border shadow-pixel-lg p-6 mt-4 text-center">
-          <div className="text-[8rem] leading-none mb-4" role="img" aria-label={`Flag of ${territory.name}`}>
-            {emoji}
-          </div>
+          <FlagImage code={territory.code} name={territory.name} className="text-[8rem] leading-none mb-4" />
           <h1 className="font-retro text-xl md:text-2xl text-retro-text mb-2">
             Flag of {territory.name}
           </h1>
@@ -109,7 +108,7 @@ export function TerritoryFlagPage() {
             </p>
             <div className="flex items-center justify-center gap-3 sm:gap-5">
               <div className="flex flex-col items-center gap-1 min-w-0 flex-1">
-                <span className="text-5xl sm:text-6xl leading-none">{emoji}</span>
+                <FlagImage code={territory.code} name={territory.name} className="text-5xl sm:text-6xl leading-none" />
                 <span className="font-body text-base text-retro-text text-center truncate max-w-full">
                   {territory.name}
                 </span>
@@ -123,7 +122,7 @@ export function TerritoryFlagPage() {
                   to={`/flags/${getCountrySlug(parentCountry)}`}
                   className="flex flex-col items-center gap-1 min-w-0 flex-1 hover:bg-retro-accent/20 p-2 -m-2 transition-colors"
                 >
-                  <span className="text-5xl sm:text-6xl leading-none">{getFlagEmoji(territory.sovereignCode)}</span>
+                  <FlagImage code={territory.sovereignCode} name={territory.sovereignName} className="text-5xl sm:text-6xl leading-none" />
                   <span className="font-body text-base text-retro-text text-center truncate max-w-full">
                     {territory.sovereignName}
                   </span>
@@ -133,7 +132,7 @@ export function TerritoryFlagPage() {
                 </Link>
               ) : (
                 <div className="flex flex-col items-center gap-1 min-w-0 flex-1">
-                  <span className="text-5xl sm:text-6xl leading-none">{getFlagEmoji(territory.sovereignCode)}</span>
+                  <FlagImage code={territory.sovereignCode} name={territory.sovereignName} className="text-5xl sm:text-6xl leading-none" />
                   <span className="font-body text-base text-retro-text text-center truncate max-w-full">
                     {territory.sovereignName}
                   </span>
@@ -180,7 +179,7 @@ export function TerritoryFlagPage() {
                   to={entry.href}
                   className="flex items-center gap-2 border border-retro-border/40 hover:border-retro-border p-2 hover:bg-retro-accent/30 transition-colors"
                 >
-                  <span className="text-5xl">{getFlagEmoji(entry.code)}</span>
+                  <FlagImage code={entry.code} name={entry.name} className="text-5xl" />
                   <span className="flex-1 font-body text-base text-retro-text">
                     {entry.name}
                     {entry.kind === 'territory' && (
@@ -206,7 +205,7 @@ export function TerritoryFlagPage() {
                   to={`/flags/territories/${getTerritorySlug(t)}`}
                   className="flex flex-col items-center gap-1 p-2 border border-retro-border/40 hover:border-retro-border hover:bg-retro-accent/30 transition-colors"
                 >
-                  <span className="text-5xl">{getFlagEmoji(t.code)}</span>
+                  <FlagImage code={t.code} name={t.name} className="text-5xl" />
                   <span className="font-body text-base text-retro-text text-center">
                     {t.name}
                   </span>
@@ -229,7 +228,7 @@ export function TerritoryFlagPage() {
                   to={peer.href}
                   className="flex flex-col items-center gap-1 p-2 border border-retro-border/40 hover:border-retro-border hover:bg-retro-accent/30 transition-colors"
                 >
-                  <span className="text-5xl">{getFlagEmoji(peer.code)}</span>
+                  <FlagImage code={peer.code} name={peer.name} className="text-5xl" />
                   <span className="font-body text-base text-retro-text text-center">{peer.name}</span>
                   {peer.kind === 'territory' && (
                     <span className="font-body text-[10px] text-retro-text-secondary/70 uppercase">Territory</span>

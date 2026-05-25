@@ -1,4 +1,4 @@
-import { getFlagEmoji } from '../utils/flagEmoji';
+import { FlagImage } from './FlagImage';
 import { Difficulty, difficultyLabels } from '../data/countries';
 
 interface FlagDisplayProps {
@@ -19,14 +19,11 @@ const difficultyColors: Record<Difficulty, string> = {
 export function FlagDisplay({ countryCode, animationKey, difficulty, showDifficulty = true }: FlagDisplayProps) {
   return (
     <div className="flex flex-col items-center justify-center py-4 min-h-[200px] sm:min-h-[240px]">
-      <span
+      <FlagImage
         key={animationKey}
+        code={countryCode}
         className="text-[7rem] sm:text-[8rem] md:text-[9rem] animate-bounce-in select-none"
-        role="img"
-        aria-label="Flag"
-      >
-        {getFlagEmoji(countryCode)}
-      </span>
+      />
       {showDifficulty && (
         <span
           className={`mt-2 px-3 py-1.5 text-xs font-retro rounded-lg border-2 border-retro-border ${difficultyColors[difficulty]}`}

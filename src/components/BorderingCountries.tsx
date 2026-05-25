@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { countries } from '../data/countries';
 import { territories, getTerritorySlug } from '../data/territories';
-import { getFlagEmoji } from '../utils/flagEmoji';
+import { FlagImage } from './FlagImage';
 import { getCountrySlug } from '../utils/slugify';
 
 interface BorderingCountriesProps {
@@ -48,7 +48,7 @@ export function BorderingCountries({ borderCodes }: BorderingCountriesProps) {
             to={n.kind === 'country' ? `/flags/${n.slug}` : `/flags/territories/${n.slug}`}
             className="inline-flex items-center gap-1.5 font-body text-sm border border-retro-border/40 hover:border-retro-border px-2 py-1 hover:bg-retro-accent/30 transition-colors"
           >
-            <span aria-hidden="true">{getFlagEmoji(n.code)}</span>
+            <FlagImage code={n.code} name={n.name} alt="" />
             <span>{n.name}</span>
           </Link>
         ))}

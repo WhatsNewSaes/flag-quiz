@@ -2,7 +2,7 @@ import { useEffect, useState, useRef, useMemo } from 'react';
 import { Country, countries } from '../data/countries';
 import { JeopardyCell } from '../hooks/useJeopardy';
 import { JeopardyQuizMode } from './JeopardyDifficultySelect';
-import { getFlagEmoji } from '../utils/flagEmoji';
+import { FlagImage } from './FlagImage';
 import { playCorrectSound, playIncorrectSound } from '../utils/sounds';
 
 interface JeopardyQuestionProps {
@@ -167,7 +167,7 @@ export function JeopardyQuestion({
           {cell.questionType === 'name-the-flag' ? (
             // Show flag, pick country name
             <div className="text-center">
-              <span className="text-[8rem] sm:text-[14rem] block mb-1">{getFlagEmoji(cell.country.code)}</span>
+              <FlagImage code={cell.country.code} name={cell.country.name} className="text-[8rem] sm:text-[14rem] block mb-1" />
               <p className="text-white text-lg">What country does this flag belong to?</p>
             </div>
           ) : (
@@ -249,7 +249,7 @@ export function JeopardyQuestion({
                   {cell.questionType === 'name-the-flag' ? (
                     <span className="text-lg">{option.name}</span>
                   ) : (
-                    <span className="text-5xl">{getFlagEmoji(option.code)}</span>
+                    <FlagImage code={option.code} name={option.name} className="text-5xl" />
                   )}
                 </button>
               ))}

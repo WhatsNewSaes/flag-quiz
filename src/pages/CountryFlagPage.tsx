@@ -4,6 +4,7 @@ import { getTerritoriesBySovereign, getTerritorySlug } from '../data/territories
 import { organizations } from '../data/organizations';
 import { organizationMembers } from '../data/organizationMembers';
 import { getFlagEmoji } from '../utils/flagEmoji';
+import { FlagImage } from '../components/FlagImage';
 import { findCountryBySlug, getCountrySlug, getContinentSlug } from '../utils/slugify';
 import { allFlagCodes, flagEntriesByContinent, resolveFlagEntry } from '../utils/flagEntry';
 import { SEOHead } from '../components/seo/SEOHead';
@@ -93,9 +94,7 @@ export function CountryFlagPage() {
 
         {/* Flag Display */}
         <div className="bg-retro-surface border-2 border-retro-border shadow-pixel-lg p-6 mt-4 text-center">
-          <div className="text-[8rem] leading-none mb-4" role="img" aria-label={`Flag of ${country.name}`}>
-            {emoji}
-          </div>
+          <FlagImage code={country.code} name={country.name} className="text-[8rem] leading-none mb-4" />
           <h1 className="font-retro text-xl md:text-2xl text-retro-text mb-2">
             Flag of {country.name}
           </h1>
@@ -149,7 +148,7 @@ export function CountryFlagPage() {
                   to={entry.href}
                   className="flex items-center gap-2 border border-retro-border/40 hover:border-retro-border p-2 hover:bg-retro-accent/30 transition-colors"
                 >
-                  <span className="text-5xl">{getFlagEmoji(entry.code)}</span>
+                  <FlagImage code={entry.code} name={entry.name} className="text-5xl" />
                   <span className="flex-1 font-body text-base text-retro-text">
                     {entry.name}
                     {entry.kind === 'territory' && (
@@ -175,7 +174,7 @@ export function CountryFlagPage() {
                   to={`/flags/territories/${getTerritorySlug(t)}`}
                   className="flex flex-col items-center gap-1 p-2 border border-retro-border/40 hover:border-retro-border hover:bg-retro-accent/30 transition-colors"
                 >
-                  <span className="text-5xl">{getFlagEmoji(t.code)}</span>
+                  <FlagImage code={t.code} name={t.name} className="text-5xl" />
                   <span className="font-body text-base text-retro-text text-center">
                     {t.name}
                   </span>
@@ -198,7 +197,7 @@ export function CountryFlagPage() {
                   to={peer.href}
                   className="flex flex-col items-center gap-1 p-2 border border-retro-border/40 hover:border-retro-border hover:bg-retro-accent/30 transition-colors"
                 >
-                  <span className="text-5xl">{getFlagEmoji(peer.code)}</span>
+                  <FlagImage code={peer.code} name={peer.name} className="text-5xl" />
                   <span className="font-body text-base text-retro-text text-center">{peer.name}</span>
                   {peer.kind === 'territory' && (
                     <span className="font-body text-[10px] text-retro-text-secondary/70 uppercase">Territory</span>

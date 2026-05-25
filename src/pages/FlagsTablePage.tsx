@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { countries, continents, type Continent } from '../data/countries';
 import { territories, getTerritorySlug } from '../data/territories';
 import { countryFacts } from '../data/countryFacts';
-import { getFlagEmoji } from '../utils/flagEmoji';
+import { FlagImage } from '../components/FlagImage';
 import { getCountrySlug } from '../utils/slugify';
 import { SEOHead } from '../components/seo/SEOHead';
 import { Breadcrumbs } from '../components/seo/Breadcrumbs';
@@ -322,7 +322,7 @@ export function FlagsTablePage() {
             <tbody>
               {filteredSorted.map((row) => (
                 <tr key={`${row.kind}-${row.code}`} className="border-b border-retro-border/20 hover:bg-retro-accent/20 transition-colors">
-                  <td className="px-3 py-2 text-3xl leading-none">{getFlagEmoji(row.code)}</td>
+                  <td className="px-3 py-2 text-3xl leading-none"><FlagImage code={row.code} name={row.name} /></td>
                   <td className="px-3 py-2">
                     <Link to={row.href} className="font-body text-sm text-retro-text hover:text-retro-neon-blue hover:underline">
                       {row.name}

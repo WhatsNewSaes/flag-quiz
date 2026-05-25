@@ -4,7 +4,7 @@ import { Capacitor } from '@capacitor/core';
 import { SEOHead } from '../components/seo/SEOHead';
 import { JsonLd } from '../components/seo/JsonLd';
 import { countries, type Continent } from '../data/countries';
-import { getFlagEmoji } from '../utils/flagEmoji';
+import { FlagImage } from '../components/FlagImage';
 import { getCountrySlug, getContinentSlug } from '../utils/slugify';
 import bigLogo from '../images/logo/big-logo.svg';
 import { HeroJourneyFlow } from '../components/home/HeroJourneyFlow';
@@ -122,9 +122,7 @@ function FlagExplorer() {
                 to={`/flags/${getCountrySlug(country)}`}
                 className="flex flex-col items-center bg-white border border-retro-border/30 p-2 hover:bg-retro-accent/20 hover:shadow-pixel-sm transition-all group"
               >
-                <span className="text-2xl md:text-3xl mb-1 group-hover:scale-110 transition-transform">
-                  {getFlagEmoji(country.code)}
-                </span>
+                <FlagImage code={country.code} name={country.name} className="text-2xl md:text-3xl mb-1 group-hover:scale-110 transition-transform" />
                 <span className="font-body text-[11px] md:text-xs text-retro-text-secondary text-center leading-tight">
                   {country.name}
                 </span>

@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { countries } from '../../data/countries';
-import { getFlagEmoji } from '../../utils/flagEmoji';
+import { FlagImage } from '../FlagImage';
 
 const POPULAR_FLAGS = ['US', 'GB', 'CN', 'JP', 'BR', 'FR', 'IN', 'KR', 'MX', 'DE', 'IT', 'CA'];
 
@@ -39,7 +39,7 @@ export function FavoriteFlagSelect({ onSelect, title = 'Pick Your Flag' }: Favor
             onClick={() => onSelect(code)}
             className="retro-btn w-14 h-14 sm:w-18 sm:h-18 flex items-center justify-center bg-retro-surface text-3xl sm:text-4xl rounded-lg"
           >
-            {getFlagEmoji(code)}
+            <FlagImage code={code} />
           </button>
         ))}
       </div>
@@ -65,7 +65,7 @@ export function FavoriteFlagSelect({ onSelect, title = 'Pick Your Flag' }: Favor
                 onClick={() => onSelect(c.code)}
                 className="w-full flex items-center gap-3 px-3 py-2.5 text-left hover:bg-retro-accent/20 transition-colors border-b border-retro-border/20 last:border-b-0"
               >
-                <span className="text-2xl">{getFlagEmoji(c.code)}</span>
+                <FlagImage code={c.code} name={c.name} className="text-2xl" />
                 <span className="text-sm text-retro-text">{c.name}</span>
               </button>
             ))}
