@@ -238,6 +238,7 @@ interface PageMeta {
   canonical: string;
   ogImage?: string;
   jsonLd?: object;
+  noindex?: boolean;
   // When set, inlined as a <script id="__flag_data__"> so the client hook
   // can render the country/territory page without an initial fetch.
   flagData?: { code: string; description?: object; facts?: object };
@@ -277,6 +278,7 @@ function buildPage(
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌍</text></svg>">
   <title>${escapeHtml(meta.title)}</title>
   <meta name="description" content="${escapeHtml(meta.description)}">
+  ${meta.noindex ? '<meta name="robots" content="noindex,nofollow">' : ''}
   <link rel="canonical" href="${meta.canonical}">
   <meta property="og:type" content="article">
   <meta property="og:title" content="${escapeHtml(meta.title)}">
@@ -1985,6 +1987,23 @@ function generateEmbedPage(assets: Assets): string {
   );
 }
 
+// Minimal shell for the iframed arcade. Vercel needs a static file at this
+// path or it returns 404 for nested paths under /embed/. The SPA hydrates
+// over this body and renders the real <EmbedArcadeRoute>.
+function generateEmbedArcadePage(assets: Assets): string {
+  return buildPage(
+    {
+      title: `Flag Arcade — Embedded Quiz`,
+      description: `An embedded flag-guessing quiz from flagarcade.com.`,
+      canonical: `${SITE_URL}/embed/arcade`,
+      noindex: true,
+    },
+    `<div style="background:#38BDF8;min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;color:#2D2D2D;">Loading…</div>`,
+    assets,
+    'EmbedArcadeRoute',
+  );
+}
+
 // ---------------------------------------------------------------------------
 // Sitemap
 // ---------------------------------------------------------------------------
@@ -2154,6 +2173,11 @@ function main() {
   writeFile(path.join(DIST, 'embed', 'index.html'), generateEmbedPage(assets));
   sitemapUrls.push({ loc: `${SITE_URL}/embed`, priority: '0.6' });
   console.log('  /embed');
+
+  // Embed arcade — static shell so Vercel doesn't 404 on this nested route.
+  // Not in sitemap (noindex).
+  writeFile(path.join(DIST, 'embed', 'arcade', 'index.html'), generateEmbedArcadePage(assets));
+  console.log('  /embed/arcade');
 
   // Sitemap
   writeFile(path.join(DIST, 'sitemap.xml'), generateSitemap(sitemapUrls));

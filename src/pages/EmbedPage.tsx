@@ -84,7 +84,7 @@ export function EmbedPage() {
           <h2 className="font-retro text-sm text-retro-text mb-3">Live preview</h2>
           <div className="relative w-full mx-auto" style={{ maxWidth: 600, aspectRatio: '3 / 4' }}>
             <iframe
-              src={EMBED_URL}
+              src="/embed/arcade"
               title="Flag Arcade quiz preview"
               loading="lazy"
               className="absolute inset-0 w-full h-full border-2 border-retro-border"
