@@ -74,9 +74,8 @@ export function EmbedPage() {
             Embed Flag Arcade
           </h1>
           <p className="font-body text-sm md:text-base text-retro-text-secondary max-w-xl mx-auto">
-            Add a free flag-guessing quiz to your classroom site, blog, or LMS. No accounts,
-            no ads, no tracking — just copy the snippet and paste it where you want the game
-            to appear.
+            Add a free flag-guessing quiz to your classroom site, blog, or LMS. No accounts
+            required — just copy the snippet and paste it where you want the game to appear.
           </p>
         </header>
 

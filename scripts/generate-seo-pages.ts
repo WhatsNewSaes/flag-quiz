@@ -1950,7 +1950,7 @@ function generateEmbedPage(assets: Assets): string {
     <main style="max-width:720px;margin:0 auto;padding:16px;">
       <h1 style="font-family:'Press Start 2P',cursive;">Embed Flag Arcade</h1>
       <p style="font-family:'Inter',sans-serif;font-size:15px;line-height:1.7;">
-        Add a free flag-guessing quiz to your classroom site, blog, or LMS. No accounts, no ads, no tracking — copy the iframe snippet and paste it where you want the game to appear.
+        Add a free flag-guessing quiz to your classroom site, blog, or LMS. No accounts required — copy the iframe snippet and paste it where you want the game to appear.
       </p>
       <h2 style="font-family:'Press Start 2P',cursive;font-size:14px;margin-top:24px;">Responsive snippet</h2>
       <p style="font-family:'Inter',sans-serif;font-size:14px;color:#6B7280;">Fills the width of its container. Best for blog posts and LMS pages.</p>
