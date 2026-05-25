@@ -8,9 +8,10 @@ interface SEOHeadProps {
   canonical?: string;
   ogImage?: string;
   ogType?: string;
+  noindex?: boolean;
 }
 
-export function SEOHead({ title, description, canonical, ogImage, ogType }: SEOHeadProps) {
+export function SEOHead({ title, description, canonical, ogImage, ogType, noindex }: SEOHeadProps) {
   useEffect(() => {
     document.title = title;
 
@@ -26,6 +27,7 @@ export function SEOHead({ title, description, canonical, ogImage, ogType }: SEOH
     };
 
     setMeta('description', description);
+    setMeta('robots', noindex ? 'noindex,nofollow' : 'index,follow');
     setMeta('og:type', ogType || 'website', true);
     setMeta('og:title', title, true);
     setMeta('og:description', description, true);

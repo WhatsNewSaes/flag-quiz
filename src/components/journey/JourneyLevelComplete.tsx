@@ -70,7 +70,7 @@ export function JourneyLevelComplete({
   const levelNumber = `${level.regionIndex + 1}-${level.levelIndexInRegion + 1}`;
 
   return (
-    <div className="min-h-screen bg-retro-bg flex items-center justify-center px-4 relative">
+    <div className="min-h-screen-nav bg-retro-bg flex items-center justify-center px-4 relative">
       {/* Back to map — fixed top-left */}
       <button
         onClick={onBackToMap}

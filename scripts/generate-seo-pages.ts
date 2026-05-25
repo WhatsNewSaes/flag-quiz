@@ -1917,6 +1917,75 @@ function generateAboutPage(assets: Assets): string {
 }
 
 // ---------------------------------------------------------------------------
+// Embed page (teacher / classroom distribution)
+// ---------------------------------------------------------------------------
+
+function generateEmbedPage(assets: Assets): string {
+  const embedUrl = `${SITE_URL}/embed/arcade`;
+  const responsiveSnippet = `&lt;div style=&quot;position:relative;width:100%;max-width:720px;aspect-ratio:3/4;margin:0 auto;&quot;&gt;
+  &lt;iframe
+    src=&quot;${embedUrl}&quot;
+    title=&quot;Flag Arcade quiz&quot;
+    loading=&quot;lazy&quot;
+    allow=&quot;autoplay&quot;
+    style=&quot;position:absolute;inset:0;width:100%;height:100%;border:0;&quot;
+  &gt;&lt;/iframe&gt;
+&lt;/div&gt;`;
+  const fixedSnippet = `&lt;iframe
+  src=&quot;${embedUrl}&quot;
+  title=&quot;Flag Arcade quiz&quot;
+  width=&quot;600&quot;
+  height=&quot;800&quot;
+  loading=&quot;lazy&quot;
+  allow=&quot;autoplay&quot;
+  style=&quot;border:0;&quot;
+&gt;&lt;/iframe&gt;`;
+
+  const bodyHtml = `
+    <nav aria-label="Breadcrumb" style="padding:8px 16px;font-family:'Inter',sans-serif;font-size:14px;">
+      <a href="/">Home</a> / Embed
+    </nav>
+    <main style="max-width:720px;margin:0 auto;padding:16px;">
+      <h1 style="font-family:'Press Start 2P',cursive;">Embed Flag Arcade</h1>
+      <p style="font-family:'Inter',sans-serif;font-size:15px;line-height:1.7;">
+        Add a free flag-guessing quiz to your classroom site, blog, or LMS. No accounts, no ads, no tracking — copy the iframe snippet and paste it where you want the game to appear.
+      </p>
+      <h2 style="font-family:'Press Start 2P',cursive;font-size:14px;margin-top:24px;">Responsive snippet</h2>
+      <p style="font-family:'Inter',sans-serif;font-size:14px;color:#6B7280;">Fills the width of its container. Best for blog posts and LMS pages.</p>
+      <pre style="background:#f4f4f4;border:1px solid #ddd;padding:12px;overflow-x:auto;font-size:12px;line-height:1.5;">${responsiveSnippet}</pre>
+      <h2 style="font-family:'Press Start 2P',cursive;font-size:14px;margin-top:24px;">Fixed size (600 × 800)</h2>
+      <p style="font-family:'Inter',sans-serif;font-size:14px;color:#6B7280;">Works in Google Sites, Notion embeds, and other tools that ask for width and height.</p>
+      <pre style="background:#f4f4f4;border:1px solid #ddd;padding:12px;overflow-x:auto;font-size:12px;line-height:1.5;">${fixedSnippet}</pre>
+      <h2 style="font-family:'Press Start 2P',cursive;font-size:14px;margin-top:24px;">Where it works</h2>
+      <ul style="font-family:'Inter',sans-serif;font-size:15px;line-height:1.8;">
+        <li>Google Sites, Notion, WordPress, Wix, Squarespace, Webflow</li>
+        <li>Canvas, Schoology, Blackboard, and other LMS platforms that allow HTML embeds</li>
+        <li>Any classroom site or teacher blog that lets you paste an iframe</li>
+      </ul>
+      <p style="font-family:'Inter',sans-serif;font-size:14px;color:#6B7280;">
+        Google Classroom and Classwork.com don't accept raw iframe HTML inside assignments, but you can paste <a href="${embedUrl}">${embedUrl}</a> as a "View material" link and students will open the quiz in a new tab.
+      </p>
+      <p style="font-family:'Inter',sans-serif;font-size:15px;line-height:1.7;margin-top:24px;">
+        <a href="/play/modes">Try all six game modes →</a>
+      </p>
+      <nav style="margin-top:32px;text-align:center;padding-bottom:32px;">
+        <a href="/">Home</a> &middot; <a href="/flags">Browse Flags</a> &middot; <a href="/quiz">Quiz</a> &middot; <a href="/about">About</a>
+      </nav>
+    </main>`;
+
+  return buildPage(
+    {
+      title: `Embed the Flag Quiz on Your Site - Free for Teachers | Flag Arcade`,
+      description: `Drop a free flag-guessing quiz into your classroom site, blog, or LMS. Works inside Google Sites, Canvas, Notion, and any platform that allows iframes. No signup required.`,
+      canonical: `${SITE_URL}/embed`,
+    },
+    bodyHtml,
+    assets,
+    'EmbedPage',
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Sitemap
 // ---------------------------------------------------------------------------
 
@@ -2080,6 +2149,11 @@ function main() {
   writeFile(path.join(DIST, 'about', 'index.html'), generateAboutPage(assets));
   sitemapUrls.push({ loc: `${SITE_URL}/about`, priority: '0.5' });
   console.log('  /about');
+
+  // Embed (teacher / classroom distribution)
+  writeFile(path.join(DIST, 'embed', 'index.html'), generateEmbedPage(assets));
+  sitemapUrls.push({ loc: `${SITE_URL}/embed`, priority: '0.6' });
+  console.log('  /embed');
 
   // Sitemap
   writeFile(path.join(DIST, 'sitemap.xml'), generateSitemap(sitemapUrls));

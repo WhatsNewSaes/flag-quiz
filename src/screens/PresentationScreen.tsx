@@ -49,7 +49,7 @@ export function PresentationScreen() {
 
   if (!currentCountry) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-sky-300 to-sky-400 flex items-center justify-center p-4">
+      <div className="min-h-screen-nav bg-retro-bg flex items-center justify-center p-4">
         <div className="text-center">
           <p className="text-xl text-retro-text-secondary mb-4">No countries available!</p>
           <p className="text-retro-text-secondary mb-4">Please adjust your filters using the settings button.</p>
@@ -65,7 +65,7 @@ export function PresentationScreen() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-sky-300 to-sky-400 py-6 px-4">
+    <div className="min-h-screen-nav bg-retro-bg py-6 px-4">
       <div className="max-w-2xl mx-auto">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl sm:text-3xl font-retro text-retro-text">

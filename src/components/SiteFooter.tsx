@@ -132,6 +132,7 @@ export function SiteFooter() {
             <h3 className={headingClass}>More</h3>
             <ul className="space-y-2">
               <li><Link to="/flags/emoji" className={linkClass}>Emoji Flags</Link></li>
+              <li><Link to="/embed" className={linkClass}>Embed for Teachers</Link></li>
               <li><Link to="/about" className={linkClass}>About Us</Link></li>
               <li><Link to="/play" className={linkClass}>Play Game</Link></li>
             </ul>

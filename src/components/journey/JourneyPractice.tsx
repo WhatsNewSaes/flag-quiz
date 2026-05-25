@@ -57,7 +57,7 @@ export function JourneyPractice({ level, onBack, onRetry }: JourneyPracticeProps
   if (!currentCountry) return null;
 
   return (
-    <div className="min-h-screen bg-retro-bg py-6 px-4">
+    <div className="min-h-screen-nav bg-retro-bg py-6 px-4">
       <div className="max-w-md mx-auto">
         {/* Header */}
         <div className="mb-5">

@@ -30,7 +30,7 @@ export function JourneyQuizSelect({ level, onSelect, onBack }: JourneyQuizSelect
   ];
 
   return (
-    <div className="min-h-screen bg-retro-bg flex items-center justify-center px-4">
+    <div className="min-h-screen-nav bg-retro-bg flex items-center justify-center px-4">
       <div className="max-w-sm w-full">
         <div className="text-center mb-8">
           <button

@@ -41,7 +41,7 @@ export function CharactersPage({ unlockedCharacters }: CharactersPageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-retro-bg py-6 px-4">
+    <div className="min-h-screen-nav bg-retro-bg py-6 px-4">
       <div className="max-w-lg mx-auto">
         {/* Header */}
         <div className="text-center mb-6">

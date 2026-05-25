@@ -8,16 +8,18 @@ export default {
     extend: {
       minHeight: {
         screen: ['100vh /* fallback */', '100dvh'],
+        'screen-nav': ['calc(100vh - 52px) /* fallback */', 'calc(100dvh - 52px)'],
       },
       height: {
         screen: ['100vh /* fallback */', '100dvh'],
+        'screen-nav': ['calc(100vh - 52px) /* fallback */', 'calc(100dvh - 52px)'],
       },
       fontFamily: {
         retro: ['"Press Start 2P"', 'cursive'],
         body: ['"Inter"', 'sans-serif'],
       },
       colors: {
-        'retro-bg': '#7EC8E3',
+        'retro-bg': '#38BDF8',
         'retro-surface': '#FFF8E7',
         'retro-accent': '#FFD93D',
         'retro-gold': '#946A08',

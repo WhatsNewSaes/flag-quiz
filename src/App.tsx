@@ -38,6 +38,10 @@ const FlagRunnerRoute = lazy(() => import('./routes/FlagRunnerRoute').then(m => 
 const AchievementsRoute = lazy(() => import('./routes/AchievementsRoute').then(m => ({ default: m.AchievementsRoute })));
 const CharactersRoute = lazy(() => import('./routes/CharactersRoute').then(m => ({ default: m.CharactersRoute })));
 
+// Embed routes
+const EmbedPage = lazy(() => import('./pages/EmbedPage').then(m => ({ default: m.EmbedPage })));
+const EmbedArcadeRoute = lazy(() => import('./routes/EmbedArcadeRoute').then(m => ({ default: m.EmbedArcadeRoute })));
+
 // Minimal loading fallback
 function LoadingFallback() {
   return (
@@ -211,7 +215,10 @@ function App() {
           <Route path="/religions" element={<ReligionsIndexPage />} />
           <Route path="/religions/:slug" element={<ReligionPage />} />
           <Route path="/about" element={<AboutPage />} />
+          <Route path="/embed" element={<EmbedPage />} />
         </Route>
+        {/* Embed route — bare-bones, no SiteLayout, intended for iframes */}
+        <Route path="/embed/arcade" element={<EmbedArcadeRoute />} />
         {/* Game routes with shared game state */}
         <Route path="/play" element={<GameLayout />}>
           <Route index element={<ModesRoute />} />

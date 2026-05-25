@@ -36,7 +36,7 @@ export function AroundTheWorldScreen({ onBack }: AroundTheWorldScreenProps) {
   // --- LOBBY PHASE ---
   if (atw.phase === 'lobby') {
     return (
-      <div className="bg-retro-bg flex flex-col px-4 pb-4 pt-3" style={{ minHeight: 'calc(100dvh - 52px)' }}>
+      <div className="min-h-screen-nav bg-retro-bg flex flex-col px-4 pb-4 pt-3">
         {onBack && (
           <button
             onClick={onBack}
@@ -132,7 +132,7 @@ export function AroundTheWorldScreen({ onBack }: AroundTheWorldScreenProps) {
     : null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-sky-300 to-sky-400 py-2 sm:py-4 sm:px-4 overflow-x-hidden">
+    <div className="min-h-screen-nav bg-retro-bg py-2 sm:py-4 sm:px-4 overflow-x-hidden">
       <div className="max-w-6xl mx-auto px-2 sm:px-0 w-full">
         <button
           onClick={atw.backToLobby}

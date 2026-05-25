@@ -38,8 +38,7 @@ export function FlagImage({ code, name, alt, className = '', title }: Props) {
       alt={alt ?? `Flag of ${name ?? code}`}
       title={title}
       loading="lazy"
-      className={`inline-block ${className}`}
-      style={{ height: '1em', width: 'auto', verticalAlign: '-0.15em' }}
+      className={`inline-block h-[1em] w-auto align-[-0.15em] border border-retro-border shadow-pixel-sm ${className}`}
     />
   );
 }

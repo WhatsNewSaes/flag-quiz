@@ -58,7 +58,7 @@ export function OverworldMap({
   }, [currentLevelIndex]);
 
   return (
-    <div className="min-h-screen bg-retro-bg flex flex-col">
+    <div className="min-h-screen-nav bg-retro-bg flex flex-col">
       {/* Title */}
       <div className="text-center py-4">
         <h1 className="font-retro text-xl text-retro-text drop-shadow-[0_2px_0_rgba(255,255,255,0.4)]">Flag Arcade</h1>

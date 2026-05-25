@@ -1,10 +1,12 @@
-import { memo, useEffect, useState, useCallback } from 'react';
+import { memo, useEffect, useState, useCallback, useRef } from 'react';
 import {
   ComposableMap,
   Geographies,
   Geography,
   ZoomableGroup,
 } from 'react-simple-maps';
+import { geoCentroid } from 'd3-geo';
+import { feature } from 'topojson-client';
 
 const DEFAULT_CENTER: [number, number] = [10, 25];
 const DEFAULT_ZOOM = 1;
@@ -74,13 +76,18 @@ interface WorldMapProps {
   focusContinent?: Continent | null;
 }
 
+// Keep the world mostly in view (~75%) while still shifting center to the highlighted country.
+const FOCUS_ZOOM = 1.3;
+
 function WorldMapComponent({ highlightedCountry, answeredCountries, focusContinent }: WorldMapProps) {
   const [geoData, setGeoData] = useState<any>(null);
   const [zoom, setZoom] = useState(DEFAULT_ZOOM);
   const [center, setCenter] = useState<[number, number]>(DEFAULT_CENTER);
+  const featureByCodeRef = useRef<Map<string, any>>(new Map());
 
-  // When focusContinent changes, snap to that view
+  // When focusContinent changes, snap to that view (only if no per-country focus is active)
   useEffect(() => {
+    if (highlightedCountry) return;
     if (focusContinent && CONTINENT_VIEWS[focusContinent]) {
       const view = CONTINENT_VIEWS[focusContinent];
       setCenter(view.center);
@@ -89,12 +96,32 @@ function WorldMapComponent({ highlightedCountry, answeredCountries, focusContine
       setCenter(DEFAULT_CENTER);
       setZoom(DEFAULT_ZOOM);
     }
-  }, [focusContinent]);
+  }, [focusContinent, highlightedCountry]);
+
+  // When the highlighted country changes (or geoData first loads), center the map on it
+  useEffect(() => {
+    if (!highlightedCountry || !geoData) return;
+    const feat = featureByCodeRef.current.get(highlightedCountry);
+    if (!feat) return;
+    const [lon, lat] = geoCentroid(feat);
+    setCenter([lon, lat]);
+    setZoom(FOCUS_ZOOM);
+  }, [highlightedCountry, geoData]);
 
   useEffect(() => {
     fetch(geoUrl)
       .then(res => res.json())
-      .then(data => setGeoData(data))
+      .then(data => {
+        setGeoData(data);
+        // Build a code → feature lookup for centroid/bounds calculations
+        const collection = feature(data, data.objects.countries) as any;
+        const map = new Map<string, any>();
+        for (const f of collection.features) {
+          const alpha2 = numericToAlpha2[f.id];
+          if (alpha2) map.set(alpha2, f);
+        }
+        featureByCodeRef.current = map;
+      })
       .catch(err => console.error('Failed to load map data:', err));
   }, []);
 

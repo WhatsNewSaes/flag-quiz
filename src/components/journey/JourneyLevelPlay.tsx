@@ -50,7 +50,7 @@ export function JourneyLevelPlay({
   const progressPct = totalFlags > 0 ? ((currentIndex) / totalFlags) * 100 : 0;
 
   return (
-    <div className="min-h-screen bg-retro-bg py-6 px-4">
+    <div className="min-h-screen-nav bg-retro-bg py-6 px-4">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-4">

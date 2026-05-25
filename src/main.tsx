@@ -37,7 +37,7 @@ function DeferredAnalytics() {
 
 if (Capacitor.isNativePlatform()) {
   StatusBar.setStyle({ style: Style.Dark });
-  StatusBar.setBackgroundColor({ color: '#7EC8E3' });
+  StatusBar.setBackgroundColor({ color: '#38BDF8' });
 }
 
 const isWeb = Capacitor.getPlatform() === 'web';

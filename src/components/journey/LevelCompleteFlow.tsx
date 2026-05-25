@@ -220,7 +220,7 @@ function CardFlow({
   }
 
   return (
-    <div className="min-h-screen bg-retro-bg flex items-center justify-center px-4">
+    <div className="min-h-screen-nav bg-retro-bg flex items-center justify-center px-4">
       <div className="max-w-sm w-full relative">
         {/* Stacked card backgrounds */}
         <div className="card-stack-bg-1" />

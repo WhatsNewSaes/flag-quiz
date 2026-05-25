@@ -11,10 +11,11 @@ import { Difficulty } from '../data/countries';
 import { playCorrectSound, playIncorrectSound } from '../utils/sounds';
 
 interface ArcadeScreenProps {
-  onBack: () => void;
+  onBack?: () => void;
+  embedded?: boolean;
 }
 
-export function ArcadeScreen({ onBack }: ArcadeScreenProps) {
+export function ArcadeScreen({ onBack, embedded = false }: ArcadeScreenProps) {
   const arcade = useArcade();
   const [showCelebration, setShowCelebration] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
@@ -40,25 +41,33 @@ export function ArcadeScreen({ onBack }: ArcadeScreenProps) {
   // --- LOBBY PHASE ---
   if (arcade.phase === 'lobby') {
     return (
-      <div className="bg-retro-bg flex flex-col px-4 pb-4 pt-3" style={{ minHeight: 'calc(100dvh - 52px)' }}>
-        <button
-          onClick={onBack}
-          className="self-start font-body text-sm text-retro-text-secondary hover:text-retro-text transition-colors flex items-center gap-1 mb-2"
-        >
-          <span>&#8592;</span> Back
-        </button>
+      <div className={`bg-retro-bg flex flex-col px-4 pb-4 pt-3 ${embedded ? 'h-full min-h-0' : 'min-h-screen-nav'}`}>
+        {onBack && (
+          <button
+            onClick={onBack}
+            className="self-start font-body text-sm text-retro-text-secondary hover:text-retro-text transition-colors flex items-center gap-1 mb-2"
+          >
+            <span>&#8592;</span> Back
+          </button>
+        )}
         <div className="flex-1 flex items-center justify-center">
         <div className="max-w-md w-full">
-          <div className="text-center mb-8">
-            <img src="/modes/arcade.webp" alt="Arcade Mode" className="w-full max-w-sm mx-auto rounded-lg pixel-border mb-4" />
+          <div className={`text-center ${embedded ? 'mb-4' : 'mb-8'}`}>
+            <img
+              src="/modes/arcade.webp"
+              alt="Arcade Mode"
+              className={`w-full mx-auto rounded-lg pixel-border mb-4 ${embedded ? 'max-w-[180px]' : 'max-w-sm'}`}
+            />
             <h1 className="font-retro text-lg text-retro-text mb-2">Arcade Mode</h1>
-            <p className="font-body text-sm text-retro-text-secondary">
-              Test your flag knowledge! Score points with streaks and difficulty bonuses.
-            </p>
+            {!embedded && (
+              <p className="font-body text-sm text-retro-text-secondary">
+                Test your flag knowledge! Score points with streaks and difficulty bonuses.
+              </p>
+            )}
           </div>
 
           {/* Flag count */}
-          <div className="text-center mb-6">
+          <div className={`text-center ${embedded ? 'mb-3' : 'mb-6'}`}>
             <div className="inline-block pixel-border bg-retro-surface rounded-lg px-6 py-3">
               <span className="font-retro text-sm text-retro-gold">{arcade.flagCount}</span>
               <span className="font-body text-sm text-retro-text ml-2">flags ready!</span>
@@ -135,7 +144,7 @@ export function ArcadeScreen({ onBack }: ArcadeScreenProps) {
     const { totalScore, totalCorrect, totalFlags, accuracy, bestStreak, difficultyBreakdown } = arcade.summary;
 
     return (
-      <div className="min-h-screen bg-retro-bg flex items-center justify-center p-4">
+      <div className={`bg-retro-bg flex items-center justify-center p-4 ${embedded ? 'h-full min-h-0' : 'min-h-screen-nav'}`}>
         <div className="max-w-md w-full">
           <div className="pixel-border bg-retro-surface rounded-lg overflow-hidden">
             <div className="bg-retro-accent/40 px-4 py-3 text-center" style={{ borderBottom: '3px solid #2D2D2D' }}>
@@ -191,12 +200,14 @@ export function ArcadeScreen({ onBack }: ArcadeScreenProps) {
                 >
                   Play Again
                 </button>
-                <button
-                  onClick={onBack}
-                  className="retro-btn w-full px-4 py-3 font-retro text-xs bg-retro-surface text-retro-text-secondary"
-                >
-                  Back to Modes
-                </button>
+                {onBack && (
+                  <button
+                    onClick={onBack}
+                    className="retro-btn w-full px-4 py-3 font-retro text-xs bg-retro-surface text-retro-text-secondary"
+                  >
+                    Back to Modes
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -214,7 +225,7 @@ export function ArcadeScreen({ onBack }: ArcadeScreenProps) {
     : 0;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-sky-300 to-sky-400 py-6 px-4">
+    <div className={`bg-retro-bg py-6 px-4 ${embedded ? 'h-full min-h-0 overflow-auto' : 'min-h-screen-nav'}`}>
       <div className="max-w-2xl mx-auto">
         <div className="flex items-center justify-between mb-2">
           <button

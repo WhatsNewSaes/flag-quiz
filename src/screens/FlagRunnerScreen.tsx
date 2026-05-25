@@ -143,7 +143,7 @@ export function FlagRunnerScreen({ onBack }: FlagRunnerScreenProps) {
   // --- LOBBY PHASE ---
   if (game.phase === 'ready') {
     return (
-      <div className="bg-retro-bg flex flex-col px-4 pb-4 pt-3" style={{ minHeight: 'calc(100dvh - 52px)' }}>
+      <div className="min-h-screen-nav bg-retro-bg flex flex-col px-4 pb-4 pt-3">
         <button
           onClick={onBack}
           className="self-start font-body text-sm text-retro-text-secondary hover:text-retro-text transition-colors flex items-center gap-1 mb-2"
@@ -228,7 +228,7 @@ export function FlagRunnerScreen({ onBack }: FlagRunnerScreenProps) {
 
   // --- PLAYING / GAME-OVER PHASE ---
   return (
-    <div className="h-[100dvh] bg-retro-bg flex flex-col items-center justify-center p-2 sm:p-4 select-none overflow-hidden">
+    <div className="h-screen-nav bg-retro-bg flex flex-col items-center justify-center p-2 sm:p-4 select-none overflow-hidden">
       <div className="max-w-sm w-full flex flex-col gap-2">
         {/* HUD */}
         <div className="flex items-center justify-between px-1">

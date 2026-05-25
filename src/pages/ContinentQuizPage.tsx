@@ -186,7 +186,7 @@ function ContinentQuizInner({
     : 0;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-sky-300 to-sky-400 py-6 px-4">
+    <div className="min-h-screen bg-retro-bg py-6 px-4">
       <SEOHead
         title={`${continent} Flag Quiz - Guess All ${flagCount} Flags | Flag Arcade`}
         description={`Can you identify all ${flagCount} flags from ${continent}? Take the free ${continent.toLowerCase()} flag quiz and test your knowledge!`}
