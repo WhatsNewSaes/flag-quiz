@@ -2018,73 +2018,237 @@ interface PlayRouteMeta {
   description: string;
   priority: string;
   routeChunk: string;
+  // Short label used in cross-links between play pages
+  shortName: string;
+  // H1 + lead paragraph rendered in the static shell. Crawlers and social
+  // previewers see this; the SPA hydrates over it.
+  h1: string;
+  lead: string;
+  // How-it-works bullets shown under the h1. Helps Google understand the
+  // page topic and gives users a meaningful first paint.
+  howItWorks: string[];
+  // When true, emits noindex meta and stays out of the sitemap. Use for
+  // utility pages that have no public search demand.
+  noindex?: boolean;
 }
 
 const PLAY_ROUTE_META: PlayRouteMeta[] = [
   {
     path: '/play/modes',
-    title: 'Play - Pick a Game Mode | Flag Arcade',
-    description: 'Choose a game mode — Journey, Arcade, Around the World, Jeopardy, Practice, or Flag Runner. Free flag quizzes with all 197 country flags.',
+    title: 'Free Flag Quiz Games - 6 Game Modes | Flag Arcade',
+    description: 'Six free flag quiz games in one place — Journey, Arcade, Around the World, Jeopardy, Practice, and Flag Runner. All 197 country flags, no signup required.',
     priority: '0.7',
     routeChunk: 'ModesRoute',
+    shortName: 'All Game Modes',
+    h1: 'Free Flag Quiz Games',
+    lead: 'Pick a game mode and start playing. Every mode is free, works in your browser, and uses all 197 country flags plus dependent territories.',
+    howItWorks: [
+      'Choose a mode below — each focuses on a different way to learn flags.',
+      'No account or download required. Your progress saves locally on Journey mode.',
+      'Switch modes any time. Mix Practice for studying and Arcade for testing.',
+    ],
   },
   {
     path: '/play/journey',
-    title: 'Journey Mode - Flag Quiz Adventure | Flag Arcade',
-    description: 'Progress through worlds of increasing difficulty. Earn stars, unlock characters, and master every country flag in our free Journey mode.',
+    title: 'Flag Quiz Adventure - Journey Mode | Flag Arcade',
+    description: 'Free flag quiz adventure. Progress through worlds of increasing difficulty, earn stars, and unlock pixel-art characters as you learn every country flag.',
     priority: '0.7',
     routeChunk: 'JourneyScreen',
+    shortName: 'Journey Mode',
+    h1: 'Journey Mode — Flag Quiz Adventure',
+    lead: 'Journey Mode is a progression-based flag quiz. You start with easy flags and unlock harder worlds as you score. Earn stars, collect characters, and chip away at every flag in the world.',
+    howItWorks: [
+      'Each world is a themed batch of flags ordered by difficulty.',
+      'Score 3 stars on a level to unlock the next one.',
+      'New characters and worlds unlock as you progress.',
+    ],
   },
   {
     path: '/play/arcade',
     title: 'Arcade Mode - Free Flag Quiz | Flag Arcade',
-    description: 'Arcade-style flag quiz. Pick your difficulty and continent, then guess as many country flags as you can. Free to play, no signup.',
+    description: 'Free arcade-style flag quiz. Pick your difficulty and continent, then guess as many country flags as you can. Streak bonuses, no signup required.',
     priority: '0.7',
     routeChunk: 'ArcadeRoute',
+    shortName: 'Arcade Mode',
+    h1: 'Arcade Mode — Free Flag Quiz',
+    lead: 'Arcade Mode is a quick, focused flag quiz. Pick which continents and difficulty levels you want, then race through as many flags as you can. Streaks multiply your score.',
+    howItWorks: [
+      'Filter by continent (Africa, Asia, Europe, North America, South America, Oceania) and difficulty (Very Easy → Very Hard).',
+      'Each correct answer adds to a streak multiplier.',
+      'Wrong answers reset the streak but the game keeps going until you stop.',
+    ],
   },
   {
     path: '/play/around-the-world',
-    title: 'Around the World - Flag Quiz | Flag Arcade',
-    description: 'Race through flags from every continent in one run. Free Around the World flag quiz — see how far you can travel before you slip up.',
+    title: 'World Map Flag Quiz - Around the World | Flag Arcade',
+    description: 'World map flag quiz: a country is highlighted on the map and you pick its flag. Free, all 197 countries, great for geography classrooms.',
     priority: '0.6',
     routeChunk: 'AroundTheWorldRoute',
+    shortName: 'Around the World',
+    h1: 'Around the World — World Map Flag Quiz',
+    lead: 'A country lights up on the world map and you pick its flag from the choices. Around the World is built for geography learners — you see the country in context, not just as a name.',
+    howItWorks: [
+      'A country is highlighted on the interactive world map.',
+      'Choose its flag from a set of multiple-choice options.',
+      'The map auto-centers on each new country so small nations are easy to spot.',
+    ],
   },
   {
     path: '/play/jeopardy',
     title: 'Jeopardy Mode - Country to Flag Quiz | Flag Arcade',
-    description: 'See the country name and pick the correct flag. Five difficulty levels in this free Jeopardy-style flag quiz from Flag Arcade.',
+    description: 'Free Jeopardy-style flag quiz: see the country name and pick the correct flag. Five difficulty levels, board layout, and category bonuses.',
     priority: '0.6',
     routeChunk: 'JeopardyRoute',
+    shortName: 'Flag Jeopardy',
+    h1: 'Flag Jeopardy — Country to Flag Quiz',
+    lead: 'Flag Jeopardy flips the usual quiz around: you read the country name and pick the right flag. Choose a value from the board to set the difficulty.',
+    howItWorks: [
+      'A 5×6 board shows point values across five difficulty rows.',
+      'Pick a tile to reveal a country name, then choose its flag.',
+      'Higher-value tiles are harder but worth more points.',
+    ],
   },
   {
     path: '/play/presentation',
     title: 'Practice Mode - Flag Flashcards | Flag Arcade',
-    description: 'Flashcard-style flag practice. Reveal answers at your own pace and learn every country flag without time pressure.',
+    description: 'Free flag flashcards. Reveal answers at your own pace, no timer, no score — pure study mode for learning every country flag.',
     priority: '0.6',
     routeChunk: 'PresentationRoute',
+    shortName: 'Practice Mode',
+    h1: 'Practice Mode — Flag Flashcards',
+    lead: 'Practice Mode is a flashcard study tool with no timer and no score. Flip cards to reveal the answer, then move to the next when you are ready.',
+    howItWorks: [
+      'A flag appears with the country name hidden.',
+      'Tap or click to reveal the answer.',
+      'Skip ahead or go back at any time — designed for quiet study, not competition.',
+    ],
   },
   {
     path: '/play/flag-runner',
-    title: 'Flag Runner - Pixel-Art Platformer | Flag Arcade',
-    description: 'Run, jump, and collect country flags in this retro pixel-art platformer. Free Flag Runner game from Flag Arcade.',
+    title: 'Flag Runner Game - Catch the Right Flags | Flag Arcade',
+    description: 'Free flag-catching action game. A country name appears at the top; dodge wrong flags and grab the right one before you run out of lives.',
     priority: '0.6',
     routeChunk: 'FlagRunnerRoute',
+    shortName: 'Flag Runner',
+    h1: 'Flag Runner — Catch the Right Flags',
+    lead: 'Flag Runner is the action mode. A country name shows at the top of the screen and flags scroll past in lanes. Move your runner to grab the right flag and avoid the wrong ones.',
+    howItWorks: [
+      'A target country name is announced at the top.',
+      'Move left or right between lanes to catch its flag.',
+      'Three lives. Wrong flags cost a life; right flags rack up the score.',
+    ],
   },
   {
     path: '/play/achievements',
     title: 'Achievements - Flag Quiz Badges | Flag Arcade',
-    description: "Track your flag quiz achievements. Unlock badges as you progress through Journey mode and master flags from every continent.",
+    description: 'Track your flag quiz achievements and badges across Journey mode and other game modes.',
     priority: '0.4',
     routeChunk: 'AchievementsRoute',
+    shortName: 'Achievements',
+    h1: 'Achievements',
+    lead: 'Track your flag quiz badges and progress.',
+    howItWorks: [],
+    noindex: true,
   },
   {
     path: '/play/characters',
     title: 'Characters - Unlockable Avatars | Flag Arcade',
-    description: "Browse and unlock pixel-art characters in Flag Arcade's Journey mode. Earn new avatars as you progress through the flag quiz.",
+    description: "Browse pixel-art characters in Flag Arcade's Journey mode.",
     priority: '0.4',
     routeChunk: 'CharactersRoute',
+    shortName: 'Characters',
+    h1: 'Characters',
+    lead: 'Browse pixel-art characters unlocked through Journey Mode.',
+    howItWorks: [],
+    noindex: true,
   },
 ];
+
+function escAttr(s: string): string {
+  return escapeHtml(s);
+}
+
+function generatePlayBody(meta: PlayRouteMeta): string {
+  const otherModes = PLAY_ROUTE_META.filter(
+    (m) => m.path !== meta.path && !m.noindex && m.path !== '/play/modes'
+  );
+  const otherLinks = otherModes
+    .map((m) => `<li><a href="${m.path}">${escAttr(m.shortName)}</a></li>`)
+    .join('');
+
+  const howItWorksHtml = meta.howItWorks.length
+    ? `<h2 style="font-family:'Press Start 2P',cursive;font-size:14px;margin-top:24px;">How it works</h2>
+       <ol style="font-family:'Inter',sans-serif;font-size:15px;line-height:1.7;padding-left:24px;">
+         ${meta.howItWorks.map((s) => `<li style="margin-bottom:6px;">${escapeHtml(s)}</li>`).join('')}
+       </ol>`
+    : '';
+
+  return `
+    <nav aria-label="Breadcrumb" style="padding:8px 16px;font-family:'Inter',sans-serif;font-size:14px;">
+      <a href="/">Home</a> / <a href="/play/modes">Play</a> / ${escapeHtml(meta.shortName)}
+    </nav>
+    <main style="max-width:720px;margin:0 auto;padding:16px;">
+      <h1 style="font-family:'Press Start 2P',cursive;line-height:1.4;">${escapeHtml(meta.h1)}</h1>
+      <p style="font-family:'Inter',sans-serif;font-size:15px;line-height:1.7;">
+        ${escapeHtml(meta.lead)}
+      </p>
+      ${howItWorksHtml}
+      <h2 style="font-family:'Press Start 2P',cursive;font-size:14px;margin-top:24px;">Other game modes</h2>
+      <ul style="font-family:'Inter',sans-serif;font-size:15px;line-height:1.8;">
+        ${otherLinks}
+        <li><a href="/play/modes">See all game modes</a></li>
+      </ul>
+      <p style="font-family:'Inter',sans-serif;font-size:15px;line-height:1.7;margin-top:24px;">
+        Or <a href="/flags">browse every country flag</a> with descriptions, history, and meaning.
+      </p>
+    </main>`;
+}
+
+// Generates the schema.org VideoGame JSON-LD for indexable game-mode pages.
+// /play/modes acts as a hub; we use CollectionPage there instead.
+function playJsonLd(meta: PlayRouteMeta): object | undefined {
+  if (meta.noindex) return undefined;
+  if (meta.path === '/play/modes') {
+    return {
+      '@context': 'https://schema.org',
+      '@type': 'CollectionPage',
+      name: meta.title,
+      description: meta.description,
+      url: `${SITE_URL}${meta.path}`,
+      hasPart: PLAY_ROUTE_META.filter(
+        (m) => !m.noindex && m.path !== '/play/modes'
+      ).map((m) => ({
+        '@type': 'VideoGame',
+        name: m.shortName,
+        url: `${SITE_URL}${m.path}`,
+      })),
+    };
+  }
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'VideoGame',
+    name: meta.shortName,
+    description: meta.description,
+    url: `${SITE_URL}${meta.path}`,
+    image: `${SITE_URL}/og-image.jpg`,
+    inLanguage: 'en',
+    genre: ['Educational', 'Trivia'],
+    playMode: 'SinglePlayer',
+    applicationCategory: 'GameApplication',
+    operatingSystem: 'Web',
+    publisher: {
+      '@type': 'Organization',
+      name: 'Flag Arcade',
+      url: SITE_URL,
+    },
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'USD',
+      availability: 'https://schema.org/InStock',
+    },
+  };
+}
 
 function generatePlayPage(meta: PlayRouteMeta, assets: Assets): string {
   return buildPage(
@@ -2092,8 +2256,10 @@ function generatePlayPage(meta: PlayRouteMeta, assets: Assets): string {
       title: meta.title,
       description: meta.description,
       canonical: `${SITE_URL}${meta.path}`,
+      noindex: meta.noindex,
+      jsonLd: playJsonLd(meta),
     },
-    `<div style="background:#38BDF8;min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;color:#2D2D2D;">Loading game…</div>`,
+    generatePlayBody(meta),
     assets,
     meta.routeChunk,
   );
@@ -2167,14 +2333,18 @@ function main() {
   // Play / game modes — write a tiny SPA-bootstrap shell at each path so
   // direct deep-links work. Vercel returns 404 for unknown nested routes
   // even with an SPA rewrite, so we need real files on disk. Each shell has
-  // proper SEO meta; the React app hydrates over it.
+  // proper SEO meta + indexable body content; the React app hydrates over it.
+  // Noindex utility pages (achievements, characters) get shells but stay out
+  // of the sitemap.
   for (const meta of PLAY_ROUTE_META) {
-    // strip leading slash, split into segments → dist/play/<mode>/index.html
     const segments = meta.path.split('/').filter(Boolean);
     writeFile(path.join(DIST, ...segments, 'index.html'), generatePlayPage(meta, assets));
-    sitemapUrls.push({ loc: `${SITE_URL}${meta.path}`, priority: meta.priority });
+    if (!meta.noindex) {
+      sitemapUrls.push({ loc: `${SITE_URL}${meta.path}`, priority: meta.priority });
+    }
   }
-  console.log(`  ${PLAY_ROUTE_META.length} /play routes (static shells + sitemap)`);
+  const indexedPlayCount = PLAY_ROUTE_META.filter((m) => !m.noindex).length;
+  console.log(`  ${PLAY_ROUTE_META.length} /play routes (${indexedPlayCount} in sitemap)`);
 
   // Flags directory
   writeFile(path.join(DIST, 'flags', 'index.html'), generateDirectoryPage(assets));
