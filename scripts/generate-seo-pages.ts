@@ -2005,6 +2005,101 @@ function generateEmbedArcadePage(assets: Assets): string {
 }
 
 // ---------------------------------------------------------------------------
+// /play/* routes (game modes)
+//
+// Vercel returns 404 for direct hits on these client-only routes when no
+// static file exists at the path. We generate a tiny SPA-bootstrap shell
+// per game mode with proper SEO metadata so deep-linking works.
+// ---------------------------------------------------------------------------
+
+interface PlayRouteMeta {
+  path: string;
+  title: string;
+  description: string;
+  priority: string;
+  routeChunk: string;
+}
+
+const PLAY_ROUTE_META: PlayRouteMeta[] = [
+  {
+    path: '/play/modes',
+    title: 'Play - Pick a Game Mode | Flag Arcade',
+    description: 'Choose a game mode — Journey, Arcade, Around the World, Jeopardy, Practice, or Flag Runner. Free flag quizzes with all 197 country flags.',
+    priority: '0.7',
+    routeChunk: 'ModesRoute',
+  },
+  {
+    path: '/play/journey',
+    title: 'Journey Mode - Flag Quiz Adventure | Flag Arcade',
+    description: 'Progress through worlds of increasing difficulty. Earn stars, unlock characters, and master every country flag in our free Journey mode.',
+    priority: '0.7',
+    routeChunk: 'JourneyScreen',
+  },
+  {
+    path: '/play/arcade',
+    title: 'Arcade Mode - Free Flag Quiz | Flag Arcade',
+    description: 'Arcade-style flag quiz. Pick your difficulty and continent, then guess as many country flags as you can. Free to play, no signup.',
+    priority: '0.7',
+    routeChunk: 'ArcadeRoute',
+  },
+  {
+    path: '/play/around-the-world',
+    title: 'Around the World - Flag Quiz | Flag Arcade',
+    description: 'Race through flags from every continent in one run. Free Around the World flag quiz — see how far you can travel before you slip up.',
+    priority: '0.6',
+    routeChunk: 'AroundTheWorldRoute',
+  },
+  {
+    path: '/play/jeopardy',
+    title: 'Jeopardy Mode - Country to Flag Quiz | Flag Arcade',
+    description: 'See the country name and pick the correct flag. Five difficulty levels in this free Jeopardy-style flag quiz from Flag Arcade.',
+    priority: '0.6',
+    routeChunk: 'JeopardyRoute',
+  },
+  {
+    path: '/play/presentation',
+    title: 'Practice Mode - Flag Flashcards | Flag Arcade',
+    description: 'Flashcard-style flag practice. Reveal answers at your own pace and learn every country flag without time pressure.',
+    priority: '0.6',
+    routeChunk: 'PresentationRoute',
+  },
+  {
+    path: '/play/flag-runner',
+    title: 'Flag Runner - Pixel-Art Platformer | Flag Arcade',
+    description: 'Run, jump, and collect country flags in this retro pixel-art platformer. Free Flag Runner game from Flag Arcade.',
+    priority: '0.6',
+    routeChunk: 'FlagRunnerRoute',
+  },
+  {
+    path: '/play/achievements',
+    title: 'Achievements - Flag Quiz Badges | Flag Arcade',
+    description: "Track your flag quiz achievements. Unlock badges as you progress through Journey mode and master flags from every continent.",
+    priority: '0.4',
+    routeChunk: 'AchievementsRoute',
+  },
+  {
+    path: '/play/characters',
+    title: 'Characters - Unlockable Avatars | Flag Arcade',
+    description: "Browse and unlock pixel-art characters in Flag Arcade's Journey mode. Earn new avatars as you progress through the flag quiz.",
+    priority: '0.4',
+    routeChunk: 'CharactersRoute',
+  },
+];
+
+function generatePlayPage(meta: PlayRouteMeta, assets: Assets): string {
+  return buildPage(
+    {
+      title: meta.title,
+      description: meta.description,
+      canonical: `${SITE_URL}${meta.path}`,
+    },
+    `<div style="background:#38BDF8;min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;color:#2D2D2D;">Loading game…</div>`,
+    assets,
+    meta.routeChunk,
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Sitemap
 // ---------------------------------------------------------------------------
 
@@ -2069,24 +2164,17 @@ function main() {
   // Homepage
   sitemapUrls.push({ loc: SITE_URL, priority: '1.0', changefreq: 'daily' });
 
-  // Play / game modes — client-side only, no pre-rendered HTML, but listed so
-  // crawlers can discover them. Vercel's SPA rewrite serves index.html and
-  // each route injects its own canonical/title/description via SEOHead.
-  const playRoutes: { path: string; priority: string }[] = [
-    { path: '/play/modes', priority: '0.7' },
-    { path: '/play/journey', priority: '0.7' },
-    { path: '/play/arcade', priority: '0.7' },
-    { path: '/play/around-the-world', priority: '0.6' },
-    { path: '/play/jeopardy', priority: '0.6' },
-    { path: '/play/presentation', priority: '0.6' },
-    { path: '/play/flag-runner', priority: '0.6' },
-    { path: '/play/achievements', priority: '0.4' },
-    { path: '/play/characters', priority: '0.4' },
-  ];
-  for (const { path: p, priority } of playRoutes) {
-    sitemapUrls.push({ loc: `${SITE_URL}${p}`, priority });
+  // Play / game modes — write a tiny SPA-bootstrap shell at each path so
+  // direct deep-links work. Vercel returns 404 for unknown nested routes
+  // even with an SPA rewrite, so we need real files on disk. Each shell has
+  // proper SEO meta; the React app hydrates over it.
+  for (const meta of PLAY_ROUTE_META) {
+    // strip leading slash, split into segments → dist/play/<mode>/index.html
+    const segments = meta.path.split('/').filter(Boolean);
+    writeFile(path.join(DIST, ...segments, 'index.html'), generatePlayPage(meta, assets));
+    sitemapUrls.push({ loc: `${SITE_URL}${meta.path}`, priority: meta.priority });
   }
-  console.log(`  ${playRoutes.length} /play routes added to sitemap`);
+  console.log(`  ${PLAY_ROUTE_META.length} /play routes (static shells + sitemap)`);
 
   // Flags directory
   writeFile(path.join(DIST, 'flags', 'index.html'), generateDirectoryPage(assets));
