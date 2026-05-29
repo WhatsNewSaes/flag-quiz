@@ -202,6 +202,26 @@ as $$
   limit p_limit;
 $$;
 
+-- ============================================================
+-- 5. CRM PROSPECTS (admin-only)
+-- ============================================================
+-- Backs the /admin dashboard's status board (new / emailed / replied /
+-- linked / dead) and free-form notes per prospect URL. Accessed only via
+-- the /api/state serverless function using the service role key. RLS is
+-- enabled with no public policies so a leaked anon key can't read it.
+
+create table public.crm_prospects (
+  url text primary key,
+  status text not null default '',
+  notes text not null default '',
+  updated_at timestamptz not null default now()
+);
+
+alter table public.crm_prospects enable row level security;
+-- Intentionally no policies — only the server-side service role key reads
+-- and writes this table, and the service role bypasses RLS.
+
+
 -- Get a user's rank for a mode (all-time)
 create or replace function public.get_user_rank(
   p_user_id uuid,
