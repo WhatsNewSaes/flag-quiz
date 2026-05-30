@@ -240,3 +240,106 @@ as $$
       where user_id = p_user_id and mode = p_mode
     );
 $$;
+
+
+-- ============================================================
+-- 6. PLAY SESSIONS (usage analytics)
+-- ============================================================
+-- One row per gameplay session (start → end). Players are mostly anonymous,
+-- so "unique players" is keyed on an anonymous device_id (a UUID kept in the
+-- client's localStorage); user_id is attached opportunistically when signed in.
+-- Written and read only via the /api/track and /api/analytics serverless
+-- functions using the service role key. RLS is enabled with no policies so a
+-- leaked anon key can neither read nor forge rows.
+
+create table public.play_sessions (
+  id uuid primary key default gen_random_uuid(),
+  device_id text not null,
+  user_id uuid references public.profiles(id) on delete set null,
+  mode text not null check (mode in ('journey', 'arcade', 'around_the_world', 'jeopardy', 'flag_runner')),
+  platform text not null default 'web' check (platform in ('web', 'ios', 'android')),
+  started_at timestamptz not null default now(),
+  ended_at timestamptz,
+  duration_ms integer,
+  completed boolean not null default false,
+  score integer,
+  correct integer,
+  total integer,
+  metadata jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now()
+);
+
+alter table public.play_sessions enable row level security;
+-- Intentionally no policies — only the server-side service role key reads and
+-- writes this table, and the service role bypasses RLS.
+
+create index idx_play_sessions_started on public.play_sessions (started_at desc);
+create index idx_play_sessions_mode_started on public.play_sessions (mode, started_at desc);
+create index idx_play_sessions_device on public.play_sessions (device_id);
+
+
+-- Per-mode rollup since a given timestamp (powers the dashboard table).
+create or replace function public.get_play_summary(p_since timestamptz)
+returns table (
+  mode text,
+  plays bigint,
+  unique_players bigint,
+  completed_plays bigint,
+  total_duration_ms bigint,
+  avg_duration_ms bigint
+)
+language sql
+stable
+as $$
+  select
+    ps.mode,
+    count(*) as plays,
+    count(distinct ps.device_id) as unique_players,
+    count(*) filter (where ps.completed) as completed_plays,
+    coalesce(sum(ps.duration_ms), 0)::bigint as total_duration_ms,
+    coalesce(round(avg(ps.duration_ms)), 0)::bigint as avg_duration_ms
+  from public.play_sessions ps
+  where ps.started_at >= p_since
+  group by ps.mode
+  order by plays desc;
+$$;
+
+-- Daily counts since a given timestamp (powers the dashboard chart).
+create or replace function public.get_play_timeseries(p_since timestamptz)
+returns table (
+  day date,
+  plays bigint,
+  unique_players bigint
+)
+language sql
+stable
+as $$
+  select
+    (ps.started_at at time zone 'UTC')::date as day,
+    count(*) as plays,
+    count(distinct ps.device_id) as unique_players
+  from public.play_sessions ps
+  where ps.started_at >= p_since
+  group by day
+  order by day;
+$$;
+
+-- Scalar totals across all modes since a given timestamp (powers the cards).
+create or replace function public.get_play_totals(p_since timestamptz)
+returns table (
+  plays bigint,
+  unique_players bigint,
+  completed_plays bigint,
+  total_duration_ms bigint
+)
+language sql
+stable
+as $$
+  select
+    count(*) as plays,
+    count(distinct ps.device_id) as unique_players,
+    count(*) filter (where ps.completed) as completed_plays,
+    coalesce(sum(ps.duration_ms), 0)::bigint as total_duration_ms
+  from public.play_sessions ps
+  where ps.started_at >= p_since;
+$$;

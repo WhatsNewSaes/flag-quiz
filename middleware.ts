@@ -6,7 +6,7 @@
 import { next } from '@vercel/edge';
 
 export const config = {
-  matcher: ['/admin', '/admin/:path*', '/api/state'],
+  matcher: ['/admin', '/admin/:path*', '/api/state', '/api/analytics'],
 };
 
 const AUTH_USER = 'seth';

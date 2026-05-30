@@ -3,6 +3,7 @@ import { countries, Country, Continent, continents, Difficulty } from '../data/c
 import { getRandomElements, getRandomElement } from '../utils/shuffle';
 import { playCorrectSound, playIncorrectSound } from '../utils/sounds';
 import { useLocalStorage } from './useLocalStorage';
+import { useSessionTracking } from './useSessionTracking';
 
 type Phase = 'ready' | 'playing' | 'game-over';
 
@@ -254,6 +255,14 @@ export function useFlagRunner() {
   const moveRight = useCallback(() => {
     movePlayer(playerLaneRef.current + 1);
   }, [movePlayer]);
+
+  // Usage analytics: a session runs while playing; ending the run (game-over)
+  // completes it, leaving the screen mid-run abandons it.
+  useSessionTracking('flag_runner', phase === 'playing', () => ({
+    score,
+    correct: correctCountRef.current,
+    metadata: { level, highScore },
+  }));
 
   return {
     phase,

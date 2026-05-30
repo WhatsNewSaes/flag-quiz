@@ -1,6 +1,7 @@
 import { useState, useCallback, useMemo } from 'react';
 import { countries, Country, Continent, continents, Difficulty } from '../data/countries';
 import { shuffle, getRandomElements } from '../utils/shuffle';
+import { useSessionTracking } from './useSessionTracking';
 
 // Countries too small to see on the world map
 const excludedCountryCodes = new Set([
@@ -175,6 +176,14 @@ export function useAroundTheWorld() {
       };
     });
   }, [mapCountries]);
+
+  // Usage analytics: endless mode — a session runs while phase is 'playing'
+  // and ends when the player returns to the lobby or leaves the screen.
+  useSessionTracking('around_the_world', state.phase === 'playing', () => ({
+    correct: totalCorrect,
+    total: totalAnswered,
+    metadata: { continents: enabledContinents, difficulties: enabledDifficulties },
+  }));
 
   return {
     phase: state.phase,

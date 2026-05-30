@@ -2,6 +2,7 @@ import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { countries, Country, Continent, continents, Difficulty, difficultyLabels } from '../data/countries';
 import { shuffle, getRandomElements } from '../utils/shuffle';
 import { QuizMode } from './useQuiz';
+import { useSessionTracking } from './useSessionTracking';
 
 export type ArcadePhase = 'lobby' | 'playing' | 'summary';
 
@@ -274,6 +275,18 @@ export function useArcade(options?: UseArcadeOptions) {
       },
     }));
   }, []);
+
+  // Usage analytics: one session per play-through (lobby → playing → summary).
+  useSessionTracking('arcade', state.phase === 'playing', () => ({
+    score: state.score,
+    correct: Object.values(state.difficultyStats).reduce((sum, s) => sum + s.correct, 0),
+    total: state.flags.length,
+    metadata: {
+      quizMode: state.quizMode,
+      difficulties: state.enabledDifficulties,
+      continents: state.enabledContinents,
+    },
+  }));
 
   const summary: ArcadeSummary | null = state.phase === 'summary' ? {
     totalScore: state.score,

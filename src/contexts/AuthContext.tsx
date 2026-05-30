@@ -3,6 +3,7 @@ import { Session, User } from '@supabase/supabase-js';
 import { Capacitor } from '@capacitor/core';
 import { Browser } from '@capacitor/browser';
 import { supabase } from '../lib/supabase';
+import { setAnalyticsUser } from '../lib/analytics';
 
 interface AuthContextValue {
   user: User | null;
@@ -39,12 +40,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
+      setAnalyticsUser(session?.user?.id ?? null);
       setLoading(false);
     });
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
+      setAnalyticsUser(session?.user?.id ?? null);
       if (isNative && session) {
         Browser.close();
       }

@@ -5,6 +5,7 @@ import { JeopardyDailyDouble } from '../components/JeopardyDailyDouble';
 import { JeopardySummary } from '../components/JeopardySummary';
 import { useJeopardy } from '../hooks/useJeopardy';
 import { JeopardyQuizMode } from '../components/JeopardyDifficultySelect';
+import { useSessionTracking } from '../hooks/useSessionTracking';
 
 interface JeopardyScreenProps {
   quizMode: JeopardyQuizMode;
@@ -20,6 +21,13 @@ export function JeopardyScreen({ quizMode }: JeopardyScreenProps) {
       initialized.current = true;
     }
   }, [quizMode]);
+
+  // Usage analytics: a session runs from board open until the board is cleared
+  // (gameOver) or the player leaves the screen.
+  useSessionTracking('jeopardy', !jeopardy.gameOver, () => ({
+    score: jeopardy.score,
+    metadata: { quizMode },
+  }));
 
   const isDailyDouble = jeopardy.selectedCell &&
     jeopardy.dailyDoubleLocation.row === jeopardy.selectedCell.row &&

@@ -3,6 +3,7 @@ import { countries, Country } from '../data/countries';
 import { JourneyLevel } from '../data/journeyLevels';
 import { shuffle, getRandomElements } from '../utils/shuffle';
 import { QuizMode } from './useQuiz';
+import { useSessionTracking } from './useSessionTracking';
 
 const ALTERNATING_MODES: QuizMode[] = ['multiple-choice', 'flag-picker'];
 
@@ -133,6 +134,18 @@ export function useJourneyGame() {
       };
     });
   }, []);
+
+  // Usage analytics: a session runs while a level is in progress (completing it
+  // or leaving mid-level ends the session).
+  useSessionTracking(
+    'journey',
+    state.level !== null && !state.isComplete,
+    () => ({
+      correct: state.correctCount,
+      total: state.flagCountries.length,
+      metadata: { levelId: state.level?.id, level: state.level?.displayName },
+    }),
+  );
 
   return {
     ...state,

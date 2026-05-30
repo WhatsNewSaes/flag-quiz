@@ -278,6 +278,7 @@ _HTML_TEMPLATE_OLD_TABLE_UNUSED = r"""<!doctype html>
   </div>
   <div style="font-size:11px;color:var(--muted);text-align:right">
     <div id="sync-pill" class="sync-pill offline"><span class="dot"></span><span id="sync-label">offline</span></div>
+    <div style="margin-top:6px"><a href="/admin/analytics" style="color:#38bdf8;text-decoration:none">📊 Usage Analytics</a></div>
     <div style="margin-top:6px">Generated __GENERATED__</div>
   </div>
 </header>
@@ -917,6 +918,7 @@ HTML_TEMPLATE = r"""<!doctype html>
   </div>
   <div style="font-size:11px;color:var(--muted);text-align:right">
     <div id="sync-pill" class="sync-pill offline"><span class="dot"></span><span id="sync-label">offline</span></div>
+    <div style="margin-top:6px"><a href="/admin/analytics" style="color:#38bdf8;text-decoration:none">📊 Usage Analytics</a></div>
     <div style="margin-top:6px">Generated __GENERATED__</div>
   </div>
 </header>
