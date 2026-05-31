@@ -258,6 +258,7 @@ create table public.play_sessions (
   user_id uuid references public.profiles(id) on delete set null,
   mode text not null check (mode in ('journey', 'arcade', 'around_the_world', 'jeopardy', 'flag_runner')),
   platform text not null default 'web' check (platform in ('web', 'ios', 'android')),
+  country text,  -- 2-letter ISO code, stamped server-side from the request geo header
   started_at timestamptz not null default now(),
   ended_at timestamptz,
   duration_ms integer,
@@ -276,6 +277,7 @@ alter table public.play_sessions enable row level security;
 create index idx_play_sessions_started on public.play_sessions (started_at desc);
 create index idx_play_sessions_mode_started on public.play_sessions (mode, started_at desc);
 create index idx_play_sessions_device on public.play_sessions (device_id);
+create index idx_play_sessions_country on public.play_sessions (country, started_at desc);
 
 
 -- Per-mode rollup since a given timestamp (powers the dashboard table).
@@ -342,4 +344,69 @@ as $$
     coalesce(sum(ps.duration_ms), 0)::bigint as total_duration_ms
   from public.play_sessions ps
   where ps.started_at >= p_since;
+$$;
+
+-- Plays and unique players by country (powers the country list).
+create or replace function public.get_play_by_country(p_since timestamptz)
+returns table (
+  country text,
+  plays bigint,
+  unique_players bigint
+)
+language sql
+stable
+as $$
+  select
+    ps.country,
+    count(*) as plays,
+    count(distinct ps.device_id) as unique_players
+  from public.play_sessions ps
+  where ps.started_at >= p_since and ps.country is not null
+  group by ps.country
+  order by plays desc;
+$$;
+
+-- Journey progression funnel: how many unique players reached each level or
+-- beyond. Reads the numeric level index from journey session metadata.
+create or replace function public.get_journey_progression(p_since timestamptz)
+returns table (
+  level_index integer,
+  level_name text,
+  players_reached bigint
+)
+language sql
+stable
+as $$
+  with per_device as (
+    select
+      device_id,
+      max((metadata ->> 'levelIndex')::int) as max_level
+    from public.play_sessions
+    where mode = 'journey'
+      and started_at >= p_since
+      and metadata ? 'levelIndex'
+    group by device_id
+  ),
+  names as (
+    select distinct on ((metadata ->> 'levelIndex')::int)
+      (metadata ->> 'levelIndex')::int as level_index,
+      metadata ->> 'level' as level_name
+    from public.play_sessions
+    where mode = 'journey'
+      and started_at >= p_since
+      and metadata ? 'levelIndex'
+    order by (metadata ->> 'levelIndex')::int, started_at desc
+  ),
+  levels as (
+    select generate_series(0, coalesce((select max(max_level) from per_device), -1)) as level_index
+  )
+  select
+    l.level_index,
+    n.level_name,
+    count(d.device_id) as players_reached
+  from levels l
+  left join names n on n.level_index = l.level_index
+  left join per_device d on d.max_level >= l.level_index
+  group by l.level_index, n.level_name
+  order by l.level_index;
 $$;

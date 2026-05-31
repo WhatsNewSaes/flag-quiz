@@ -72,6 +72,11 @@ export default async function handler(req: Request): Promise<Response> {
     const platform = PLATFORMS.includes(body.platform as string) ? (body.platform as string) : 'web';
     const userId = typeof body.user_id === 'string' && UUID_RE.test(body.user_id) ? body.user_id : null;
 
+    // Country comes from Vercel's edge geo header (server-side, no IP stored).
+    // Absent locally / for unknown IPs.
+    const rawCountry = req.headers.get('x-vercel-ip-country') || '';
+    const country = /^[A-Z]{2}$/.test(rawCountry) ? rawCountry : null;
+
     // Cap metadata size so a bad client can't write huge blobs.
     let metadata: Record<string, unknown> = {};
     if (body.metadata && typeof body.metadata === 'object') {
@@ -85,6 +90,7 @@ export default async function handler(req: Request): Promise<Response> {
       user_id: userId,
       mode,
       platform,
+      country,
       started_at: isoOrNull(body.started_at) ?? new Date().toISOString(),
       completed: false,
       metadata,

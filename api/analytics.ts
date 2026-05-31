@@ -37,13 +37,15 @@ export default async function handler(req: Request): Promise<Response> {
     auth: { persistSession: false, autoRefreshToken: false },
   });
 
-  const [totals, summary, timeseries] = await Promise.all([
+  const [totals, summary, timeseries, byCountry, journey] = await Promise.all([
     supabase.rpc('get_play_totals', { p_since: since }),
     supabase.rpc('get_play_summary', { p_since: since }),
     supabase.rpc('get_play_timeseries', { p_since: since }),
+    supabase.rpc('get_play_by_country', { p_since: since }),
+    supabase.rpc('get_journey_progression', { p_since: since }),
   ]);
 
-  const err = totals.error || summary.error || timeseries.error;
+  const err = totals.error || summary.error || timeseries.error || byCountry.error || journey.error;
   if (err) return json(500, { error: err.message });
 
   return json(200, {
@@ -57,6 +59,8 @@ export default async function handler(req: Request): Promise<Response> {
     },
     summary: summary.data || [],
     timeseries: timeseries.data || [],
+    byCountry: byCountry.data || [],
+    journey: journey.data || [],
   });
 }
 

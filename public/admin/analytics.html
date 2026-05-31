@@ -56,6 +56,29 @@
   .status { color: var(--muted); font-size: 13px; padding: 8px 0; }
   .axis { fill: var(--muted); font-size: 11px; }
   .gridline { stroke: var(--line); stroke-width: 1; }
+
+  /* Country list */
+  .country-list {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2px 32px; max-height: 420px; overflow-y: auto;
+  }
+  .country-row { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+  .country-row .rank { width: 22px; text-align: right; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .country-row .flag { font-size: 22px; width: 26px; text-align: center; line-height: 1; }
+  .country-row .name { flex: 1; min-width: 0; }
+  .country-row .name .ttl { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .country-row .count { text-align: right; font-variant-numeric: tabular-nums; }
+  .country-row .count .sub { color: var(--muted); font-size: 11px; }
+
+  /* Journey funnel */
+  .funnel { display: flex; flex-direction: column; gap: 6px; max-height: 480px; overflow-y: auto; }
+  .funnel-row { display: grid; grid-template-columns: 130px 1fr 56px; align-items: center; gap: 12px; font-size: 13px; }
+  .funnel-row .lvl { color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .funnel-bar { height: 24px; background: var(--panel-2); border-radius: 5px; overflow: hidden; }
+  .funnel-bar > span { display: flex; align-items: center; height: 100%; background: linear-gradient(90deg, var(--accent-2), var(--accent)); padding-left: 8px; color: #0f172a; font-weight: 700; font-size: 12px; min-width: 0; }
+  .funnel-row .pl { text-align: right; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  @media (max-width: 760px) { .two-col { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -74,25 +97,36 @@
   <section class="cards" id="cards"></section>
 
   <section class="panel">
+    <h2>🌍 Where players come from</h2>
+    <div class="country-list" id="countryList"></div>
+  </section>
+
+  <section class="panel">
     <h2>Plays per day</h2>
     <svg id="chart" viewBox="0 0 800 240" preserveAspectRatio="none" aria-label="Plays per day"></svg>
   </section>
 
-  <section class="panel">
-    <h2>By game mode</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Mode</th>
-          <th>Plays</th>
-          <th>Unique players</th>
-          <th>Avg length</th>
-          <th>Completion</th>
-        </tr>
-      </thead>
-      <tbody id="modeRows"></tbody>
-    </table>
-  </section>
+  <div class="two-col">
+    <section class="panel">
+      <h2>By game mode</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Mode</th>
+            <th>Plays</th>
+            <th>Players</th>
+            <th>Avg time/player</th>
+          </tr>
+        </thead>
+        <tbody id="modeRows"></tbody>
+      </table>
+    </section>
+
+    <section class="panel">
+      <h2>How far players get in Journey</h2>
+      <div class="funnel" id="journeyFunnel"></div>
+    </section>
+  </div>
 
 <script>
 const MODE_LABELS = {
@@ -122,12 +156,29 @@ function pct(part, whole) {
   return Math.round((part / whole) * 100) + '%';
 }
 
+// Average time played per user = total play time / unique players.
+function avgPerUser(totalMs, users) {
+  return users > 0 ? totalMs / users : 0;
+}
+
+// Flag emoji from a 2-letter ISO code (regional indicator symbols).
+function flagEmoji(cc) {
+  if (!cc || cc.length !== 2) return '🏳️';
+  return cc.toUpperCase().replace(/./g, c => String.fromCodePoint(127397 + c.charCodeAt(0)));
+}
+
+let regionNames;
+try { regionNames = new Intl.DisplayNames(['en'], { type: 'region' }); } catch (e) { regionNames = null; }
+function countryName(cc) {
+  try { return (regionNames && regionNames.of(cc.toUpperCase())) || cc; } catch (e) { return cc; }
+}
+
 function renderCards(t) {
   const cards = [
     { label: 'Total plays', value: fmtNum(t.plays) },
     { label: 'Unique players', value: fmtNum(t.unique_players) },
-    { label: 'Time played', value: fmtDuration(t.total_duration_ms) },
-    { label: 'Completion rate', value: pct(t.completed_plays, t.plays), sub: fmtNum(t.completed_plays) + ' finished' },
+    { label: 'Avg time / player', value: fmtDuration(avgPerUser(Number(t.total_duration_ms), Number(t.unique_players))), sub: 'total time ÷ players' },
+    { label: 'Countries', value: fmtNum(t.countries), sub: 'with at least one play' },
   ];
   document.getElementById('cards').innerHTML = cards.map(c => `
     <div class="card">
@@ -141,7 +192,7 @@ function renderModes(rows) {
   const maxPlays = rows.reduce((m, r) => Math.max(m, Number(r.plays)), 0) || 1;
   const tbody = document.getElementById('modeRows');
   if (!rows.length) {
-    tbody.innerHTML = '<tr><td colspan="5" class="muted">No plays in this window yet.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="4" class="muted">No plays in this window yet.</td></tr>';
     return;
   }
   tbody.innerHTML = rows.map(r => `
@@ -151,9 +202,45 @@ function renderModes(rows) {
         <div class="bar"><span style="width:${(Number(r.plays) / maxPlays) * 100}%"></span></div>
       </td>
       <td>${fmtNum(Number(r.unique_players))}</td>
-      <td>${fmtDuration(Number(r.avg_duration_ms))}</td>
-      <td>${pct(Number(r.completed_plays), Number(r.plays))}</td>
+      <td>${fmtDuration(avgPerUser(Number(r.total_duration_ms), Number(r.unique_players)))}</td>
     </tr>`).join('');
+}
+
+function renderCountries(rows) {
+  const el = document.getElementById('countryList');
+  if (!rows.length) {
+    el.innerHTML = '<div class="muted">No country data yet.</div>';
+    return;
+  }
+  const max = rows.reduce((m, r) => Math.max(m, Number(r.plays)), 0) || 1;
+  el.innerHTML = rows.map((r, i) => `
+    <div class="country-row">
+      <div class="rank">${i + 1}</div>
+      <div class="flag">${flagEmoji(r.country)}</div>
+      <div class="name">
+        <div class="ttl">${countryName(r.country)}</div>
+        <div class="bar"><span style="width:${(Number(r.plays) / max) * 100}%"></span></div>
+      </div>
+      <div class="count">${fmtNum(Number(r.plays))}<div class="sub">${fmtNum(Number(r.unique_players))} players</div></div>
+    </div>`).join('');
+}
+
+function renderJourney(rows) {
+  const el = document.getElementById('journeyFunnel');
+  if (!rows.length) {
+    el.innerHTML = '<div class="muted">No Journey plays yet.</div>';
+    return;
+  }
+  const max = Number(rows[0].players_reached) || 1;
+  el.innerHTML = rows.map(r => {
+    const players = Number(r.players_reached);
+    const name = r.level_name || ('Level ' + (Number(r.level_index) + 1));
+    return `<div class="funnel-row">
+      <div class="lvl" title="${name}">${name}</div>
+      <div class="funnel-bar"><span style="width:${Math.max((players / max) * 100, players > 0 ? 8 : 0)}%">${players > 0 ? fmtNum(players) : ''}</span></div>
+      <div class="pl">${pct(players, max)}</div>
+    </div>`;
+  }).join('');
 }
 
 function renderChart(series) {
@@ -205,9 +292,12 @@ async function load(win) {
     const res = await fetch('/api/analytics?since=' + win);
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
+    data.totals.countries = (data.byCountry || []).length;
     renderCards(data.totals);
-    renderModes(data.summary);
+    renderCountries(data.byCountry || []);
     renderChart(data.timeseries);
+    renderModes(data.summary);
+    renderJourney(data.journey || []);
     status.textContent = 'Last ' + data.days + ' days · ' + fmtNum(Number(data.totals.plays)) + ' plays';
   } catch (e) {
     status.textContent = 'Failed to load analytics: ' + e.message;

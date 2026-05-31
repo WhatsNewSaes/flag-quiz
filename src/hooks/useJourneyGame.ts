@@ -143,7 +143,11 @@ export function useJourneyGame() {
     () => ({
       correct: state.correctCount,
       total: state.flagCountries.length,
-      metadata: { levelId: state.level?.id, level: state.level?.displayName },
+      metadata: {
+        levelId: state.level?.id,
+        level: state.level?.displayName,
+        levelIndex: state.level?.globalLevelIndex,
+      },
     }),
   );
 
