@@ -1,3 +1,4 @@
+import { execFileSync } from 'node:child_process';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 
@@ -12,6 +13,12 @@ type Finding = {
 type Args = {
   file?: string;
   selfTest: boolean;
+};
+
+type ReleaseContext = {
+  appVersion: string;
+  buildNumber: string;
+  gitCommit: string;
 };
 
 const requiredReleaseFields = [
@@ -35,6 +42,23 @@ const requiredSignoffFields = [
   'Known launch risks accepted',
   'Release approver',
   'Approval date',
+];
+
+const requiredUrlVerificationFields = [
+  'Public site URL verified',
+  'Privacy URL verified',
+  'Terms URL verified',
+  'Support URL verified',
+];
+
+const requiredBuildArtifactRows = [
+  { platform: 'iOS', storeChannel: 'TestFlight' },
+  { platform: 'Android', storeChannel: 'Play internal test' },
+];
+
+const requiredSigningRows = [
+  { platform: 'iOS' },
+  { platform: 'Android' },
 ];
 
 const requiredInstalledBuildRows = [
@@ -147,6 +171,48 @@ function fieldValue(markdown: string, label: string) {
   return match?.[1]?.trim();
 }
 
+function commandOutput(command: string, args: string[]) {
+  return execFileSync(command, args, {
+    cwd: root,
+    encoding: 'utf8',
+    stdio: ['ignore', 'pipe', 'ignore'],
+  }).trim();
+}
+
+function matchFirst(text: string, pattern: RegExp, label: string) {
+  const match = text.match(pattern);
+  if (!match?.[1]) throw new Error(`Could not find ${label}.`);
+  return match[1].trim();
+}
+
+async function currentReleaseContext(): Promise<ReleaseContext> {
+  const packageJson = JSON.parse(await readFile(path.join(root, 'package.json'), 'utf8')) as { version?: string };
+  const androidBuildGradle = await readFile(path.join(root, 'android/app/build.gradle'), 'utf8');
+  const iosProject = await readFile(path.join(root, 'ios/App/App.xcodeproj/project.pbxproj'), 'utf8');
+
+  const appVersion = packageJson.version;
+  if (!appVersion) throw new Error('package.json version is missing.');
+
+  const androidVersionCode = matchFirst(androidBuildGradle, /versionCode\s+(\d+)/, 'Android versionCode');
+  const iosBuildNumbers = [...iosProject.matchAll(/CURRENT_PROJECT_VERSION = ([^;]+);/g)]
+    .map((match) => match[1].trim());
+  const uniqueIosBuildNumbers = [...new Set(iosBuildNumbers)];
+
+  if (uniqueIosBuildNumbers.length !== 1) {
+    throw new Error(`Expected exactly one iOS build number, found: ${uniqueIosBuildNumbers.join(', ') || 'none'}`);
+  }
+
+  if (androidVersionCode !== uniqueIosBuildNumbers[0]) {
+    throw new Error(`Android versionCode (${androidVersionCode}) does not match iOS build number (${uniqueIosBuildNumbers[0]}).`);
+  }
+
+  return {
+    appVersion,
+    buildNumber: androidVersionCode,
+    gitCommit: commandOutput('git', ['rev-parse', '--short', 'HEAD']),
+  };
+}
+
 function tableRows(markdown: string) {
   return markdown
     .split('\n')
@@ -193,13 +259,26 @@ function requireComplete(findings: Finding[], label: string, value: string | und
   else fail(findings, label, value ? `Current value: ${value}` : 'Missing value');
 }
 
-function validateEvidence(markdown: string) {
+function requireEqual(findings: Finding[], label: string, value: string | undefined, expected: string) {
+  if (value === expected) pass(findings, label, value);
+  else fail(findings, label, value ? `Expected ${expected}, got ${value}` : `Missing value, expected ${expected}`);
+}
+
+function validateEvidence(markdown: string, context: ReleaseContext) {
   const findings: Finding[] = [];
 
   for (const label of requiredReleaseFields) {
     const value = fieldValue(markdown, label);
     if (value && isFilled(value)) pass(findings, `${label} is filled`, value);
     else fail(findings, `${label} is filled`, value ? `Current value: ${value}` : 'Missing field');
+  }
+
+  requireEqual(findings, 'Release evidence app version matches package.json', fieldValue(markdown, 'App version'), context.appVersion);
+  requireEqual(findings, 'Release evidence build number matches native build numbers', fieldValue(markdown, 'Build number / version code'), context.buildNumber);
+  requireEqual(findings, 'Release evidence git commit matches current HEAD', fieldValue(markdown, 'Git commit'), context.gitCommit);
+
+  for (const label of requiredUrlVerificationFields) {
+    requirePass(findings, `${label} passed`, fieldValue(markdown, label));
   }
 
   const rows = tableRows(markdown);
@@ -232,6 +311,52 @@ function validateEvidence(markdown: string) {
 
   if (checkedResultCells > 0) pass(findings, 'Evidence tables include completed result cells', `${checkedResultCells} completed cells`);
   else fail(findings, 'Evidence tables include completed result cells', 'No Pass/Complete/Uploaded/Verified cells found');
+
+  const artifactRows = tableRowsForSection(markdown, 'Build Artifacts');
+  for (const required of requiredBuildArtifactRows) {
+    const row = artifactRows.find((candidate) =>
+      candidate[0] === required.platform
+      && candidate[1] === required.storeChannel
+    );
+    const label = `${required.platform} ${required.storeChannel} build artifact is uploaded`;
+    if (!row) {
+      fail(findings, label, 'Missing row');
+      continue;
+    }
+
+    for (const [index, cellLabel] of [
+      [2, 'Artifact'],
+      [3, 'Uploaded by'],
+      [4, 'Upload date'],
+    ] as const) {
+      const value = row[index];
+      if (value && isFilled(value)) pass(findings, `${required.platform} build artifact ${cellLabel} is filled`, value);
+      else fail(findings, `${required.platform} build artifact ${cellLabel} is filled`, value ? `Current value: ${value}` : 'Missing value');
+    }
+    requireComplete(findings, label, row[5]);
+  }
+
+  const signingRows = tableRowsForSection(markdown, 'Signing Evidence');
+  for (const required of requiredSigningRows) {
+    const row = signingRows.find((candidate) => candidate[0] === required.platform);
+    const label = `${required.platform} signing evidence is verified`;
+    if (!row) {
+      fail(findings, label, 'Missing row');
+      continue;
+    }
+
+    for (const [index, cellLabel] of [
+      [1, 'Signing identity'],
+      [2, 'Team/account id'],
+      [3, 'Profile/keystore'],
+      [4, 'Verified by'],
+    ] as const) {
+      const value = row[index];
+      if (value && isFilled(value)) pass(findings, `${required.platform} signing evidence ${cellLabel} is filled`, value);
+      else fail(findings, `${required.platform} signing evidence ${cellLabel} is filled`, value ? `Current value: ${value}` : 'Missing value');
+    }
+    requireComplete(findings, label, row[5]);
+  }
 
   const installedBuildRows = tableRowsForSection(markdown, 'Installed Build Matrix');
   for (const required of requiredInstalledBuildRows) {
@@ -386,6 +511,14 @@ ${storeConsoleRows}
 `;
 }
 
+function selfTestReleaseContext(): ReleaseContext {
+  return {
+    appVersion: '1.0.0',
+    buildNumber: '1',
+    gitCommit: 'abc1234',
+  };
+}
+
 async function main() {
   const args = parseArgs(process.argv.slice(2));
 
@@ -396,8 +529,9 @@ async function main() {
   const markdown = args.selfTest
     ? selfTestEvidence()
     : await readFile(path.resolve(root, args.file ?? ''), 'utf8');
+  const context = args.selfTest ? selfTestReleaseContext() : await currentReleaseContext();
 
-  const findings = validateEvidence(markdown);
+  const findings = validateEvidence(markdown, context);
   const failed = findings.filter((finding) => !finding.ok);
 
   for (const finding of findings) {
