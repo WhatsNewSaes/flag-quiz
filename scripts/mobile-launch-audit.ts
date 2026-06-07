@@ -813,10 +813,16 @@ async function main() {
     'wrong installed build number',
     'invalid approval date',
     'future approval date',
+    'open failure log row',
+    'invalid failure severity',
     'Approval date is YYYY-MM-DD',
     'Required Smoke Evidence',
     'Store Console Evidence',
     'evidence link is valid',
+    'Failure log has no unresolved rows',
+    'Failure log row 1 Retest result passed',
+    'Failure log row 1 Severity is valid',
+    'requireSeverity',
     'Local evidence file does not exist',
     'negativeSelfTestFindings',
     'Negative self-test rejects',
@@ -856,6 +862,14 @@ async function main() {
   expect(
     releaseEvidenceTemplate.includes('future-dated evidence is rejected'),
     'Release evidence template documents future-dated evidence rejection'
+  );
+  expect(
+    releaseRunbook.includes('unresolved failure rows are rejected'),
+    'Release runbook documents unresolved failure row rejection'
+  );
+  expect(
+    releaseEvidenceTemplate.includes('Every non-empty failure row must use Severity'),
+    'Release evidence template documents failure row closure requirements'
   );
   expect(
     storeSubmissionPackage.includes('external artifact manifests'),

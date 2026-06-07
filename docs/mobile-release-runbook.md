@@ -84,6 +84,8 @@ The release evidence checker requires the `Artifact manifest` field to be a loca
 
 Evidence date, signed-build upload dates, installed-build test dates, and approval date must use `YYYY-MM-DD` and must be today or earlier. Future-dated evidence is rejected so the file cannot pass before the work is actually complete.
 
+If any launch issue is recorded in the Failure Log, keep the row until it has a valid severity (`Critical`, `High`, `Medium`, or `Low`), owner, fix commit or no-code-change reference, and `Pass` retest result. Empty failure logs are allowed; unresolved failure rows are rejected.
+
 As the final local gate before submitting for App Store and Google Play review, run it with the signed artifact paths. The gate runs unsigned preflight, writes the artifact manifest from the evidence file's `Artifact manifest` path, validates the completed evidence file, and checks public URLs.
 
 ```bash

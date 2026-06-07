@@ -270,7 +270,13 @@ function sectionMarkdown(markdown: string, heading: string) {
 }
 
 function tableRowsForSection(markdown: string, heading: string) {
-  return tableRows(sectionMarkdown(markdown, heading));
+  return tableRows(sectionMarkdown(markdown, heading))
+    .filter((row) => !row.some((cell) => [
+      'Platform',
+      'Area',
+      'Store',
+      'Date',
+    ].includes(cell)));
 }
 
 function isPassLike(value: string) {
@@ -320,6 +326,17 @@ function requireReleaseDate(findings: Finding[], label: string, value: string | 
   const today = todayIsoDate();
   if (dateValue <= today) pass(findings, `${dateLabel} is not future-dated`, dateValue);
   else fail(findings, `${dateLabel} is not future-dated`, `Expected ${today} or earlier, got ${dateValue}`);
+}
+
+function requireFilledCell(findings: Finding[], label: string, value: string | undefined) {
+  if (value && isFilled(value)) pass(findings, label, value);
+  else fail(findings, label, value ? `Current value: ${value}` : 'Missing value');
+}
+
+function requireSeverity(findings: Finding[], label: string, value: string | undefined) {
+  const allowed = ['critical', 'high', 'medium', 'low'];
+  if (value && allowed.includes(normalize(value))) pass(findings, label, value);
+  else fail(findings, label, value ? `Expected Critical, High, Medium, or Low; got ${value}` : 'Missing value');
 }
 
 function evidenceTarget(value: string) {
@@ -603,6 +620,24 @@ function validateEvidence(markdown: string, context: ReleaseContext) {
     requireEvidenceLink(findings, `${required.store} ${required.area} evidence link is valid`, evidenceLink);
   }
 
+  const failureRows = tableRowsForSection(markdown, 'Failure Log')
+    .filter((row) => !row.every((cell) => cell === ''));
+  if (failureRows.length === 0) {
+    pass(findings, 'Failure log has no unresolved rows');
+  }
+  for (const [index, row] of failureRows.entries()) {
+    const rowLabel = `Failure log row ${index + 1}`;
+    requireReleaseDate(findings, `${rowLabel} Date is YYYY-MM-DD`, row[0]);
+    requireFilledCell(findings, `${rowLabel} Platform is filled`, row[1]);
+    requireFilledCell(findings, `${rowLabel} Device is filled`, row[2]);
+    requireFilledCell(findings, `${rowLabel} Area is filled`, row[3]);
+    requireFilledCell(findings, `${rowLabel} Issue is filled`, row[4]);
+    requireSeverity(findings, `${rowLabel} Severity is valid`, row[5]);
+    requireFilledCell(findings, `${rowLabel} Owner is filled`, row[6]);
+    requireFilledCell(findings, `${rowLabel} Fix commit is filled`, row[7]);
+    requirePass(findings, `${rowLabel} Retest result passed`, row[8]);
+  }
+
   for (const label of requiredCompleteSignoffFields) {
     requireComplete(findings, `${label} is signed off`, fieldValue(markdown, label));
   }
@@ -798,6 +833,24 @@ function negativeSelfTestFindings() {
       baseline.replace('- Approval date: 2026-06-07', '- Approval date: 2999-01-01'),
       context,
       ['Approval date is not future-dated']
+    ),
+    ...expectSelfTestFailure(
+      'open failure log row',
+      baseline.replace(
+        '|  |  |  |  |  |  |  |  |  |',
+        '| 2026-06-07 | iOS | Physical iPhone | Perfect Passport share sheet | Share sheet did not open | High | QA | d0412c9 |  |'
+      ),
+      context,
+      ['Failure log row 1 Retest result passed']
+    ),
+    ...expectSelfTestFailure(
+      'invalid failure severity',
+      baseline.replace(
+        '|  |  |  |  |  |  |  |  |  |',
+        '| 2026-06-07 | Android | Physical Android phone | Flag Runner touch controls and restart | Restart button overlapped | Maybe | QA | d0412c9 | Pass |'
+      ),
+      context,
+      ['Failure log row 1 Severity is valid']
     ),
     ...expectSelfTestFailure(
       'malformed local artifact manifest',

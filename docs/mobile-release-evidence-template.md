@@ -90,6 +90,8 @@ Record `Pass`, `Fail`, or `N/A`. Every required row must include an evidence URL
 
 ## Failure Log
 
+Leave the blank row empty if there were no failures. Every non-empty failure row must use Severity `Critical`, `High`, `Medium`, or `Low`, include an owner and fix commit or no-code-change reference, and end with Retest result `Pass`.
+
 | Date | Platform | Device | Area | Issue | Severity | Owner | Fix commit | Retest result |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 |  |  |  |  |  |  |  |  |  |
