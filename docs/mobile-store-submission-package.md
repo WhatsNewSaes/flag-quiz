@@ -127,6 +127,7 @@ npm run mobile:evidence:self-test
 npm run mobile:audit
 npm run build
 npx cap sync
+npm run mobile:bundle:check
 npm run mobile:readiness
 npm run mobile:blockers:check
 npm run package:store-submission

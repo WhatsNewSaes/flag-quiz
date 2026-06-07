@@ -147,6 +147,7 @@ async function main() {
     '- `npm run mobile:store:check` verifies store listing copy limits, asset dimensions, privacy references, and handoff paths.',
     '- `npm run mobile:qa:plan` verifies the installed-build QA plan covers required devices, game modes, native behaviors, and release evidence workflow.',
     '- `npm run mobile:devices:check` verifies the local simulator/emulator coverage plan covers target sizes, all game modes, native back, network behavior, and evidence notes.',
+    '- `npm run mobile:bundle:check` verifies web, Android, and iOS bundled assets do not include OS metadata files such as `.DS_Store`.',
     '- `npm run mobile:preflight` runs the local release preflight sequence in the expected order.',
     '- `.github/workflows/mobile-preflight.yml` runs the unsigned mobile preflight in CI and uploads the generated store submission package.',
     '- `npm run mobile:urls:check` verifies public store listing URLs against the production site when network access is available.',

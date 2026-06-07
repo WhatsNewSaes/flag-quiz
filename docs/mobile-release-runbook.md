@@ -25,6 +25,7 @@ npm run mobile:evidence:self-test
 npm run mobile:audit
 npm run build
 npx cap sync
+npm run mobile:bundle:check
 npm run mobile:readiness
 npm run mobile:blockers:check
 npm run package:store-submission
@@ -42,6 +43,8 @@ The first iOS release is targeted to iPhone only. Do not add iPad screenshots un
 `npm run mobile:blockers:check` verifies that `dist/mobile-launch-blockers.md` still matches the unchecked launch checklist items and required closeout criteria.
 
 GitHub Actions also runs the unsigned mobile preflight on `main`, pull requests, and manual dispatch through `.github/workflows/mobile-preflight.yml`. The workflow uploads the generated store submission package as an artifact; signed store builds still require local/store-console credentials.
+
+`npm run mobile:bundle:check` runs after `npx cap sync` and rejects OS metadata files such as `.DS_Store` in web, Android, or iOS bundled assets.
 
 `npm run mobile:signing:preflight` is expected to warn until Android signing secrets and the Apple Developer Team are configured locally. It should not fail unless a repo safety invariant or filled signing config is broken.
 
