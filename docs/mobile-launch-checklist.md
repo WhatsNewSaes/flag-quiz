@@ -81,9 +81,10 @@ Last updated: 2026-06-07
 - [ ] App Store subtitle
 - [ ] App Store description
 - [ ] App Store keywords
-- [ ] Support URL
-- [ ] Marketing URL
-- [ ] Privacy policy URL
+- [x] Support URL exists: `https://flagarcade.com/support`
+- [x] Marketing URL exists: `https://flagarcade.com`
+- [x] Privacy policy URL exists: `https://flagarcade.com/privacy`
+- [x] Terms URL exists: `https://flagarcade.com/terms`
 - [ ] Category selections
 - [ ] Content rating questionnaire
 - [ ] Age rating questionnaire
@@ -97,8 +98,8 @@ Last updated: 2026-06-07
 - [ ] Confirm analytics data collected and retention policy
 - [ ] Confirm Supabase/auth data collected and deletion path
 - [ ] Confirm no precise location, contacts, photos, microphone, camera, or health permissions are requested
-- [ ] Confirm children's/privacy positioning before launch copy is finalized
-- [ ] Confirm Terms of Use, Privacy Policy, and support contact are reachable from store listings
+- [x] Confirm children's/privacy positioning before launch copy is finalized
+- [x] Confirm Terms of Use, Privacy Policy, and support contact are reachable from store listings
 
 ## Manual Device Targets
 

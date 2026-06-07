@@ -96,7 +96,6 @@ Use `docs/mobile-store-metadata.md` as the working copy for listing text, catego
 
 Remaining required external artifacts:
 
-- Privacy policy URL.
 - App Store privacy nutrition labels.
 - Google Play Data Safety form.
 - App Store screenshots.

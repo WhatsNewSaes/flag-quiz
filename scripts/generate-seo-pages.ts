@@ -1922,6 +1922,83 @@ function generateAboutPage(assets: Assets): string {
   );
 }
 
+function generateLegalInfoPage(
+  assets: Assets,
+  page: 'privacy' | 'terms' | 'support',
+): string {
+  const content = {
+    privacy: {
+      title: 'Privacy Policy - Flag Arcade',
+      description: 'Read the Flag Arcade privacy policy, including what data is collected, how it is used, and how to contact us.',
+      heading: 'Privacy Policy',
+      updated: 'Last updated: June 7, 2026',
+      sections: [
+        ['Overview', 'Flag Arcade is a geography and flag quiz game. You can play without creating an account. If you choose to sign in, we use your account only to support features such as progress sync.'],
+        ['Information We Collect', 'We may collect gameplay information such as progress, scores, achievements, preferences, and selected characters. If you sign in, we may collect account details provided through the authentication provider, such as your email address or user identifier. We also use basic analytics to understand aggregate usage and whether the app is working correctly.'],
+        ['How We Use Information', 'We use information to run the game, save progress, improve game modes, fix bugs, understand aggregate usage, and keep the service reliable.'],
+        ['What We Do Not Collect', 'Flag Arcade does not request access to precise location, contacts, photos, camera, microphone, health data, or payment information.'],
+        ['Service Providers', 'We may use trusted service providers for hosting, analytics, authentication, database storage, and app distribution. These providers process information only as needed to operate Flag Arcade.'],
+        ['Children', 'Flag Arcade is designed as a general-audience learning game. We do not knowingly collect personal information from children under 13. If you believe a child provided personal information, contact us so we can review and delete it where appropriate.'],
+        ['Your Choices', 'You can play without signing in. You can also clear local browser or app storage to remove local progress on your device. For account or data requests, use the support page.'],
+      ],
+    },
+    terms: {
+      title: 'Terms of Use - Flag Arcade',
+      description: 'Read the Flag Arcade terms of use for playing the website and mobile app.',
+      heading: 'Terms of Use',
+      updated: 'Last updated: June 7, 2026',
+      sections: [
+        ['Using Flag Arcade', 'Flag Arcade is provided for learning, practice, and entertainment. By using the site or mobile app, you agree to use it lawfully and respectfully.'],
+        ['Accounts And Progress', 'You can play many parts of Flag Arcade without an account. If account features are available, you are responsible for keeping your sign-in method secure.'],
+        ['Content', 'Flag names, geography facts, images, and game content are provided for educational use. We work to keep the information accurate, but country and territory information can change over time.'],
+        ['Availability', 'We may update, change, or remove features as the game improves. We do not guarantee that Flag Arcade will always be available or error-free.'],
+        ['Privacy', 'Your use of Flag Arcade is also covered by our Privacy Policy.'],
+      ],
+    },
+    support: {
+      title: 'Support - Flag Arcade',
+      description: 'Get support for Flag Arcade, including privacy questions, bug reports, and app store support.',
+      heading: 'Support',
+      updated: '',
+      sections: [
+        ['Contact', 'Need help with Flag Arcade, want to report a bug, or have a privacy request? Flag Arcade is built by UX Cabin. For support, visit uxcabin.com.'],
+      ],
+    },
+  }[page];
+
+  const sectionsHtml = content.sections
+    .map(([heading, text]) => `
+      <section style="margin-top:24px;">
+        <h2 style="font-family:'Press Start 2P',cursive;font-size:14px;">${escapeHtml(heading)}</h2>
+        <p style="font-family:'Inter',sans-serif;font-size:15px;line-height:1.7;">${escapeHtml(text)}</p>
+      </section>`)
+    .join('');
+
+  const bodyHtml = `
+    <nav aria-label="Breadcrumb" style="padding:8px 16px;font-family:'Inter',sans-serif;font-size:14px;">
+      <a href="/">Home</a> / ${escapeHtml(content.heading)}
+    </nav>
+    <main style="max-width:720px;margin:0 auto;padding:16px;">
+      ${content.updated ? `<p style="font-family:'Inter',sans-serif;font-size:13px;color:#6B7280;">${escapeHtml(content.updated)}</p>` : ''}
+      <h1 style="font-family:'Press Start 2P',cursive;">${escapeHtml(content.heading)}</h1>
+      ${sectionsHtml}
+      <nav style="margin-top:32px;text-align:center;padding-bottom:32px;">
+        <a href="/">Home</a> &middot; <a href="/privacy">Privacy</a> &middot; <a href="/terms">Terms</a> &middot; <a href="/support">Support</a>
+      </nav>
+    </main>`;
+
+  return buildPage(
+    {
+      title: content.title,
+      description: content.description,
+      canonical: `${SITE_URL}/${page}`,
+    },
+    bodyHtml,
+    assets,
+    page === 'privacy' ? 'PrivacyPage' : page === 'terms' ? 'TermsPage' : 'SupportPage',
+  );
+}
+
 // ---------------------------------------------------------------------------
 // Embed page (teacher / classroom distribution)
 // ---------------------------------------------------------------------------
@@ -2456,6 +2533,15 @@ function main() {
   sitemapUrls.push({ loc: `${SITE_URL}/about`, priority: '0.5' });
   console.log('  /about');
 
+  // Legal/support pages required for app store review and support links
+  writeFile(path.join(DIST, 'privacy', 'index.html'), generateLegalInfoPage(assets, 'privacy'));
+  sitemapUrls.push({ loc: `${SITE_URL}/privacy`, priority: '0.3' });
+  writeFile(path.join(DIST, 'terms', 'index.html'), generateLegalInfoPage(assets, 'terms'));
+  sitemapUrls.push({ loc: `${SITE_URL}/terms`, priority: '0.3' });
+  writeFile(path.join(DIST, 'support', 'index.html'), generateLegalInfoPage(assets, 'support'));
+  sitemapUrls.push({ loc: `${SITE_URL}/support`, priority: '0.3' });
+  console.log('  /privacy + /terms + /support');
+
   // Embed (teacher / classroom distribution)
   writeFile(path.join(DIST, 'embed', 'index.html'), generateEmbedPage(assets));
   sitemapUrls.push({ loc: `${SITE_URL}/embed`, priority: '0.6' });
@@ -2477,7 +2563,21 @@ function main() {
   );
   console.log('  robots.txt');
 
-  const totalPages = 1 + 1 + continents.length * 2 + countries.length + contentPages.length;
+  const totalPages = PLAY_ROUTE_META.length
+    + 1 // /flags
+    + 1 // /quiz
+    + continents.length * 2
+    + countries.length
+    + contentPages.length
+    + 1 // /patterns
+    + 1 + organizations.length
+    + 1 + territories.length
+    + 1 // /flags/emoji
+    + 1 + religions.length
+    + 1 // /about
+    + 3 // /privacy, /terms, /support
+    + 1 // /embed
+    + 1; // /embed/arcade
   const totalSitemapUrls = sitemapUrls.length;
   console.log(`\nDone! Generated ${totalPages} SEO pages + sitemap (${totalSitemapUrls} URLs) + robots.txt`);
 }

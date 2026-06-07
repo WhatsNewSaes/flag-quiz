@@ -134,6 +134,7 @@ export function SiteFooter() {
               <li><Link to="/flags/emoji" className={linkClass}>Emoji Flags</Link></li>
               <li><Link to="/embed" className={linkClass}>Embed for Teachers</Link></li>
               <li><Link to="/about" className={linkClass}>About Us</Link></li>
+              <li><Link to="/support" className={linkClass}>Support</Link></li>
               <li><Link to="/play" className={linkClass}>Play Game</Link></li>
             </ul>
           </div>
@@ -148,6 +149,9 @@ export function SiteFooter() {
             <Link to="/flags/territories" className={linkClass}>Territories</Link>
             <Link to="/quiz" className={linkClass}>Quiz</Link>
             <Link to="/play" className={linkClass}>Play</Link>
+            <Link to="/privacy" className={linkClass}>Privacy</Link>
+            <Link to="/terms" className={linkClass}>Terms</Link>
+            <Link to="/support" className={linkClass}>Support</Link>
             <a
               href="https://uxcabin.com"
               target="_blank"

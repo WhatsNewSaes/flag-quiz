@@ -20,6 +20,9 @@ const ContinentFlagsPage = lazy(() => import('./pages/ContinentFlagsPage').then(
 const QuizLandingPage = lazy(() => import('./pages/QuizLandingPage').then(m => ({ default: m.QuizLandingPage })));
 const ContinentQuizPage = lazy(() => import('./pages/ContinentQuizPage').then(m => ({ default: m.ContinentQuizPage })));
 const AboutPage = lazy(() => import('./pages/AboutPage').then(m => ({ default: m.AboutPage })));
+const PrivacyPage = lazy(() => import('./pages/PrivacyPage').then(m => ({ default: m.PrivacyPage })));
+const TermsPage = lazy(() => import('./pages/TermsPage').then(m => ({ default: m.TermsPage })));
+const SupportPage = lazy(() => import('./pages/SupportPage').then(m => ({ default: m.SupportPage })));
 const EmojiFlagsPage = lazy(() => import('./pages/EmojiFlagsPage').then(m => ({ default: m.EmojiFlagsPage })));
 const OrganizationsPage = lazy(() => import('./pages/OrganizationsPage').then(m => ({ default: m.OrganizationsPage })));
 const OrganizationPage = lazy(() => import('./pages/OrganizationPage').then(m => ({ default: m.OrganizationPage })));
@@ -240,6 +243,9 @@ function App() {
           <Route path="/religions" element={<ReligionsIndexPage />} />
           <Route path="/religions/:slug" element={<ReligionPage />} />
           <Route path="/about" element={<AboutPage />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
+          <Route path="/terms" element={<TermsPage />} />
+          <Route path="/support" element={<SupportPage />} />
           <Route path="/embed" element={<EmbedPage />} />
         </Route>
         {/* Embed route — bare-bones, no SiteLayout, intended for iframes */}

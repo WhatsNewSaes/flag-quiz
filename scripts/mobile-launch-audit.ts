@@ -137,6 +137,14 @@ async function main() {
   expect(existsSync(resolve('docs/mobile-store-metadata.md')), 'Mobile store metadata draft exists');
   expect(existsSync(resolve('docs/mobile-release-runbook.md')), 'Mobile release runbook exists');
   expect(existsSync(resolve('android/keystore.properties.example')), 'Android keystore template exists');
+  expect(existsSync(resolve('src/pages/PrivacyPage.tsx')), 'Privacy page source exists');
+  expect(existsSync(resolve('src/pages/TermsPage.tsx')), 'Terms page source exists');
+  expect(existsSync(resolve('src/pages/SupportPage.tsx')), 'Support page source exists');
+
+  const appSource = await readFile(resolve('src/App.tsx'), 'utf8');
+  expect(appSource.includes('path="/privacy"'), 'Privacy route is registered');
+  expect(appSource.includes('path="/terms"'), 'Terms route is registered');
+  expect(appSource.includes('path="/support"'), 'Support route is registered');
 
   const gitignore = await readFile(resolve('.gitignore'), 'utf8');
   expect(gitignore.includes('android/keystore.properties'), 'Android keystore properties are gitignored');

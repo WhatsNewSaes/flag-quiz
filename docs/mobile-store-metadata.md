@@ -10,8 +10,9 @@ Use this as the working copy for App Store Connect and Google Play Console. Fina
 - Category: Games / Educational / Trivia
 - Website: https://flagarcade.com
 - Marketing URL: https://flagarcade.com
-- Support URL: https://flagarcade.com/about
-- Privacy policy URL: Pending
+- Support URL: https://flagarcade.com/support
+- Privacy policy URL: https://flagarcade.com/privacy
+- Terms URL: https://flagarcade.com/terms
 - Bundle ID / package name: `com.flagarcade.app`
 - Current public version: `1.0`
 
