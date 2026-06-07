@@ -438,6 +438,11 @@ async function main() {
     'App Store Connect privacy labels and Google Play Data Safety forms are submitted',
     'npm run mobile:evidence:check',
     'npm run mobile:go-live:check',
+    '## Closeout Commands',
+    'npm run mobile:build:android:release',
+    'npm run mobile:artifacts:check -- --android-aab android/app/build/outputs/bundle/release/app-release.aab --ios-archive ios/App/build/FlagArcade.xcarchive',
+    'docs/release-evidence/mobile-<version>-build-<build>-<commit>.md',
+    'ios/App/build/FlagArcade.xcarchive',
   ];
   for (const term of launchBlockerCheckerTerms) {
     expect(launchBlockerChecker.includes(term), `Launch blocker checker covers ${term}`);
@@ -552,6 +557,10 @@ async function main() {
     'Remaining External Requirements',
     'Launch Decision',
     'Open blocker count',
+    'Closeout Commands',
+    'npm run mobile:build:android:release',
+    'npm run mobile:artifacts:check -- --android-aab android/app/build/outputs/bundle/release/app-release.aab --ios-archive ios/App/build/FlagArcade.xcarchive',
+    'docs/release-evidence/mobile-<version>-build-<build>-<commit>.md',
     'npm run mobile:preflight',
     'npm run mobile:version:check',
     'npm run mobile:store:check',

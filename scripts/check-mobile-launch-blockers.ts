@@ -96,6 +96,23 @@ async function main() {
     expect(actual.includes(item), `Launch blocker report includes close requirement: ${item}`);
   }
 
+  const requiredCloseoutTerms = [
+    '## Closeout Commands',
+    'npm run mobile:signing:preflight',
+    'npm run mobile:build:android:release',
+    'npm run mobile:evidence:init -- --build 1 --owner "Release Owner"',
+    'npm run mobile:artifacts:check -- --android-aab android/app/build/outputs/bundle/release/app-release.aab --ios-archive ios/App/build/FlagArcade.xcarchive',
+    'npm run mobile:evidence:check -- --file docs/release-evidence/<release-file>.md',
+    'npm run mobile:urls:check',
+    'npm run mobile:go-live:check -- --evidence docs/release-evidence/<release-file>.md --android-aab android/app/build/outputs/bundle/release/app-release.aab --ios-archive ios/App/build/FlagArcade.xcarchive',
+    'docs/release-evidence/mobile-<version>-build-<build>-<commit>.md',
+    'android/app/build/outputs/bundle/release/app-release.aab',
+    'ios/App/build/FlagArcade.xcarchive',
+  ];
+  for (const term of requiredCloseoutTerms) {
+    expect(actual.includes(term), `Launch blocker report includes closeout term: ${term}`);
+  }
+
   const failed = findings.filter((finding) => !finding.ok);
   for (const finding of findings) {
     const prefix = finding.ok ? 'PASS' : 'FAIL';
