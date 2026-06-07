@@ -221,6 +221,7 @@ async function main() {
   expect(existsSync(resolve('docs/mobile-store-privacy-form-answers.md')), 'Mobile store privacy form answers exist');
   expect(existsSync(resolve('docs/mobile-store-submission-package.md')), 'Mobile store submission package exists');
   expect(existsSync(resolve('docs/mobile-installed-build-qa.md')), 'Mobile installed-build QA checklist exists');
+  expect(existsSync(resolve('docs/mobile-release-evidence-template.md')), 'Mobile release evidence template exists');
   expect(existsSync(resolve('android/keystore.properties.example')), 'Android keystore template exists');
   expect(existsSync(resolve('store-assets/README.md')), 'Store assets README exists');
   expect(existsSync(resolve('src/pages/PrivacyPage.tsx')), 'Privacy page source exists');
@@ -275,6 +276,34 @@ async function main() {
   ];
   for (const term of requiredQaTerms) {
     expect(installedBuildQa.includes(term), `Installed-build QA covers ${term}`);
+  }
+  expect(
+    installedBuildQa.includes('docs/mobile-release-evidence-template.md'),
+    'Installed-build QA links release evidence template'
+  );
+
+  const releaseEvidenceTemplate = await readFile(resolve('docs/mobile-release-evidence-template.md'), 'utf8');
+  const releaseEvidenceTerms = [
+    'Release Candidate',
+    'Build Artifacts',
+    'Signing Evidence',
+    'Installed Build Matrix',
+    'Required Smoke Evidence',
+    'Store Console Evidence',
+    'Failure Log',
+    'Final Signoff',
+    'TestFlight',
+    'Play internal test',
+    'Perfect Passport share sheet',
+    'Flag Jeopardy Type mode',
+    'Android native back behavior',
+    'Auth callback/deep link',
+    'App Privacy labels',
+    'Data Safety',
+    'Pre-launch report',
+  ];
+  for (const term of releaseEvidenceTerms) {
+    expect(releaseEvidenceTemplate.includes(term), `Release evidence template covers ${term}`);
   }
 
   const deletionRunbook = await readFile(resolve('docs/mobile-data-deletion-runbook.md'), 'utf8');

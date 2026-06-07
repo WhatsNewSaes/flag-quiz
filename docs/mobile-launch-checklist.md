@@ -115,6 +115,7 @@ Last updated: 2026-06-07
 - [x] Android Pixel 8 emulator APK install/smoke tested
 - [x] iPhone 17 simulator build/install/launch/screenshot tested
 - [x] Installed-build QA checklist exists: `docs/mobile-installed-build-qa.md`
+- [x] Release evidence template exists: `docs/mobile-release-evidence-template.md`
 - [ ] Physical iPhone test
 - [ ] Physical Android test
 - [ ] Small-screen iPhone simulator test
@@ -125,4 +126,5 @@ Last updated: 2026-06-07
 - iOS command-line tooling in this environment cannot tap through screens, so final iOS interaction QA needs either manual simulator use, XCUITest, or a physical device.
 - First-run Journey onboarding intentionally asks for character and flag selection on fresh installs before showing the map.
 - Privacy form answer drafts exist, but App Store Connect and Google Play Console still need final human submission.
+- Release evidence template exists, but final evidence cannot be filled until signed TestFlight and Play internal builds are uploaded and installed.
 - Store submission cannot be considered complete until signed release builds, store screenshots, privacy forms, and internal test tracks are verified.

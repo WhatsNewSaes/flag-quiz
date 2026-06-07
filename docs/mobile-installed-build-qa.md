@@ -4,6 +4,8 @@ Last updated: 2026-06-07
 
 Use this checklist for TestFlight and Google Play internal testing builds. Do not mark the launch checklist's installed-build smoke tests complete until every required row below has been run on the submitted build or a build with the same commit and signing configuration.
 
+For launch signoff, copy `docs/mobile-release-evidence-template.md` and fill it with the exact build ids, devices, screenshots or clips, store-console statuses, failures, and final approval.
+
 ## Test Matrix
 
 | Platform | Build source | Device | OS version | Tester | Date | Result |

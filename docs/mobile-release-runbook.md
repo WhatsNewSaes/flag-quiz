@@ -24,6 +24,8 @@ Confirm privacy and store form answers against `docs/mobile-privacy-data-invento
 
 Use `docs/mobile-store-submission-package.md` as the final handoff manifest for upload paths, listing copy, privacy answers, and external store-console tasks.
 
+Create a release evidence file from `docs/mobile-release-evidence-template.md` before uploading store builds, then keep it updated through TestFlight, Play internal testing, and final signoff.
+
 ## 2. Android Release AAB
 
 Create an upload keystore once and store it outside git:
@@ -88,6 +90,8 @@ Upload to TestFlight before App Store review.
 ## 4. Manual QA Before Store Upload
 
 Use `docs/mobile-installed-build-qa.md` as the pass/fail checklist for TestFlight and Google Play internal testing.
+
+Record the actual devices, build ids, pass/fail results, and evidence links in the copied `docs/mobile-release-evidence-template.md` file.
 
 - Install the Android internal test build and tap through all six game modes.
 - Install the TestFlight build and tap through all six game modes.
