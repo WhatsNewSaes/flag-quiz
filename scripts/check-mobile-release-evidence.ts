@@ -1,9 +1,11 @@
 import { execFileSync } from 'node:child_process';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
 import path from 'node:path';
 
 const root = process.cwd();
+const selfTestDirectories: string[] = [];
 
 type Finding = {
   label: string;
@@ -347,9 +349,15 @@ function requireArtifactManifest(findings: Finding[], value: string | undefined,
   if (!value || !isFilled(value)) return;
 
   const target = evidenceTarget(value);
-  if (!target || target.startsWith('#') || target.includes('<release-file>') || isExternalEvidenceTarget(target)) {
+  if (!target || target.startsWith('#') || target.includes('<release-file>')) {
     return;
   }
+
+  if (isExternalEvidenceTarget(target)) {
+    fail(findings, 'Artifact manifest is local JSON path', `External artifact manifest is not parsed: ${target}`);
+    return;
+  }
+  pass(findings, 'Artifact manifest is local JSON path', target);
 
   const localPath = target.split('#')[0];
   const absolutePath = path.resolve(root, localPath);
@@ -594,7 +602,43 @@ function validateEvidence(markdown: string, context: ReleaseContext) {
   return findings;
 }
 
-function selfTestEvidence() {
+function selfTestArtifactManifestPath(context: ReleaseContext) {
+  const directory = mkdtempSync(path.join(tmpdir(), 'flag-arcade-mobile-evidence-'));
+  selfTestDirectories.push(directory);
+  const manifestPath = path.join(directory, 'mobile-artifacts.json');
+  writeFileSync(manifestPath, JSON.stringify({
+    generatedAt: '2026-06-07T00:00:00.000Z',
+    gitCommit: context.gitCommit,
+    appVersion: context.appVersion,
+    buildNumber: context.buildNumber,
+    artifacts: [
+      {
+        platform: 'android',
+        kind: 'signed-aab',
+        path: 'android/app/build/outputs/bundle/release/app-release.aab',
+        bytes: 1024,
+        sha256: 'a'.repeat(64),
+      },
+      {
+        platform: 'ios',
+        kind: 'signed-xcarchive',
+        path: 'ios/App/build/FlagArcade.xcarchive',
+        files: [
+          {
+            path: 'ios/App/build/FlagArcade.xcarchive/Info.plist',
+            bytes: 1024,
+            sha256: 'b'.repeat(64),
+          },
+        ],
+      },
+    ],
+  }, null, 2));
+
+  return manifestPath;
+}
+
+function selfTestEvidence(context = selfTestReleaseContext()) {
+  const artifactManifestPath = selfTestArtifactManifestPath(context);
   const smokeEvidenceRows = requiredSmokeRows
     .map((row) => `| ${row.area} | ${row.ios} | ${row.android} | https://example.com/evidence/${row.area.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.png |  |`)
     .join('\n');
@@ -616,7 +660,7 @@ function selfTestEvidence() {
 - Privacy URL verified: Pass
 - Terms URL verified: Pass
 - Support URL verified: Pass
-- Artifact manifest: https://example.com/evidence/mobile-artifacts.json
+- Artifact manifest: ${artifactManifestPath}
 
 ## Build Artifacts
 
@@ -700,8 +744,8 @@ function expectSelfTestFailure(
 }
 
 function negativeSelfTestFindings() {
-  const baseline = selfTestEvidence();
   const context = selfTestReleaseContext();
+  const baseline = selfTestEvidence(context);
 
   return [
     ...expectSelfTestFailure(
@@ -736,9 +780,15 @@ function negativeSelfTestFindings() {
     ),
     ...expectSelfTestFailure(
       'malformed local artifact manifest',
-      baseline.replace('- Artifact manifest: https://example.com/evidence/mobile-artifacts.json', '- Artifact manifest: package.json'),
+      baseline.replace(/- Artifact manifest: .+/, '- Artifact manifest: package.json'),
       context,
       ['Artifact manifest git commit matches release evidence']
+    ),
+    ...expectSelfTestFailure(
+      'external artifact manifest',
+      baseline.replace(/- Artifact manifest: .+/, '- Artifact manifest: https://example.com/evidence/mobile-artifacts.json'),
+      context,
+      ['Artifact manifest is local JSON path']
     ),
   ];
 }
@@ -754,10 +804,10 @@ async function main() {
     throw new Error('Usage: npm run mobile:evidence:check -- --file docs/release-evidence/<file>.md');
   }
 
-  const markdown = args.selfTest
-    ? selfTestEvidence()
-    : await readFile(path.resolve(root, args.file ?? ''), 'utf8');
   const context = args.selfTest ? selfTestReleaseContext() : await currentReleaseContext();
+  const markdown = args.selfTest
+    ? selfTestEvidence(context)
+    : await readFile(path.resolve(root, args.file ?? ''), 'utf8');
 
   const findings = [
     ...validateEvidence(markdown, context),
@@ -768,6 +818,10 @@ async function main() {
   for (const finding of findings) {
     const prefix = finding.ok ? 'PASS' : 'FAIL';
     console.log(`${prefix} ${finding.label}${finding.detail ? ` (${finding.detail})` : ''}`);
+  }
+
+  for (const directory of selfTestDirectories) {
+    rmSync(directory, { recursive: true, force: true });
   }
 
   if (failed.length > 0) {

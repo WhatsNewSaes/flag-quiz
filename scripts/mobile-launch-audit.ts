@@ -771,6 +771,7 @@ async function main() {
   }
 
   const releaseEvidenceChecker = await readFile(resolve('scripts/check-mobile-release-evidence.ts'), 'utf8');
+  const releaseRunbook = await readFile(resolve('docs/mobile-release-runbook.md'), 'utf8');
   const releaseEvidenceCheckerTerms = [
     '--file',
     '--self-test',
@@ -793,6 +794,7 @@ async function main() {
     'build artifact is uploaded',
     'Artifact manifest',
     'Artifact manifest evidence link is valid',
+    'Artifact manifest is local JSON path',
     'Artifact manifest JSON can be parsed',
     'Artifact manifest git commit matches release evidence',
     'Artifact manifest app version matches release evidence',
@@ -817,6 +819,7 @@ async function main() {
     'Negative self-test rejects',
     'stale git commit',
     'missing repo-relative evidence file',
+    'external artifact manifest',
     'weak final signoff value',
     'existsSync',
     'Physical iPhone',
@@ -838,6 +841,15 @@ async function main() {
   for (const term of releaseEvidenceCheckerTerms) {
     expect(releaseEvidenceChecker.includes(term), `Release evidence checker covers ${term}`);
   }
+
+  expect(
+    releaseRunbook.includes('The release evidence checker requires the `Artifact manifest` field to be a local JSON path'),
+    'Release runbook documents local artifact manifest enforcement'
+  );
+  expect(
+    storeSubmissionPackage.includes('external artifact manifests'),
+    'Submission package documents external artifact manifest rejection'
+  );
 
   const releaseArtifactChecker = await readFile(resolve('scripts/check-mobile-release-artifacts.ts'), 'utf8');
   const releaseArtifactCheckerTerms = [
@@ -867,7 +879,6 @@ async function main() {
   }
 
   const goLiveGate = await readFile(resolve('scripts/mobile-go-live-check.ts'), 'utf8');
-  const releaseRunbook = await readFile(resolve('docs/mobile-release-runbook.md'), 'utf8');
   const goLiveGateTerms = [
     '--evidence',
     '--android-aab',
