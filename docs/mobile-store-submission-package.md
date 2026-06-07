@@ -124,6 +124,7 @@ npm run mobile:audit
 npm run build
 npx cap sync
 npm run mobile:readiness
+npm run mobile:blockers:check
 npm run package:store-submission
 npm run mobile:handoff:check
 npm run mobile:build:android:debug
@@ -134,7 +135,7 @@ Expected current local result: all commands pass. Signed release uploads still r
 
 After packaging, use `dist/mobile-store-submission/manifest.json` as the integrity index for the handoff archive. It records each included file's original repo path, archive destination, byte count, and SHA-256 checksum so the exact store assets and docs can be verified during submission.
 
-`npm run package:store-submission` runs `npm run mobile:handoff:check` automatically. Run `npm run mobile:handoff:check` again if the package is moved or reviewed later and you want to verify the manifest, checksums, and ZIP contents still match.
+`npm run package:store-submission` runs `npm run mobile:blockers:check` and `npm run mobile:handoff:check` automatically. Run `npm run mobile:blockers:check` again after editing `docs/mobile-launch-checklist.md`, and run `npm run mobile:handoff:check` again if the package is moved or reviewed later and you want to verify the manifest, checksums, and ZIP contents still match.
 
 Before final store form submission, verify store metadata and public listing URLs:
 

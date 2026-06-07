@@ -56,6 +56,7 @@ async function main() {
   expect(Boolean(packageJson.scripts?.['mobile:version:check']), 'package.json exposes mobile version consistency checker script');
   expect(Boolean(packageJson.scripts?.['mobile:store:check']), 'package.json exposes mobile store submission checker script');
   expect(Boolean(packageJson.scripts?.['mobile:handoff:check']), 'package.json exposes mobile store handoff checker script');
+  expect(Boolean(packageJson.scripts?.['mobile:blockers:check']), 'package.json exposes mobile launch blocker checker script');
   expect(Boolean(packageJson.scripts?.['mobile:build:android:debug']), 'package.json exposes Android debug build script');
   expect(Boolean(packageJson.scripts?.['mobile:build:android:release']), 'package.json exposes Android release AAB script');
   expect(Boolean(packageJson.scripts?.['mobile:build:ios:debug']), 'package.json exposes iOS debug build script');
@@ -69,6 +70,10 @@ async function main() {
   expect(
     packageJson.scripts?.['package:store-submission']?.includes('npm run mobile:handoff:check') === true,
     'Store submission package script runs handoff checker'
+  );
+  expect(
+    packageJson.scripts?.['package:store-submission']?.includes('npm run mobile:blockers:check') === true,
+    'Store submission package script runs blocker checker'
   );
   expect(
     packageJson.scripts?.['mobile:preflight']?.includes('npm run mobile:store:check') === true,
@@ -252,6 +257,7 @@ async function main() {
   expect(existsSync(resolve('scripts/check-mobile-public-urls.ts')), 'Mobile public URL check script exists');
   expect(existsSync(resolve('scripts/check-mobile-store-submission.ts')), 'Mobile store submission checker script exists');
   expect(existsSync(resolve('scripts/check-mobile-store-handoff.ts')), 'Mobile store handoff checker script exists');
+  expect(existsSync(resolve('scripts/check-mobile-launch-blockers.ts')), 'Mobile launch blocker checker script exists');
   expect(existsSync(resolve('scripts/init-mobile-release-evidence.ts')), 'Mobile release evidence initializer script exists');
   expect(existsSync(resolve('scripts/check-mobile-release-evidence.ts')), 'Mobile release evidence checker script exists');
   expect(existsSync(resolve('scripts/check-mobile-release-artifacts.ts')), 'Mobile release artifact checker script exists');
@@ -305,6 +311,7 @@ async function main() {
   expect(storeSubmissionPackage.includes('npm run mobile:urls:check'), 'Submission package documents public URL check command');
   expect(storeSubmissionPackage.includes('npm run mobile:version:check'), 'Submission package documents version consistency checker command');
   expect(storeSubmissionPackage.includes('npm run mobile:store:check'), 'Submission package documents store submission checker command');
+  expect(storeSubmissionPackage.includes('npm run mobile:blockers:check'), 'Submission package documents launch blocker checker command');
   expect(storeSubmissionPackage.includes('npm run mobile:handoff:check'), 'Submission package documents store handoff checker command');
   expect(storeSubmissionPackage.includes('npm run mobile:signing:preflight'), 'Submission package documents signing preflight command');
   expect(storeSubmissionPackage.includes('npm run mobile:evidence:init'), 'Submission package documents release evidence initializer command');
@@ -360,6 +367,7 @@ async function main() {
     'docs/release-evidence',
     'npm run mobile:evidence:init',
     'npm run mobile:evidence:check',
+    'npm run mobile:blockers:check',
     'npm run mobile:handoff:check',
     'Signed iOS archive uploaded to TestFlight',
     'Signed Android AAB uploaded to Google Play internal testing',
@@ -384,6 +392,22 @@ async function main() {
   ];
   for (const term of storeHandoffCheckerTerms) {
     expect(storeHandoffChecker.includes(term), `Store handoff checker covers ${term}`);
+  }
+
+  const launchBlockerChecker = await readFile(resolve('scripts/check-mobile-launch-blockers.ts'), 'utf8');
+  const launchBlockerCheckerTerms = [
+    'docs/mobile-launch-checklist.md',
+    'dist/mobile-launch-blockers.md',
+    'Open blocker count',
+    'Launch blocker report matches unchecked checklist items',
+    'Signed Android AAB and signed iOS App Store archive exist and pass',
+    'TestFlight and Google Play internal builds are uploaded',
+    'App Store Connect privacy labels and Google Play Data Safety forms are submitted',
+    'npm run mobile:evidence:check',
+    'npm run mobile:go-live:check',
+  ];
+  for (const term of launchBlockerCheckerTerms) {
+    expect(launchBlockerChecker.includes(term), `Launch blocker checker covers ${term}`);
   }
 
   const signingPreflight = await readFile(resolve('scripts/mobile-signing-preflight.ts'), 'utf8');
@@ -474,6 +498,7 @@ async function main() {
     'npm run mobile:urls:check',
     'npm run mobile:evidence:init',
     'npm run mobile:evidence:check',
+    'npm run mobile:blockers:check',
     'docs/mobile-launch-checklist.md',
     'dist/mobile-readiness-report.md',
     'dist/mobile-launch-blockers.md',

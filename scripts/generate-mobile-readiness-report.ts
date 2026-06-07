@@ -6,7 +6,7 @@ const root = process.cwd();
 const outputPath = path.join(root, 'dist/mobile-readiness-report.md');
 const blockerOutputPath = path.join(root, 'dist/mobile-launch-blockers.md');
 
-type ChecklistSection = {
+export type ChecklistSection = {
   title: string;
   checked: number;
   unchecked: string[];
@@ -28,20 +28,20 @@ function commandOutput(command: string, args: string[]) {
   }
 }
 
-function checklistStats(markdown: string) {
+export function checklistStats(markdown: string) {
   const checked = [...markdown.matchAll(/- \[x\] /g)].length;
   const unchecked = [...markdown.matchAll(/- \[ \] /g)].length;
   return { checked, unchecked, total: checked + unchecked };
 }
 
-function uncheckedItems(markdown: string) {
+export function uncheckedItems(markdown: string) {
   return markdown
     .split('\n')
     .filter((line) => line.startsWith('- [ ] '))
     .map((line) => line.replace('- [ ] ', '').trim());
 }
 
-function checklistSections(markdown: string) {
+export function checklistSections(markdown: string) {
   const sections: ChecklistSection[] = [];
   let current: ChecklistSection | null = null;
 
@@ -61,7 +61,7 @@ function checklistSections(markdown: string) {
   return sections.filter((section) => section.checked > 0 || section.unchecked.length > 0);
 }
 
-function launchBlockerReport(params: {
+export function launchBlockerReport(params: {
   appVersion: string;
   commit: string;
   generatedAt: string;
@@ -133,6 +133,7 @@ async function main() {
     '- `npm run mobile:evidence:init` creates a release-candidate evidence file with the current version, build, branch, and commit prefilled.',
     '- `npm run mobile:evidence:check` fails completed release evidence files that still contain missing QA, upload, store-console, or signoff fields.',
     '- `npm run mobile:artifacts:check` verifies signed Android AAB and iOS `.xcarchive` paths when release artifacts exist locally.',
+    '- `npm run mobile:blockers:check` verifies the generated launch blocker report still matches the unchecked launch checklist items.',
     '- `npm run mobile:handoff:check` verifies the generated store handoff manifest, SHA-256 checksums, byte counts, and ZIP contents.',
     '- `npm run mobile:go-live:check` composes preflight, release evidence validation, and public URL checks into the final local review gate.',
     '- `npm run package:store-submission` creates a handoff folder and zip archive for upload/supporting materials.',
@@ -178,7 +179,9 @@ async function main() {
   console.log(`Wrote ${path.relative(root, blockerOutputPath)}`);
 }
 
-main().catch((error) => {
-  console.error(error);
-  process.exit(1);
-});
+if (import.meta.url === `file://${process.argv[1]}`) {
+  main().catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });
+}

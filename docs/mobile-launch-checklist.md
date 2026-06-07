@@ -67,6 +67,7 @@ Last updated: 2026-06-07
 - [x] `npm run mobile:audit`
 - [x] `npm run mobile:version:check`
 - [x] `npm run mobile:store:check`
+- [x] `npm run mobile:blockers:check`
 - [x] `npm run mobile:handoff:check`
 - [x] GitHub Actions unsigned mobile preflight exists: `.github/workflows/mobile-preflight.yml`
 - [x] Android debug build: `./gradlew assembleDebug`

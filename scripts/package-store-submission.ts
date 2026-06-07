@@ -163,7 +163,7 @@ async function main() {
     '',
     'It does not contain signing secrets, signed archives, App Store Connect uploads, Google Play Console uploads, or completed installed-build evidence.',
     '',
-    'This package is verified by `npm run mobile:handoff:check`, which checks manifest byte counts, SHA-256 checksums, and ZIP contents.',
+    'This package is verified by `npm run mobile:blockers:check` and `npm run mobile:handoff:check`, which check the generated blocker report, manifest byte counts, SHA-256 checksums, and ZIP contents.',
     '',
     'Start with `docs/mobile-store-submission-package.md`, then run `npm run mobile:evidence:init`, fill the generated release evidence file after signed builds are uploaded, and verify it with `npm run mobile:evidence:check`.',
     '',

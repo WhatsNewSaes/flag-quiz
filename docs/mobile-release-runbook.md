@@ -24,6 +24,7 @@ npm run mobile:audit
 npm run build
 npx cap sync
 npm run mobile:readiness
+npm run mobile:blockers:check
 npm run package:store-submission
 npm run mobile:handoff:check
 ```
@@ -33,6 +34,8 @@ Expected current result: all commands pass locally.
 Android npm scripts use `$JAVA_HOME` when present and fall back to `/opt/homebrew/opt/openjdk@21`, which is the verified local JDK path for this workspace.
 
 `npm run mobile:readiness` writes `dist/mobile-readiness-report.md` and `dist/mobile-launch-blockers.md`. The blocker report is generated from unchecked items in `docs/mobile-launch-checklist.md` and is included in the store handoff package.
+
+`npm run mobile:blockers:check` verifies that `dist/mobile-launch-blockers.md` still matches the unchecked launch checklist items and required closeout criteria.
 
 GitHub Actions also runs the unsigned mobile preflight on `main`, pull requests, and manual dispatch through `.github/workflows/mobile-preflight.yml`. The workflow uploads the generated store submission package as an artifact; signed store builds still require local/store-console credentials.
 
