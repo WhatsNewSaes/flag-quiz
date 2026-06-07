@@ -63,6 +63,7 @@ async function main() {
     '- `npm run mobile:version:check` verifies package, Android, iOS, store metadata, and handoff version/build fields match.',
     '- `npm run mobile:store:check` verifies store listing copy limits, asset dimensions, privacy references, and handoff paths.',
     '- `npm run mobile:preflight` runs the local release preflight sequence in the expected order.',
+    '- `.github/workflows/mobile-preflight.yml` runs the unsigned mobile preflight in CI and uploads the generated store submission package.',
     '- `npm run mobile:urls:check` verifies public store listing URLs against the production site when network access is available.',
     '- `npm run mobile:evidence:init` creates a release-candidate evidence file with the current version, build, branch, and commit prefilled.',
     '- `npm run mobile:evidence:check` fails completed release evidence files that still contain missing QA, upload, store-console, or signoff fields.',

@@ -239,6 +239,7 @@ async function main() {
   expect(existsSync(resolve('docs/mobile-store-submission-package.md')), 'Mobile store submission package exists');
   expect(existsSync(resolve('docs/mobile-installed-build-qa.md')), 'Mobile installed-build QA checklist exists');
   expect(existsSync(resolve('docs/mobile-release-evidence-template.md')), 'Mobile release evidence template exists');
+  expect(existsSync(resolve('.github/workflows/mobile-preflight.yml')), 'Mobile preflight GitHub Actions workflow exists');
   expect(existsSync(resolve('scripts/mobile-signing-preflight.ts')), 'Mobile signing preflight script exists');
   expect(existsSync(resolve('scripts/check-mobile-version-consistency.ts')), 'Mobile version consistency checker script exists');
   expect(existsSync(resolve('scripts/check-mobile-public-urls.ts')), 'Mobile public URL check script exists');
@@ -265,6 +266,28 @@ async function main() {
   const storeAssetsReadme = await readFile(resolve('store-assets/README.md'), 'utf8');
   expect(storeAssetsReadme.includes('npm run package:store-submission'), 'Store assets README documents packaging command');
   expect(storeAssetsReadme.includes('dist/mobile-readiness-report.md'), 'Store assets README documents readiness report output');
+
+  const mobilePreflightWorkflow = await readFile(resolve('.github/workflows/mobile-preflight.yml'), 'utf8');
+  const mobilePreflightWorkflowTerms = [
+    'Mobile Launch Preflight',
+    'pull_request',
+    'push',
+    'workflow_dispatch',
+    'macos-latest',
+    'actions/checkout@v4',
+    'actions/setup-node@v4',
+    'node-version: 25',
+    'npm ci',
+    'npm run mobile:preflight',
+    'npm run mobile:urls:check',
+    'actions/upload-artifact@v4',
+    'dist/mobile-store-submission',
+    'dist/flag-arcade-mobile-store-submission.zip',
+    'dist/mobile-readiness-report.md',
+  ];
+  for (const term of mobilePreflightWorkflowTerms) {
+    expect(mobilePreflightWorkflow.includes(term), `Mobile preflight workflow covers ${term}`);
+  }
 
   const storeSubmissionPackage = await readFile(resolve('docs/mobile-store-submission-package.md'), 'utf8');
   expect(storeSubmissionPackage.includes('npm run mobile:preflight'), 'Submission package documents mobile preflight command');

@@ -31,6 +31,8 @@ Expected current result: all commands pass locally.
 
 Android npm scripts use `$JAVA_HOME` when present and fall back to `/opt/homebrew/opt/openjdk@21`, which is the verified local JDK path for this workspace.
 
+GitHub Actions also runs the unsigned mobile preflight on `main`, pull requests, and manual dispatch through `.github/workflows/mobile-preflight.yml`. The workflow uploads the generated store submission package as an artifact; signed store builds still require local/store-console credentials.
+
 `npm run mobile:signing:preflight` is expected to warn until Android signing secrets and the Apple Developer Team are configured locally. It should not fail unless a repo safety invariant or filled signing config is broken.
 
 Run `npm run mobile:version:check` after any release version bump to confirm `package.json`, Android Gradle, iOS project settings, store metadata, and the submission handoff all agree.
