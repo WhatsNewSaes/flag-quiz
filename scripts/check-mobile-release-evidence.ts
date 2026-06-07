@@ -294,6 +294,17 @@ function requireEqual(findings: Finding[], label: string, value: string | undefi
   else fail(findings, label, value ? `Expected ${expected}, got ${value}` : `Missing value, expected ${expected}`);
 }
 
+function isIsoDate(value: string | undefined) {
+  if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const parsed = new Date(`${value}T00:00:00.000Z`);
+  return !Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0, 10) === value;
+}
+
+function requireIsoDate(findings: Finding[], label: string, value: string | undefined) {
+  if (isIsoDate(value)) pass(findings, label, value);
+  else fail(findings, label, value ? `Expected YYYY-MM-DD, got ${value}` : 'Missing value');
+}
+
 function evidenceTarget(value: string) {
   const trimmed = value.trim();
   const markdownLink = trimmed.match(/^\[[^\]]+\]\(([^)]+)\)$/);
@@ -414,6 +425,7 @@ function validateEvidence(markdown: string, context: ReleaseContext) {
   requireEqual(findings, 'Release evidence app version matches package.json', fieldValue(markdown, 'App version'), context.appVersion);
   requireEqual(findings, 'Release evidence build number matches native build numbers', fieldValue(markdown, 'Build number / version code'), context.buildNumber);
   requireEqual(findings, 'Release evidence git commit matches current HEAD', fieldValue(markdown, 'Git commit'), context.gitCommit);
+  requireIsoDate(findings, 'Release evidence date is YYYY-MM-DD', fieldValue(markdown, 'Evidence date'));
 
   for (const label of requiredUrlVerificationFields) {
     requirePass(findings, `${label} passed`, fieldValue(markdown, label));
@@ -466,12 +478,12 @@ function validateEvidence(markdown: string, context: ReleaseContext) {
     for (const [index, cellLabel] of [
       [2, 'Artifact'],
       [3, 'Uploaded by'],
-      [4, 'Upload date'],
     ] as const) {
       const value = row[index];
       if (value && isFilled(value)) pass(findings, `${required.platform} build artifact ${cellLabel} is filled`, value);
       else fail(findings, `${required.platform} build artifact ${cellLabel} is filled`, value ? `Current value: ${value}` : 'Missing value');
     }
+    requireIsoDate(findings, `${required.platform} build artifact Upload date is YYYY-MM-DD`, row[4]);
     requireComplete(findings, label, row[5]);
   }
 
@@ -514,12 +526,12 @@ function validateEvidence(markdown: string, context: ReleaseContext) {
     for (const [index, cellLabel] of [
       [3, 'OS version'],
       [5, 'Tester'],
-      [6, 'Date'],
     ] as const) {
       const value = row[index];
       if (value && isFilled(value)) pass(findings, `${required.platform} ${required.device} ${cellLabel} is filled`, value);
       else fail(findings, `${required.platform} ${required.device} ${cellLabel} is filled`, value ? `Current value: ${value}` : 'Missing value');
     }
+    requireIsoDate(findings, `${required.platform} ${required.device} Date is YYYY-MM-DD`, row[6]);
     requireEqual(
       findings,
       `${required.platform} ${required.device} app build shown matches release build`,
@@ -577,6 +589,7 @@ function validateEvidence(markdown: string, context: ReleaseContext) {
     if (value && isFilled(value)) pass(findings, `${label} is signed off`, value);
     else fail(findings, `${label} is signed off`, value ? `Current value: ${value}` : 'Missing field');
   }
+  requireIsoDate(findings, 'Approval date is YYYY-MM-DD', fieldValue(markdown, 'Approval date'));
 
   return findings;
 }
@@ -714,6 +727,12 @@ function negativeSelfTestFindings() {
       baseline.replace('| Android | Play internal test | Physical Android phone | Android 16 | 1 | QA | 2026-06-07 | Pass |', '| Android | Play internal test | Physical Android phone | Android 16 | 2 | QA | 2026-06-07 | Pass |'),
       context,
       ['Android Physical Android phone app build shown matches release build']
+    ),
+    ...expectSelfTestFailure(
+      'invalid approval date',
+      baseline.replace('- Approval date: 2026-06-07', '- Approval date: June 7'),
+      context,
+      ['Approval date is YYYY-MM-DD']
     ),
     ...expectSelfTestFailure(
       'malformed local artifact manifest',

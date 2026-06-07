@@ -4,6 +4,8 @@ Last updated: 2026-06-07
 
 Copy this file for each release candidate, for example `docs/release-evidence/mobile-1.0-build-1.md`. Do not mark the launch checklist's installed-build smoke tests complete until this evidence is filled for both platforms.
 
+Use `YYYY-MM-DD` for Evidence date, Upload date, installed-build Date, Failure Log Date, and Approval date.
+
 ## Release Candidate
 
 - App version:
@@ -94,7 +96,7 @@ Record `Pass`, `Fail`, or `N/A`. Every required row must include an evidence URL
 
 ## Final Signoff
 
-Do not sign off while any required row above is `Not run`, `Fail`, `Not uploaded`, `Not verified`, or `Not complete`.
+Do not sign off while any required row above is `Not run`, `Fail`, `Not uploaded`, `Not verified`, or `Not complete`. Use `YYYY-MM-DD` for Approval date.
 
 - iOS installed build smoke passed:
 - Android installed build smoke passed:
