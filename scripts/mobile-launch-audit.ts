@@ -79,6 +79,7 @@ async function main() {
   expect(Boolean(packageJson.scripts?.['mobile:build:android:debug']), 'package.json exposes Android debug build script');
   expect(Boolean(packageJson.scripts?.['mobile:build:android:release']), 'package.json exposes Android release AAB script');
   expect(Boolean(packageJson.scripts?.['mobile:build:ios:debug']), 'package.json exposes iOS debug build script');
+  expect(Boolean(packageJson.scripts?.['mobile:build:ios:archive']), 'package.json exposes iOS App Store archive script');
   expect(Boolean(packageJson.scripts?.['mobile:signing:preflight']), 'package.json exposes mobile signing preflight script');
   expect(Boolean(packageJson.scripts?.['mobile:readiness']), 'package.json exposes mobile readiness report script');
   expect(Boolean(packageJson.scripts?.['mobile:evidence:init']), 'package.json exposes mobile release evidence initializer script');
@@ -398,6 +399,7 @@ async function main() {
   expect(storeSubmissionPackage.includes('npm run mobile:evidence:check'), 'Submission package documents release evidence checker command');
   expect(storeSubmissionPackage.includes('npm run mobile:artifacts:check'), 'Submission package documents release artifact checker command');
   expect(storeSubmissionPackage.includes('npm run mobile:go-live:check'), 'Submission package documents go-live gate command');
+  expect(storeSubmissionPackage.includes('npm run mobile:build:ios:archive'), 'Submission package documents iOS archive command');
   expect(
     storeSubmissionPackage.includes('npm run mobile:go-live:check -- --evidence docs/release-evidence/<release-file>.md --android-aab android/app/build/outputs/bundle/release/app-release.aab --ios-archive ios/App/build/FlagArcade.xcarchive'),
     'Submission package documents go-live gate with signed artifact paths'
@@ -499,6 +501,7 @@ async function main() {
     'npm run mobile:go-live:check',
     '## Closeout Commands',
     'npm run mobile:build:android:release',
+    'npm run mobile:build:ios:archive',
     'npm run mobile:artifacts:check -- --android-aab android/app/build/outputs/bundle/release/app-release.aab --ios-archive ios/App/build/FlagArcade.xcarchive --manifest docs/release-evidence/mobile-<version>-build-<build>-<commit>-artifacts.json',
     'docs/release-evidence/mobile-<version>-build-<build>-<commit>.md',
     'ios/App/build/FlagArcade.xcarchive',
@@ -645,6 +648,7 @@ async function main() {
     'Open blocker count',
     'Closeout Commands',
     'npm run mobile:build:android:release',
+    'npm run mobile:build:ios:archive',
     'npm run mobile:artifacts:check -- --android-aab android/app/build/outputs/bundle/release/app-release.aab --ios-archive ios/App/build/FlagArcade.xcarchive --manifest docs/release-evidence/mobile-<version>-build-<build>-<commit>-artifacts.json',
     'docs/release-evidence/mobile-<version>-build-<build>-<commit>.md',
     'npm run mobile:preflight',

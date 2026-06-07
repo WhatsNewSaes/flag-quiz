@@ -109,6 +109,7 @@ async function main() {
     '## Closeout Commands',
     'npm run mobile:signing:preflight',
     'npm run mobile:build:android:release',
+    'npm run mobile:build:ios:archive',
     'npm run mobile:evidence:init -- --build 1 --owner "Release Owner"',
     'npm run mobile:artifacts:check -- --android-aab android/app/build/outputs/bundle/release/app-release.aab --ios-archive ios/App/build/FlagArcade.xcarchive --manifest docs/release-evidence/mobile-<version>-build-<build>-<commit>-artifacts.json',
     'npm run mobile:evidence:check -- --file docs/release-evidence/<release-file>.md',

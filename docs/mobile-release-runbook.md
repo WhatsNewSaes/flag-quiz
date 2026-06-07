@@ -161,15 +161,10 @@ Archive from Xcode using `Product > Archive`, then upload to App Store Connect f
 Command-line archive once signing is configured:
 
 ```bash
-npm run build
-npx cap sync ios
-xcodebuild archive \
-  -project ios/App/App.xcodeproj \
-  -scheme App \
-  -configuration Release \
-  -destination 'generic/platform=iOS' \
-  -archivePath ios/App/build/FlagArcade.xcarchive
+npm run mobile:build:ios:archive
 ```
+
+Expected output path: `ios/App/build/FlagArcade.xcarchive`.
 
 Upload to TestFlight before App Store review.
 
