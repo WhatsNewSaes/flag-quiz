@@ -59,6 +59,7 @@ async function main() {
   expect(Boolean(packageJson.scripts?.['mobile:signing:preflight']), 'package.json exposes mobile signing preflight script');
   expect(Boolean(packageJson.scripts?.['mobile:readiness']), 'package.json exposes mobile readiness report script');
   expect(Boolean(packageJson.scripts?.['mobile:evidence:init']), 'package.json exposes mobile release evidence initializer script');
+  expect(Boolean(packageJson.scripts?.['mobile:evidence:check']), 'package.json exposes mobile release evidence checker script');
   expect(Boolean(packageJson.scripts?.['package:store-submission']), 'package.json exposes store submission package script');
 
   const capacitorConfig = await readFile(resolve('capacitor.config.ts'), 'utf8');
@@ -231,6 +232,7 @@ async function main() {
   expect(existsSync(resolve('scripts/mobile-signing-preflight.ts')), 'Mobile signing preflight script exists');
   expect(existsSync(resolve('scripts/check-mobile-public-urls.ts')), 'Mobile public URL check script exists');
   expect(existsSync(resolve('scripts/init-mobile-release-evidence.ts')), 'Mobile release evidence initializer script exists');
+  expect(existsSync(resolve('scripts/check-mobile-release-evidence.ts')), 'Mobile release evidence checker script exists');
   expect(existsSync(resolve('scripts/generate-mobile-readiness-report.ts')), 'Mobile readiness report script exists');
   expect(existsSync(resolve('scripts/package-store-submission.ts')), 'Store submission packaging script exists');
   expect(existsSync(resolve('android/keystore.properties.example')), 'Android keystore template exists');
@@ -257,6 +259,7 @@ async function main() {
   expect(storeSubmissionPackage.includes('npm run mobile:urls:check'), 'Submission package documents public URL check command');
   expect(storeSubmissionPackage.includes('npm run mobile:signing:preflight'), 'Submission package documents signing preflight command');
   expect(storeSubmissionPackage.includes('npm run mobile:evidence:init'), 'Submission package documents release evidence initializer command');
+  expect(storeSubmissionPackage.includes('npm run mobile:evidence:check'), 'Submission package documents release evidence checker command');
   expect(storeSubmissionPackage.includes('npm run package:store-submission'), 'Submission package documents packaging command');
   expect(storeSubmissionPackage.includes('dist/mobile-store-submission'), 'Submission package documents packaging output path');
   expect(storeSubmissionPackage.includes('dist/flag-arcade-mobile-store-submission.zip'), 'Submission package documents packaging archive path');
@@ -297,6 +300,7 @@ async function main() {
     'docs/mobile-release-evidence-template.md',
     'docs/release-evidence',
     'npm run mobile:evidence:init',
+    'npm run mobile:evidence:check',
     'Signed iOS archive uploaded to TestFlight',
     'Signed Android AAB uploaded to Google Play internal testing',
   ];
@@ -348,6 +352,7 @@ async function main() {
     'npm run mobile:preflight',
     'npm run mobile:urls:check',
     'npm run mobile:evidence:init',
+    'npm run mobile:evidence:check',
     'docs/mobile-launch-checklist.md',
     'dist/mobile-readiness-report.md',
   ];
@@ -377,8 +382,10 @@ async function main() {
     expect(installedBuildQa.includes(term), `Installed-build QA covers ${term}`);
   }
   expect(
-    installedBuildQa.includes('npm run mobile:evidence:init') && installedBuildQa.includes('docs/release-evidence/'),
-    'Installed-build QA links release evidence initializer'
+    installedBuildQa.includes('npm run mobile:evidence:init')
+      && installedBuildQa.includes('npm run mobile:evidence:check')
+      && installedBuildQa.includes('docs/release-evidence/'),
+    'Installed-build QA links release evidence initializer and checker'
   );
 
   const releaseEvidenceTemplate = await readFile(resolve('docs/mobile-release-evidence-template.md'), 'utf8');
@@ -421,6 +428,28 @@ async function main() {
   ];
   for (const term of releaseEvidenceInitializerTerms) {
     expect(releaseEvidenceInitializer.includes(term), `Release evidence initializer covers ${term}`);
+  }
+
+  const releaseEvidenceChecker = await readFile(resolve('scripts/check-mobile-release-evidence.ts'), 'utf8');
+  const releaseEvidenceCheckerTerms = [
+    '--file',
+    '--self-test',
+    'App version',
+    'Build number / version code',
+    'Git commit',
+    'Public site URL verified',
+    'Terms URL verified',
+    'iOS installed build smoke passed',
+    'Android installed build smoke passed',
+    'Store privacy forms submitted',
+    'Signed release artifacts uploaded',
+    'not run',
+    'not uploaded',
+    'not complete',
+    'not verified',
+  ];
+  for (const term of releaseEvidenceCheckerTerms) {
+    expect(releaseEvidenceChecker.includes(term), `Release evidence checker covers ${term}`);
   }
 
   const deletionRunbook = await readFile(resolve('docs/mobile-data-deletion-runbook.md'), 'utf8');

@@ -137,3 +137,9 @@ Before uploading signed builds, start a release evidence file:
 ```bash
 npm run mobile:evidence:init -- --build 1 --owner "Release Owner"
 ```
+
+Before final store review submission, verify the completed evidence file:
+
+```bash
+npm run mobile:evidence:check -- --file docs/release-evidence/<release-file>.md
+```

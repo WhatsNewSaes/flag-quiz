@@ -154,7 +154,7 @@ async function main() {
     '',
     'It does not contain signing secrets, signed archives, App Store Connect uploads, Google Play Console uploads, or completed installed-build evidence.',
     '',
-    'Start with `docs/mobile-store-submission-package.md`, then run `npm run mobile:evidence:init` and fill the generated release evidence file after signed builds are uploaded.',
+    'Start with `docs/mobile-store-submission-package.md`, then run `npm run mobile:evidence:init`, fill the generated release evidence file after signed builds are uploaded, and verify it with `npm run mobile:evidence:check`.',
     '',
   ].join('\n');
 

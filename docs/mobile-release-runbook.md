@@ -45,6 +45,12 @@ npm run mobile:evidence:init -- --build 1 --owner "Release Owner"
 
 The generated file is written to `docs/release-evidence/` with the current version, build, branch, and git commit prefilled.
 
+After TestFlight, Play internal testing, and store-console evidence are filled, verify the signoff file:
+
+```bash
+npm run mobile:evidence:check -- --file docs/release-evidence/<release-file>.md
+```
+
 ## 2. Android Release AAB
 
 Create an upload keystore once and store it outside git:
@@ -117,6 +123,8 @@ Upload to TestFlight before App Store review.
 Use `docs/mobile-installed-build-qa.md` as the pass/fail checklist for TestFlight and Google Play internal testing.
 
 Record the actual devices, build ids, pass/fail results, and evidence links in the generated `docs/release-evidence/` file.
+
+Do not submit for final review until the generated evidence file passes `npm run mobile:evidence:check`.
 
 - Install the Android internal test build and tap through all six game modes.
 - Install the TestFlight build and tap through all six game modes.
