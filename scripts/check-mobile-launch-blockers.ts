@@ -86,7 +86,7 @@ async function main() {
   );
 
   const requiredCloseItems = [
-    'Signed Android AAB and signed iOS App Store archive exist and pass `npm run mobile:artifacts:check`.',
+    'Signed Android AAB and signed iOS App Store archive exist and pass `npm run mobile:artifacts:check`, with a release artifact manifest saved in the evidence file.',
     'TestFlight and Google Play internal builds are uploaded, installed, and recorded in release evidence.',
     'Installed-build smoke tests pass on the required iOS and Android targets.',
     'App Store Connect privacy labels and Google Play Data Safety forms are submitted.',
@@ -101,7 +101,7 @@ async function main() {
     'npm run mobile:signing:preflight',
     'npm run mobile:build:android:release',
     'npm run mobile:evidence:init -- --build 1 --owner "Release Owner"',
-    'npm run mobile:artifacts:check -- --android-aab android/app/build/outputs/bundle/release/app-release.aab --ios-archive ios/App/build/FlagArcade.xcarchive',
+    'npm run mobile:artifacts:check -- --android-aab android/app/build/outputs/bundle/release/app-release.aab --ios-archive ios/App/build/FlagArcade.xcarchive --manifest docs/release-evidence/mobile-<version>-build-<build>-<commit>-artifacts.json',
     'npm run mobile:evidence:check -- --file docs/release-evidence/<release-file>.md',
     'npm run mobile:urls:check',
     'npm run mobile:go-live:check -- --evidence docs/release-evidence/<release-file>.md --android-aab android/app/build/outputs/bundle/release/app-release.aab --ios-archive ios/App/build/FlagArcade.xcarchive',

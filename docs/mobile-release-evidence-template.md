@@ -16,6 +16,7 @@ Copy this file for each release candidate, for example `docs/release-evidence/mo
 - Privacy URL verified:
 - Terms URL verified:
 - Support URL verified:
+- Artifact manifest:
 
 ## Build Artifacts
 

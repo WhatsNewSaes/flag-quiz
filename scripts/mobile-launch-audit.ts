@@ -478,7 +478,7 @@ async function main() {
     'npm run mobile:go-live:check',
     '## Closeout Commands',
     'npm run mobile:build:android:release',
-    'npm run mobile:artifacts:check -- --android-aab android/app/build/outputs/bundle/release/app-release.aab --ios-archive ios/App/build/FlagArcade.xcarchive',
+    'npm run mobile:artifacts:check -- --android-aab android/app/build/outputs/bundle/release/app-release.aab --ios-archive ios/App/build/FlagArcade.xcarchive --manifest docs/release-evidence/mobile-<version>-build-<build>-<commit>-artifacts.json',
     'docs/release-evidence/mobile-<version>-build-<build>-<commit>.md',
     'ios/App/build/FlagArcade.xcarchive',
   ];
@@ -624,7 +624,7 @@ async function main() {
     'Open blocker count',
     'Closeout Commands',
     'npm run mobile:build:android:release',
-    'npm run mobile:artifacts:check -- --android-aab android/app/build/outputs/bundle/release/app-release.aab --ios-archive ios/App/build/FlagArcade.xcarchive',
+    'npm run mobile:artifacts:check -- --android-aab android/app/build/outputs/bundle/release/app-release.aab --ios-archive ios/App/build/FlagArcade.xcarchive --manifest docs/release-evidence/mobile-<version>-build-<build>-<commit>-artifacts.json',
     'docs/release-evidence/mobile-<version>-build-<build>-<commit>.md',
     'npm run mobile:preflight',
     'npm run mobile:version:check',
@@ -717,6 +717,7 @@ async function main() {
     'Pre-launch report',
     'Every required row must include an evidence URL or repo-relative evidence file path',
     'Repo-relative evidence file paths must exist',
+    'Artifact manifest',
     'Not verified',
   ];
   for (const term of releaseEvidenceTerms) {
@@ -761,6 +762,8 @@ async function main() {
     'requiredFilledSignoffFields',
     'Terms URL verified',
     'build artifact is uploaded',
+    'Artifact manifest',
+    'Artifact manifest evidence link is valid',
     'signing evidence is verified',
     'requiredInstalledBuildRows',
     'requiredSmokeRows',
@@ -800,6 +803,9 @@ async function main() {
   const releaseArtifactCheckerTerms = [
     '--android-aab',
     '--ios-archive',
+    '--manifest',
+    'sha256',
+    'Release artifact manifest written',
     'android/app/build/outputs/bundle/release/app-release.aab',
     'ios/App/build/FlagArcade.xcarchive',
     'BundleConfig.pb',

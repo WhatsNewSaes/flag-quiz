@@ -34,6 +34,7 @@ const requiredReleaseFields = [
   'Privacy URL verified',
   'Terms URL verified',
   'Support URL verified',
+  'Artifact manifest',
 ];
 
 const requiredCompleteSignoffFields = [
@@ -323,6 +324,7 @@ function validateEvidence(markdown: string, context: ReleaseContext) {
   for (const label of requiredUrlVerificationFields) {
     requirePass(findings, `${label} passed`, fieldValue(markdown, label));
   }
+  requireEvidenceLink(findings, 'Artifact manifest evidence link is valid', fieldValue(markdown, 'Artifact manifest'));
 
   const rows = tableRows(markdown);
   let checkedResultCells = 0;
@@ -502,6 +504,7 @@ function selfTestEvidence() {
 - Privacy URL verified: Pass
 - Terms URL verified: Pass
 - Support URL verified: Pass
+- Artifact manifest: https://example.com/evidence/mobile-artifacts.json
 
 ## Build Artifacts
 

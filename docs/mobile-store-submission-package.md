@@ -167,7 +167,9 @@ npm run mobile:evidence:init -- --build 1 --owner "Release Owner"
 Before final store review submission, verify the completed evidence file:
 
 ```bash
-npm run mobile:artifacts:check -- --android-aab android/app/build/outputs/bundle/release/app-release.aab --ios-archive ios/App/build/FlagArcade.xcarchive
+npm run mobile:artifacts:check -- --android-aab android/app/build/outputs/bundle/release/app-release.aab --ios-archive ios/App/build/FlagArcade.xcarchive --manifest docs/release-evidence/mobile-<version>-build-<build>-<commit>-artifacts.json
 npm run mobile:evidence:check -- --file docs/release-evidence/<release-file>.md
 npm run mobile:go-live:check -- --evidence docs/release-evidence/<release-file>.md --android-aab android/app/build/outputs/bundle/release/app-release.aab --ios-archive ios/App/build/FlagArcade.xcarchive
 ```
+
+Add the generated artifact manifest path to the `Artifact manifest` field in the release evidence file before running `npm run mobile:evidence:check`.

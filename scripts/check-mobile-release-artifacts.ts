@@ -1,6 +1,7 @@
 import { execFileSync } from 'node:child_process';
-import { existsSync, statSync } from 'node:fs';
-import { readdir } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
+import { existsSync, readFileSync, statSync } from 'node:fs';
+import { mkdir, readdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
 const root = process.cwd();
@@ -8,6 +9,7 @@ const root = process.cwd();
 type Args = {
   androidAab?: string;
   iosArchive?: string;
+  manifest?: string;
 };
 
 type Finding = {
@@ -16,7 +18,37 @@ type Finding = {
   detail?: string;
 };
 
+type ArtifactManifest = {
+  generatedAt: string;
+  gitCommit: string;
+  appVersion: string;
+  buildNumber: string;
+  artifacts: Array<{
+    platform: 'android' | 'ios';
+    kind: string;
+    path: string;
+    bytes?: number;
+    sha256?: string;
+    bundleId?: string;
+    version?: string;
+    buildNumber?: string;
+    entries?: number;
+    files?: Array<{
+      path: string;
+      bytes: number;
+      sha256: string;
+    }>;
+  }>;
+};
+
 const findings: Finding[] = [];
+const artifactManifest: ArtifactManifest = {
+  generatedAt: new Date().toISOString(),
+  gitCommit: '',
+  appVersion: '',
+  buildNumber: '',
+  artifacts: [],
+};
 
 function parseArgs(argv: string[]): Args {
   const args: Args = {};
@@ -33,6 +65,12 @@ function parseArgs(argv: string[]): Args {
 
     if (arg === '--ios-archive' && next) {
       args.iosArchive = next;
+      index += 1;
+      continue;
+    }
+
+    if (arg === '--manifest' && next) {
+      args.manifest = next;
       index += 1;
       continue;
     }
@@ -58,6 +96,31 @@ function expect(condition: boolean, label: string, detail?: string) {
 
 function resolveInput(input: string) {
   return path.resolve(root, input);
+}
+
+function sha256(filePath: string) {
+  return createHash('sha256').update(readFileSync(filePath)).digest('hex');
+}
+
+function currentGitCommit() {
+  try {
+    return execFileSync('git', ['rev-parse', '--short', 'HEAD'], {
+      cwd: root,
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    }).trim();
+  } catch {
+    return 'unknown';
+  }
+}
+
+function packageVersion() {
+  try {
+    const packageJson = JSON.parse(readFileSync(path.join(root, 'package.json'), 'utf8')) as { version?: string };
+    return packageJson.version ?? 'unknown';
+  } catch {
+    return 'unknown';
+  }
 }
 
 function listZipEntries(filePath: string) {
@@ -106,6 +169,18 @@ async function checkAndroidAab(inputPath: string) {
     entries.some((entry) => /^META-INF\/.+\.(RSA|DSA|EC)$/i.test(entry)),
     'Android AAB includes signing certificate block'
   );
+
+  artifactManifest.artifacts.push({
+    platform: 'android',
+    kind: 'signed-aab',
+    path: relativePath,
+    bytes: stats.size,
+    sha256: sha256(aabPath),
+    bundleId: 'com.flagarcade.app',
+    version: '1.0',
+    buildNumber: '1',
+    entries: entries.length,
+  });
 }
 
 async function checkIosArchive(inputPath: string) {
@@ -203,6 +278,29 @@ async function checkIosArchive(inputPath: string) {
           ? path.join(appPath, appInfoPlist.CFBundleExecutable)
           : '';
         expect(Boolean(executablePath && existsSync(executablePath)), 'iOS archived app executable exists', executablePath ? path.relative(root, executablePath) : 'missing CFBundleExecutable');
+
+        const manifestFiles = [
+          appInfoPlistPath,
+          path.join(appPath, '_CodeSignature/CodeResources'),
+          path.join(appPath, 'embedded.mobileprovision'),
+          executablePath,
+        ].filter((filePath) => filePath && existsSync(filePath));
+        artifactManifest.artifacts.push({
+          platform: 'ios',
+          kind: 'signed-xcarchive',
+          path: relativePath,
+          bundleId: appInfoPlist.CFBundleIdentifier,
+          version: appInfoPlist.CFBundleShortVersionString,
+          buildNumber: appInfoPlist.CFBundleVersion,
+          files: manifestFiles.map((filePath) => {
+            const fileStats = statSync(filePath);
+            return {
+              path: path.relative(root, filePath),
+              bytes: fileStats.size,
+              sha256: sha256(filePath),
+            };
+          }),
+        });
       } catch {
         fail('iOS archived app Info.plist can be parsed');
       }
@@ -223,23 +321,37 @@ async function checkIosArchive(inputPath: string) {
 
 async function main() {
   const args = parseArgs(process.argv.slice(2));
+  artifactManifest.gitCommit = currentGitCommit();
+  artifactManifest.appVersion = packageVersion();
+  artifactManifest.buildNumber = '1';
 
   if (!args.androidAab || !args.iosArchive) {
-    throw new Error('Usage: npm run mobile:artifacts:check -- --android-aab android/app/build/outputs/bundle/release/app-release.aab --ios-archive ios/App/build/FlagArcade.xcarchive');
+    throw new Error('Usage: npm run mobile:artifacts:check -- --android-aab android/app/build/outputs/bundle/release/app-release.aab --ios-archive ios/App/build/FlagArcade.xcarchive --manifest docs/release-evidence/mobile-<version>-build-<build>-<commit>-artifacts.json');
   }
 
   await checkAndroidAab(args.androidAab);
   await checkIosArchive(args.iosArchive);
 
-  const failed = findings.filter((finding) => !finding.ok);
+  const artifactFailures = findings.filter((finding) => !finding.ok);
+  if (artifactFailures.length > 0) {
+    for (const finding of findings) {
+      const prefix = finding.ok ? 'PASS' : 'FAIL';
+      console.log(`${prefix} ${finding.label}${finding.detail ? ` (${finding.detail})` : ''}`);
+    }
+    console.error(`\n${artifactFailures.length} release artifact check(s) failed.`);
+    process.exit(1);
+  }
+
+  if (args.manifest) {
+    const manifestPath = resolveInput(args.manifest);
+    await mkdir(path.dirname(manifestPath), { recursive: true });
+    await writeFile(manifestPath, `${JSON.stringify(artifactManifest, null, 2)}\n`);
+    pass('Release artifact manifest written', path.relative(root, manifestPath));
+  }
+
   for (const finding of findings) {
     const prefix = finding.ok ? 'PASS' : 'FAIL';
     console.log(`${prefix} ${finding.label}${finding.detail ? ` (${finding.detail})` : ''}`);
-  }
-
-  if (failed.length > 0) {
-    console.error(`\n${failed.length} release artifact check(s) failed.`);
-    process.exit(1);
   }
 
   console.log(`\nAll ${findings.length} release artifact checks passed.`);
