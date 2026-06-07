@@ -93,6 +93,7 @@ Last updated: 2026-06-07
 - [x] Age rating questionnaire notes drafted
 - [ ] Copyright holder
 - [x] Store metadata draft exists: `docs/mobile-store-metadata.md`
+- [x] Store submission package manifest exists: `docs/mobile-store-submission-package.md`
 
 ## Privacy And Compliance
 

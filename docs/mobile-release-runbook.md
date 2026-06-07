@@ -22,6 +22,8 @@ Android npm scripts use `$JAVA_HOME` when present and fall back to `/opt/homebre
 
 Confirm privacy and store form answers against `docs/mobile-privacy-data-inventory.md` before uploading builds.
 
+Use `docs/mobile-store-submission-package.md` as the final handoff manifest for upload paths, listing copy, privacy answers, and external store-console tasks.
+
 ## 2. Android Release AAB
 
 Create an upload keystore once and store it outside git:
@@ -98,6 +100,8 @@ Upload to TestFlight before App Store review.
 Use `docs/mobile-store-metadata.md` as the working copy for listing text, categories, rating notes, and screenshot planning.
 
 Use `docs/mobile-privacy-data-inventory.md` as the working copy for App Store Privacy and Google Play Data Safety answers.
+
+Use `docs/mobile-store-submission-package.md` as the checklist of exact upload assets and remaining external tasks.
 
 Generate store artwork before packaging screenshots:
 

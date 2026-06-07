@@ -217,6 +217,7 @@ async function main() {
   expect(existsSync(resolve('docs/mobile-store-metadata.md')), 'Mobile store metadata draft exists');
   expect(existsSync(resolve('docs/mobile-release-runbook.md')), 'Mobile release runbook exists');
   expect(existsSync(resolve('docs/mobile-privacy-data-inventory.md')), 'Mobile privacy data inventory exists');
+  expect(existsSync(resolve('docs/mobile-store-submission-package.md')), 'Mobile store submission package exists');
   expect(existsSync(resolve('android/keystore.properties.example')), 'Android keystore template exists');
   expect(existsSync(resolve('store-assets/README.md')), 'Store assets README exists');
   expect(existsSync(resolve('src/pages/PrivacyPage.tsx')), 'Privacy page source exists');
@@ -231,6 +232,23 @@ async function main() {
   expect(storeMetadata.includes('Keywords:'), 'App Store keywords are drafted');
   expect(storeMetadata.includes('Category: Games / Educational / Trivia'), 'Store category selection is drafted');
   expect(storeMetadata.includes('No gambling or loot boxes.'), 'Rating questionnaire notes are drafted');
+
+  const storeSubmissionPackage = await readFile(resolve('docs/mobile-store-submission-package.md'), 'utf8');
+  expect(storeSubmissionPackage.includes('com.flagarcade.app'), 'Submission package includes bundle/package id');
+  expect(storeSubmissionPackage.includes('store-assets/shared/app-icon-1024.png'), 'Submission package includes app icon path');
+  expect(storeSubmissionPackage.includes('store-assets/google-play/feature-graphic.png'), 'Submission package includes Play feature graphic path');
+  expect(storeSubmissionPackage.includes('android/app/build/outputs/bundle/release/app-release.aab'), 'Submission package includes Android AAB path');
+  expect(storeSubmissionPackage.includes('docs/mobile-privacy-data-inventory.md'), 'Submission package links privacy inventory');
+  for (const slug of storeScreenshotSlugs) {
+    expect(
+      storeSubmissionPackage.includes(`store-assets/app-store/iphone-6-7/${slug}.png`),
+      `Submission package includes ${slug} App Store screenshot`
+    );
+    expect(
+      storeSubmissionPackage.includes(`store-assets/google-play/phone-screenshots/${slug}.png`),
+      `Submission package includes ${slug} Google Play screenshot`
+    );
+  }
 
   const appSource = await readFile(resolve('src/App.tsx'), 'utf8');
   expect(appSource.includes('path="/privacy"'), 'Privacy route is registered');
