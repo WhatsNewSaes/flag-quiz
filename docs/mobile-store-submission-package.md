@@ -149,6 +149,8 @@ npm run mobile:qa:plan
 npm run mobile:urls:check
 ```
 
+The evidence self-test includes negative rejection cases for stale commits, missing repo-relative evidence files, and weak final signoff values.
+
 Before uploading signed builds, start a release evidence file:
 
 ```bash

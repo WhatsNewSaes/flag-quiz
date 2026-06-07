@@ -14,6 +14,7 @@ type Finding = {
 type Args = {
   file?: string;
   selfTest: boolean;
+  selfTestFailures: boolean;
 };
 
 type ReleaseContext = {
@@ -122,7 +123,7 @@ const incompleteValues = new Set([
 ]);
 
 function parseArgs(argv: string[]): Args {
-  const args: Args = { selfTest: false };
+  const args: Args = { selfTest: false, selfTestFailures: false };
 
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
@@ -130,6 +131,11 @@ function parseArgs(argv: string[]): Args {
 
     if (arg === '--self-test') {
       args.selfTest = true;
+      continue;
+    }
+
+    if (arg === '--self-test-failures') {
+      args.selfTestFailures = true;
       continue;
     }
 
@@ -558,8 +564,58 @@ function selfTestReleaseContext(): ReleaseContext {
   };
 }
 
+function expectSelfTestFailure(
+  name: string,
+  markdown: string,
+  context: ReleaseContext,
+  expectedFailureLabels: string[]
+) {
+  const findings: Finding[] = [];
+  const failedLabels = validateEvidence(markdown, context)
+    .filter((finding) => !finding.ok)
+    .map((finding) => finding.label);
+
+  for (const expected of expectedFailureLabels) {
+    const matched = failedLabels.some((label) => label.includes(expected));
+    if (matched) pass(findings, `Negative self-test rejects ${name}: ${expected}`);
+    else fail(findings, `Negative self-test rejects ${name}: ${expected}`, `Failures: ${failedLabels.join(', ') || 'none'}`);
+  }
+
+  return findings;
+}
+
+function negativeSelfTestFindings() {
+  const baseline = selfTestEvidence();
+  const context = selfTestReleaseContext();
+
+  return [
+    ...expectSelfTestFailure(
+      'stale git commit',
+      baseline.replace('- Git commit: abc1234', '- Git commit: stale000'),
+      context,
+      ['Release evidence git commit matches current HEAD']
+    ),
+    ...expectSelfTestFailure(
+      'missing repo-relative evidence file',
+      baseline.replace('https://example.com/evidence/fresh-launch-and-splash.png', 'docs/release-evidence/missing-screenshot.png'),
+      context,
+      ['Fresh launch and splash evidence link is valid']
+    ),
+    ...expectSelfTestFailure(
+      'weak final signoff value',
+      baseline.replace('- Store privacy forms submitted: Yes', '- Store privacy forms submitted: No'),
+      context,
+      ['Store privacy forms submitted is signed off']
+    ),
+  ];
+}
+
 async function main() {
   const args = parseArgs(process.argv.slice(2));
+
+  if (args.selfTestFailures && !args.selfTest) {
+    throw new Error('Use --self-test-failures together with --self-test.');
+  }
 
   if (!args.selfTest && !args.file) {
     throw new Error('Usage: npm run mobile:evidence:check -- --file docs/release-evidence/<file>.md');
@@ -570,7 +626,10 @@ async function main() {
     : await readFile(path.resolve(root, args.file ?? ''), 'utf8');
   const context = args.selfTest ? selfTestReleaseContext() : await currentReleaseContext();
 
-  const findings = validateEvidence(markdown, context);
+  const findings = [
+    ...validateEvidence(markdown, context),
+    ...(args.selfTestFailures ? negativeSelfTestFindings() : []),
+  ];
   const failed = findings.filter((finding) => !finding.ok);
 
   for (const finding of findings) {

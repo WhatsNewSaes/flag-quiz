@@ -30,7 +30,7 @@
     "mobile:handoff:check": "tsx scripts/check-mobile-store-handoff.ts",
     "mobile:blockers:check": "tsx scripts/check-mobile-launch-blockers.ts",
     "mobile:evidence:init": "tsx scripts/init-mobile-release-evidence.ts",
-    "mobile:evidence:self-test": "tsx scripts/check-mobile-release-evidence.ts --self-test",
+    "mobile:evidence:self-test": "tsx scripts/check-mobile-release-evidence.ts --self-test --self-test-failures",
     "mobile:evidence:check": "tsx scripts/check-mobile-release-evidence.ts",
     "mobile:artifacts:check": "tsx scripts/check-mobile-release-artifacts.ts",
     "mobile:go-live:check": "tsx scripts/mobile-go-live-check.ts",
