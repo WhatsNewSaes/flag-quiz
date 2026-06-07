@@ -42,7 +42,7 @@ Copy this file for each release candidate, for example `docs/release-evidence/mo
 
 ## Required Smoke Evidence
 
-Record `Pass`, `Fail`, or `N/A`. Every required row must include an evidence link to a screenshot, clip, store-console screenshot, or QA note before `npm run mobile:evidence:check` can pass.
+Record `Pass`, `Fail`, or `N/A`. Every required row must include an evidence URL or repo-relative evidence file path to a screenshot, clip, store-console screenshot, or QA note before `npm run mobile:evidence:check` can pass. Repo-relative evidence file paths must exist.
 
 | Area | iOS result | Android result | Evidence file/link | Notes |
 | --- | --- | --- | --- | --- |

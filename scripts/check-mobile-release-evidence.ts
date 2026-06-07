@@ -1,4 +1,5 @@
 import { execFileSync } from 'node:child_process';
+import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 
@@ -34,12 +35,15 @@ const requiredReleaseFields = [
   'Support URL verified',
 ];
 
-const requiredSignoffFields = [
+const requiredCompleteSignoffFields = [
   'iOS installed build smoke passed',
   'Android installed build smoke passed',
   'Store privacy forms submitted',
   'Signed release artifacts uploaded',
   'Known launch risks accepted',
+];
+
+const requiredFilledSignoffFields = [
   'Release approver',
   'Approval date',
 ];
@@ -264,6 +268,39 @@ function requireEqual(findings: Finding[], label: string, value: string | undefi
   else fail(findings, label, value ? `Expected ${expected}, got ${value}` : `Missing value, expected ${expected}`);
 }
 
+function evidenceTarget(value: string) {
+  const trimmed = value.trim();
+  const markdownLink = trimmed.match(/^\[[^\]]+\]\(([^)]+)\)$/);
+  return (markdownLink?.[1] ?? trimmed).trim();
+}
+
+function isExternalEvidenceTarget(target: string) {
+  return /^[a-z][a-z0-9+.-]*:\/\//i.test(target);
+}
+
+function requireEvidenceLink(findings: Finding[], label: string, value: string | undefined) {
+  if (!value || !isFilled(value)) {
+    fail(findings, label, value ? `Current value: ${value}` : 'Missing value');
+    return;
+  }
+
+  const target = evidenceTarget(value);
+  if (!target || target.startsWith('#') || target.includes('<release-file>')) {
+    fail(findings, label, `Placeholder target: ${value}`);
+    return;
+  }
+
+  if (isExternalEvidenceTarget(target)) {
+    pass(findings, label, target);
+    return;
+  }
+
+  const localPath = target.split('#')[0];
+  const absolutePath = path.resolve(root, localPath);
+  if (existsSync(absolutePath)) pass(findings, label, localPath);
+  else fail(findings, label, `Local evidence file does not exist: ${localPath}`);
+}
+
 function validateEvidence(markdown: string, context: ReleaseContext) {
   const findings: Finding[] = [];
 
@@ -407,8 +444,7 @@ function validateEvidence(markdown: string, context: ReleaseContext) {
     }
 
     const evidenceLink = row[3];
-    if (evidenceLink && isFilled(evidenceLink)) pass(findings, `${required.area} evidence link is filled`, evidenceLink);
-    else fail(findings, `${required.area} evidence link is filled`, evidenceLink ? `Current value: ${evidenceLink}` : 'Missing value');
+    requireEvidenceLink(findings, `${required.area} evidence link is valid`, evidenceLink);
   }
 
   const storeRows = tableRowsForSection(markdown, 'Store Console Evidence');
@@ -422,11 +458,14 @@ function validateEvidence(markdown: string, context: ReleaseContext) {
 
     requireComplete(findings, label, row[2]);
     const evidenceLink = row[3];
-    if (evidenceLink && isFilled(evidenceLink)) pass(findings, `${required.store} ${required.area} evidence link is filled`, evidenceLink);
-    else fail(findings, `${required.store} ${required.area} evidence link is filled`, evidenceLink ? `Current value: ${evidenceLink}` : 'Missing value');
+    requireEvidenceLink(findings, `${required.store} ${required.area} evidence link is valid`, evidenceLink);
   }
 
-  for (const label of requiredSignoffFields) {
+  for (const label of requiredCompleteSignoffFields) {
+    requireComplete(findings, `${label} is signed off`, fieldValue(markdown, label));
+  }
+
+  for (const label of requiredFilledSignoffFields) {
     const value = fieldValue(markdown, label);
     if (value && isFilled(value)) pass(findings, `${label} is signed off`, value);
     else fail(findings, `${label} is signed off`, value ? `Current value: ${value}` : 'Missing field');
@@ -437,10 +476,10 @@ function validateEvidence(markdown: string, context: ReleaseContext) {
 
 function selfTestEvidence() {
   const smokeEvidenceRows = requiredSmokeRows
-    .map((row) => `| ${row.area} | ${row.ios} | ${row.android} | evidence/${row.area.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.png |  |`)
+    .map((row) => `| ${row.area} | ${row.ios} | ${row.android} | https://example.com/evidence/${row.area.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.png |  |`)
     .join('\n');
   const storeConsoleRows = requiredStoreConsoleRows
-    .map((row) => `| ${row.store} | ${row.area} | Complete | evidence/${row.store.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${row.area.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.png |  |`)
+    .map((row) => `| ${row.store} | ${row.area} | Complete | https://example.com/evidence/${row.store.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${row.area.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.png |  |`)
     .join('\n');
 
   return `# Mobile Release Evidence
