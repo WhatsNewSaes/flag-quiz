@@ -24,6 +24,7 @@ const requiredFiles = [
   'docs/mobile-privacy-data-inventory.md',
   'docs/mobile-data-deletion-runbook.md',
   'docs/mobile-installed-build-qa.md',
+  'docs/mobile-local-device-coverage.md',
   'docs/mobile-release-evidence-template.md',
   'docs/mobile-launch-checklist.md',
   'dist/mobile-readiness-report.md',

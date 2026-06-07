@@ -47,13 +47,15 @@ GitHub Actions also runs the unsigned mobile preflight on `main`, pull requests,
 
 Run `npm run mobile:version:check` after any release version bump to confirm `package.json`, Android Gradle, iOS project settings, store metadata, and the submission handoff all agree.
 
-Before submitting store forms, run `npm run mobile:store:check` to verify listing copy, store text limits, asset dimensions, privacy references, and handoff paths. Run `npm run mobile:qa:plan` to verify the installed-build QA checklist still covers the required devices, game modes, native behaviors, and evidence flow. Then run `npm run mobile:urls:check` to verify the public marketing, privacy, terms, and support URLs are live. The URL check uses the production site and is intentionally separate from the local preflight.
+Before submitting store forms, run `npm run mobile:store:check` to verify listing copy, store text limits, asset dimensions, privacy references, and handoff paths. Run `npm run mobile:qa:plan` to verify the installed-build QA checklist still covers the required devices, game modes, native behaviors, and evidence flow. Run `npm run mobile:devices:check` to verify the local simulator/emulator coverage plan still covers small-screen iPhone, latest iPhone, Pixel 8 Android, large Android, every game mode, native back, offline launch, poor network, and evidence capture notes. Then run `npm run mobile:urls:check` to verify the public marketing, privacy, terms, and support URLs are live. The URL check uses the production site and is intentionally separate from the local preflight.
 
 `npm run mobile:evidence:self-test` exercises the release evidence checker against a complete synthetic signoff file and negative cases for stale commits, missing repo-relative evidence files, and weak final signoff values. It is included in `npm run mobile:preflight` so CI catches regressions in the final evidence gate before a real release evidence file exists.
 
 Confirm privacy and store form answers against `docs/mobile-privacy-data-inventory.md` before uploading builds.
 
 Use `docs/mobile-store-submission-package.md` as the final handoff manifest for upload paths, listing copy, privacy answers, and external store-console tasks.
+
+Use `docs/mobile-local-device-coverage.md` before signed builds are available to keep simulator/emulator QA consistent. This local pass is useful for catching layout and native shell issues early, but launch signoff still requires the installed-build evidence generated from TestFlight and Google Play internal testing.
 
 `npm run package:store-submission` runs `npm run mobile:handoff:check` after creating the ZIP. Run that checker directly any time you need to verify an existing `dist/mobile-store-submission/manifest.json` and `dist/flag-arcade-mobile-store-submission.zip`.
 

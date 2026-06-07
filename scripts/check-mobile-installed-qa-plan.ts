@@ -38,18 +38,21 @@ async function main() {
   const qaPath = resolve('docs/mobile-installed-build-qa.md');
   const evidenceTemplatePath = resolve('docs/mobile-release-evidence-template.md');
   const runbookPath = resolve('docs/mobile-release-runbook.md');
+  const localDeviceCoveragePath = resolve('docs/mobile-local-device-coverage.md');
 
   expect(existsSync(qaPath), 'Installed-build QA checklist exists', path.relative(root, qaPath));
   expect(existsSync(evidenceTemplatePath), 'Release evidence template exists', path.relative(root, evidenceTemplatePath));
   expect(existsSync(runbookPath), 'Mobile release runbook exists', path.relative(root, runbookPath));
+  expect(existsSync(localDeviceCoveragePath), 'Local device coverage checklist exists', path.relative(root, localDeviceCoveragePath));
 
-  if (!existsSync(qaPath) || !existsSync(evidenceTemplatePath) || !existsSync(runbookPath)) {
+  if (!existsSync(qaPath) || !existsSync(evidenceTemplatePath) || !existsSync(runbookPath) || !existsSync(localDeviceCoveragePath)) {
     throw new Error('Mobile QA plan docs are missing.');
   }
 
   const qa = await readFile(qaPath, 'utf8');
   const evidenceTemplate = await readFile(evidenceTemplatePath, 'utf8');
   const runbook = await readFile(runbookPath, 'utf8');
+  const localDeviceCoverage = await readFile(localDeviceCoveragePath, 'utf8');
 
   includesAll(qa, 'Installed-build QA device matrix', [
     'Physical iPhone',
@@ -109,10 +112,19 @@ async function main() {
 
   includesAll(runbook, 'Release runbook installed-build flow', [
     'docs/mobile-installed-build-qa.md',
+    'docs/mobile-local-device-coverage.md',
+    'npm run mobile:devices:check',
     'TestFlight',
     'Play internal testing',
     'npm run mobile:evidence:check',
     'npm run mobile:go-live:check',
+  ]);
+
+  includesAll(localDeviceCoverage, 'Local device coverage handoff', [
+    'smallest available iPhone simulator',
+    'FlagArcade_Pixel_8_API_36',
+    'Large Android emulator or device',
+    'not the final store gate',
   ]);
 
   const failed = findings.filter((finding) => !finding.ok);

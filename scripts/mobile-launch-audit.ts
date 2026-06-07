@@ -56,6 +56,7 @@ async function main() {
   expect(Boolean(packageJson.scripts?.['mobile:version:check']), 'package.json exposes mobile version consistency checker script');
   expect(Boolean(packageJson.scripts?.['mobile:store:check']), 'package.json exposes mobile store submission checker script');
   expect(Boolean(packageJson.scripts?.['mobile:qa:plan']), 'package.json exposes mobile installed-build QA plan checker script');
+  expect(Boolean(packageJson.scripts?.['mobile:devices:check']), 'package.json exposes mobile local device coverage checker script');
   expect(Boolean(packageJson.scripts?.['mobile:handoff:check']), 'package.json exposes mobile store handoff checker script');
   expect(Boolean(packageJson.scripts?.['mobile:blockers:check']), 'package.json exposes mobile launch blocker checker script');
   expect(Boolean(packageJson.scripts?.['mobile:build:android:debug']), 'package.json exposes Android debug build script');
@@ -84,6 +85,10 @@ async function main() {
   expect(
     packageJson.scripts?.['mobile:preflight']?.includes('npm run mobile:qa:plan') === true,
     'Mobile preflight includes installed-build QA plan checker'
+  );
+  expect(
+    packageJson.scripts?.['mobile:preflight']?.includes('npm run mobile:devices:check') === true,
+    'Mobile preflight includes local device coverage checker'
   );
   expect(
     packageJson.scripts?.['mobile:preflight']?.includes('npm run mobile:version:check') === true,
@@ -269,6 +274,7 @@ async function main() {
   expect(existsSync(resolve('docs/mobile-store-privacy-form-answers.md')), 'Mobile store privacy form answers exist');
   expect(existsSync(resolve('docs/mobile-store-submission-package.md')), 'Mobile store submission package exists');
   expect(existsSync(resolve('docs/mobile-installed-build-qa.md')), 'Mobile installed-build QA checklist exists');
+  expect(existsSync(resolve('docs/mobile-local-device-coverage.md')), 'Mobile local device coverage checklist exists');
   expect(existsSync(resolve('docs/mobile-release-evidence-template.md')), 'Mobile release evidence template exists');
   expect(existsSync(resolve('.github/workflows/mobile-preflight.yml')), 'Mobile preflight GitHub Actions workflow exists');
   expect(existsSync(resolve('scripts/mobile-signing-preflight.ts')), 'Mobile signing preflight script exists');
@@ -276,6 +282,7 @@ async function main() {
   expect(existsSync(resolve('scripts/check-mobile-public-urls.ts')), 'Mobile public URL check script exists');
   expect(existsSync(resolve('scripts/check-mobile-store-submission.ts')), 'Mobile store submission checker script exists');
   expect(existsSync(resolve('scripts/check-mobile-installed-qa-plan.ts')), 'Mobile installed-build QA plan checker script exists');
+  expect(existsSync(resolve('scripts/check-mobile-local-device-coverage.ts')), 'Mobile local device coverage checker script exists');
   expect(existsSync(resolve('scripts/check-mobile-store-handoff.ts')), 'Mobile store handoff checker script exists');
   expect(existsSync(resolve('scripts/check-mobile-launch-blockers.ts')), 'Mobile launch blocker checker script exists');
   expect(existsSync(resolve('scripts/init-mobile-release-evidence.ts')), 'Mobile release evidence initializer script exists');
@@ -332,6 +339,7 @@ async function main() {
   expect(storeSubmissionPackage.includes('npm run mobile:version:check'), 'Submission package documents version consistency checker command');
   expect(storeSubmissionPackage.includes('npm run mobile:store:check'), 'Submission package documents store submission checker command');
   expect(storeSubmissionPackage.includes('npm run mobile:qa:plan'), 'Submission package documents installed-build QA plan checker command');
+  expect(storeSubmissionPackage.includes('npm run mobile:devices:check'), 'Submission package documents local device coverage checker command');
   expect(storeSubmissionPackage.includes('npm run mobile:blockers:check'), 'Submission package documents launch blocker checker command');
   expect(storeSubmissionPackage.includes('npm run mobile:handoff:check'), 'Submission package documents store handoff checker command');
   expect(storeSubmissionPackage.includes('npm run mobile:signing:preflight'), 'Submission package documents signing preflight command');
@@ -393,6 +401,7 @@ async function main() {
     'docs/mobile-store-submission-package.md',
     'docs/mobile-store-privacy-form-answers.md',
     'docs/mobile-release-evidence-template.md',
+    'docs/mobile-local-device-coverage.md',
     'docs/release-evidence',
     'npm run mobile:evidence:init',
     'npm run mobile:evidence:check',
@@ -565,6 +574,7 @@ async function main() {
     'npm run mobile:version:check',
     'npm run mobile:store:check',
     'npm run mobile:qa:plan',
+    'npm run mobile:devices:check',
     'npm run mobile:urls:check',
     'npm run mobile:evidence:init',
     'npm run mobile:evidence:check',
@@ -578,6 +588,7 @@ async function main() {
   }
 
   const installedBuildQa = await readFile(resolve('docs/mobile-installed-build-qa.md'), 'utf8');
+  const localDeviceCoverage = await readFile(resolve('docs/mobile-local-device-coverage.md'), 'utf8');
   const requiredQaTerms = [
     'Journey Mode',
     'Perfect Passport',
@@ -604,6 +615,28 @@ async function main() {
       && installedBuildQa.includes('docs/release-evidence/'),
     'Installed-build QA links release evidence initializer and checker'
   );
+
+  const localDeviceCoverageTerms = [
+    'iPhone SE or smallest available iPhone simulator',
+    'Latest available iPhone simulator',
+    'FlagArcade_Pixel_8_API_36',
+    'Large Android emulator or device',
+    'Journey Mode',
+    'Perfect Passport',
+    'Flag Jeopardy Easy',
+    'Flag Jeopardy Type',
+    'Arcade Mode',
+    'Around the World',
+    'Flag Runner',
+    'Native back',
+    'Offline launch',
+    'Poor network',
+    'docs/release-evidence/local-device/',
+    'not the final store gate',
+  ];
+  for (const term of localDeviceCoverageTerms) {
+    expect(localDeviceCoverage.includes(term), `Local device coverage covers ${term}`);
+  }
 
   const releaseEvidenceTemplate = await readFile(resolve('docs/mobile-release-evidence-template.md'), 'utf8');
   const releaseEvidenceTerms = [
