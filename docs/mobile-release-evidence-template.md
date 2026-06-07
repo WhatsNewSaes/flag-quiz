@@ -14,6 +14,7 @@ Copy this file for each release candidate, for example `docs/release-evidence/mo
 - Evidence date:
 - Public site URL verified:
 - Privacy URL verified:
+- Terms URL verified:
 - Support URL verified:
 
 ## Build Artifacts

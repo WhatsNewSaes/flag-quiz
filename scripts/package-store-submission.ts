@@ -31,6 +31,10 @@ const requiredDirectories = [
   'store-assets/google-play/phone-screenshots',
 ];
 
+const optionalDirectories = [
+  'docs/release-evidence',
+];
+
 function resolve(...segments: string[]) {
   return path.join(root, ...segments);
 }
@@ -80,6 +84,16 @@ async function copyDirectoryIntoPackage(relativeSource: string, relativeDestinat
   }
 }
 
+async function copyOptionalDirectoryIntoPackage(relativeSource: string, relativeDestination: string, entries: ManifestEntry[]) {
+  try {
+    await assertPathExists(relativeSource);
+  } catch {
+    return;
+  }
+
+  await copyDirectoryIntoPackage(relativeSource, relativeDestination, entries);
+}
+
 async function main() {
   const packageJson = JSON.parse(await readFile(resolve('package.json'), 'utf8')) as {
     version?: string;
@@ -98,6 +112,9 @@ async function main() {
 
   for (const relativeFile of requiredFiles.filter((file) => file.startsWith('docs/'))) {
     await copyFileIntoPackage(relativeFile, relativeFile, entries);
+  }
+  for (const relativeDirectory of optionalDirectories) {
+    await copyOptionalDirectoryIntoPackage(relativeDirectory, relativeDirectory, entries);
   }
   await copyFileIntoPackage('dist/mobile-readiness-report.md', 'mobile-readiness-report.md', entries);
 
@@ -137,7 +154,7 @@ async function main() {
     '',
     'It does not contain signing secrets, signed archives, App Store Connect uploads, Google Play Console uploads, or completed installed-build evidence.',
     '',
-    'Start with `docs/mobile-store-submission-package.md`, then fill a copied release evidence file from `docs/mobile-release-evidence-template.md` after signed builds are uploaded.',
+    'Start with `docs/mobile-store-submission-package.md`, then run `npm run mobile:evidence:init` and fill the generated release evidence file after signed builds are uploaded.',
     '',
   ].join('\n');
 

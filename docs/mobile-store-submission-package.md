@@ -131,3 +131,9 @@ Before final store form submission, verify public listing URLs:
 ```bash
 npm run mobile:urls:check
 ```
+
+Before uploading signed builds, start a release evidence file:
+
+```bash
+npm run mobile:evidence:init -- --build 1 --owner "Release Owner"
+```

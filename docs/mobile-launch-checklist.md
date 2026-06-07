@@ -118,6 +118,7 @@ Last updated: 2026-06-07
 - [x] iPhone 17 simulator build/install/launch/screenshot tested
 - [x] Installed-build QA checklist exists: `docs/mobile-installed-build-qa.md`
 - [x] Release evidence template exists: `docs/mobile-release-evidence-template.md`
+- [x] Release evidence initializer exists: `npm run mobile:evidence:init`
 - [ ] Physical iPhone test
 - [ ] Physical Android test
 - [ ] Small-screen iPhone simulator test
