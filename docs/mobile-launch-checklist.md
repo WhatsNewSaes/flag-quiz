@@ -69,6 +69,7 @@ Last updated: 2026-06-07
 - [x] iOS unsigned build: `xcodebuild ... CODE_SIGNING_ALLOWED=NO build`
 - [x] Android release build script exists: `npm run mobile:build:android:release`
 - [x] iOS debug build script exists: `npm run mobile:build:ios:debug`
+- [x] Signing preflight script exists: `npm run mobile:signing:preflight`
 - [ ] Android release build: signed AAB
 - [ ] iOS archive: signed App Store archive
 - [ ] Upload Android internal test build to Google Play Console
@@ -127,4 +128,5 @@ Last updated: 2026-06-07
 - First-run Journey onboarding intentionally asks for character and flag selection on fresh installs before showing the map.
 - Privacy form answer drafts exist, but App Store Connect and Google Play Console still need final human submission.
 - Release evidence template exists, but final evidence cannot be filled until signed TestFlight and Play internal builds are uploaded and installed.
+- Signing preflight is expected to warn until Android keystore secrets and Apple Developer Team are configured locally.
 - Store submission cannot be considered complete until signed release builds, store screenshots, privacy forms, and internal test tracks are verified.

@@ -11,6 +11,7 @@ Run these from the repo root:
 ```bash
 npm run typecheck:all
 npm run build:store-assets
+npm run mobile:signing:preflight
 npm run mobile:audit
 npm run build
 npx cap sync
@@ -21,6 +22,8 @@ npm run package:store-submission
 Expected current result: all commands pass locally.
 
 Android npm scripts use `$JAVA_HOME` when present and fall back to `/opt/homebrew/opt/openjdk@21`, which is the verified local JDK path for this workspace.
+
+`npm run mobile:signing:preflight` is expected to warn until Android signing secrets and the Apple Developer Team are configured locally. It should not fail unless a repo safety invariant or filled signing config is broken.
 
 Confirm privacy and store form answers against `docs/mobile-privacy-data-inventory.md` before uploading builds.
 
@@ -49,6 +52,12 @@ cp android/keystore.properties.example android/keystore.properties
 ```
 
 Fill in the passwords and keystore file name in `android/keystore.properties`.
+
+Check signing readiness:
+
+```bash
+npm run mobile:signing:preflight
+```
 
 Build the Play upload artifact:
 

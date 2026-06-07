@@ -108,6 +108,7 @@ Run before creating signed store builds:
 ```bash
 npm run typecheck:all
 npm run build:store-assets
+npm run mobile:signing:preflight
 npm run mobile:audit
 npm run build
 npx cap sync
