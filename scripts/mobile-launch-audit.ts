@@ -803,6 +803,8 @@ async function main() {
     'Artifact manifest build number matches release evidence',
     'Artifact manifest includes signed Android AAB',
     'Artifact manifest includes signed iOS archive',
+    'isPlaceholderEvidenceTarget',
+    'Placeholder evidence target',
     'malformed local artifact manifest',
     'signing evidence is verified',
     'requiredInstalledBuildRows',
@@ -813,6 +815,7 @@ async function main() {
     'wrong installed build number',
     'invalid approval date',
     'future approval date',
+    'placeholder external evidence URL',
     'open failure log row',
     'invalid failure severity',
     'Approval date is YYYY-MM-DD',
@@ -862,6 +865,14 @@ async function main() {
   expect(
     releaseEvidenceTemplate.includes('future-dated evidence is rejected'),
     'Release evidence template documents future-dated evidence rejection'
+  );
+  expect(
+    releaseRunbook.includes('placeholder hosts such as `example.com`'),
+    'Release runbook documents placeholder evidence URL rejection'
+  );
+  expect(
+    releaseEvidenceTemplate.includes('Placeholder evidence hosts such as `example.com`'),
+    'Release evidence template documents placeholder evidence URL rejection'
   );
   expect(
     releaseRunbook.includes('unresolved failure rows are rejected'),

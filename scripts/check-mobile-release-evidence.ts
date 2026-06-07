@@ -349,6 +349,21 @@ function isExternalEvidenceTarget(target: string) {
   return /^[a-z][a-z0-9+.-]*:\/\//i.test(target);
 }
 
+function isPlaceholderEvidenceTarget(target: string) {
+  try {
+    const url = new URL(target);
+    const hostname = url.hostname.toLowerCase();
+    return hostname === 'localhost'
+      || hostname === '127.0.0.1'
+      || hostname === '::1'
+      || hostname === '[::1]'
+      || hostname.endsWith('.invalid')
+      || ['example.com', 'example.net', 'example.org'].includes(hostname);
+  } catch {
+    return false;
+  }
+}
+
 function requireEvidenceLink(findings: Finding[], label: string, value: string | undefined) {
   if (!value || !isFilled(value)) {
     fail(findings, label, value ? `Current value: ${value}` : 'Missing value');
@@ -362,6 +377,10 @@ function requireEvidenceLink(findings: Finding[], label: string, value: string |
   }
 
   if (isExternalEvidenceTarget(target)) {
+    if (isPlaceholderEvidenceTarget(target)) {
+      fail(findings, label, `Placeholder evidence target: ${target}`);
+      return;
+    }
     pass(findings, label, target);
     return;
   }
@@ -690,10 +709,10 @@ function selfTestArtifactManifestPath(context: ReleaseContext) {
 function selfTestEvidence(context = selfTestReleaseContext()) {
   const artifactManifestPath = selfTestArtifactManifestPath(context);
   const smokeEvidenceRows = requiredSmokeRows
-    .map((row) => `| ${row.area} | ${row.ios} | ${row.android} | https://example.com/evidence/${row.area.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.png |  |`)
+    .map((row) => `| ${row.area} | ${row.ios} | ${row.android} | https://flagarcade.com/release-evidence/${row.area.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.png |  |`)
     .join('\n');
   const storeConsoleRows = requiredStoreConsoleRows
-    .map((row) => `| ${row.store} | ${row.area} | Complete | https://example.com/evidence/${row.store.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${row.area.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.png |  |`)
+    .map((row) => `| ${row.store} | ${row.area} | Complete | https://flagarcade.com/release-evidence/${row.store.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${row.area.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.png |  |`)
     .join('\n');
 
   return `# Mobile Release Evidence
@@ -806,7 +825,13 @@ function negativeSelfTestFindings() {
     ),
     ...expectSelfTestFailure(
       'missing repo-relative evidence file',
-      baseline.replace('https://example.com/evidence/fresh-launch-and-splash.png', 'docs/release-evidence/missing-screenshot.png'),
+      baseline.replace('https://flagarcade.com/release-evidence/fresh-launch-and-splash.png', 'docs/release-evidence/missing-screenshot.png'),
+      context,
+      ['Fresh launch and splash evidence link is valid']
+    ),
+    ...expectSelfTestFailure(
+      'placeholder external evidence URL',
+      baseline.replace('https://flagarcade.com/release-evidence/fresh-launch-and-splash.png', 'https://example.com/evidence/fresh-launch-and-splash.png'),
       context,
       ['Fresh launch and splash evidence link is valid']
     ),
