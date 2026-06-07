@@ -21,6 +21,8 @@ Last updated: 2026-06-07
 - [x] Android launcher icons exist for mdpi through xxxhdpi
 - [x] Android adaptive icon foreground/background resources exist
 - [x] Android splash resources exist for portrait and landscape densities
+- [x] Game mode landing-page OG images exist at 1200x630
+- [x] Game mode landing pages use mode-specific OG images
 - [ ] Review app icon on real home screens against light/dark wallpapers
 - [ ] Review splash screen on real devices for cropping and perceived load time
 - [ ] Produce App Store screenshots for required iPhone sizes
@@ -57,6 +59,7 @@ Last updated: 2026-06-07
 - [x] `npm run typecheck:all`
 - [x] `npm run build`
 - [x] `npx cap sync`
+- [x] `npm run mobile:audit`
 - [x] Android debug build: `./gradlew assembleDebug`
 - [x] iOS unsigned build: `xcodebuild ... CODE_SIGNING_ALLOWED=NO build`
 - [ ] Android release build: signed AAB
