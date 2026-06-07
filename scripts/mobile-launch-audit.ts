@@ -52,6 +52,7 @@ async function main() {
   expect(packageJson.version === '1.0.0', 'package.json public version is 1.0.0');
   expect(Boolean(packageJson.scripts?.['mobile:audit']), 'package.json exposes mobile:audit');
   expect(Boolean(packageJson.scripts?.['mobile:preflight']), 'package.json exposes mobile:preflight');
+  expect(Boolean(packageJson.scripts?.['mobile:urls:check']), 'package.json exposes mobile public URL check script');
   expect(Boolean(packageJson.scripts?.['mobile:build:android:debug']), 'package.json exposes Android debug build script');
   expect(Boolean(packageJson.scripts?.['mobile:build:android:release']), 'package.json exposes Android release AAB script');
   expect(Boolean(packageJson.scripts?.['mobile:build:ios:debug']), 'package.json exposes iOS debug build script');
@@ -227,6 +228,7 @@ async function main() {
   expect(existsSync(resolve('docs/mobile-installed-build-qa.md')), 'Mobile installed-build QA checklist exists');
   expect(existsSync(resolve('docs/mobile-release-evidence-template.md')), 'Mobile release evidence template exists');
   expect(existsSync(resolve('scripts/mobile-signing-preflight.ts')), 'Mobile signing preflight script exists');
+  expect(existsSync(resolve('scripts/check-mobile-public-urls.ts')), 'Mobile public URL check script exists');
   expect(existsSync(resolve('scripts/generate-mobile-readiness-report.ts')), 'Mobile readiness report script exists');
   expect(existsSync(resolve('scripts/package-store-submission.ts')), 'Store submission packaging script exists');
   expect(existsSync(resolve('android/keystore.properties.example')), 'Android keystore template exists');
@@ -250,6 +252,7 @@ async function main() {
 
   const storeSubmissionPackage = await readFile(resolve('docs/mobile-store-submission-package.md'), 'utf8');
   expect(storeSubmissionPackage.includes('npm run mobile:preflight'), 'Submission package documents mobile preflight command');
+  expect(storeSubmissionPackage.includes('npm run mobile:urls:check'), 'Submission package documents public URL check command');
   expect(storeSubmissionPackage.includes('npm run mobile:signing:preflight'), 'Submission package documents signing preflight command');
   expect(storeSubmissionPackage.includes('npm run package:store-submission'), 'Submission package documents packaging command');
   expect(storeSubmissionPackage.includes('dist/mobile-store-submission'), 'Submission package documents packaging output path');
@@ -313,6 +316,22 @@ async function main() {
     expect(signingPreflight.includes(term), `Signing preflight covers ${term}`);
   }
 
+  const publicUrlCheck = await readFile(resolve('scripts/check-mobile-public-urls.ts'), 'utf8');
+  const publicUrlCheckTerms = [
+    'https://flagarcade.com',
+    'https://flagarcade.com/privacy',
+    'https://flagarcade.com/terms',
+    'https://flagarcade.com/support',
+    'Flag Arcade',
+    'Privacy',
+    'Terms',
+    'Support',
+    'text/html',
+  ];
+  for (const term of publicUrlCheckTerms) {
+    expect(publicUrlCheck.includes(term), `Public URL check covers ${term}`);
+  }
+
   const readinessReportScript = await readFile(resolve('scripts/generate-mobile-readiness-report.ts'), 'utf8');
   const readinessReportTerms = [
     'Mobile Launch Readiness Report',
@@ -322,6 +341,7 @@ async function main() {
     'Remaining External Requirements',
     'Launch Decision',
     'npm run mobile:preflight',
+    'npm run mobile:urls:check',
     'docs/mobile-launch-checklist.md',
     'docs/mobile-release-evidence-template.md',
     'dist/mobile-readiness-report.md',

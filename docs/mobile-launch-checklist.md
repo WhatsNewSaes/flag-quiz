@@ -89,6 +89,7 @@ Last updated: 2026-06-07
 - [x] Marketing URL exists: `https://flagarcade.com`
 - [x] Privacy policy URL exists: `https://flagarcade.com/privacy`
 - [x] Terms URL exists: `https://flagarcade.com/terms`
+- [x] Public URL check script exists: `npm run mobile:urls:check`
 - [x] Category selections
 - [x] Content rating questionnaire notes drafted
 - [x] Age rating questionnaire notes drafted

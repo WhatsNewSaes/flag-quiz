@@ -125,3 +125,9 @@ npm run mobile:build:ios:debug
 ```
 
 Expected current local result: all commands pass. Signed release uploads still require developer account credentials and store-console access.
+
+Before final store form submission, verify public listing URLs:
+
+```bash
+npm run mobile:urls:check
+```

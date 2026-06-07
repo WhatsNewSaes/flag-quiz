@@ -31,6 +31,8 @@ Android npm scripts use `$JAVA_HOME` when present and fall back to `/opt/homebre
 
 `npm run mobile:signing:preflight` is expected to warn until Android signing secrets and the Apple Developer Team are configured locally. It should not fail unless a repo safety invariant or filled signing config is broken.
 
+Before submitting store forms, run `npm run mobile:urls:check` to verify the public marketing, privacy, terms, and support URLs are live. This check uses the production site and is intentionally separate from the local preflight.
+
 Confirm privacy and store form answers against `docs/mobile-privacy-data-inventory.md` before uploading builds.
 
 Use `docs/mobile-store-submission-package.md` as the final handoff manifest for upload paths, listing copy, privacy answers, and external store-console tasks.

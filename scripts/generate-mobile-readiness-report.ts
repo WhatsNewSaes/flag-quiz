@@ -61,6 +61,7 @@ async function main() {
     '- Privacy policy, terms, support page, deletion flow, privacy inventory, data-safety answers, QA checklist, release evidence template, and store submission package docs exist.',
     '- `npm run mobile:audit` verifies permissions, privacy manifest, metadata docs, store assets, QA docs, package script, and deletion coverage.',
     '- `npm run mobile:preflight` runs the local release preflight sequence in the expected order.',
+    '- `npm run mobile:urls:check` verifies public store listing URLs against the production site when network access is available.',
     '- `npm run package:store-submission` creates a handoff folder and zip archive for upload/supporting materials.',
     '',
     '## Store Handoff Outputs',
