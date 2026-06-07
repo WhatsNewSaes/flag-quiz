@@ -12,7 +12,7 @@ Last updated: 2026-06-07
 - [x] Android URL scheme: `com.flagarcade.app://auth/callback`
 - [x] Mobile orientation locked to portrait
 - [ ] Confirm final developer accounts and signing team ids
-- [ ] Confirm production release version and build number
+- [x] Confirm production release version and build number
 - [x] Android release keystore template exists
 - [x] Mobile release runbook exists
 
@@ -78,19 +78,19 @@ Last updated: 2026-06-07
 
 ## Store Metadata
 
-- [ ] Short description for Google Play
-- [ ] Full description for Google Play
-- [ ] Promotional text for App Store
-- [ ] App Store subtitle
-- [ ] App Store description
-- [ ] App Store keywords
+- [x] Short description for Google Play
+- [x] Full description for Google Play
+- [x] Promotional text for App Store
+- [x] App Store subtitle
+- [x] App Store description
+- [x] App Store keywords
 - [x] Support URL exists: `https://flagarcade.com/support`
 - [x] Marketing URL exists: `https://flagarcade.com`
 - [x] Privacy policy URL exists: `https://flagarcade.com/privacy`
 - [x] Terms URL exists: `https://flagarcade.com/terms`
-- [ ] Category selections
-- [ ] Content rating questionnaire
-- [ ] Age rating questionnaire
+- [x] Category selections
+- [x] Content rating questionnaire notes drafted
+- [x] Age rating questionnaire notes drafted
 - [ ] Copyright holder
 - [x] Store metadata draft exists: `docs/mobile-store-metadata.md`
 

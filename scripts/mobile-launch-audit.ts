@@ -46,8 +46,10 @@ async function imageMetadata(relativePath: string) {
 
 async function main() {
   const packageJson = JSON.parse(await readFile(resolve('package.json'), 'utf8')) as {
+    version?: string;
     scripts?: Record<string, string>;
   };
+  expect(packageJson.version === '1.0.0', 'package.json public version is 1.0.0');
   expect(Boolean(packageJson.scripts?.['mobile:audit']), 'package.json exposes mobile:audit');
   expect(Boolean(packageJson.scripts?.['mobile:build:android:debug']), 'package.json exposes Android debug build script');
   expect(Boolean(packageJson.scripts?.['mobile:build:android:release']), 'package.json exposes Android release AAB script');
@@ -62,6 +64,9 @@ async function main() {
   expect(capacitorConfig.includes('Keyboard'), 'Capacitor keyboard plugin configured');
 
   const androidManifest = await readFile(resolve('android/app/src/main/AndroidManifest.xml'), 'utf8');
+  const androidBuildGradle = await readFile(resolve('android/app/build.gradle'), 'utf8');
+  expect(androidBuildGradle.includes('versionCode 1'), 'Android versionCode is 1');
+  expect(androidBuildGradle.includes('versionName "1.0"'), 'Android versionName is 1.0');
   expect(androidManifest.includes('android:screenOrientation="portrait"'), 'Android main activity is portrait locked');
   expect(
     androidManifest.includes('android:scheme="com.flagarcade.app"')
@@ -131,6 +136,8 @@ async function main() {
   expect(iosPrivacyManifestText.includes('NSPrivacyAccessedAPICategoryUserDefaults'), 'iOS privacy manifest declares UserDefaults access');
   expect(iosPrivacyManifestText.includes('NSPrivacyCollectedDataTypeProductInteraction'), 'iOS privacy manifest declares product interaction data');
   const xcodeProject = await readFile(resolve('ios/App/App.xcodeproj/project.pbxproj'), 'utf8');
+  expect(xcodeProject.includes('MARKETING_VERSION = 1.0;'), 'iOS marketing version is 1.0');
+  expect(xcodeProject.includes('CURRENT_PROJECT_VERSION = 1;'), 'iOS build number is 1');
   expect(xcodeProject.includes('PrivacyInfo.xcprivacy'), 'iOS privacy manifest is referenced by Xcode project');
   expect(xcodeProject.includes('PrivacyInfo.xcprivacy in Resources'), 'iOS privacy manifest is bundled as a resource');
 
@@ -215,6 +222,15 @@ async function main() {
   expect(existsSync(resolve('src/pages/PrivacyPage.tsx')), 'Privacy page source exists');
   expect(existsSync(resolve('src/pages/TermsPage.tsx')), 'Terms page source exists');
   expect(existsSync(resolve('src/pages/SupportPage.tsx')), 'Support page source exists');
+
+  const storeMetadata = await readFile(resolve('docs/mobile-store-metadata.md'), 'utf8');
+  expect(storeMetadata.includes('Short description:'), 'Google Play short description is drafted');
+  expect(storeMetadata.includes('Full description:'), 'Google Play full description is drafted');
+  expect(storeMetadata.includes('Subtitle:'), 'App Store subtitle is drafted');
+  expect(storeMetadata.includes('Promotional text:'), 'App Store promotional text is drafted');
+  expect(storeMetadata.includes('Keywords:'), 'App Store keywords are drafted');
+  expect(storeMetadata.includes('Category: Games / Educational / Trivia'), 'Store category selection is drafted');
+  expect(storeMetadata.includes('No gambling or loot boxes.'), 'Rating questionnaire notes are drafted');
 
   const appSource = await readFile(resolve('src/App.tsx'), 'utf8');
   expect(appSource.includes('path="/privacy"'), 'Privacy route is registered');

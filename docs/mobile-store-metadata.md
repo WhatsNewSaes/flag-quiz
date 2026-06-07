@@ -15,6 +15,7 @@ Use this as the working copy for App Store Connect and Google Play Console. Fina
 - Terms URL: https://flagarcade.com/terms
 - Bundle ID / package name: `com.flagarcade.app`
 - Current public version: `1.0`
+- Native build number / Android version code: `1`
 
 ## App Store
 
