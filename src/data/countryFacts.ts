@@ -21,6 +21,9 @@ export interface CountryFacts {
   religions?: { name: string; percent?: number }[];
   medianAge?: number; // years, Factbook "Median age" (total)
   fertilityRate?: number; // children born per woman, Factbook "Total fertility rate"
+  gdpPpp?: number; // USD, Factbook "Real GDP (purchasing power parity)"
+  highestPointMeters?: number; // meters above sea level
+  coastlineKm?: number;
 }
 
 export const countryFacts: Record<string, CountryFacts> = {
@@ -39,6 +42,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Christian","percent":89.5},{"name":"Other","percent":8.8},{"name":"Unspecified","percent":1.7}],
     medianAge: 49.4,
     fertilityRate: 1.47,
+    gdpPpp: 5402000000,
+    highestPointMeters: 2946,
+    coastlineKm: 0,
   },
   "AE": {
     population: 11294243,
@@ -56,6 +62,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Muslim","percent":74.5},{"name":"Christian","percent":12.9},{"name":"Hindu","percent":6.2},{"name":"Buddhist","percent":3.2},{"name":"Agnostic","percent":1.3},{"name":"Other","percent":1.9}],
     medianAge: 35.8,
     fertilityRate: 1.6,
+    gdpPpp: 745994000000,
+    highestPointMeters: 1905,
+    coastlineKm: 1318,
   },
   "AF": {
     population: 43844000,
@@ -73,6 +82,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Muslim","percent":99.7},{"name":"Other","percent":0.3}],
     medianAge: 18.4,
     fertilityRate: 4.89,
+    gdpPpp: 82238000000,
+    highestPointMeters: 7492,
+    coastlineKm: 0,
   },
   "AG": {
     population: 103603,
@@ -89,6 +101,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Protestant","percent":68.3},{"name":"Roman Catholic","percent":8.2},{"name":"Other","percent":12.2},{"name":"Unspecified","percent":5.5},{"name":"None","percent":5.9}],
     medianAge: 34.1,
     fertilityRate: 1.92,
+    gdpPpp: 2772000000,
+    highestPointMeters: 402,
+    coastlineKm: 153,
   },
   "AI": {
     population: 16010,
@@ -104,6 +119,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Protestant","percent":84.1},{"name":"Roman Catholic","percent":6.8},{"name":"Jehovah's Witness","percent":1.1},{"name":"Other","percent":3.2},{"name":"Unspecified","percent":0.3},{"name":"None","percent":4.5}],
     medianAge: 37.5,
     fertilityRate: 1.72,
+    gdpPpp: 362499000,
+    highestPointMeters: 73,
+    coastlineKm: 61,
   },
   "AL": {
     population: 2363314,
@@ -121,6 +139,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Muslim","percent":56.7},{"name":"Roman Catholic","percent":10},{"name":"Orthodox","percent":6.8},{"name":"Atheist","percent":2.5},{"name":"Bektashi","percent":2.1},{"name":"Other","percent":5.7},{"name":"Unspecified","percent":16.2}],
     medianAge: 37.9,
     fertilityRate: 1.09,
+    gdpPpp: 51360000000,
+    highestPointMeters: 2764,
+    coastlineKm: 362,
   },
   "AM": {
     population: 3076200,
@@ -138,6 +159,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Armenian Apostolic","percent":95.2},{"name":"Unspecified","percent":1.7}],
     medianAge: 39.5,
     fertilityRate: 1.66,
+    gdpPpp: 60909000000,
+    highestPointMeters: 4090,
+    coastlineKm: 0,
   },
   "AO": {
     population: 36170961,
@@ -155,6 +179,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":41.1},{"name":"Protestant","percent":38.1},{"name":"Other","percent":8.6},{"name":"None","percent":12.3}],
     medianAge: 16.6,
     fertilityRate: 5.45,
+    gdpPpp: 278239000000,
+    highestPointMeters: 2620,
+    coastlineKm: 1600,
   },
   "AQ": {
     population: 1300,
@@ -179,6 +206,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":62.9},{"name":"Evangelical","percent":15.3},{"name":"Jehovah's Witness and Church of Jesus Christ","percent":1.4},{"name":"Other","percent":1.2},{"name":"None","percent":18.9},{"name":"Unspecified","percent":0.3}],
     medianAge: 34.6,
     fertilityRate: 1.43,
+    gdpPpp: 1213000000000,
+    highestPointMeters: 6962,
+    coastlineKm: 4989,
   },
   "AS": {
     population: 49710,
@@ -194,6 +224,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Christian","percent":98.3},{"name":"Other","percent":1},{"name":"Unspecified","percent":1}],
     medianAge: 30.6,
     fertilityRate: 1.99,
+    gdpPpp: 658000000,
+    highestPointMeters: 964,
+    coastlineKm: 116,
   },
   "AT": {
     population: 9200931,
@@ -211,6 +244,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":55.2},{"name":"Muslim","percent":8.3},{"name":"Orthodox","percent":4.9},{"name":"Evangelical","percent":3.8},{"name":"Jewish","percent":0.1},{"name":"Other","percent":5.4},{"name":"None","percent":22.4}],
     medianAge: 44.5,
     fertilityRate: 1.35,
+    gdpPpp: 581131000000,
+    highestPointMeters: 3798,
+    coastlineKm: 0,
   },
   "AU": {
     population: 27536874,
@@ -227,6 +263,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":20},{"name":"Protestant","percent":21.6},{"name":"Muslim","percent":3.2},{"name":"Hindu","percent":2.7},{"name":"Buddhist","percent":2.4},{"name":"Orthodox","percent":2.3},{"name":"Other","percent":2.1},{"name":"None","percent":38.4},{"name":"Unspecified","percent":7.3}],
     medianAge: 38.5,
     fertilityRate: 1.5,
+    gdpPpp: 1635000000000,
+    highestPointMeters: 2228,
+    coastlineKm: 25760,
   },
   "AW": {
     population: 107566,
@@ -242,6 +281,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":75.3},{"name":"Protestant","percent":4.9},{"name":"Jehovah's Witness","percent":1.7},{"name":"Other","percent":12},{"name":"None","percent":5.5},{"name":"Unspecified","percent":0.5}],
     medianAge: 41.2,
     fertilityRate: 1.82,
+    gdpPpp: 4350000000,
+    highestPointMeters: 188,
+    coastlineKm: 68.5,
   },
   "AX": {
     population: 30654,
@@ -270,6 +312,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Muslim","percent":97.3},{"name":"Christian","percent":2.6},{"name":"Other","percent":0.1},{"name":"Unspecified","percent":0.1}],
     medianAge: 34.8,
     fertilityRate: 1.69,
+    gdpPpp: 225198000000,
+    highestPointMeters: 4466,
+    coastlineKm: 0,
   },
   "BA": {
     population: 3422000,
@@ -287,6 +332,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Muslim","percent":50.7},{"name":"Orthodox","percent":30.7},{"name":"Roman Catholic","percent":15.2},{"name":"Atheist","percent":0.8},{"name":"Agnostic","percent":0.3},{"name":"Other","percent":1.2},{"name":"Unspecified","percent":1.1}],
     medianAge: 45.7,
     fertilityRate: 1.15,
+    gdpPpp: 64641000000,
+    highestPointMeters: 2386,
+    coastlineKm: 20,
   },
   "BB": {
     population: 267800,
@@ -303,6 +351,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Protestant","percent":71.8},{"name":"Roman Catholic","percent":3.8},{"name":"Rastafarian","percent":1},{"name":"Other","percent":1.5},{"name":"None","percent":20.6},{"name":"Unspecified","percent":1.2}],
     medianAge: 42.2,
     fertilityRate: 1.24,
+    gdpPpp: 5634000000,
+    highestPointMeters: 336,
+    coastlineKm: 97,
   },
   "BD": {
     population: 169828911,
@@ -320,6 +371,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Muslim","percent":91},{"name":"Hindu","percent":8},{"name":"Other","percent":1}],
     medianAge: 27.8,
     fertilityRate: 2.25,
+    gdpPpp: 1473000000000,
+    highestPointMeters: 1060,
+    coastlineKm: 580,
   },
   "BE": {
     population: 11825551,
@@ -337,6 +391,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":57.1},{"name":"Protestant","percent":5.1},{"name":"Muslim","percent":6.8},{"name":"Other","percent":1.7},{"name":"Atheist","percent":9.1},{"name":"None","percent":20.2}],
     medianAge: 42.4,
     fertilityRate: 1.46,
+    gdpPpp: 749229000000,
+    highestPointMeters: 694,
+    coastlineKm: 66.5,
   },
   "BF": {
     population: 24070553,
@@ -354,6 +411,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Muslim","percent":63.8},{"name":"Roman Catholic","percent":20.1},{"name":"Animist","percent":9},{"name":"Protestant","percent":6.2},{"name":"Other","percent":0.2},{"name":"None","percent":0.7}],
     medianAge: 19,
     fertilityRate: 4.02,
+    gdpPpp: 60001000000,
+    highestPointMeters: 749,
+    coastlineKm: 0,
   },
   "BG": {
     population: 6437360,
@@ -371,6 +431,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Christian","percent":64.7},{"name":"Muslim","percent":9.8},{"name":"Other","percent":0.1},{"name":"None","percent":4.7},{"name":"Unspecified","percent":20.7}],
     medianAge: 45.5,
     fertilityRate: 1.52,
+    gdpPpp: 219645000000,
+    highestPointMeters: 2925,
+    coastlineKm: 354,
   },
   "BH": {
     population: 1594654,
@@ -387,6 +450,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Muslim","percent":74.2},{"name":"Other","percent":25.9}],
     medianAge: 33.5,
     fertilityRate: 1.64,
+    gdpPpp: 93937000000,
+    highestPointMeters: 135,
+    coastlineKm: 161,
   },
   "BI": {
     population: 12332788,
@@ -404,6 +470,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Christian","percent":93.9},{"name":"Muslim","percent":3.4},{"name":"Other","percent":1.3},{"name":"None","percent":1.3}],
     medianAge: 17.6,
     fertilityRate: 4.94,
+    gdpPpp: 11739000000,
+    highestPointMeters: 2685,
+    coastlineKm: 0,
   },
   "BJ": {
     population: 13224860,
@@ -421,6 +490,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Muslim","percent":27.7},{"name":"Roman Catholic","percent":25.5},{"name":"Protestant","percent":23},{"name":"Vodou","percent":11.6},{"name":"other traditional religions","percent":2.6},{"name":"Other","percent":2.6},{"name":"None","percent":5.8}],
     medianAge: 17.2,
     fertilityRate: 5.3,
+    gdpPpp: 56424000000,
+    highestPointMeters: 675,
+    coastlineKm: 121,
   },
   "BL": {
     population: 10562,
@@ -447,6 +519,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Protestant","percent":55.3},{"name":"Roman Catholic","percent":14.5},{"name":"Jehovah's Witness","percent":1.3},{"name":"Muslim","percent":1},{"name":"Other","percent":3.9},{"name":"None","percent":17.8},{"name":"Unspecified","percent":6.2}],
     medianAge: 43.9,
     fertilityRate: 1.88,
+    gdpPpp: 6808000000,
+    highestPointMeters: 79,
+    coastlineKm: 103,
   },
   "BN": {
     population: 455500,
@@ -464,6 +539,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Muslim","percent":82.1},{"name":"Christian","percent":6.7},{"name":"Buddhist","percent":6.3},{"name":"Other","percent":4.9}],
     medianAge: 32.6,
     fertilityRate: 1.73,
+    gdpPpp: 36640000000,
+    highestPointMeters: 1850,
+    coastlineKm: 161,
   },
   "BO": {
     population: 11365333,
@@ -481,6 +559,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":65},{"name":"Protestant","percent":19.6},{"name":"Believer","percent":0.9},{"name":"Other","percent":4.8},{"name":"Atheist","percent":1.7},{"name":"Agnostic","percent":0.6},{"name":"None","percent":6.1},{"name":"Unspecified","percent":1.3}],
     medianAge: 27,
     fertilityRate: 2.13,
+    gdpPpp: 122200000000,
+    highestPointMeters: 6542,
+    coastlineKm: 0,
   },
   "BQ": {
     population: 31980,
@@ -509,6 +590,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":56.8},{"name":"Evangelical","percent":26.9},{"name":"None","percent":9.3},{"name":"Other","percent":4},{"name":"Spirtism","percent":1.8},{"name":"Unspecified","percent":1.6}],
     medianAge: 35.4,
     fertilityRate: 1.73,
+    gdpPpp: 4165000000000,
+    highestPointMeters: 2994,
+    coastlineKm: 7491,
   },
   "BS": {
     population: 398165,
@@ -525,6 +609,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Protestant","percent":82.9},{"name":"Roman Catholic","percent":12},{"name":"Other","percent":0.6},{"name":"None","percent":1.9},{"name":"Unspecified","percent":2.6}],
     medianAge: 31.1,
     fertilityRate: 1.45,
+    gdpPpp: 14544000000,
+    highestPointMeters: 64,
+    coastlineKm: 3542,
   },
   "BT": {
     population: 784043,
@@ -542,6 +629,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Buddhist","percent":75.3},{"name":"Indian- and Nepali-influenced Hinduism","percent":22.1},{"name":"Other","percent":2.6}],
     medianAge: 31.2,
     fertilityRate: 1.75,
+    gdpPpp: 11517000000,
+    highestPointMeters: 7570,
+    coastlineKm: 0,
   },
   "BV": {
     population: 0,
@@ -566,6 +656,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Christian","percent":79.1},{"name":"Badimo","percent":4.1},{"name":"Other","percent":1.4},{"name":"None","percent":15.2},{"name":"Unspecified","percent":0.3}],
     medianAge: 25.8,
     fertilityRate: 2.73,
+    gdpPpp: 45553000000,
+    highestPointMeters: 1495,
+    coastlineKm: 0,
   },
   "BY": {
     population: 9109280,
@@ -583,6 +676,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Orthodox","percent":48.3},{"name":"Roman Catholic","percent":7.1},{"name":"Other","percent":3.5},{"name":"None","percent":41.1}],
     medianAge: 42.5,
     fertilityRate: 1.45,
+    gdpPpp: 265220000000,
+    highestPointMeters: 346,
+    coastlineKm: 0,
   },
   "BZ": {
     population: 417634,
@@ -600,6 +696,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":40.1},{"name":"Protestant","percent":31.5},{"name":"Jehovah's Witness","percent":1.7},{"name":"Other","percent":10.5},{"name":"Unspecified","percent":0.6},{"name":"None","percent":15.5}],
     medianAge: 27.2,
     fertilityRate: 2.02,
+    gdpPpp: 5538000000,
+    highestPointMeters: 1124,
+    coastlineKm: 386,
   },
   "CA": {
     population: 41651653,
@@ -617,6 +716,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Christian","percent":53.3},{"name":"Muslim","percent":4.9},{"name":"Hindu","percent":2.3},{"name":"Sikh","percent":2.1},{"name":"Buddhist","percent":1},{"name":"Jewish","percent":0.9},{"name":"Traditional","percent":0.2},{"name":"Other","percent":0.6},{"name":"None","percent":34.6}],
     medianAge: 42.8,
     fertilityRate: 1.43,
+    gdpPpp: 2341000000000,
+    highestPointMeters: 5959,
+    coastlineKm: 202080,
   },
   "CC": {
     population: 593,
@@ -631,6 +733,8 @@ export const countryFacts: Record<string, CountryFacts> = {
     governmentType: "non-self-governing overseas territory of Australia",
     religions: [{"name":"Muslim","percent":75},{"name":"Anglican","percent":3.5},{"name":"Roman Catholic","percent":2.2},{"name":"None","percent":12.9},{"name":"Unspecified","percent":6.3}],
     medianAge: 40,
+    highestPointMeters: 9,
+    coastlineKm: 26,
   },
   "CD": {
     population: 112832000,
@@ -648,6 +752,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Christian","percent":93.1},{"name":"Kimbanguist","percent":2.8},{"name":"Muslim","percent":1.3},{"name":"Other","percent":1.2},{"name":"None","percent":1.3},{"name":"Unspecified","percent":0.2}],
     medianAge: 16.9,
     fertilityRate: 5.42,
+    gdpPpp: 164367000000,
+    highestPointMeters: 5110,
+    coastlineKm: 37,
   },
   "CF": {
     population: 6470307,
@@ -665,6 +772,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":34.6},{"name":"Protestant","percent":38.6},{"name":"Muslim","percent":13.8},{"name":"ethnic religionist","percent":12},{"name":"Baha'i","percent":0.2},{"name":"Agnostic","percent":0.7}],
     medianAge: 20.6,
     fertilityRate: 3.89,
+    gdpPpp: 5926000000,
+    highestPointMeters: 1410,
+    coastlineKm: 0,
   },
   "CG": {
     population: 6142180,
@@ -682,6 +792,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":33.1},{"name":"Awakening Churches/Christian Revival","percent":22.3},{"name":"Protestant","percent":19.9},{"name":"Salutiste","percent":2.2},{"name":"Muslim","percent":1.6},{"name":"Kimbanguist","percent":1.5},{"name":"Other","percent":8.1},{"name":"None","percent":11.3}],
     medianAge: 20.9,
     fertilityRate: 3.72,
+    gdpPpp: 39147000000,
+    highestPointMeters: 1020,
+    coastlineKm: 169,
   },
   "CH": {
     population: 9082848,
@@ -698,6 +811,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":34.4},{"name":"Protestant","percent":28.2},{"name":"Muslim","percent":5.4},{"name":"Other","percent":1.5},{"name":"None","percent":29.4},{"name":"Unspecified","percent":1.1}],
     medianAge: 44.4,
     fertilityRate: 1.59,
+    gdpPpp: 741035000000,
+    highestPointMeters: 4634,
+    coastlineKm: 0,
   },
   "CI": {
     population: 31719275,
@@ -715,6 +831,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Muslim","percent":42.9},{"name":"Roman Catholic","percent":17.2},{"name":"Evangelical","percent":11.8},{"name":"Methodist","percent":1.7},{"name":"Protestant","percent":3.2},{"name":"Animist","percent":3.6},{"name":"Other","percent":0.5},{"name":"None","percent":19.1}],
     medianAge: 20,
     fertilityRate: 3.85,
+    gdpPpp: 215018000000,
+    highestPointMeters: 1752,
+    coastlineKm: 515,
   },
   "CK": {
     population: 15040,
@@ -731,6 +850,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Protestant","percent":55},{"name":"Roman Catholic","percent":16.7},{"name":"Latter-day Saint","percent":3.9},{"name":"Jehovah's Witness","percent":2.2},{"name":"Apostolic Church","percent":2.1},{"name":"Other","percent":4.5},{"name":"Unspecified","percent":15.6}],
     medianAge: 41.5,
     fertilityRate: 1.99,
+    gdpPpp: 401155000,
+    highestPointMeters: 652,
+    coastlineKm: 120,
   },
   "CL": {
     population: 20206953,
@@ -748,6 +870,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":57},{"name":"None","percent":25.7},{"name":"Evangelical","percent":16.2},{"name":"Protestant","percent":1.3}],
     medianAge: 38.9,
     fertilityRate: 1.25,
+    gdpPpp: 596556000000,
+    highestPointMeters: 6893,
+    coastlineKm: 6435,
   },
   "CM": {
     population: 29442327,
@@ -765,6 +890,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":33.1},{"name":"Muslim","percent":30.6},{"name":"Protestant","percent":33.2},{"name":"Animist","percent":1.3},{"name":"Other","percent":0.7},{"name":"None","percent":1.2}],
     medianAge: 19.4,
     fertilityRate: 3.87,
+    gdpPpp: 143264000000,
+    highestPointMeters: 4045,
+    coastlineKm: 402,
   },
   "CN": {
     population: 1408280000,
@@ -782,6 +910,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"folk religion","percent":21.9},{"name":"Buddhist","percent":18.2},{"name":"Christian","percent":5.1},{"name":"Muslim","percent":1.8},{"name":"Hindu","percent":0.1},{"name":"Jewish","percent":0.1},{"name":"Other","percent":0.7},{"name":"Unspecified","percent":52.1}],
     medianAge: 40.8,
     fertilityRate: 1.2,
+    gdpPpp: 33598000000000,
+    highestPointMeters: 8849,
+    coastlineKm: 14500,
   },
   "CO": {
     population: 53057212,
@@ -799,6 +930,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":63.6},{"name":"Protestant","percent":17.2},{"name":"Jehovah's Witness","percent":0.6},{"name":"Latter-day Saint","percent":0.1},{"name":"Other","percent":0.3},{"name":"Believer","percent":0.2},{"name":"Agnostic","percent":1},{"name":"Atheist","percent":1},{"name":"None","percent":14.2},{"name":"Unspecified","percent":1.8}],
     medianAge: 33.1,
     fertilityRate: 1.94,
+    gdpPpp: 978592000000,
+    highestPointMeters: 5730,
+    coastlineKm: 3208,
   },
   "CR": {
     population: 5309625,
@@ -816,6 +950,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":47.5},{"name":"Evangelical","percent":19.8},{"name":"Jehovah's Witness","percent":1.4},{"name":"Protestant","percent":1.2},{"name":"Other","percent":3.1},{"name":"None","percent":27}],
     medianAge: 36,
     fertilityRate: 1.45,
+    gdpPpp: 138371000000,
+    highestPointMeters: 3819,
+    coastlineKm: 1290,
   },
   "CU": {
     population: 9748007,
@@ -832,6 +969,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Christian","percent":58.9},{"name":"folk religion","percent":17.6},{"name":"Buddhist","percent":1},{"name":"Hindu","percent":1},{"name":"Jewish","percent":1},{"name":"Muslim","percent":1},{"name":"Other","percent":1},{"name":"None","percent":23.2}],
     medianAge: 46.2,
     fertilityRate: 1.49,
+    gdpPpp: 81165000000,
+    highestPointMeters: 1974,
+    coastlineKm: 3735,
   },
   "CV": {
     population: 491233,
@@ -848,6 +988,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":72.5},{"name":"Protestant","percent":5.3},{"name":"Christian Rationalism","percent":1.7},{"name":"Muslim","percent":1.3},{"name":"Jehovah's Witness","percent":1.2},{"name":"Latter-day Saint","percent":1},{"name":"Other","percent":1.2},{"name":"None","percent":15.6},{"name":"Unspecified","percent":0.4}],
     medianAge: 29.3,
     fertilityRate: 2.08,
+    gdpPpp: 5200000000,
+    highestPointMeters: 2829,
+    coastlineKm: 965,
   },
   "CW": {
     population: 156115,
@@ -863,6 +1006,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":72.8},{"name":"Pentecostal","percent":6.6},{"name":"Protestant","percent":3.2},{"name":"Adventist","percent":3},{"name":"Jehovah's Witness","percent":2},{"name":"Evangelical","percent":1.9},{"name":"Other","percent":3.8},{"name":"None","percent":6},{"name":"Unspecified","percent":0.6}],
     medianAge: 38.1,
     fertilityRate: 1.95,
+    gdpPpp: 4312000000,
+    highestPointMeters: 372,
+    coastlineKm: 364,
   },
   "CX": {
     population: 1692,
@@ -877,6 +1023,8 @@ export const countryFacts: Record<string, CountryFacts> = {
     governmentType: "non-self-governing overseas territory of Australia",
     religions: [{"name":"Muslim","percent":19.4},{"name":"Buddhist","percent":18.3},{"name":"Roman Catholic","percent":8.8},{"name":"Protestant","percent":9.8},{"name":"Other","percent":0.6},{"name":"None","percent":15.3},{"name":"Unspecified","percent":27.7}],
     medianAge: 38,
+    highestPointMeters: 361,
+    coastlineKm: 138.9,
   },
   "CY": {
     population: 1442614,
@@ -893,6 +1041,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Orthodox","percent":89.1},{"name":"Roman Catholic","percent":2.9},{"name":"Protestant/Anglican","percent":2},{"name":"Muslim","percent":1.8},{"name":"Buddhist","percent":1},{"name":"Other","percent":1.4},{"name":"Unspecified","percent":1.1},{"name":"None","percent":0.6}],
     medianAge: 39.9,
     fertilityRate: 1.49,
+    gdpPpp: 50055000000,
+    highestPointMeters: 1951,
+    coastlineKm: 648,
   },
   "CZ": {
     population: 10882341,
@@ -910,6 +1061,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":7},{"name":"other believers belonging to a church or religious society","percent":6},{"name":"Believer","percent":9.1},{"name":"None","percent":47.8},{"name":"Unspecified","percent":30.1}],
     medianAge: 44.4,
     fertilityRate: 1.73,
+    gdpPpp: 521928000000,
+    highestPointMeters: 1602,
+    coastlineKm: 0,
   },
   "DE": {
     population: 83491249,
@@ -927,6 +1081,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":24.8},{"name":"Protestant","percent":22.6},{"name":"Muslim","percent":3.7},{"name":"Other","percent":5.1},{"name":"None","percent":43.8}],
     medianAge: 46.9,
     fertilityRate: 1.59,
+    gdpPpp: 5247000000000,
+    highestPointMeters: 2963,
+    coastlineKm: 2389,
   },
   "DJ": {
     population: 1066809,
@@ -944,6 +1101,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Muslim","percent":94},{"name":"Other","percent":6}],
     medianAge: 26.7,
     fertilityRate: 2.09,
+    gdpPpp: 7995000000,
+    highestPointMeters: 2021,
+    coastlineKm: 314,
   },
   "DK": {
     population: 6011488,
@@ -961,6 +1121,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Evangelical Lutheran","percent":71.4},{"name":"Muslim","percent":4.3},{"name":"Other","percent":24.3}],
     medianAge: 42.2,
     fertilityRate: 1.5,
+    gdpPpp: 440558000000,
+    highestPointMeters: 171,
+    coastlineKm: 7314,
   },
   "DM": {
     population: 67408,
@@ -977,6 +1140,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":52.7},{"name":"Protestant","percent":29.7},{"name":"Jehovah's Witness","percent":1.3},{"name":"Rastafarian","percent":1.1},{"name":"Other","percent":4.3},{"name":"None","percent":9.4},{"name":"Unspecified","percent":1.4}],
     medianAge: 37.5,
     fertilityRate: 2.01,
+    gdpPpp: 1241000000,
+    highestPointMeters: 1447,
+    coastlineKm: 148,
   },
   "DO": {
     population: 10771504,
@@ -994,6 +1160,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Evangelical","percent":50.2},{"name":"Roman Catholic","percent":30.1},{"name":"None","percent":18.5},{"name":"Unspecified","percent":1.2}],
     medianAge: 29.6,
     fertilityRate: 2.17,
+    gdpPpp: 276884000000,
+    highestPointMeters: 3098,
+    coastlineKm: 1288,
   },
   "DZ": {
     population: 47400000,
@@ -1011,6 +1180,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Muslim","percent":99},{"name":"Other","percent":1}],
     medianAge: 29.3,
     fertilityRate: 2.91,
+    gdpPpp: 722912000000,
+    highestPointMeters: 2908,
+    coastlineKm: 998,
   },
   "EC": {
     population: 18103660,
@@ -1028,6 +1200,8 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":68.2},{"name":"Protestant","percent":19},{"name":"Jehovah's Witness","percent":1.4},{"name":"Other","percent":2.3},{"name":"None","percent":8.2},{"name":"Unspecified","percent":1}],
     medianAge: 28.2,
     fertilityRate: 2.17,
+    gdpPpp: 252728000000,
+    coastlineKm: 2237,
   },
   "EE": {
     population: 1369995,
@@ -1045,6 +1219,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Orthodox","percent":16.5},{"name":"Protestant","percent":9.2},{"name":"Other","percent":3},{"name":"None","percent":58.4},{"name":"Unspecified","percent":12.9}],
     medianAge: 42.9,
     fertilityRate: 1.36,
+    gdpPpp: 57001000000,
+    highestPointMeters: 318,
+    coastlineKm: 3794,
   },
   "EG": {
     population: 107271260,
@@ -1062,6 +1239,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Muslim","percent":90},{"name":"Christian","percent":10}],
     medianAge: 24.6,
     fertilityRate: 2.53,
+    gdpPpp: 1958000000000,
+    highestPointMeters: 2629,
+    coastlineKm: 2450,
   },
   "EH": {
     population: 600904,
@@ -1090,6 +1270,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     governmentType: "authoritarian",
     medianAge: 21.7,
     fertilityRate: 3.35,
+    gdpPpp: 2534000000,
+    highestPointMeters: 3018,
+    coastlineKm: 2234,
   },
   "ES": {
     population: 49315949,
@@ -1106,6 +1289,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":58.2},{"name":"Atheist","percent":16.2},{"name":"Agnostic","percent":10.8},{"name":"Other","percent":2.7},{"name":"None","percent":10.5},{"name":"Unspecified","percent":1.7}],
     medianAge: 47.2,
     fertilityRate: 1.32,
+    gdpPpp: 2361000000000,
+    highestPointMeters: 3718,
+    coastlineKm: 4964,
   },
   "ET": {
     population: 111652998,
@@ -1122,6 +1308,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Ethiopian Orthodox","percent":43.8},{"name":"Muslim","percent":31.3},{"name":"Protestant","percent":22.8},{"name":"Roman Catholic","percent":0.7},{"name":"traditional","percent":0.6},{"name":"Other","percent":0.8}],
     medianAge: 20.6,
     fertilityRate: 3.77,
+    gdpPpp: 380895000000,
+    highestPointMeters: 4550,
+    coastlineKm: 0,
   },
   "FI": {
     population: 5650325,
@@ -1139,6 +1328,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Lutheran","percent":66.6},{"name":"Greek Orthodox","percent":1.1},{"name":"Other","percent":1.7},{"name":"None","percent":30.6}],
     medianAge: 44,
     fertilityRate: 1.28,
+    gdpPpp: 313591000000,
+    highestPointMeters: 1328,
+    coastlineKm: 1250,
   },
   "FJ": {
     population: 900869,
@@ -1155,6 +1347,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Protestant","percent":55.4},{"name":"Hindu","percent":27.9},{"name":"Roman Catholic","percent":9.1},{"name":"Muslim","percent":6.3},{"name":"Sikh","percent":0.3},{"name":"Other","percent":0.3},{"name":"None","percent":0.8}],
     medianAge: 32,
     fertilityRate: 2.18,
+    gdpPpp: 13100000000,
+    highestPointMeters: 1324,
+    coastlineKm: 1129,
   },
   "FK": {
     population: 3662,
@@ -1168,6 +1363,8 @@ export const countryFacts: Record<string, CountryFacts> = {
     subregion: "South America",
     governmentType: "parliamentary democracy",
     religions: [{"name":"Christian","percent":57.1},{"name":"Other","percent":1.6},{"name":"None","percent":35.4},{"name":"Unspecified","percent":6}],
+    highestPointMeters: 705,
+    coastlineKm: 1288,
   },
   "FM": {
     population: 105564,
@@ -1184,6 +1381,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":54.7},{"name":"Protestant","percent":41.1},{"name":"Latter-day Saint","percent":1.5},{"name":"Other","percent":1.9},{"name":"None","percent":0.7},{"name":"Unspecified","percent":0.1}],
     medianAge: 28.7,
     fertilityRate: 2.17,
+    gdpPpp: 432679000,
+    highestPointMeters: 782,
+    coastlineKm: 6112,
   },
   "FO": {
     population: 54885,
@@ -1199,6 +1399,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Christian","percent":87},{"name":"Other","percent":0.9},{"name":"None","percent":3.7},{"name":"Unspecified","percent":8.9}],
     medianAge: 37,
     fertilityRate: 2.26,
+    gdpPpp: 3834000000,
+    highestPointMeters: 882,
+    coastlineKm: 1117,
   },
   "FR": {
     population: 66351959,
@@ -1216,6 +1419,8 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":47},{"name":"Muslim","percent":4},{"name":"Protestant","percent":2},{"name":"Buddhist","percent":2},{"name":"Orthodox","percent":1},{"name":"Jewish","percent":1},{"name":"Other","percent":1},{"name":"None","percent":33},{"name":"Unspecified","percent":9}],
     medianAge: 42.7,
     fertilityRate: 1.9,
+    gdpPpp: 3732000000000,
+    coastlineKm: 4853,
   },
   "GA": {
     population: 2469296,
@@ -1233,6 +1438,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Protestant","percent":50.4},{"name":"Roman Catholic","percent":29.8},{"name":"Muslim","percent":10.8},{"name":"traditional/animist","percent":1.1},{"name":"Other","percent":0.9},{"name":"None","percent":7}],
     medianAge: 22.3,
     fertilityRate: 3.16,
+    gdpPpp: 48045000000,
+    highestPointMeters: 1050,
+    coastlineKm: 885,
   },
   "GB": {
     population: 69281437,
@@ -1250,6 +1458,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Christian","percent":59.5},{"name":"Muslim","percent":4.4},{"name":"Hindu","percent":1.3},{"name":"Other","percent":2},{"name":"Unspecified","percent":7.2},{"name":"None","percent":25.7}],
     medianAge: 40.9,
     fertilityRate: 1.64,
+    gdpPpp: 3636000000000,
+    highestPointMeters: 1345,
+    coastlineKm: 12429,
   },
   "GD": {
     population: 109021,
@@ -1266,6 +1477,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Protestant","percent":49.2},{"name":"Roman Catholic","percent":36},{"name":"Jehovah's Witness","percent":1.2},{"name":"Rastafarian","percent":1.2},{"name":"Other","percent":5.5},{"name":"None","percent":5.7},{"name":"Unspecified","percent":1.3}],
     medianAge: 35.9,
     fertilityRate: 1.89,
+    gdpPpp: 2080000000,
+    highestPointMeters: 840,
+    coastlineKm: 121,
   },
   "GE": {
     population: 4000921,
@@ -1283,6 +1497,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Orthodox","percent":83.4},{"name":"Muslim","percent":10.7},{"name":"Armenian Apostolic Christian","percent":2.9},{"name":"Other","percent":1.2},{"name":"None","percent":0.5},{"name":"Unspecified","percent":1.2}],
     medianAge: 38.6,
     fertilityRate: 1.94,
+    gdpPpp: 91849000000,
+    highestPointMeters: 5193,
+    coastlineKm: 310,
   },
   "GF": {
     population: 292354,
@@ -1309,6 +1526,8 @@ export const countryFacts: Record<string, CountryFacts> = {
     governmentType: "parliamentary democracy",
     medianAge: 45.1,
     fertilityRate: 1.59,
+    highestPointMeters: 114,
+    coastlineKm: 50,
   },
   "GH": {
     population: 33742380,
@@ -1326,6 +1545,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Christian","percent":71.3},{"name":"Muslim","percent":19.9},{"name":"traditionalist","percent":3.2},{"name":"Other","percent":4.5},{"name":"None","percent":1.1}],
     medianAge: 21.6,
     fertilityRate: 3.51,
+    gdpPpp: 243124000000,
+    highestPointMeters: 885,
+    coastlineKm: 539,
   },
   "GI": {
     population: 38000,
@@ -1342,6 +1564,8 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":72.1},{"name":"Church of England","percent":7.7},{"name":"Protestant","percent":3.8},{"name":"Muslim","percent":3.6},{"name":"Jewish","percent":2.4},{"name":"Hindu","percent":2},{"name":"Other","percent":1.1},{"name":"None","percent":7.1},{"name":"Unspecified","percent":0.1}],
     medianAge: 37.1,
     fertilityRate: 1.88,
+    highestPointMeters: 426,
+    coastlineKm: 12,
   },
   "GL": {
     population: 56542,
@@ -1356,6 +1580,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     governmentType: "parliamentary democracy",
     medianAge: 35.6,
     fertilityRate: 1.87,
+    gdpPpp: 4040000000,
+    highestPointMeters: 3694,
+    coastlineKm: 44087,
   },
   "GM": {
     population: 2422712,
@@ -1373,6 +1600,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Muslim","percent":96.4},{"name":"Christian","percent":3.5},{"name":"Other","percent":0.1}],
     medianAge: 20.5,
     fertilityRate: 3.39,
+    gdpPpp: 8365000000,
+    highestPointMeters: 63,
+    coastlineKm: 80,
   },
   "GN": {
     population: 14363931,
@@ -1390,6 +1620,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Muslim","percent":85.2},{"name":"Christian","percent":13.4},{"name":"Animist","percent":0.2},{"name":"None","percent":1.2}],
     medianAge: 19.5,
     fertilityRate: 4.75,
+    gdpPpp: 59439000000,
+    highestPointMeters: 1752,
+    coastlineKm: 320,
   },
   "GP": {
     population: 378561,
@@ -1418,6 +1651,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":88},{"name":"Protestant","percent":5},{"name":"Muslim","percent":2},{"name":"Other","percent":5}],
     medianAge: 22.3,
     fertilityRate: 4.05,
+    gdpPpp: 29248000000,
+    highestPointMeters: 3008,
+    coastlineKm: 296,
   },
   "GR": {
     population: 10400720,
@@ -1435,6 +1671,8 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Greek Orthodox","percent":85.5},{"name":"Muslim","percent":2},{"name":"Other","percent":3},{"name":"None","percent":9.5},{"name":"Unspecified","percent":1}],
     medianAge: 46.8,
     fertilityRate: 1.42,
+    gdpPpp: 392205000000,
+    coastlineKm: 13676,
   },
   "GT": {
     population: 18079810,
@@ -1452,6 +1690,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Evangelical","percent":45.7},{"name":"Roman Catholic","percent":42.4},{"name":"None","percent":11},{"name":"Unspecified","percent":0.9}],
     medianAge: 26.7,
     fertilityRate: 1.97,
+    gdpPpp: 232673000000,
+    highestPointMeters: 4220,
+    coastlineKm: 400,
   },
   "GU": {
     population: 153836,
@@ -1467,6 +1708,8 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Christian","percent":94.2},{"name":"folk religions","percent":1.5},{"name":"Buddhist","percent":1.1},{"name":"Other","percent":1.6},{"name":"Unspecified","percent":1.7}],
     medianAge: 30.5,
     fertilityRate: 2.7,
+    highestPointMeters: 406,
+    coastlineKm: 125.5,
   },
   "GW": {
     population: 1781308,
@@ -1484,6 +1727,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Muslim","percent":46.1},{"name":"folk religions","percent":30.6},{"name":"Christian","percent":18.9},{"name":"Other","percent":4.4}],
     medianAge: 18.5,
     fertilityRate: 4.59,
+    gdpPpp: 5912000000,
+    highestPointMeters: 277,
+    coastlineKm: 350,
   },
   "GY": {
     population: 772975,
@@ -1501,6 +1747,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Protestant","percent":55.6},{"name":"Hindu","percent":24.8},{"name":"Roman Catholic","percent":7.1},{"name":"Muslim","percent":6.8},{"name":"Jehovah's Witness","percent":1.3},{"name":"Rastafarian","percent":0.5},{"name":"Other","percent":0.9},{"name":"None","percent":3.1}],
     medianAge: 28.7,
     fertilityRate: 2.04,
+    gdpPpp: 58423000000,
+    highestPointMeters: 2775,
+    coastlineKm: 459,
   },
   "HK": {
     population: 7527500,
@@ -1517,6 +1766,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Buddhist","percent":27.9},{"name":"Protestant","percent":6.7},{"name":"Roman Catholic","percent":5.3},{"name":"Muslim","percent":4.2},{"name":"Hindu","percent":1.4},{"name":"Sikh","percent":0.2},{"name":"Other","percent":54.3}],
     medianAge: 47.6,
     fertilityRate: 1.24,
+    gdpPpp: 497880000000,
+    highestPointMeters: 958,
+    coastlineKm: 733,
   },
   "HN": {
     population: 9892632,
@@ -1534,6 +1786,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Evangelical","percent":55},{"name":"Roman Catholic","percent":33.4},{"name":"None","percent":10.1},{"name":"Unspecified","percent":1.5}],
     medianAge: 26.1,
     fertilityRate: 2.29,
+    gdpPpp: 71297000000,
+    highestPointMeters: 2870,
+    coastlineKm: 823,
   },
   "HR": {
     population: 3866233,
@@ -1551,6 +1806,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":79},{"name":"Orthodox","percent":3.3},{"name":"Protestant","percent":5.1},{"name":"Muslim","percent":1.3},{"name":"Other","percent":1.1},{"name":"Agnostic","percent":1.7},{"name":"None","percent":4.7},{"name":"Unspecified","percent":3.9}],
     medianAge: 44.9,
     fertilityRate: 1.43,
+    gdpPpp: 164825000000,
+    highestPointMeters: 1831,
+    coastlineKm: 5835,
   },
   "HT": {
     population: 11867032,
@@ -1568,6 +1826,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":55},{"name":"Protestant","percent":29},{"name":"Vodou","percent":2.1},{"name":"Other","percent":4.6},{"name":"None","percent":10}],
     medianAge: 25.3,
     fertilityRate: 2.39,
+    gdpPpp: 32971000000,
+    highestPointMeters: 2674,
+    coastlineKm: 1771,
   },
   "HU": {
     population: 9539502,
@@ -1585,6 +1846,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":30.1},{"name":"Calvinist","percent":9.8},{"name":"Lutheran","percent":1.8},{"name":"Protestant","percent":1.6},{"name":"Other","percent":0.4},{"name":"None","percent":16.1},{"name":"Unspecified","percent":40.1}],
     medianAge: 45.1,
     fertilityRate: 1.6,
+    gdpPpp: 389207000000,
+    highestPointMeters: 1014,
+    coastlineKm: 0,
   },
   "ID": {
     population: 284438782,
@@ -1602,6 +1866,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Muslim","percent":87.4},{"name":"Protestant","percent":7.5},{"name":"Roman Catholic","percent":3.1},{"name":"Hindu","percent":1.7},{"name":"Other","percent":0.8}],
     medianAge: 31.8,
     fertilityRate: 1.93,
+    gdpPpp: 4102000000000,
+    highestPointMeters: 4884,
+    coastlineKm: 54716,
   },
   "IE": {
     population: 5458600,
@@ -1619,6 +1886,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":69.2},{"name":"Protestant","percent":4.6},{"name":"Orthodox","percent":2},{"name":"Muslim","percent":1.6},{"name":"Other","percent":1.4},{"name":"Agnostic","percent":0.1},{"name":"None","percent":14.5},{"name":"Unspecified","percent":6.7}],
     medianAge: 40.5,
     fertilityRate: 1.72,
+    gdpPpp: 620544000000,
+    highestPointMeters: 1041,
+    coastlineKm: 1448,
   },
   "IL": {
     population: 10134800,
@@ -1636,6 +1906,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Jewish","percent":73.5},{"name":"Muslim","percent":18.1},{"name":"Christian","percent":1.9},{"name":"Druze","percent":1.6},{"name":"Other","percent":4.9}],
     medianAge: 30.2,
     fertilityRate: 2.89,
+    gdpPpp: 472177000000,
+    highestPointMeters: 2224,
+    coastlineKm: 273,
   },
   "IM": {
     population: 84530,
@@ -1651,6 +1924,8 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Christian","percent":54.7},{"name":"Muslim","percent":0.5},{"name":"Buddhist","percent":0.5},{"name":"Hindu","percent":0.4},{"name":"Jewish","percent":0.2},{"name":"None","percent":43.8}],
     medianAge: 45.1,
     fertilityRate: 1.87,
+    highestPointMeters: 621,
+    coastlineKm: 160,
   },
   "IN": {
     population: 1417492000,
@@ -1668,6 +1943,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Hindu","percent":79.8},{"name":"Muslim","percent":14.2},{"name":"Christian","percent":2.3},{"name":"Sikh","percent":1.7},{"name":"Other","percent":2}],
     medianAge: 30.1,
     fertilityRate: 2,
+    gdpPpp: 14244000000000,
+    highestPointMeters: 8586,
+    coastlineKm: 7000,
   },
   "IO": {
     population: 0,
@@ -1679,6 +1957,8 @@ export const countryFacts: Record<string, CountryFacts> = {
     drivingSide: "right",
     timezones: ["UTC+06:00"],
     subregion: "Eastern Africa",
+    highestPointMeters: 9,
+    coastlineKm: 698,
   },
   "IQ": {
     population: 46118793,
@@ -1696,6 +1976,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Muslim","percent":96.5},{"name":"Christian","percent":1},{"name":"Other","percent":2.5}],
     medianAge: 22.7,
     fertilityRate: 3.03,
+    gdpPpp: 585887000000,
+    highestPointMeters: 3611,
+    coastlineKm: 58,
   },
   "IR": {
     population: 85961000,
@@ -1713,6 +1996,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Muslim","percent":98.5},{"name":"Christian","percent":0.7},{"name":"Baha'i","percent":0.3},{"name":"Agnostic","percent":0.3},{"name":"Other","percent":0.2}],
     medianAge: 35.2,
     fertilityRate: 1.53,
+    gdpPpp: 1486000000000,
+    highestPointMeters: 5625,
+    coastlineKm: 2440,
   },
   "IS": {
     population: 391810,
@@ -1729,6 +2015,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Evangelical Lutheran Church of Iceland","percent":58.6},{"name":"Roman Catholic","percent":3.8},{"name":"Independent Congregation of Reykjavik","percent":2.6},{"name":"Independent Congregation of Hafnarfjordur","percent":1.9},{"name":"pagan worship","percent":1.5},{"name":"Icelandic Ethical Humanist Association","percent":1.4},{"name":"Other","percent":18.7},{"name":"None","percent":7.7}],
     medianAge: 38.2,
     fertilityRate: 1.93,
+    gdpPpp: 26561000000,
+    highestPointMeters: 2110,
+    coastlineKm: 4970,
   },
   "IT": {
     population: 58927633,
@@ -1746,6 +2035,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Christian","percent":80.8},{"name":"Muslim","percent":4.9},{"name":"Unspecified","percent":13.4},{"name":"Other","percent":0.9}],
     medianAge: 48.8,
     fertilityRate: 1.27,
+    gdpPpp: 3133000000000,
+    highestPointMeters: 4748,
+    coastlineKm: 7600,
   },
   "JE": {
     population: 103267,
@@ -1761,6 +2053,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Christian","percent":85.2},{"name":"Baha'i","percent":0.3},{"name":"Hindu","percent":0.1},{"name":"Jewish","percent":0.1},{"name":"Muslim","percent":0.1},{"name":"Atheist","percent":1.1},{"name":"Agnostic","percent":13.1}],
     medianAge: 38.5,
     fertilityRate: 1.66,
+    gdpPpp: 5569000000,
+    highestPointMeters: 136,
+    coastlineKm: 70,
   },
   "JM": {
     population: 2825544,
@@ -1777,6 +2072,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Protestant","percent":64.8},{"name":"Roman Catholic","percent":2.2},{"name":"Jehovah's Witness","percent":1.9},{"name":"Rastafarian","percent":1.1},{"name":"Other","percent":6.5},{"name":"None","percent":21.3},{"name":"Unspecified","percent":2.3}],
     medianAge: 28.8,
     fertilityRate: 1.86,
+    gdpPpp: 29130000000,
+    highestPointMeters: 2256,
+    coastlineKm: 1022,
   },
   "JO": {
     population: 11734000,
@@ -1794,6 +2092,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Muslim","percent":97.1},{"name":"Christian","percent":2.1},{"name":"Buddhist","percent":0.4},{"name":"Hindu","percent":0.1},{"name":"Jewish","percent":0.1},{"name":"folk","percent":0.1},{"name":"Other","percent":0.1},{"name":"Unspecified","percent":0.1}],
     medianAge: 25.4,
     fertilityRate: 2.83,
+    gdpPpp: 109986000000,
+    highestPointMeters: 1854,
+    coastlineKm: 26,
   },
   "JP": {
     population: 123210000,
@@ -1810,6 +2111,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Shintoism","percent":48.6},{"name":"Buddhist","percent":46.4},{"name":"Christian","percent":1.1},{"name":"Other","percent":4}],
     medianAge: 50.2,
     fertilityRate: 1.41,
+    gdpPpp: 5715000000000,
+    highestPointMeters: 3776,
+    coastlineKm: 29751,
   },
   "KE": {
     population: 53330978,
@@ -1827,6 +2131,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Christian","percent":85.5},{"name":"Muslim","percent":10.9},{"name":"Other","percent":1.8},{"name":"None","percent":1.6},{"name":"Unspecified","percent":0.2}],
     medianAge: 21.5,
     fertilityRate: 3.09,
+    gdpPpp: 328632000000,
+    highestPointMeters: 5199,
+    coastlineKm: 536,
   },
   "KG": {
     population: 7281800,
@@ -1844,6 +2151,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Muslim","percent":90},{"name":"Christian","percent":7},{"name":"Other","percent":3}],
     medianAge: 28.6,
     fertilityRate: 2.43,
+    gdpPpp: 50907000000,
+    highestPointMeters: 7439,
+    coastlineKm: 0,
   },
   "KH": {
     population: 17577760,
@@ -1861,6 +2171,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Buddhist","percent":97.1},{"name":"Muslim","percent":2},{"name":"Christian","percent":0.3},{"name":"Other","percent":0.5}],
     medianAge: 28.3,
     fertilityRate: 2.14,
+    gdpPpp: 123676000000,
+    highestPointMeters: 1810,
+    coastlineKm: 443,
   },
   "KI": {
     population: 120740,
@@ -1877,6 +2190,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":58.9},{"name":"Kiribati Uniting Church","percent":21.2},{"name":"Kiribati Protestant Church","percent":8.4},{"name":"Latter-day Saint","percent":5.6},{"name":"Seventh Day Adventist","percent":2.1},{"name":"Baha'i","percent":2.1},{"name":"Other","percent":1.7}],
     medianAge: 27.7,
     fertilityRate: 2.13,
+    gdpPpp: 438143000,
+    highestPointMeters: 81,
+    coastlineKm: 1143,
   },
   "KM": {
     population: 919901,
@@ -1893,6 +2209,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Muslim","percent":98.1},{"name":"ethnic religionist","percent":1.1},{"name":"Christian","percent":0.6},{"name":"Other","percent":0.3}],
     medianAge: 23.1,
     fertilityRate: 2.52,
+    gdpPpp: 3092000000,
+    highestPointMeters: 2360,
+    coastlineKm: 340,
   },
   "KN": {
     population: 51320,
@@ -1908,6 +2227,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     governmentType: "federal parliamentary democracy under a constitutional monarchy",
     medianAge: 39.1,
     fertilityRate: 1.76,
+    gdpPpp: 1465000000,
+    highestPointMeters: 1156,
+    coastlineKm: 135,
   },
   "KP": {
     population: 25950000,
@@ -1924,6 +2246,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     governmentType: "dictatorship, single-party communist state",
     medianAge: 36.2,
     fertilityRate: 1.8,
+    gdpPpp: 15416000000,
+    highestPointMeters: 2744,
+    coastlineKm: 2495,
   },
   "KR": {
     population: 51159889,
@@ -1941,6 +2266,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Protestant","percent":17},{"name":"Buddhist","percent":16},{"name":"Roman Catholic","percent":6},{"name":"None","percent":60}],
     medianAge: 47,
     fertilityRate: 0.68,
+    gdpPpp: 2607000000000,
+    highestPointMeters: 1950,
+    coastlineKm: 2413,
   },
   "KW": {
     population: 4881254,
@@ -1958,6 +2286,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Muslim","percent":74.6},{"name":"Christian","percent":18.2},{"name":"Other","percent":7.2}],
     medianAge: 30.4,
     fertilityRate: 2.19,
+    gdpPpp: 225947000000,
+    highestPointMeters: 300,
+    coastlineKm: 499,
   },
   "KY": {
     population: 84738,
@@ -1973,6 +2304,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Protestant","percent":60.8},{"name":"Roman Catholic","percent":13.6},{"name":"Hindu","percent":1.7},{"name":"Jehovah's Witness","percent":0.9},{"name":"Other","percent":4.8},{"name":"None","percent":16.7},{"name":"Unspecified","percent":1.4}],
     medianAge: 41.3,
     fertilityRate: 1.81,
+    gdpPpp: 5705000000,
+    highestPointMeters: 50,
+    coastlineKm: 160,
   },
   "KZ": {
     population: 20426568,
@@ -1990,6 +2324,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Muslim","percent":69.3},{"name":"Christian","percent":17.2},{"name":"Buddhist","percent":0.1},{"name":"Other","percent":0.1},{"name":"None","percent":2.3},{"name":"Unspecified","percent":11}],
     medianAge: 32.1,
     fertilityRate: 2.57,
+    gdpPpp: 739385000000,
+    highestPointMeters: 7010,
+    coastlineKm: 0,
   },
   "LA": {
     population: 7647000,
@@ -2007,6 +2344,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Buddhist","percent":64.7},{"name":"Christian","percent":1.7},{"name":"None","percent":31.4},{"name":"Unspecified","percent":2.1}],
     medianAge: 25.8,
     fertilityRate: 2.19,
+    gdpPpp: 66905000000,
+    highestPointMeters: 2817,
+    coastlineKm: 0,
   },
   "LB": {
     population: 5490000,
@@ -2024,6 +2364,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Muslim","percent":67.8},{"name":"Christian","percent":32.4},{"name":"Druze","percent":4.5}],
     medianAge: 29.4,
     fertilityRate: 2.2,
+    gdpPpp: 65415000000,
+    highestPointMeters: 3088,
+    coastlineKm: 225,
   },
   "LC": {
     population: 184100,
@@ -2040,6 +2383,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":61.5},{"name":"Protestant","percent":28.9},{"name":"Rastafarian","percent":1.9},{"name":"Other","percent":0.4},{"name":"None","percent":5.9},{"name":"Unspecified","percent":1.4}],
     medianAge: 40.4,
     fertilityRate: 1.71,
+    gdpPpp: 4359000000,
+    highestPointMeters: 948,
+    coastlineKm: 158,
   },
   "LI": {
     population: 40900,
@@ -2057,6 +2403,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":73.4},{"name":"Protestant Reformed","percent":6.3},{"name":"Muslim","percent":5.9},{"name":"Orthodox","percent":1.3},{"name":"Lutheran","percent":1.2},{"name":"Protestant","percent":1},{"name":"Other","percent":0.8},{"name":"None","percent":7},{"name":"Unspecified","percent":3.3}],
     medianAge: 44.4,
     fertilityRate: 1.69,
+    gdpPpp: 7172000000,
+    highestPointMeters: 2599,
+    coastlineKm: 0,
   },
   "LK": {
     population: 21763170,
@@ -2073,6 +2422,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Buddhist","percent":70.2},{"name":"Hindu","percent":12.6},{"name":"Muslim","percent":9.7},{"name":"Roman Catholic","percent":6.1},{"name":"Protestant","percent":1.3},{"name":"Other","percent":0.05}],
     medianAge: 34.2,
     fertilityRate: 2.12,
+    gdpPpp: 301407000000,
+    highestPointMeters: 2524,
+    coastlineKm: 1340,
   },
   "LR": {
     population: 5248621,
@@ -2090,6 +2442,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Christian","percent":84.9},{"name":"Muslim","percent":12},{"name":"Traditional","percent":0.5},{"name":"Other","percent":0.1},{"name":"None","percent":2.6}],
     medianAge: 20.1,
     fertilityRate: 3.84,
+    gdpPpp: 9308000000,
+    highestPointMeters: 1447,
+    coastlineKm: 579,
   },
   "LS": {
     population: 2116427,
@@ -2107,6 +2462,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Protestant","percent":56.9},{"name":"Roman Catholic","percent":39.3},{"name":"non-Christian","percent":1.4},{"name":"None","percent":2.3}],
     medianAge: 24,
     fertilityRate: 2.49,
+    gdpPpp: 6166000000,
+    highestPointMeters: 3482,
+    coastlineKm: 0,
   },
   "LT": {
     population: 2894886,
@@ -2124,6 +2482,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":74.2},{"name":"Russian Orthodox","percent":3.7},{"name":"Old Believer","percent":0.6},{"name":"Evangelical Lutheran","percent":0.6},{"name":"Evangelical Reformist","percent":0.2},{"name":"Other","percent":0.9},{"name":"None","percent":6.1},{"name":"Unspecified","percent":13.7}],
     medianAge: 44,
     fertilityRate: 1.22,
+    gdpPpp: 136227000000,
+    highestPointMeters: 294,
+    coastlineKm: 90,
   },
   "LU": {
     population: 681973,
@@ -2141,6 +2502,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Christian","percent":70.6},{"name":"Muslim","percent":2.3},{"name":"Other","percent":0.4},{"name":"Unspecified","percent":26.7}],
     medianAge: 40.1,
     fertilityRate: 1.25,
+    gdpPpp: 86871000000,
+    highestPointMeters: 559,
+    coastlineKm: 0,
   },
   "LV": {
     population: 1829000,
@@ -2158,6 +2522,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Lutheran","percent":36.2},{"name":"Roman Catholic","percent":19.5},{"name":"Orthodox","percent":19.1},{"name":"Protestant","percent":1.6},{"name":"Other","percent":0.1},{"name":"Unspecified","percent":23.5}],
     medianAge: 43.8,
     fertilityRate: 1.25,
+    gdpPpp: 72516000000,
+    highestPointMeters: 312,
+    coastlineKm: 498,
   },
   "LY": {
     population: 7459000,
@@ -2175,6 +2542,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Muslim","percent":96.6},{"name":"Christian","percent":2.7},{"name":"Buddhist","percent":1},{"name":"Hindu","percent":1},{"name":"Jewish","percent":1},{"name":"folk religion","percent":1},{"name":"Other","percent":1},{"name":"Unspecified","percent":1}],
     medianAge: 26.4,
     fertilityRate: 2.96,
+    gdpPpp: 90609000000,
+    highestPointMeters: 2267,
+    coastlineKm: 1770,
   },
   "MA": {
     population: 36828330,
@@ -2192,6 +2562,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Muslim","percent":99},{"name":"Other","percent":1}],
     medianAge: 30.9,
     fertilityRate: 2.24,
+    gdpPpp: 350594000000,
+    highestPointMeters: 4165,
+    coastlineKm: 2945,
   },
   "MC": {
     population: 38423,
@@ -2208,6 +2581,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":90},{"name":"Other","percent":10}],
     medianAge: 57.5,
     fertilityRate: 1.55,
+    gdpPpp: 8924000000,
+    highestPointMeters: 162,
+    coastlineKm: 4.1,
   },
   "MD": {
     population: 2749076,
@@ -2225,6 +2601,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Orthodox","percent":90.1},{"name":"Protestant","percent":2.6},{"name":"Other","percent":0.1},{"name":"Agnostic","percent":0.1},{"name":"Atheist","percent":0.2},{"name":"Unspecified","percent":6.9}],
     medianAge: 40.4,
     fertilityRate: 1.27,
+    gdpPpp: 39342000000,
+    highestPointMeters: 430,
+    coastlineKm: 0,
   },
   "ME": {
     population: 623327,
@@ -2242,6 +2621,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Orthodox","percent":72.1},{"name":"Muslim","percent":19.1},{"name":"Roman Catholic","percent":3.4},{"name":"Atheist","percent":1.2},{"name":"Other","percent":1.5},{"name":"Unspecified","percent":2.6}],
     medianAge: 41.5,
     fertilityRate: 1.8,
+    gdpPpp: 17375000000,
+    highestPointMeters: 2534,
+    coastlineKm: 293.5,
   },
   "MF": {
     population: 31496,
@@ -2270,6 +2652,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Church of Jesus Christ in Madagascar/Malagasy Lutheran Church/Anglican Church","percent":34},{"name":"Roman Catholic","percent":32.3},{"name":"Protestant","percent":8.1},{"name":"traditional/Animist","percent":1.7},{"name":"Muslim","percent":1.4},{"name":"Other","percent":0.6},{"name":"None","percent":21.9}],
     medianAge: 20.5,
     fertilityRate: 3.47,
+    gdpPpp: 52968000000,
+    highestPointMeters: 2876,
+    coastlineKm: 4828,
   },
   "MH": {
     population: 42418,
@@ -2286,6 +2671,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Protestant","percent":79.3},{"name":"Roman Catholic","percent":9.3},{"name":"Latter-day Saint","percent":5.7},{"name":"Jehovah's Witness","percent":1.3},{"name":"Other","percent":3.3},{"name":"None","percent":1.1}],
     medianAge: 25.9,
     fertilityRate: 2.62,
+    gdpPpp: 270809000,
+    highestPointMeters: 14,
+    coastlineKm: 370.4,
   },
   "MK": {
     population: 1822612,
@@ -2303,6 +2691,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Orthodox","percent":46.1},{"name":"Muslim","percent":32.2},{"name":"Christian","percent":13.2},{"name":"Other","percent":7.2}],
     medianAge: 40.9,
     fertilityRate: 1.53,
+    gdpPpp: 43844000000,
+    highestPointMeters: 2764,
+    coastlineKm: 0,
   },
   "ML": {
     population: 22395489,
@@ -2320,6 +2711,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Muslim","percent":93.9},{"name":"Christian","percent":2.8},{"name":"Animist","percent":0.7},{"name":"None","percent":2.5}],
     medianAge: 16.5,
     fertilityRate: 5.26,
+    gdpPpp: 71253000000,
+    highestPointMeters: 1155,
+    coastlineKm: 0,
   },
   "MM": {
     population: 51316756,
@@ -2337,6 +2731,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Buddhist","percent":87.9},{"name":"Christian","percent":6.2},{"name":"Muslim","percent":4.3},{"name":"Animist","percent":0.8},{"name":"Hindu","percent":0.5},{"name":"Other","percent":0.2},{"name":"None","percent":0.1}],
     medianAge: 31.1,
     fertilityRate: 1.95,
+    gdpPpp: 287559000000,
+    highestPointMeters: 5870,
+    coastlineKm: 1930,
   },
   "MN": {
     population: 3544835,
@@ -2354,6 +2751,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Buddhist","percent":51.8},{"name":"None","percent":40.6},{"name":"Muslim","percent":3.2},{"name":"Shaman","percent":2.5},{"name":"Christian","percent":1.3},{"name":"Other","percent":0.6}],
     medianAge: 28.8,
     fertilityRate: 2.6,
+    gdpPpp: 59221000000,
+    highestPointMeters: 4374,
+    coastlineKm: 0,
   },
   "MO": {
     population: 685900,
@@ -2369,6 +2769,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"folk religion","percent":58.9},{"name":"Buddhist","percent":17.3},{"name":"Christian","percent":7.2},{"name":"Other","percent":1.2},{"name":"None","percent":15.4}],
     medianAge: 43,
     fertilityRate: 1.25,
+    gdpPpp: 77524000000,
+    highestPointMeters: 172,
+    coastlineKm: 41,
   },
   "MP": {
     population: 47329,
@@ -2383,6 +2786,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     governmentType: "a commonwealth in political union with and under the sovereignty of the US",
     medianAge: 32.6,
     fertilityRate: 2.53,
+    gdpPpp: 1242000000,
+    highestPointMeters: 965,
+    coastlineKm: 1482,
   },
   "MQ": {
     population: 349925,
@@ -2411,6 +2817,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Muslim","percent":100}],
     medianAge: 18.6,
     fertilityRate: 4.76,
+    gdpPpp: 33069000000,
+    highestPointMeters: 915,
+    coastlineKm: 754,
   },
   "MS": {
     population: 4386,
@@ -2426,6 +2835,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Protestant","percent":71.4},{"name":"Roman Catholic","percent":11.4},{"name":"Rastafarian","percent":1.4},{"name":"Hindu","percent":1.2},{"name":"Jehovah's Witness","percent":1},{"name":"Muslim","percent":0.4},{"name":"Unspecified","percent":5.1},{"name":"None","percent":7.9}],
     medianAge: 37.1,
     fertilityRate: 1.34,
+    gdpPpp: 89254000,
+    highestPointMeters: 915,
+    coastlineKm: 40,
   },
   "MT": {
     population: 574250,
@@ -2442,6 +2854,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":90}],
     medianAge: 42.1,
     fertilityRate: 1.18,
+    gdpPpp: 34731000000,
+    highestPointMeters: 253,
+    coastlineKm: 196.8,
   },
   "MU": {
     population: 1243741,
@@ -2458,6 +2873,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Hindu","percent":48.5},{"name":"Roman Catholic","percent":26.3},{"name":"Muslim","percent":17.3},{"name":"Protestant","percent":6.4},{"name":"Other","percent":0.6},{"name":"None","percent":0.7},{"name":"Unspecified","percent":0.1}],
     medianAge: 40,
     fertilityRate: 1.36,
+    gdpPpp: 34406000000,
+    highestPointMeters: 828,
+    coastlineKm: 177,
   },
   "MV": {
     population: 515132,
@@ -2473,6 +2891,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     governmentType: "presidential republic",
     medianAge: 32.4,
     fertilityRate: 1.7,
+    gdpPpp: 12325000000,
+    highestPointMeters: 5,
+    coastlineKm: 644,
   },
   "MW": {
     population: 20734262,
@@ -2490,6 +2911,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Protestant","percent":60.1},{"name":"Roman Catholic","percent":17.2},{"name":"Muslim","percent":13.8},{"name":"traditionalist","percent":1.1},{"name":"Other","percent":5.6},{"name":"None","percent":2.1}],
     medianAge: 19.4,
     fertilityRate: 3.33,
+    gdpPpp: 35425000000,
+    highestPointMeters: 3002,
+    coastlineKm: 0,
   },
   "MX": {
     population: 130575786,
@@ -2507,6 +2931,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":77.7},{"name":"None","percent":10.6},{"name":"Evangelical","percent":7.5},{"name":"Jehovah's Witness","percent":1.2}],
     medianAge: 31,
     fertilityRate: 1.85,
+    gdpPpp: 2883000000000,
+    highestPointMeters: 5636,
+    coastlineKm: 9330,
   },
   "MY": {
     population: 34231700,
@@ -2524,6 +2951,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Muslim","percent":63.5},{"name":"Buddhist","percent":18.7},{"name":"Christian","percent":9.1},{"name":"Hindu","percent":6.1},{"name":"Other","percent":0.9},{"name":"Unspecified","percent":1.8}],
     medianAge: 32.2,
     fertilityRate: 1.73,
+    gdpPpp: 1212000000000,
+    highestPointMeters: 4095,
+    coastlineKm: 4675,
   },
   "MZ": {
     population: 34090466,
@@ -2541,6 +2971,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":27.3},{"name":"Muslim","percent":19.1},{"name":"Pentecostal","percent":16.7},{"name":"Saio/Zione","percent":16.3},{"name":"None","percent":13.5},{"name":"Other","percent":4.3},{"name":"Anglican","percent":1.7},{"name":"Unspecified","percent":1.2}],
     medianAge: 17.4,
     fertilityRate: 4.58,
+    gdpPpp: 51786000000,
+    highestPointMeters: 2436,
+    coastlineKm: 2470,
   },
   "NA": {
     population: 3022401,
@@ -2558,6 +2991,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Christian","percent":97.5},{"name":"Other","percent":0.6},{"name":"Unspecified","percent":1.9}],
     medianAge: 23.1,
     fertilityRate: 2.85,
+    gdpPpp: 31154000000,
+    highestPointMeters: 2573,
+    coastlineKm: 1572,
   },
   "NC": {
     population: 264596,
@@ -2573,6 +3009,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Christian","percent":85.2},{"name":"Muslim","percent":2.8},{"name":"Other","percent":1.6},{"name":"Unspecified","percent":10.4}],
     medianAge: 34.6,
     fertilityRate: 1.82,
+    gdpPpp: 8469000000,
+    highestPointMeters: 1628,
+    coastlineKm: 2254,
   },
   "NE": {
     population: 26312034,
@@ -2590,6 +3029,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Muslim","percent":95.5},{"name":"ethnic religionist","percent":4.1},{"name":"Christian","percent":0.3},{"name":"Agnostic","percent":0.1}],
     medianAge: 15.3,
     fertilityRate: 6.55,
+    gdpPpp: 47921000000,
+    highestPointMeters: 2022,
+    coastlineKm: 0,
   },
   "NF": {
     population: 2188,
@@ -2603,6 +3045,8 @@ export const countryFacts: Record<string, CountryFacts> = {
     subregion: "Australia and New Zealand",
     governmentType: "administered as an overseas territory of Australia",
     religions: [{"name":"Protestant","percent":49.7},{"name":"Roman Catholic","percent":12.6},{"name":"Other","percent":1.4},{"name":"None","percent":26.7},{"name":"Unspecified","percent":9.5}],
+    highestPointMeters: 319,
+    coastlineKm: 32,
   },
   "NG": {
     population: 223800000,
@@ -2620,6 +3064,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Muslim","percent":53.5},{"name":"Roman Catholic","percent":10.6},{"name":"Protestant","percent":35.3},{"name":"Other","percent":0.6}],
     medianAge: 19.4,
     fertilityRate: 4.59,
+    gdpPpp: 1318000000000,
+    highestPointMeters: 2419,
+    coastlineKm: 853,
   },
   "NI": {
     population: 6803886,
@@ -2637,6 +3084,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":44.9},{"name":"Protestant","percent":38.7},{"name":"Other","percent":1.2},{"name":"Believer","percent":1},{"name":"Agnostic","percent":0.4},{"name":"None","percent":13.7},{"name":"Unspecified","percent":0.2}],
     medianAge: 29.5,
     fertilityRate: 1.82,
+    gdpPpp: 52989000000,
+    highestPointMeters: 2085,
+    coastlineKm: 910,
   },
   "NL": {
     population: 18100436,
@@ -2654,6 +3104,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":20.1},{"name":"Protestant","percent":14.8},{"name":"Muslim","percent":5},{"name":"Other","percent":5.9},{"name":"None","percent":54.1}],
     medianAge: 42.2,
     fertilityRate: 1.62,
+    gdpPpp: 1276000000000,
+    highestPointMeters: 862,
+    coastlineKm: 451,
   },
   "NO": {
     population: 5606944,
@@ -2671,6 +3124,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Church of Norway","percent":67.5},{"name":"Muslim","percent":3.1},{"name":"Roman Catholic","percent":3.1},{"name":"Protestant","percent":3.8},{"name":"Other","percent":2.6},{"name":"Unspecified","percent":19.9}],
     medianAge: 41,
     fertilityRate: 1.58,
+    gdpPpp: 507680000000,
+    highestPointMeters: 2469,
+    coastlineKm: 25148,
   },
   "NP": {
     population: 29911840,
@@ -2688,6 +3144,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Hindu","percent":81.2},{"name":"Buddhist","percent":8.2},{"name":"Muslim","percent":5.1},{"name":"Kirat","percent":3.2},{"name":"Christian","percent":1.8}],
     medianAge: 28.1,
     fertilityRate: 1.82,
+    gdpPpp: 149643000000,
+    highestPointMeters: 8849,
+    coastlineKm: 0,
   },
   "NR": {
     population: 11680,
@@ -2704,6 +3163,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Protestant","percent":60.4},{"name":"Roman Catholic","percent":33.9},{"name":"Other","percent":4.2},{"name":"None","percent":1.3},{"name":"Unspecified","percent":0.3}],
     medianAge: 28.2,
     fertilityRate: 2.52,
+    gdpPpp: 150581000,
+    highestPointMeters: 70,
+    coastlineKm: 30,
   },
   "NU": {
     population: 1681,
@@ -2718,6 +3180,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     independence: "1974",
     governmentType: "parliamentary democracy",
     religions: [{"name":"Ekalesia Niue","percent":61.7},{"name":"Latter Day Saints","percent":8.7},{"name":"Roman Catholic","percent":8.4},{"name":"Other","percent":8.2},{"name":"Unspecified","percent":5.1},{"name":"None","percent":3.7},{"name":"Jehovah's Witnesses","percent":2.7},{"name":"Seventh Day Adventist","percent":1.4}],
+    gdpPpp: 18700000,
+    highestPointMeters: 80,
+    coastlineKm: 64,
   },
   "NZ": {
     population: 5324700,
@@ -2734,6 +3199,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Christian","percent":37.3},{"name":"Hindu","percent":2.7},{"name":"Maori","percent":1.3},{"name":"Muslim","percent":1.3},{"name":"Buddhist","percent":1.1},{"name":"Other","percent":1.6},{"name":"None","percent":48.6},{"name":"Unspecified","percent":6.7}],
     medianAge: 38.1,
     fertilityRate: 1.84,
+    gdpPpp: 257117000000,
+    highestPointMeters: 3724,
+    coastlineKm: 15134,
   },
   "OM": {
     population: 5343630,
@@ -2751,6 +3219,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Muslim","percent":85.9},{"name":"Christian","percent":6.4},{"name":"Hindu","percent":5.7},{"name":"Other","percent":2}],
     medianAge: 27.5,
     fertilityRate: 2.61,
+    gdpPpp: 193591000000,
+    highestPointMeters: 3004,
+    coastlineKm: 2092,
   },
   "PA": {
     population: 4064780,
@@ -2768,6 +3239,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Evangelical","percent":55},{"name":"Roman Catholic","percent":33.4},{"name":"None","percent":10.1},{"name":"Unspecified","percent":1.5}],
     medianAge: 31.7,
     fertilityRate: 2.33,
+    gdpPpp: 164484000000,
+    highestPointMeters: 3475,
+    coastlineKm: 2490,
   },
   "PE": {
     population: 34350244,
@@ -2785,6 +3259,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":76},{"name":"Evangelical","percent":15.7},{"name":"None","percent":5.1},{"name":"Other","percent":3.2}],
     medianAge: 30.4,
     fertilityRate: 2.12,
+    gdpPpp: 535911000000,
+    highestPointMeters: 6746,
+    coastlineKm: 2414,
   },
   "PF": {
     population: 279500,
@@ -2800,6 +3277,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Protestant","percent":54},{"name":"Roman Catholic","percent":30},{"name":"Other","percent":10},{"name":"None","percent":6}],
     medianAge: 35.8,
     fertilityRate: 1.78,
+    gdpPpp: 6007000000,
+    highestPointMeters: 2241,
+    coastlineKm: 2525,
   },
   "PG": {
     population: 11781559,
@@ -2817,6 +3297,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Protestant","percent":69.6},{"name":"Roman Catholic","percent":26},{"name":"non-Christian","percent":1.4},{"name":"Unspecified","percent":3.1}],
     medianAge: 21.9,
     fertilityRate: 3.72,
+    gdpPpp: 45487000000,
+    highestPointMeters: 4509,
+    coastlineKm: 5152,
   },
   "PH": {
     population: 114123600,
@@ -2833,6 +3316,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":78.8},{"name":"Muslim","percent":6.4},{"name":"Iglesia ni Cristo","percent":2.6},{"name":"Protestant","percent":3.9},{"name":"Other","percent":8.2},{"name":"Unspecified","percent":0.1}],
     medianAge: 27.1,
     fertilityRate: 1.94,
+    gdpPpp: 1202000000000,
+    highestPointMeters: 2954,
+    coastlineKm: 36289,
   },
   "PK": {
     population: 241499431,
@@ -2850,6 +3336,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Muslim","percent":96.4},{"name":"Hindu","percent":1.6},{"name":"Christian","percent":1.4}],
     medianAge: 23.2,
     fertilityRate: 3.25,
+    gdpPpp: 1390000000000,
+    highestPointMeters: 8611,
+    coastlineKm: 1046,
   },
   "PL": {
     population: 37392000,
@@ -2867,6 +3356,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":70.7},{"name":"Unspecified","percent":20.9},{"name":"None","percent":6.9}],
     medianAge: 43.4,
     fertilityRate: 1.33,
+    gdpPpp: 1649000000000,
+    highestPointMeters: 2499,
+    coastlineKm: 440,
   },
   "PM": {
     population: 5819,
@@ -2891,6 +3383,8 @@ export const countryFacts: Record<string, CountryFacts> = {
     subregion: "Polynesia",
     governmentType: "parliamentary democracy",
     religions: [{"name":"Seventh Day Adventist","percent":100}],
+    highestPointMeters: 347,
+    coastlineKm: 51,
   },
   "PR": {
     population: 3203295,
@@ -2906,6 +3400,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":56},{"name":"Protestant","percent":33},{"name":"Other","percent":2},{"name":"Atheist","percent":1},{"name":"None","percent":7}],
     medianAge: 46.7,
     fertilityRate: 1.27,
+    gdpPpp: 141344000000,
+    highestPointMeters: 1338,
+    coastlineKm: 501,
   },
   "PS": {
     population: 5483450,
@@ -2921,6 +3418,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Muslim","percent":82.5},{"name":"Jewish","percent":13},{"name":"Christian","percent":1.8},{"name":"Unspecified","percent":1}],
     medianAge: 22,
     fertilityRate: 3.44,
+    gdpPpp: 20339000000,
+    highestPointMeters: 1020,
+    coastlineKm: 0,
   },
   "PT": {
     population: 10749635,
@@ -2938,6 +3438,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":68.1},{"name":"Unspecified","percent":15.1},{"name":"None","percent":12},{"name":"Protestant","percent":1.8},{"name":"Other","percent":1}],
     medianAge: 46.8,
     fertilityRate: 1.46,
+    gdpPpp: 448226000000,
+    highestPointMeters: 2351,
+    coastlineKm: 1793,
   },
   "PW": {
     population: 16733,
@@ -2954,6 +3457,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":46.9},{"name":"Protestant","percent":30.9},{"name":"Modekngei","percent":5.1},{"name":"Muslim","percent":4.9},{"name":"Other","percent":12.3}],
     medianAge: 35.5,
     fertilityRate: 1.7,
+    gdpPpp: 280025000,
+    highestPointMeters: 242,
+    coastlineKm: 1519,
   },
   "PY": {
     population: 6109644,
@@ -2971,6 +3477,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":80.4},{"name":"Protestant","percent":7},{"name":"Believer","percent":5.7},{"name":"Other","percent":0.6},{"name":"Agnostic","percent":0.1},{"name":"None","percent":0.2},{"name":"Unspecified","percent":6.2}],
     medianAge: 32.3,
     fertilityRate: 1.88,
+    gdpPpp: 112919000000,
+    highestPointMeters: 842,
+    coastlineKm: 0,
   },
   "QA": {
     population: 3173024,
@@ -2988,6 +3497,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Muslim","percent":65.2},{"name":"Christian","percent":13.7},{"name":"Hindu","percent":15.9},{"name":"Buddhist","percent":3.8},{"name":"folk religion","percent":0.1},{"name":"Jewish","percent":0.1},{"name":"Other","percent":1},{"name":"Unspecified","percent":1}],
     medianAge: 34.4,
     fertilityRate: 1.9,
+    gdpPpp: 317064000000,
+    highestPointMeters: 103,
+    coastlineKm: 563,
   },
   "RE": {
     population: 896175,
@@ -3016,6 +3528,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Romanian Orthodox","percent":85.3},{"name":"Roman Catholic","percent":4.5},{"name":"Reformed","percent":3},{"name":"Pentecostal","percent":2.5},{"name":"Other","percent":4.7}],
     medianAge: 45.8,
     fertilityRate: 1.63,
+    gdpPpp: 774376000000,
+    highestPointMeters: 2544,
+    coastlineKm: 225,
   },
   "RS": {
     population: 6567783,
@@ -3033,6 +3548,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Serbian Orthodox","percent":81.1},{"name":"Unspecified","percent":7.8},{"name":"Muslim","percent":4.2},{"name":"Roman Catholic","percent":3.9},{"name":"Atheist","percent":1.1}],
     medianAge: 44.1,
     fertilityRate: 1.47,
+    gdpPpp: 177093000000,
+    highestPointMeters: 2169,
+    coastlineKm: 0,
   },
   "RU": {
     population: 146028325,
@@ -3050,6 +3568,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Russian Orthodox","percent":17.5},{"name":"Muslim","percent":12.5},{"name":"Protestant","percent":2}],
     medianAge: 42.3,
     fertilityRate: 1.52,
+    gdpPpp: 6089000000000,
+    highestPointMeters: 5642,
+    coastlineKm: 37653,
   },
   "RW": {
     population: 14104969,
@@ -3067,6 +3588,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":39.9},{"name":"Pentecostal","percent":21.3},{"name":"Protestant","percent":18.8},{"name":"Adventist","percent":12.2},{"name":"None","percent":3},{"name":"Muslim","percent":2},{"name":"Other","percent":2}],
     medianAge: 21.3,
     fertilityRate: 3.2,
+    gdpPpp: 46543000000,
+    highestPointMeters: 4519,
+    coastlineKm: 0,
   },
   "SA": {
     population: 35300280,
@@ -3083,6 +3607,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     governmentType: "absolute monarchy",
     medianAge: 32.8,
     fertilityRate: 1.84,
+    gdpPpp: 2213000000000,
+    highestPointMeters: 3000,
+    coastlineKm: 2640,
   },
   "SB": {
     population: 750325,
@@ -3099,6 +3626,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Protestant","percent":76.3},{"name":"Roman Catholic","percent":19.6},{"name":"Other","percent":4},{"name":"Unspecified","percent":0.1}],
     medianAge: 25.5,
     fertilityRate: 2.72,
+    gdpPpp: 2070000000,
+    highestPointMeters: 2335,
+    coastlineKm: 5313,
   },
   "SC": {
     population: 122729,
@@ -3115,6 +3645,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":76.2},{"name":"Protestant","percent":12.9},{"name":"Hindu","percent":2.4},{"name":"Muslim","percent":1.6},{"name":"Other","percent":1.1},{"name":"Unspecified","percent":4.8},{"name":"None","percent":0.9}],
     medianAge: 39.2,
     fertilityRate: 1.8,
+    gdpPpp: 3549000000,
+    highestPointMeters: 905,
+    coastlineKm: 491,
   },
   "SD": {
     population: 51662000,
@@ -3131,6 +3664,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     governmentType: "presidential republic",
     medianAge: 19.5,
     fertilityRate: 4.41,
+    gdpPpp: 94420000000,
+    highestPointMeters: 3042,
+    coastlineKm: 853,
   },
   "SE": {
     population: 10605098,
@@ -3148,6 +3684,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Church of Sweden","percent":53.9},{"name":"Other","percent":8.9},{"name":"None","percent":37.2}],
     medianAge: 41.2,
     fertilityRate: 1.66,
+    gdpPpp: 668628000000,
+    highestPointMeters: 2100,
+    coastlineKm: 3218,
   },
   "SG": {
     population: 6110200,
@@ -3164,6 +3703,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Buddhist","percent":31.1},{"name":"Christian","percent":18.9},{"name":"Muslim","percent":15.6},{"name":"Taoist","percent":8.8},{"name":"Hindu","percent":5},{"name":"Other","percent":0.6},{"name":"None","percent":20}],
     medianAge: 39.8,
     fertilityRate: 1.18,
+    gdpPpp: 800304000000,
+    highestPointMeters: 166,
+    coastlineKm: 193,
   },
   "SH": {
     population: 5651,
@@ -3179,6 +3721,8 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Anglican","percent":63.2},{"name":"Unspecified","percent":11.4},{"name":"None","percent":9},{"name":"Jehovah's Witness","percent":3.8},{"name":"Baptist","percent":2.3},{"name":"Salvation Army","percent":2},{"name":"Roman Catholic","percent":2.2},{"name":"Seventh Day Adventist","percent":1.9},{"name":"New Apostolic","percent":1.6},{"name":"Protestant","percent":1.4},{"name":"Other","percent":1.1}],
     medianAge: 45.5,
     fertilityRate: 1.61,
+    highestPointMeters: 2060,
+    coastlineKm: 60,
   },
   "SI": {
     population: 2130638,
@@ -3196,6 +3740,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":69},{"name":"Orthodox","percent":4},{"name":"Muslim","percent":3},{"name":"Christian","percent":1},{"name":"Other","percent":3},{"name":"Atheist","percent":14},{"name":"None","percent":4},{"name":"Unspecified","percent":2}],
     medianAge: 46,
     fertilityRate: 1.49,
+    gdpPpp: 103118000000,
+    highestPointMeters: 2864,
+    coastlineKm: 46.6,
   },
   "SJ": {
     population: 2530,
@@ -3208,6 +3755,8 @@ export const countryFacts: Record<string, CountryFacts> = {
     timezones: ["UTC+01:00"],
     subregion: "Northern Europe",
     governmentType: "non-self-governing territory of Norway",
+    highestPointMeters: 1717,
+    coastlineKm: 3587,
   },
   "SK": {
     population: 5413813,
@@ -3225,6 +3774,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":55.8},{"name":"Evangelical Church of the Augsburg Confession","percent":5.3},{"name":"Greek Catholic","percent":4},{"name":"Reformed Christian","percent":1.6},{"name":"Other","percent":3},{"name":"None","percent":23.8},{"name":"Unspecified","percent":6.5}],
     medianAge: 43.1,
     fertilityRate: 1.6,
+    gdpPpp: 218762000000,
+    highestPointMeters: 2655,
+    coastlineKm: 0,
   },
   "SL": {
     population: 9077691,
@@ -3242,6 +3794,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Muslim","percent":77.1},{"name":"Christian","percent":22.9}],
     medianAge: 19.7,
     fertilityRate: 3.52,
+    gdpPpp: 26728000000,
+    highestPointMeters: 1948,
+    coastlineKm: 402,
   },
   "SM": {
     population: 34132,
@@ -3257,6 +3812,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     governmentType: "parliamentary republic",
     medianAge: 46.3,
     fertilityRate: 1.54,
+    gdpPpp: 2393000000,
+    highestPointMeters: 739,
+    coastlineKm: 0,
   },
   "SN": {
     population: 18593258,
@@ -3274,6 +3832,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Muslim","percent":97.2},{"name":"Christian","percent":2.7}],
     medianAge: 19.4,
     fertilityRate: 3.96,
+    gdpPpp: 83183000000,
+    highestPointMeters: 648,
+    coastlineKm: 531,
   },
   "SO": {
     population: 19655000,
@@ -3291,6 +3852,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Muslim","percent":99.9},{"name":"ethnic religionist","percent":0.1}],
     medianAge: 15.7,
     fertilityRate: 6.38,
+    gdpPpp: 26770000000,
+    highestPointMeters: 2460,
+    coastlineKm: 3025,
   },
   "SR": {
     population: 616500,
@@ -3308,6 +3872,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Protestant","percent":26.8},{"name":"Hindu","percent":22.3},{"name":"Roman Catholic","percent":21.6},{"name":"Muslim","percent":13.8},{"name":"Winti","percent":1.8},{"name":"Jehovah's Witness","percent":1.2},{"name":"Other","percent":1.7},{"name":"None","percent":7.5},{"name":"Unspecified","percent":3.2}],
     medianAge: 32.3,
     fertilityRate: 1.87,
+    gdpPpp: 12316000000,
+    highestPointMeters: 1230,
+    coastlineKm: 386,
   },
   "SS": {
     population: 15786898,
@@ -3325,6 +3892,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Christian","percent":60.5},{"name":"folk religion","percent":32.9},{"name":"Muslim","percent":6.2},{"name":"Other","percent":1},{"name":"Unspecified","percent":1}],
     medianAge: 18.7,
     fertilityRate: 4.98,
+    gdpPpp: 6752000000,
+    highestPointMeters: 3187,
+    coastlineKm: 0,
   },
   "ST": {
     population: 209607,
@@ -3341,6 +3911,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":55.7},{"name":"Adventist","percent":4.1},{"name":"Assembly of God","percent":3.4},{"name":"New Apostolic","percent":2.9},{"name":"Mana","percent":2.3},{"name":"Universal Kingdom of God","percent":2},{"name":"Jehovah's Witness","percent":1.2},{"name":"Other","percent":6.2},{"name":"None","percent":21.2},{"name":"Unspecified","percent":1}],
     medianAge: 21.2,
     fertilityRate: 3.18,
+    gdpPpp: 1291000000,
+    highestPointMeters: 2024,
+    coastlineKm: 209,
   },
   "SV": {
     population: 6029976,
@@ -3358,6 +3931,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":43.9},{"name":"Protestant","percent":39.6},{"name":"None","percent":16.3},{"name":"Unspecified","percent":0.2}],
     medianAge: 31.2,
     fertilityRate: 1.4,
+    gdpPpp: 73961000000,
+    highestPointMeters: 2730,
+    coastlineKm: 307,
   },
   "SX": {
     population: 41349,
@@ -3374,6 +3950,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Protestant","percent":41.9},{"name":"Roman Catholic","percent":33.1},{"name":"Hindu","percent":5.2},{"name":"Christian","percent":4.1},{"name":"Jehovah's Witness","percent":1.7},{"name":"Evangelical","percent":1.4},{"name":"Muslim/Jewish","percent":1.1},{"name":"Other","percent":1.3},{"name":"None","percent":7.9},{"name":"Unspecified","percent":2.4}],
     medianAge: 40.8,
     fertilityRate: 1.96,
+    gdpPpp: 1986000000,
+    highestPointMeters: 250,
+    coastlineKm: 58.9,
   },
   "SY": {
     population: 25620000,
@@ -3391,6 +3970,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Muslim","percent":87},{"name":"Christian","percent":10},{"name":"Druze","percent":3}],
     medianAge: 24.5,
     fertilityRate: 2.64,
+    gdpPpp: 98858000000,
+    highestPointMeters: 2814,
+    coastlineKm: 193,
   },
   "SZ": {
     population: 1235549,
@@ -3408,6 +3990,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Christian","percent":90},{"name":"Muslim","percent":2},{"name":"Other","percent":8}],
     medianAge: 24.8,
     fertilityRate: 2.64,
+    gdpPpp: 12885000000,
+    highestPointMeters: 1862,
+    coastlineKm: 0,
   },
   "TC": {
     population: 50828,
@@ -3423,6 +4008,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Protestant","percent":72.8},{"name":"Roman Catholic","percent":11.4},{"name":"Jehovah's Witness","percent":1.8},{"name":"Other","percent":14}],
     medianAge: 36.6,
     fertilityRate: 1.7,
+    gdpPpp: 1554000000,
+    highestPointMeters: 48,
+    coastlineKm: 389,
   },
   "TD": {
     population: 19340757,
@@ -3440,6 +4028,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Muslim","percent":52.1},{"name":"Protestant","percent":24.1},{"name":"Roman Catholic","percent":20},{"name":"Animist","percent":0.3},{"name":"None","percent":2.8},{"name":"Unspecified","percent":0.7}],
     medianAge: 16.9,
     fertilityRate: 5.13,
+    gdpPpp: 52895000000,
+    highestPointMeters: 3445,
+    coastlineKm: 0,
   },
   "TG": {
     population: 8095498,
@@ -3457,6 +4048,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Christian","percent":42.3},{"name":"folk religion","percent":36.9},{"name":"Muslim","percent":14},{"name":"Hindu","percent":1},{"name":"Buddhist","percent":1},{"name":"Jewish","percent":1},{"name":"Other","percent":1},{"name":"None","percent":6.2}],
     medianAge: 20.9,
     fertilityRate: 4.03,
+    gdpPpp: 27115000000,
+    highestPointMeters: 986,
+    coastlineKm: 56,
   },
   "TH": {
     population: 65859640,
@@ -3473,6 +4067,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Buddhist","percent":92.5},{"name":"Muslim","percent":5.4},{"name":"Christian","percent":1.2},{"name":"Other","percent":0.9}],
     medianAge: 41.9,
     fertilityRate: 1.55,
+    gdpPpp: 1558000000000,
+    highestPointMeters: 2565,
+    coastlineKm: 3219,
   },
   "TJ": {
     population: 10499000,
@@ -3490,6 +4087,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Muslim","percent":98},{"name":"Other","percent":2}],
     medianAge: 22.8,
     fertilityRate: 3.52,
+    gdpPpp: 50370000000,
+    highestPointMeters: 7495,
+    coastlineKm: 0,
   },
   "TK": {
     population: 2608,
@@ -3503,6 +4103,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     subregion: "Polynesia",
     governmentType: "<p>parliamentary democracy under a constitutional monarchy</p>",
     religions: [{"name":"Congregational Christian Church","percent":50.4},{"name":"Roman Catholic","percent":38.7},{"name":"Presbyterian","percent":5.9},{"name":"Protestant","percent":4.2},{"name":"Unspecified","percent":0.8}],
+    gdpPpp: 7711583,
+    highestPointMeters: 5,
+    coastlineKm: 101,
   },
   "TL": {
     population: 1391221,
@@ -3520,6 +4123,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":90.7},{"name":"Other","percent":7.1},{"name":"Protestant Evangelical","percent":1.9}],
     medianAge: 23,
     fertilityRate: 2.79,
+    gdpPpp: 5863000000,
+    highestPointMeters: 2963,
+    coastlineKm: 706,
   },
   "TM": {
     population: 7057841,
@@ -3537,6 +4143,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Muslim","percent":93},{"name":"Christian","percent":6.4},{"name":"Buddhist","percent":1},{"name":"folk religion","percent":1},{"name":"Jewish","percent":1},{"name":"Other","percent":1},{"name":"Unspecified","percent":1}],
     medianAge: 31.6,
     fertilityRate: 2.02,
+    gdpPpp: 134555000000,
+    highestPointMeters: 3139,
+    coastlineKm: 0,
   },
   "TN": {
     population: 11972169,
@@ -3554,6 +4163,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Muslim","percent":99},{"name":"Other","percent":1}],
     medianAge: 34.1,
     fertilityRate: 1.59,
+    gdpPpp: 156086000000,
+    highestPointMeters: 1544,
+    coastlineKm: 1148,
   },
   "TO": {
     population: 100179,
@@ -3570,6 +4182,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Protestant","percent":63.9},{"name":"Latter-day Saint","percent":19.7},{"name":"Roman Catholic","percent":13.7},{"name":"Other","percent":2.1},{"name":"None","percent":0.6},{"name":"Unspecified","percent":0.1}],
     medianAge: 26.4,
     fertilityRate: 2.59,
+    gdpPpp: 740082000,
+    highestPointMeters: 1046,
+    coastlineKm: 419,
   },
   "TR": {
     population: 85664944,
@@ -3587,6 +4202,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Muslim","percent":99.8},{"name":"Other","percent":0.2}],
     medianAge: 34.4,
     fertilityRate: 1.88,
+    gdpPpp: 3018000000000,
+    highestPointMeters: 5137,
+    coastlineKm: 7200,
   },
   "TT": {
     population: 1367764,
@@ -3603,6 +4221,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Protestant","percent":32.1},{"name":"Roman Catholic","percent":21.6},{"name":"Hindu","percent":18.2},{"name":"Muslim","percent":5},{"name":"Jehovah's Witness","percent":1.5},{"name":"Other","percent":8.4},{"name":"None","percent":2.2},{"name":"Unspecified","percent":11.1}],
     medianAge: 39.1,
     fertilityRate: 1.63,
+    gdpPpp: 43362000000,
+    highestPointMeters: 940,
+    coastlineKm: 362,
   },
   "TV": {
     population: 10643,
@@ -3619,6 +4240,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Protestant","percent":92.7},{"name":"Baha'i","percent":1.5},{"name":"Jehovah's Witness","percent":1.5},{"name":"Other","percent":3.9},{"name":"None","percent":0.4}],
     medianAge: 28.1,
     fertilityRate: 2.76,
+    gdpPpp: 57055000,
+    highestPointMeters: 5,
+    coastlineKm: 24,
   },
   "TW": {
     population: 23317031,
@@ -3634,6 +4258,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Buddhist","percent":35.3},{"name":"Taoist","percent":33.2},{"name":"Christian","percent":3.9},{"name":"folk religion","percent":10},{"name":"None","percent":18.2}],
     medianAge: 45.1,
     fertilityRate: 1.12,
+    gdpPpp: 1743000000000,
+    highestPointMeters: 3952,
+    coastlineKm: 1566.3,
   },
   "TZ": {
     population: 68153004,
@@ -3651,6 +4278,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Christian","percent":63.1},{"name":"Muslim","percent":34.1},{"name":"folk religion","percent":1.1},{"name":"Buddhist","percent":1},{"name":"Hindu","percent":1},{"name":"Jewish","percent":1},{"name":"Other","percent":1},{"name":"Unspecified","percent":1.6}],
     medianAge: 18.8,
     fertilityRate: 4.45,
+    gdpPpp: 246706000000,
+    highestPointMeters: 5895,
+    coastlineKm: 1424,
   },
   "UA": {
     population: 32862000,
@@ -3667,6 +4297,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     governmentType: "semi-presidential republic",
     medianAge: 44.6,
     fertilityRate: 1.22,
+    gdpPpp: 577583000000,
+    highestPointMeters: 2061,
+    coastlineKm: 2782,
   },
   "UG": {
     population: 45905417,
@@ -3684,6 +4317,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Protestant","percent":45.1},{"name":"Roman Catholic","percent":39.3},{"name":"Muslim","percent":13.7},{"name":"Other","percent":1.6},{"name":"None","percent":0.2}],
     medianAge: 16.4,
     fertilityRate: 5.08,
+    gdpPpp: 144137000000,
+    highestPointMeters: 5110,
+    coastlineKm: 0,
   },
   "US": {
     population: 340110988,
@@ -3701,6 +4337,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Protestant","percent":47.4},{"name":"Roman Catholic","percent":20.8},{"name":"Jewish","percent":1.9},{"name":"Latter-day Saint","percent":1.6},{"name":"Muslim","percent":0.9},{"name":"Jehovah's Witness","percent":0.8},{"name":"Buddhist","percent":0.7},{"name":"Hindu","percent":0.7},{"name":"Other","percent":1.8},{"name":"Unspecified","percent":23.4}],
     medianAge: 39.5,
     fertilityRate: 1.63,
+    gdpPpp: 25676000000000,
+    highestPointMeters: 6190,
+    coastlineKm: 19924,
   },
   "UY": {
     population: 3499451,
@@ -3718,6 +4357,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":36.5},{"name":"Protestant","percent":5},{"name":"African American Cults/Umbanda","percent":2.8},{"name":"Jehovah's Witness","percent":0.6},{"name":"Latter-day Saint","percent":0.2},{"name":"Other","percent":1},{"name":"Believer","percent":1.8},{"name":"Agnostic","percent":0.3},{"name":"Atheist","percent":1.3},{"name":"None","percent":47.3},{"name":"Unspecified","percent":3.4}],
     medianAge: 37.4,
     fertilityRate: 1.27,
+    gdpPpp: 108502000000,
+    highestPointMeters: 514,
+    coastlineKm: 660,
   },
   "UZ": {
     population: 37859698,
@@ -3735,6 +4377,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Muslim","percent":88},{"name":"Orthodox","percent":9},{"name":"Other","percent":3}],
     medianAge: 29.2,
     fertilityRate: 2.6,
+    gdpPpp: 379989000000,
+    highestPointMeters: 4643,
+    coastlineKm: 0,
   },
   "VA": {
     population: 882,
@@ -3749,6 +4394,8 @@ export const countryFacts: Record<string, CountryFacts> = {
     subregion: "Southern Europe",
     independence: "1929",
     governmentType: "ecclesiastical elective monarchy",
+    highestPointMeters: 78,
+    coastlineKm: 0,
   },
   "VC": {
     population: 110872,
@@ -3765,6 +4412,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Protestant","percent":75},{"name":"Roman Catholic","percent":6.3},{"name":"Rastafarian","percent":1.1},{"name":"Jehovah's Witness","percent":0.8},{"name":"Other","percent":4.7},{"name":"None","percent":7.5},{"name":"Unspecified","percent":4.7}],
     medianAge: 38.1,
     fertilityRate: 1.73,
+    gdpPpp: 1883000000,
+    highestPointMeters: 1234,
+    coastlineKm: 84,
   },
   "VE": {
     population: 28517000,
@@ -3782,6 +4432,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":48.1},{"name":"Protestant","percent":31.6},{"name":"Jehovah's Witness","percent":1.4},{"name":"African American/umbanda","percent":0.7},{"name":"Other","percent":0.1},{"name":"Believer","percent":3.5},{"name":"Agnostic","percent":0.1},{"name":"Atheist","percent":0.4},{"name":"None","percent":13.6},{"name":"Unspecified","percent":0.6}],
     medianAge: 31.3,
     fertilityRate: 2.16,
+    gdpPpp: 110943000000,
+    highestPointMeters: 4978,
+    coastlineKm: 2800,
   },
   "VG": {
     population: 39471,
@@ -3797,6 +4450,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Protestant","percent":70.2},{"name":"Roman Catholic","percent":8.9},{"name":"Jehovah's Witness","percent":2.5},{"name":"Hindu","percent":1.9},{"name":"Other","percent":6.2},{"name":"None","percent":7.9},{"name":"Unspecified","percent":2.4}],
     medianAge: 38.8,
     fertilityRate: 1.39,
+    gdpPpp: 1634000000,
+    highestPointMeters: 521,
+    coastlineKm: 80,
   },
   "VI": {
     population: 87146,
@@ -3812,6 +4468,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Protestant","percent":67.7},{"name":"Roman Catholic","percent":27.1},{"name":"Other","percent":1.5},{"name":"None","percent":3.7}],
     medianAge: 43.4,
     fertilityRate: 1.95,
+    gdpPpp: 4900000000,
+    highestPointMeters: 474,
+    coastlineKm: 188,
   },
   "VN": {
     population: 101343800,
@@ -3829,6 +4488,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":6.1},{"name":"Buddhist","percent":5.8},{"name":"Protestant","percent":1},{"name":"Other","percent":0.8},{"name":"None","percent":86.3}],
     medianAge: 33.5,
     fertilityRate: 2.01,
+    gdpPpp: 1456000000000,
+    highestPointMeters: 3144,
+    coastlineKm: 3444,
   },
   "VU": {
     population: 321409,
@@ -3845,6 +4507,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Protestant","percent":39.9},{"name":"Roman Catholic","percent":12.1},{"name":"Apostolic","percent":2.3},{"name":"Latter-day Saint","percent":1.8},{"name":"customary beliefs","percent":3.1},{"name":"Other","percent":12},{"name":"None","percent":1.4},{"name":"Unspecified","percent":0.1}],
     medianAge: 24.9,
     fertilityRate: 2.46,
+    gdpPpp: 1039000000,
+    highestPointMeters: 1877,
+    coastlineKm: 2528,
   },
   "WF": {
     population: 11620,
@@ -3860,6 +4525,8 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Roman Catholic","percent":99},{"name":"Other","percent":1}],
     medianAge: 36.9,
     fertilityRate: 1.71,
+    highestPointMeters: 522,
+    coastlineKm: 129,
   },
   "WS": {
     population: 205557,
@@ -3876,6 +4543,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Protestant","percent":58.5},{"name":"Roman Catholic","percent":18.8},{"name":"Latter-day Saint","percent":16.9},{"name":"Worship Centre","percent":2.8},{"name":"Other","percent":2.9},{"name":"None","percent":0.2}],
     medianAge: 27.8,
     fertilityRate: 2.29,
+    gdpPpp: 1503000000,
+    highestPointMeters: 1857,
+    coastlineKm: 403,
   },
   "XK": {
     population: 1585566,
@@ -3893,6 +4563,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Muslim","percent":95.6},{"name":"Roman Catholic","percent":2.2},{"name":"Orthodox","percent":1.5},{"name":"Other","percent":0.1},{"name":"None","percent":0.1},{"name":"Unspecified","percent":0.6}],
     medianAge: 32.3,
     fertilityRate: 1.85,
+    gdpPpp: 25019000000,
+    highestPointMeters: 2656,
+    coastlineKm: 0,
   },
   "YE": {
     population: 32684503,
@@ -3910,6 +4583,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Muslim","percent":99.1},{"name":"Other","percent":0.9}],
     medianAge: 20.5,
     fertilityRate: 3.65,
+    gdpPpp: 18719000000,
+    highestPointMeters: 3666,
+    coastlineKm: 1906,
   },
   "YT": {
     population: 320901,
@@ -3938,6 +4614,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Christian","percent":86},{"name":"other traditional African religions","percent":5.4},{"name":"Muslim","percent":1.9},{"name":"Other","percent":1.5},{"name":"None","percent":5.2}],
     medianAge: 30.7,
     fertilityRate: 2.23,
+    gdpPpp: 870420000000,
+    highestPointMeters: 3450,
+    coastlineKm: 2798,
   },
   "ZM": {
     population: 19693423,
@@ -3955,6 +4634,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Protestant","percent":75.3},{"name":"Roman Catholic","percent":20.2},{"name":"Other","percent":2.7},{"name":"None","percent":1.8}],
     medianAge: 19,
     fertilityRate: 3.67,
+    gdpPpp: 79207000000,
+    highestPointMeters: 2330,
+    coastlineKm: 0,
   },
   "ZW": {
     population: 17073087,
@@ -3972,6 +4654,9 @@ export const countryFacts: Record<string, CountryFacts> = {
     religions: [{"name":"Apostolic Sect","percent":40.3},{"name":"Pentecostal","percent":17},{"name":"Protestant","percent":21.6},{"name":"Roman Catholic","percent":6.4},{"name":"African traditionalist","percent":5},{"name":"Other","percent":1.5},{"name":"None","percent":8.3}],
     medianAge: 21.3,
     fertilityRate: 3.42,
+    gdpPpp: 57391000000,
+    highestPointMeters: 2592,
+    coastlineKm: 0,
   },
 };
 

@@ -7,10 +7,11 @@ import ArcadeIcon from '../images/modes/arcade.png';
 import FlagRunnerIcon from '../images/modes/flag-runner.png';
 import JeopardyIcon from '../images/modes/jeopardy.png';
 import GlobeIcon from '../images/modes/around-the-world.png';
+import PassportIcon from '../images/modes/passport.svg';
 import PracticeIcon from '../images/modes/practice.png';
 
 
-export type GameMode = 'arcade' | 'around-the-world' | 'jeopardy' | 'presentation' | 'flag-runner';
+export type GameMode = 'arcade' | 'around-the-world' | 'jeopardy' | 'presentation' | 'flag-runner' | 'perfect-passport';
 
 interface GameModeSelectProps {
   onSelectMode: (mode: GameMode) => void;
@@ -26,8 +27,14 @@ interface ModeConfig {
   titleTextColor?: string;
 }
 
-// Rainbow forward from green (Journey at top): G → B → V → R → O → Y
 const modes: ModeConfig[] = [
+  {
+    mode: 'perfect-passport',
+    icon: PassportIcon,
+    title: 'Perfect Passport',
+    description: 'Answer 10 questions and try to build the perfect passport on this world tour adventure.',
+    titleBarColor: 'bg-[#0F766E]',
+  },
   {
     mode: 'jeopardy',
     icon: JeopardyIcon,

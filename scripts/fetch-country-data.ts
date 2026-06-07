@@ -36,6 +36,9 @@ interface CountryFacts {
   religions?: { name: string; percent?: number }[];
   medianAge?: number; // years, Factbook "Median age" (total)
   fertilityRate?: number; // children born per woman, Factbook "Total fertility rate"
+  gdpPpp?: number; // USD, Factbook "Real GDP (purchasing power parity)"
+  highestPointMeters?: number; // meters above sea level
+  coastlineKm?: number;
 }
 
 // ---------------------------------------------------------------------------
@@ -139,19 +142,6 @@ async function fetchRestCountries(): Promise<{
 // ---------------------------------------------------------------------------
 // Factbook
 // ---------------------------------------------------------------------------
-
-const FACTBOOK_REGIONS = [
-  'africa',
-  'australia-oceania',
-  'central-america-n-caribbean',
-  'central-asia',
-  'east-n-southeast-asia',
-  'europe',
-  'middle-east',
-  'north-america',
-  'south-america',
-  'south-asia',
-];
 
 // Manual ISO alpha-2 → factbook (region, gec_slug) overrides for ones whose
 // names don't match cleanly. The factbook uses the GEC (Geopolitical Entity
@@ -260,11 +250,11 @@ const FACTBOOK_OVERRIDES: Record<string, { region: string; slug: string }> = {
   CH: { region: 'europe', slug: 'sz' }, // Switzerland
   UA: { region: 'europe', slug: 'up' }, // Ukraine
   VA: { region: 'europe', slug: 'vt' }, // Vatican
-  AM: { region: 'middle-east', slug: 'am' },
-  AZ: { region: 'middle-east', slug: 'aj' }, // Azerbaijan
+  AM: { region: 'central-asia', slug: 'am' },
+  AZ: { region: 'central-asia', slug: 'aj' }, // Azerbaijan
   BH: { region: 'middle-east', slug: 'ba' }, // Bahrain
   CY: { region: 'europe', slug: 'cy' },
-  GE: { region: 'middle-east', slug: 'gg' }, // Georgia
+  GE: { region: 'central-asia', slug: 'gg' }, // Georgia
   IR: { region: 'middle-east', slug: 'ir' },
   IQ: { region: 'middle-east', slug: 'iz' }, // Iraq
   IL: { region: 'middle-east', slug: 'is' }, // Israel
@@ -421,6 +411,9 @@ interface FactbookData {
   independence?: string;
   medianAge?: number;
   fertilityRate?: number;
+  gdpPpp?: number;
+  highestPointMeters?: number;
+  coastlineKm?: number;
 }
 
 function parseReligions(text: string): { name: string; percent?: number }[] {
@@ -605,6 +598,52 @@ function parseLeadingNumber(text: string): number | undefined {
   return Number.isFinite(n) ? n : undefined;
 }
 
+function parseMeters(text: string): number | undefined {
+  const m = text.match(/(-?\d[\d,]*(?:\.\d+)?)\s*m\b/i);
+  if (!m) return undefined;
+  const n = parseFloat(m[1].replace(/,/g, ''));
+  return Number.isFinite(n) ? n : undefined;
+}
+
+function parseKilometers(text: string): number | undefined {
+  const m = text.match(/(-?\d[\d,]*(?:\.\d+)?)\s*km\b/i);
+  if (!m) return undefined;
+  const n = parseFloat(m[1].replace(/,/g, ''));
+  return Number.isFinite(n) ? n : undefined;
+}
+
+function parseUsdAmount(text: string): number | undefined {
+  const m = text.match(/\$([\d,.]+)\s*(trillion|billion|million)?/i);
+  if (!m) return undefined;
+  const base = parseFloat(m[1].replace(/,/g, ''));
+  if (!Number.isFinite(base)) return undefined;
+  const unit = m[2]?.toLowerCase();
+  if (unit === 'trillion') return Math.round(base * 1_000_000_000_000);
+  if (unit === 'billion') return Math.round(base * 1_000_000_000);
+  if (unit === 'million') return Math.round(base * 1_000_000);
+  return Math.round(base);
+}
+
+function parseFactbookGdpPpp(value: unknown): number | undefined {
+  if (!value || typeof value !== 'object') return undefined;
+  const entries = Object.entries(value as Record<string, unknown>)
+    .filter(([key]) => key !== 'note')
+    .sort(([a], [b]) => {
+      const ay = Number(a.match(/\b(20\d{2})\b/)?.[1] ?? 0);
+      const by = Number(b.match(/\b(20\d{2})\b/)?.[1] ?? 0);
+      return by - ay;
+    });
+
+  for (const [, entry] of entries) {
+    const text = (entry as { text?: unknown })?.text;
+    if (typeof text !== 'string') continue;
+    const parsed = parseUsdAmount(text);
+    if (parsed !== undefined) return parsed;
+  }
+
+  return undefined;
+}
+
 function cleanGovernmentType(text: string): string {
   // Take only the first sentence/clause and strip trailing notes
   const firstClause = text.split(/[;.\n]/)[0].trim();
@@ -650,6 +689,21 @@ async function fetchFactbookEntry(region: string, slug: string): Promise<Factboo
     if (typeof fertilityRaw === 'string') {
       const v = parseLeadingNumber(fertilityRaw);
       if (v !== undefined) out.fertilityRate = v;
+    }
+
+    const gdpPpp = parseFactbookGdpPpp(data?.Economy?.['Real GDP (purchasing power parity)']);
+    if (gdpPpp !== undefined) out.gdpPpp = gdpPpp;
+
+    const highestPointRaw = data?.Geography?.Elevation?.['highest point']?.text;
+    if (typeof highestPointRaw === 'string') {
+      const v = parseMeters(highestPointRaw);
+      if (v !== undefined) out.highestPointMeters = v;
+    }
+
+    const coastlineRaw = data?.Geography?.Coastline?.text;
+    if (typeof coastlineRaw === 'string') {
+      const v = parseKilometers(coastlineRaw);
+      if (v !== undefined) out.coastlineKm = v;
     }
 
     return out;
@@ -711,6 +765,9 @@ function serializeFacts(facts: CountryFacts): string {
   if (facts.religions) lines.push(`    religions: ${JSON.stringify(facts.religions)}`);
   if (facts.medianAge !== undefined) lines.push(`    medianAge: ${facts.medianAge}`);
   if (facts.fertilityRate !== undefined) lines.push(`    fertilityRate: ${facts.fertilityRate}`);
+  if (facts.gdpPpp !== undefined) lines.push(`    gdpPpp: ${facts.gdpPpp}`);
+  if (facts.highestPointMeters !== undefined) lines.push(`    highestPointMeters: ${facts.highestPointMeters}`);
+  if (facts.coastlineKm !== undefined) lines.push(`    coastlineKm: ${facts.coastlineKm}`);
   return lines.join(',\n');
 }
 
@@ -747,6 +804,9 @@ async function main() {
     if (fb?.independence) facts.independence = fb.independence;
     if (fb?.medianAge !== undefined) facts.medianAge = fb.medianAge;
     if (fb?.fertilityRate !== undefined) facts.fertilityRate = fb.fertilityRate;
+    if (fb?.gdpPpp !== undefined) facts.gdpPpp = fb.gdpPpp;
+    if (fb?.highestPointMeters !== undefined) facts.highestPointMeters = fb.highestPointMeters;
+    if (fb?.coastlineKm !== undefined) facts.coastlineKm = fb.coastlineKm;
     merged.set(upper, facts);
   }
 
@@ -781,6 +841,9 @@ export interface CountryFacts {
   religions?: { name: string; percent?: number }[];
   medianAge?: number; // years, Factbook "Median age" (total)
   fertilityRate?: number; // children born per woman, Factbook "Total fertility rate"
+  gdpPpp?: number; // USD, Factbook "Real GDP (purchasing power parity)"
+  highestPointMeters?: number; // meters above sea level
+  coastlineKm?: number;
 }
 
 export const countryFacts: Record<string, CountryFacts> = {

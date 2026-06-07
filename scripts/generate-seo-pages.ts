@@ -9,10 +9,10 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 
 // Import data files directly (they're pure TS with no React deps)
-import { countries, continents, difficultyLabels, type Country, type Continent } from '../src/data/countries';
-import { flagFeatures, getSimilarFlags, type FlagFeatures } from '../src/data/flagFeatures';
+import { countries, continents, type Country, type Continent } from '../src/data/countries';
+import { flagFeatures, getSimilarFlags, type FlagColor, type FlagPattern } from '../src/data/flagFeatures';
 import { flagPatternInfos } from '../src/data/flagPatterns';
-import { flagDescriptions, type FlagDescription } from '../src/data/flagDescriptions';
+import { flagDescriptions } from '../src/data/flagDescriptions';
 import { organizations } from '../src/data/organizations';
 import { organizationMembers } from '../src/data/organizationMembers';
 import { territories } from '../src/data/territories';
@@ -42,6 +42,10 @@ function getFlagEmoji(code: string): string {
 
 function escapeHtml(s: string): string {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function stringifyScriptJson(value: unknown): string {
+  return JSON.stringify(value).replace(/</g, '\\u003c');
 }
 
 type Assets = {
@@ -251,10 +255,10 @@ function buildPage(
   routeChunk?: string,
 ): string {
   const jsonLdTag = meta.jsonLd
-    ? `<script type="application/ld+json">${JSON.stringify(meta.jsonLd)}</script>`
+    ? `<script type="application/ld+json">${stringifyScriptJson(meta.jsonLd)}</script>`
     : '';
   const flagDataTag = meta.flagData
-    ? `<script id="__flag_data__" type="application/json">${JSON.stringify(meta.flagData)}</script>`
+    ? `<script id="__flag_data__" type="application/json">${stringifyScriptJson(meta.flagData)}</script>`
     : '';
 
   // Preload static deps of the entry (vendor, etc.) so they download in
@@ -994,7 +998,7 @@ function getContentPages(): ContentPage[] {
       "Complex flags are the outliers of national vexillology — designs that refuse to fit a single stripe, cross, or canton convention. Often they layer multiple geometric elements, carry detailed central emblems, or break flag-design rules entirely. South Africa's 1994 post-apartheid flag is the canonical example: six colors arranged into a horizontal Y that converges at the hoist, deliberately designed to represent the merging of diverse paths into a single nation. Nepal stands alone as the world's only non-rectangular national flag, formed by two stacked crimson pennants edged in blue, with a stylized white sun and moon at their centers. The current shape was codified in the 1962 constitution but the underlying double-pennant design has been used by Nepali rulers for centuries. Other complex flags include Sri Lanka, which encloses a golden lion holding a sword within bordering panels of green and orange; Bhutan, with its white thunder dragon clutching jewels across a yellow-and-orange diagonal field; and tiny Antigua and Barbuda, whose rising-sun motif sits inside a black, blue, and white V on a red field.",
   };
 
-  const patternPages: ContentPage[] = [
+  const patternPages: ContentPage[] = ([
     { pattern: 'horizontal-stripes', label: 'Horizontal Stripes', slug: 'horizontal-stripes' },
     { pattern: 'vertical-stripes', label: 'Vertical Stripes', slug: 'vertical-stripes' },
     { pattern: 'cross', label: 'Crosses', slug: 'with-crosses' },
@@ -1002,7 +1006,7 @@ function getContentPages(): ContentPage[] {
     { pattern: 'canton', label: 'Canton Designs', slug: 'canton-designs' },
     { pattern: 'solid', label: 'Solid Fields', slug: 'solid-designs' },
     { pattern: 'complex', label: 'Complex Designs', slug: 'complex-designs' },
-  ].map(({ pattern, label, slug }) => ({
+  ] satisfies { pattern: FlagPattern; label: string; slug: string }[]).map(({ pattern, label, slug }) => ({
     slug,
     title: `Flags with ${label} - ${label} Flag Designs | Flag Arcade`,
     description: `Browse all country flags featuring ${label.toLowerCase()} in their design. Compare flags that share similar patterns.`,
@@ -1012,7 +1016,7 @@ function getContentPages(): ContentPage[] {
     getCountries: () => countries.filter((c) => flagFeatures[c.code]?.patterns.includes(pattern)),
   }));
 
-  const comboFilter = (c: { code: string }, ...colors: string[]) => {
+  const comboFilter = (c: { code: string }, ...colors: FlagColor[]) => {
     const f = flagFeatures[c.code];
     return f ? colors.every((col) => f.colors.includes(col)) : false;
   };
@@ -2016,6 +2020,7 @@ interface PlayRouteMeta {
   path: string;
   title: string;
   description: string;
+  ogImage?: string;
   priority: string;
   routeChunk: string;
   // Short label used in cross-links between play pages
@@ -2037,6 +2042,7 @@ const PLAY_ROUTE_META: PlayRouteMeta[] = [
     path: '/play/modes',
     title: 'Free Flag Quiz Games - 6 Game Modes | Flag Arcade',
     description: 'Six free flag quiz games in one place — Journey, Arcade, Around the World, Jeopardy, Practice, and Flag Runner. All 197 country flags, no signup required.',
+    ogImage: `${SITE_URL}/modes/journey.webp`,
     priority: '0.7',
     routeChunk: 'ModesRoute',
     shortName: 'All Game Modes',
@@ -2052,6 +2058,7 @@ const PLAY_ROUTE_META: PlayRouteMeta[] = [
     path: '/play/journey',
     title: 'Flag Quiz Adventure - Journey Mode | Flag Arcade',
     description: 'Free flag quiz adventure. Progress through worlds of increasing difficulty, earn stars, and unlock pixel-art characters as you learn every country flag.',
+    ogImage: `${SITE_URL}/modes/journey.webp`,
     priority: '0.7',
     routeChunk: 'JourneyScreen',
     shortName: 'Journey Mode',
@@ -2067,6 +2074,7 @@ const PLAY_ROUTE_META: PlayRouteMeta[] = [
     path: '/play/arcade',
     title: 'Arcade Mode - Free Flag Quiz | Flag Arcade',
     description: 'Free arcade-style flag quiz. Pick your difficulty and continent, then guess as many country flags as you can. Streak bonuses, no signup required.',
+    ogImage: `${SITE_URL}/modes/arcade.webp`,
     priority: '0.7',
     routeChunk: 'ArcadeRoute',
     shortName: 'Arcade Mode',
@@ -2082,6 +2090,7 @@ const PLAY_ROUTE_META: PlayRouteMeta[] = [
     path: '/play/around-the-world',
     title: 'World Map Flag Quiz - Around the World | Flag Arcade',
     description: 'World map flag quiz: a country is highlighted on the map and you pick its flag. Free, all 197 countries, great for geography classrooms.',
+    ogImage: `${SITE_URL}/modes/around-the-world.webp`,
     priority: '0.6',
     routeChunk: 'AroundTheWorldRoute',
     shortName: 'Around the World',
@@ -2097,6 +2106,7 @@ const PLAY_ROUTE_META: PlayRouteMeta[] = [
     path: '/play/jeopardy',
     title: 'Jeopardy Mode - Country to Flag Quiz | Flag Arcade',
     description: 'Free Jeopardy-style flag quiz: see the country name and pick the correct flag. Five difficulty levels, board layout, and category bonuses.',
+    ogImage: `${SITE_URL}/modes/jeopardy.webp`,
     priority: '0.6',
     routeChunk: 'JeopardyRoute',
     shortName: 'Flag Jeopardy',
@@ -2112,6 +2122,7 @@ const PLAY_ROUTE_META: PlayRouteMeta[] = [
     path: '/play/presentation',
     title: 'Practice Mode - Flag Flashcards | Flag Arcade',
     description: 'Free flag flashcards. Reveal answers at your own pace, no timer, no score — pure study mode for learning every country flag.',
+    ogImage: `${SITE_URL}/modes/presentation.webp`,
     priority: '0.6',
     routeChunk: 'PresentationRoute',
     shortName: 'Practice Mode',
@@ -2127,6 +2138,7 @@ const PLAY_ROUTE_META: PlayRouteMeta[] = [
     path: '/play/flag-runner',
     title: 'Flag Runner Game - Catch the Right Flags | Flag Arcade',
     description: 'Free flag-catching action game. A country name appears at the top; dodge wrong flags and grab the right one before you run out of lives.',
+    ogImage: `${SITE_URL}/modes/flag-runner.webp`,
     priority: '0.6',
     routeChunk: 'FlagRunnerRoute',
     shortName: 'Flag Runner',
@@ -2136,6 +2148,22 @@ const PLAY_ROUTE_META: PlayRouteMeta[] = [
       'A target country name is announced at the top.',
       'Move left or right between lanes to catch its flag.',
       'Three lives. Wrong flags cost a life; right flags rack up the score.',
+    ],
+  },
+  {
+    path: '/play/perfect-passport',
+    title: 'Perfect Passport - Can You Score 197/197? | Flag Arcade',
+    description: 'Draft 10 countries from random spins, simulate a world tour, and see if your roster can score 197/197 in Perfect Passport.',
+    ogImage: `${SITE_URL}/modes/perfect-passport.webp`,
+    priority: '0.7',
+    routeChunk: 'PerfectPassportRoute',
+    shortName: 'Perfect Passport',
+    h1: 'Perfect Passport — Can You Score 197/197?',
+    lead: 'Perfect Passport is a country draft game. Each round gives you six countries and one global stat category. Pick the strongest option, stamp your passport, and see if your roster can beat the world.',
+    howItWorks: [
+      'Draft 10 countries from random six-country spins.',
+      'Use two rerolls when a spin is not strong enough for a perfect run.',
+      'Your final roster simulates a 197-country world tour and produces a shareable score.',
     ],
   },
   {
@@ -2230,7 +2258,7 @@ function playJsonLd(meta: PlayRouteMeta): object | undefined {
     name: meta.shortName,
     description: meta.description,
     url: `${SITE_URL}${meta.path}`,
-    image: `${SITE_URL}/og-image.jpg`,
+    image: meta.ogImage || `${SITE_URL}/og-image.jpg`,
     inLanguage: 'en',
     genre: ['Educational', 'Trivia'],
     playMode: 'SinglePlayer',
@@ -2256,6 +2284,7 @@ function generatePlayPage(meta: PlayRouteMeta, assets: Assets): string {
       title: meta.title,
       description: meta.description,
       canonical: `${SITE_URL}${meta.path}`,
+      ogImage: meta.ogImage,
       noindex: meta.noindex,
       jsonLd: playJsonLd(meta),
     },

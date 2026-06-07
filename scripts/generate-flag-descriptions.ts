@@ -321,10 +321,6 @@ const territoryDescriptions: Record<string, TerritoryEntry> = {
   },
 };
 
-function capitalize(s: string): string {
-  return s.charAt(0).toUpperCase() + s.slice(1);
-}
-
 function formatColorList(colors: string[]): string {
   if (colors.length === 1) return colors[0];
   if (colors.length === 2) return `${colors[0]} and ${colors[1]}`;

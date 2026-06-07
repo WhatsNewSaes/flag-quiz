@@ -19,6 +19,13 @@ const FLAG_EMOJIS = [
 
 const GAME_MODES = [
   {
+    title: 'Perfect Passport',
+    description: 'Answer 10 questions and try to build the perfect passport on this world tour adventure.',
+    image: '/modes/perfect-passport.webp',
+    path: '/play/perfect-passport',
+    isNew: true,
+  },
+  {
     title: 'Journey Mode',
     description: 'Progress through worlds of increasing difficulty. Earn stars and unlock achievements.',
     image: '/modes/journey.webp',
@@ -43,17 +50,10 @@ const GAME_MODES = [
     path: '/play/jeopardy',
   },
   {
-    title: 'Practice Mode',
-    description: 'Flashcard-style study mode. Reveal answers at your own pace.',
-    image: '/modes/presentation.webp',
-    path: '/play/presentation',
-  },
-  {
     title: 'Flag Runner',
     description: 'A pixel-art platformer where you collect flags while running and jumping.',
     image: '/modes/flag-runner.webp',
     path: '/play/flag-runner',
-    isNew: true,
   },
 ];
 

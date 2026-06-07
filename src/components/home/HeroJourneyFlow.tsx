@@ -85,6 +85,7 @@ export function HeroJourneyFlow() {
 
   const handleFlagPick = useCallback((code: string) => {
     window.localStorage.setItem('favorite-flag', JSON.stringify(code));
+    window.localStorage.setItem('onboarding-complete', JSON.stringify('true'));
     setPhase('launching');
     navigate('/play/journey');
   }, [navigate]);

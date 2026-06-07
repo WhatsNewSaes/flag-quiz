@@ -158,6 +158,9 @@ export function SyncProvider({ children }: { children: ReactNode }) {
       // Read local settings
       const localSettings: Record<string, unknown> = {};
       const settingsKeys = [
+        'onboarding-complete',
+        'selected-character',
+        'favorite-flag',
         'quiz-mode',
         'enabled-continents',
         'enabled-difficulties',

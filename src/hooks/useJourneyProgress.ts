@@ -173,10 +173,12 @@ export function useJourneyProgress(regions: JourneyRegion[], allLevels: JourneyL
     (levelId: string, correct: number, total: number) => {
       const stars = calculateStars(correct, total);
       const pct = total > 0 ? Math.round((correct / total) * 100) : 0;
+      const previousResult = progress.levelResults[levelId];
+      const isNewBest = !previousResult || pct > previousResult.bestPercentage;
 
       setProgress((prev) => {
         const existing = prev.levelResults[levelId];
-        const isNewBest = !existing || pct > existing.bestPercentage;
+        const nextIsNewBest = !existing || pct > existing.bestPercentage;
         const newStars = existing ? Math.max(existing.stars, stars) : stars;
         const oldStars = existing?.stars ?? 0;
         const starDelta = newStars - oldStars;
@@ -185,9 +187,9 @@ export function useJourneyProgress(regions: JourneyRegion[], allLevels: JourneyL
           ...prev.levelResults,
           [levelId]: {
             stars: newStars,
-            bestScore: isNewBest ? correct : (existing?.bestScore ?? correct),
+            bestScore: nextIsNewBest ? correct : (existing?.bestScore ?? correct),
             totalFlags: total,
-            bestPercentage: isNewBest ? pct : (existing?.bestPercentage ?? pct),
+            bestPercentage: nextIsNewBest ? pct : (existing?.bestPercentage ?? pct),
             attempts: (existing?.attempts ?? 0) + 1,
             lastFailedAt: stars === 0 ? Date.now() : (existing?.lastFailedAt ?? null),
           },
@@ -208,9 +210,9 @@ export function useJourneyProgress(regions: JourneyRegion[], allLevels: JourneyL
         };
       });
 
-      return { stars, percentage: pct, isNewBest: true };
+      return { stars, percentage: pct, isNewBest };
     },
-    [setProgress, regions]
+    [setProgress, regions, progress.levelResults]
   );
 
   const checkAchievements = useCallback(

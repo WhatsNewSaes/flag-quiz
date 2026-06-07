@@ -1,6 +1,7 @@
 import { NavBar } from '../components/NavBar';
 import { PresentationScreen } from '../screens/PresentationScreen';
 import { SEOHead } from '../components/seo/SEOHead';
+import { MODE_OG_IMAGES } from '../utils/modeOgImages';
 
 export function PresentationRoute() {
   return (
@@ -9,6 +10,7 @@ export function PresentationRoute() {
         title="Practice Mode - Flag Flashcards | Flag Arcade"
         description="Flashcard-style flag practice. Reveal answers at your own pace and learn every country flag without time pressure."
         canonical="https://flagarcade.com/play/presentation"
+        ogImage={MODE_OG_IMAGES.presentation}
       />
       <NavBar />
       <PresentationScreen />

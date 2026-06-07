@@ -1,0 +1,5 @@
+{
+  "extends": "./tsconfig.json",
+  "include": ["src", "api", "scripts", "middleware.ts", "vite.config.ts", "capacitor.config.ts"],
+  "exclude": ["dist", "node_modules", "android", "ios", "tools"]
+}

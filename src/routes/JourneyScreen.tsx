@@ -8,8 +8,11 @@ import { JourneyLevelPlay } from '../components/journey/JourneyLevelPlay';
 import { LevelCompleteFlow } from '../components/journey/LevelCompleteFlow';
 import { JourneyPractice } from '../components/journey/JourneyPractice';
 import { SEOHead } from '../components/seo/SEOHead';
+import { MODE_OG_IMAGES } from '../utils/modeOgImages';
 
 type JourneyPhase = 'map' | 'play' | 'complete' | 'practice';
+const DEFAULT_CHARACTER = 'boy';
+const DEFAULT_FAVORITE_FLAG = 'US';
 
 export function JourneyScreen() {
   const {
@@ -23,10 +26,15 @@ export function JourneyScreen() {
   } = useGameContext();
 
   const [onboardingComplete, setOnboardingComplete] = useLocalStorage<string>('onboarding-complete', '');
-  const [, setSelectedCharacter] = useLocalStorage<string>('selected-character', '');
-  const [, setFavoriteFlag] = useLocalStorage<string>('favorite-flag', '');
+  const [selectedCharacter, setSelectedCharacter] = useLocalStorage<string>('selected-character', '');
+  const [favoriteFlag, setFavoriteFlag] = useLocalStorage<string>('favorite-flag', '');
 
   const [journeyPhase, setJourneyPhase] = useState<JourneyPhase>('map');
+  const hasJourneyHistory = Object.keys(journeyProgress.progress.levelResults).length > 0
+    || journeyProgress.progress.totalStars > 0;
+  const hasOnboardingComplete = onboardingComplete === 'true'
+    || Boolean(selectedCharacter)
+    || hasJourneyHistory;
 
   const handleOnboardingComplete = useCallback((character: string, flag: string) => {
     setSelectedCharacter(character);
@@ -73,7 +81,27 @@ export function JourneyScreen() {
     }
   }, [journeyPhase, journeyGame.isComplete, completionResult, handleJourneyComplete]);
 
-  if (!onboardingComplete) {
+  useEffect(() => {
+    if (onboardingComplete !== 'true' && (selectedCharacter || hasJourneyHistory)) {
+      if (!selectedCharacter) {
+        setSelectedCharacter(DEFAULT_CHARACTER);
+      }
+      if (!favoriteFlag) {
+        setFavoriteFlag(DEFAULT_FAVORITE_FLAG);
+      }
+      setOnboardingComplete('true');
+    }
+  }, [
+    onboardingComplete,
+    selectedCharacter,
+    favoriteFlag,
+    hasJourneyHistory,
+    setSelectedCharacter,
+    setFavoriteFlag,
+    setOnboardingComplete,
+  ]);
+
+  if (!hasOnboardingComplete) {
     return <Onboarding onComplete={handleOnboardingComplete} />;
   }
 
@@ -148,6 +176,7 @@ export function JourneyScreen() {
         title="Journey Mode - Flag Quiz Adventure | Flag Arcade"
         description="Progress through worlds of increasing difficulty. Earn stars, unlock characters, and master every country flag in our free Journey mode."
         canonical="https://flagarcade.com/play/journey"
+        ogImage={MODE_OG_IMAGES.journey}
       />
       <NavBar />
       <OverworldMap

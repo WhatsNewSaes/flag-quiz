@@ -5,6 +5,7 @@ import { JeopardyDifficultySelect, type JeopardyQuizMode } from '../components/J
 import { JeopardyScreen } from '../screens/JeopardyScreen';
 import { ModeGuard } from './ModeGuard';
 import { SEOHead } from '../components/seo/SEOHead';
+import { MODE_OG_IMAGES } from '../utils/modeOgImages';
 
 export function JeopardyRoute() {
   const navigate = useNavigate();
@@ -16,6 +17,7 @@ export function JeopardyRoute() {
         title="Jeopardy Mode - Country to Flag Quiz | Flag Arcade"
         description="See the country name and pick the correct flag. Five difficulty levels in this free Jeopardy-style flag quiz from Flag Arcade."
         canonical="https://flagarcade.com/play/jeopardy"
+        ogImage={MODE_OG_IMAGES.jeopardy}
       />
       <NavBar variant="dark" />
       {quizMode ? (

@@ -6,12 +6,17 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom', 'react-router-dom', '@vercel/analytics'],
+        manualChunks(id) {
+          if (
+            id.includes('/node_modules/react/') ||
+            id.includes('/node_modules/react-dom/') ||
+            id.includes('/node_modules/react-router/') ||
+            id.includes('/node_modules/react-router-dom/') ||
+            id.includes('/node_modules/@vercel/analytics/')
+          ) {
+            return 'vendor'
+          }
         },
-        // Merge chunks smaller than 10 KB into their importers to reduce
-        // network waterfall depth (Lighthouse "Avoid chaining critical requests").
-        experimentalMinChunkSize: 10000,
       },
     },
   },

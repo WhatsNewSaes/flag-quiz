@@ -13,6 +13,7 @@ import * as path from 'node:path';
 import sharp from 'sharp';
 import satori from 'satori';
 import { Resvg } from '@resvg/resvg-js';
+import type { ReactNode } from 'react';
 import { countries } from '../src/data/countries';
 
 const OUT_DIR = path.resolve(import.meta.dirname, '..', 'public', 'og');
@@ -50,72 +51,74 @@ async function main() {
     const nameFontSize = country.name.length > 20 ? 32 : country.name.length > 14 ? 45 : 60;
 
     // Render the overlay (text + flag emoji) with satori
-    const overlaySvg = await satori(
-      {
-        type: 'div',
-        props: {
-          style: {
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'flex-start',
-            paddingTop: '25px',
-            paddingBottom: '140px',
-            fontFamily: 'Press Start 2P',
-          },
-          children: [
-            // Country name
-            {
-              type: 'div',
-              props: {
-                style: {
-                  fontSize: `${nameFontSize}px`,
-                  fontWeight: 700,
-                  color: '#FFFFFF',
-                  textAlign: 'center',
-                  textTransform: 'uppercase' as const,
-                  textShadow: '0 2px 8px rgba(0,0,0,0.7)',
-                  marginBottom: '25px',
-                },
-                children: country.name,
-              },
-            },
-            // Continent
-            {
-              type: 'div',
-              props: {
-                style: {
-                  fontSize: '24px',
-                  fontWeight: 700,
-                  color: '#cccccc',
-                  textAlign: 'center',
-                  textTransform: 'uppercase' as const,
-                  textShadow: '0 2px 6px rgba(0,0,0,0.7)',
-                  marginBottom: '25px',
-                },
-                children: country.continent,
-              },
-            },
-            // Flag emoji
-            {
-              type: 'div',
-              props: {
-                style: {
-                  fontSize: '375px',
-                  lineHeight: 1,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.5))',
-                },
-                children: emoji,
-              },
-            },
-          ],
+    const overlay = {
+      type: 'div',
+      props: {
+        style: {
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'flex-start',
+          paddingTop: '25px',
+          paddingBottom: '140px',
+          fontFamily: 'Press Start 2P',
         },
+        children: [
+          // Country name
+          {
+            type: 'div',
+            props: {
+              style: {
+                fontSize: `${nameFontSize}px`,
+                fontWeight: 700,
+                color: '#FFFFFF',
+                textAlign: 'center',
+                textTransform: 'uppercase' as const,
+                textShadow: '0 2px 8px rgba(0,0,0,0.7)',
+                marginBottom: '25px',
+              },
+              children: country.name,
+            },
+          },
+          // Continent
+          {
+            type: 'div',
+            props: {
+              style: {
+                fontSize: '24px',
+                fontWeight: 700,
+                color: '#cccccc',
+                textAlign: 'center',
+                textTransform: 'uppercase' as const,
+                textShadow: '0 2px 6px rgba(0,0,0,0.7)',
+                marginBottom: '25px',
+              },
+              children: country.continent,
+            },
+          },
+          // Flag emoji
+          {
+            type: 'div',
+            props: {
+              style: {
+                fontSize: '375px',
+                lineHeight: 1,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.5))',
+              },
+              children: emoji,
+            },
+          },
+        ],
       },
+    } as ReactNode;
+
+    const overlaySvg = await satori(
+      overlay,
       {
         width: 1200,
         height: 630,

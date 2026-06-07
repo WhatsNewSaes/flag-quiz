@@ -30,9 +30,9 @@ export function JeopardyQuestion({
 }: JeopardyQuestionProps) {
   const isAnswered = answeredCorrectly !== null;
   const valueAtStake = isDailyDouble ? wager : cell.value;
-  const isTypeAhead = quizMode === 'type-ahead';
+  const isTypeAhead = quizMode === 'hard';
 
-  // Type-ahead state for extra-hard mode
+  // Type-ahead state for hard mode
   const [inputValue, setInputValue] = useState('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(0);
@@ -57,7 +57,7 @@ export function JeopardyQuestion({
     setHighlightedIndex(0);
   }, [filteredCountries]);
 
-  // Focus input in extra-hard mode
+  // Focus input in hard mode
   useEffect(() => {
     if (isTypeAhead && !isAnswered && inputRef.current) {
       inputRef.current.focus();

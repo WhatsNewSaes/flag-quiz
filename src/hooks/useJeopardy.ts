@@ -58,7 +58,7 @@ function getRandomCountryForCell(continent: Continent, difficulty: Difficulty): 
   return matching[Math.floor(Math.random() * matching.length)];
 }
 
-function generateBoard(quizMode: JeopardyQuizMode = 'pick-the-name'): JeopardyCell[][] {
+function generateBoard(quizMode: JeopardyQuizMode = 'easy'): JeopardyCell[][] {
   const board: JeopardyCell[][] = [];
 
   for (let row = 0; row < 5; row++) {
@@ -69,12 +69,11 @@ function generateBoard(quizMode: JeopardyQuizMode = 'pick-the-name'): JeopardyCe
       const continent = continentOrder[col];
       const country = getRandomCountryForCell(continent, difficulty);
 
-      let questionType: QuestionType;
-      if (quizMode === 'pick-the-name' || quizMode === 'type-ahead') {
-        questionType = 'name-the-flag'; // show flag, pick/type country name
-      } else {
-        questionType = 'pick-the-flag'; // show country name, pick flag
-      }
+      const questionType: QuestionType = quizMode === 'hard'
+        ? 'name-the-flag'
+        : (row + col) % 2 === 0
+          ? 'name-the-flag'
+          : 'pick-the-flag';
 
       rowCells.push({
         continent,
@@ -164,7 +163,7 @@ export function useJeopardy() {
       dailyDoubleWager: 0,
       gameOver: false,
       gameDifficulty: 'medium' as JeopardyDifficulty,
-      quizMode: 'pick-the-name' as JeopardyQuizMode,
+      quizMode: 'easy' as JeopardyQuizMode,
     };
   });
 
@@ -289,26 +288,28 @@ export function useJeopardy() {
   }, []);
 
   const resetGame = useCallback((quizMode?: JeopardyQuizMode) => {
-    const mode = quizMode ?? 'pick-the-name';
-    const board = generateBoard(mode);
-    const dailyDoubleRow = Math.floor(Math.random() * 5);
-    const dailyDoubleCol = Math.floor(Math.random() * 6);
+    setState(prev => {
+      const mode = quizMode ?? prev.quizMode;
+      const board = generateBoard(mode);
+      const dailyDoubleRow = Math.floor(Math.random() * 5);
+      const dailyDoubleCol = Math.floor(Math.random() * 6);
 
-    setState(prev => ({
-      board,
-      score: 0,
-      dailyDoubleLocation: { row: dailyDoubleRow, col: dailyDoubleCol },
-      selectedCell: null,
-      currentQuestion: null,
-      options: [],
-      answeredCorrectly: null,
-      selectedAnswer: null,
-      showDailyDouble: false,
-      dailyDoubleWager: 0,
-      gameOver: false,
-      gameDifficulty: 'medium' as JeopardyDifficulty,
-      quizMode: quizMode ?? prev.quizMode,
-    }));
+      return {
+        board,
+        score: 0,
+        dailyDoubleLocation: { row: dailyDoubleRow, col: dailyDoubleCol },
+        selectedCell: null,
+        currentQuestion: null,
+        options: [],
+        answeredCorrectly: null,
+        selectedAnswer: null,
+        showDailyDouble: false,
+        dailyDoubleWager: 0,
+        gameOver: false,
+        gameDifficulty: 'medium' as JeopardyDifficulty,
+        quizMode: mode,
+      };
+    });
   }, []);
 
   return {

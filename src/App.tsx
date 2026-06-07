@@ -35,6 +35,7 @@ const AroundTheWorldRoute = lazy(() => import('./routes/AroundTheWorldRoute').th
 const JeopardyRoute = lazy(() => import('./routes/JeopardyRoute').then(m => ({ default: m.JeopardyRoute })));
 const PresentationRoute = lazy(() => import('./routes/PresentationRoute').then(m => ({ default: m.PresentationRoute })));
 const FlagRunnerRoute = lazy(() => import('./routes/FlagRunnerRoute').then(m => ({ default: m.FlagRunnerRoute })));
+const PerfectPassportRoute = lazy(() => import('./routes/PerfectPassportRoute').then(m => ({ default: m.PerfectPassportRoute })));
 const AchievementsRoute = lazy(() => import('./routes/AchievementsRoute').then(m => ({ default: m.AchievementsRoute })));
 const CharactersRoute = lazy(() => import('./routes/CharactersRoute').then(m => ({ default: m.CharactersRoute })));
 
@@ -107,6 +108,7 @@ const SCREEN_TO_PATH: Record<string, string> = {
   'jeopardy': '/play/jeopardy',
   'presentation': '/play/presentation',
   'flag-runner': '/play/flag-runner',
+  'perfect-passport': '/play/perfect-passport',
   'achievements': '/play/achievements',
   'characters': '/play/characters',
   'campaign': '/play/arcade',
@@ -229,6 +231,7 @@ function App() {
           <Route path="jeopardy" element={<JeopardyRoute />} />
           <Route path="presentation" element={<PresentationRoute />} />
           <Route path="flag-runner" element={<FlagRunnerRoute />} />
+          <Route path="perfect-passport" element={<PerfectPassportRoute />} />
           <Route path="achievements" element={<AchievementsRoute />} />
           <Route path="characters" element={<CharactersRoute />} />
           <Route path="*" element={<Navigate to="/play/modes" replace />} />
