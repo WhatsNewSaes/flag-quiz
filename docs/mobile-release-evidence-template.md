@@ -4,7 +4,7 @@ Last updated: 2026-06-07
 
 Copy this file for each release candidate, for example `docs/release-evidence/mobile-1.0-build-1.md`. Do not mark the launch checklist's installed-build smoke tests complete until this evidence is filled for both platforms.
 
-Use `YYYY-MM-DD` for Evidence date, Upload date, installed-build Date, Failure Log Date, and Approval date.
+Use `YYYY-MM-DD` for Evidence date, Upload date, installed-build Date, Failure Log Date, and Approval date. Release evidence dates must be today or earlier; future-dated evidence is rejected.
 
 ## Release Candidate
 

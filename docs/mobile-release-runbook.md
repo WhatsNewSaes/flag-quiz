@@ -82,6 +82,8 @@ npm run mobile:evidence:check -- --file docs/release-evidence/<release-file>.md
 
 The release evidence checker requires the `Artifact manifest` field to be a local JSON path so it can parse and verify the manifest's commit, version, build number, and signed artifact hashes. Other screenshot, clip, QA-note, and store-console evidence fields may use external URLs or repo-relative files.
 
+Evidence date, signed-build upload dates, installed-build test dates, and approval date must use `YYYY-MM-DD` and must be today or earlier. Future-dated evidence is rejected so the file cannot pass before the work is actually complete.
+
 As the final local gate before submitting for App Store and Google Play review, run it with the signed artifact paths. The gate runs unsigned preflight, writes the artifact manifest from the evidence file's `Artifact manifest` path, validates the completed evidence file, and checks public URLs.
 
 ```bash

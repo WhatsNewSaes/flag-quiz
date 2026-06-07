@@ -784,6 +784,8 @@ async function main() {
     'Release evidence build number matches native build numbers',
     'Release evidence git commit matches current HEAD',
     'Release evidence date is YYYY-MM-DD',
+    'is not future-dated',
+    'todayIsoDate',
     'Public site URL verified',
     'requiredUrlVerificationFields',
     'requiredBuildArtifactRows',
@@ -810,6 +812,7 @@ async function main() {
     'app build shown matches release build',
     'wrong installed build number',
     'invalid approval date',
+    'future approval date',
     'Approval date is YYYY-MM-DD',
     'Required Smoke Evidence',
     'Store Console Evidence',
@@ -845,6 +848,14 @@ async function main() {
   expect(
     releaseRunbook.includes('The release evidence checker requires the `Artifact manifest` field to be a local JSON path'),
     'Release runbook documents local artifact manifest enforcement'
+  );
+  expect(
+    releaseRunbook.includes('Future-dated evidence is rejected'),
+    'Release runbook documents future-dated evidence rejection'
+  );
+  expect(
+    releaseEvidenceTemplate.includes('future-dated evidence is rejected'),
+    'Release evidence template documents future-dated evidence rejection'
   );
   expect(
     storeSubmissionPackage.includes('external artifact manifests'),

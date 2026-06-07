@@ -307,6 +307,21 @@ function requireIsoDate(findings: Finding[], label: string, value: string | unde
   else fail(findings, label, value ? `Expected YYYY-MM-DD, got ${value}` : 'Missing value');
 }
 
+function todayIsoDate() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function requireReleaseDate(findings: Finding[], label: string, value: string | undefined) {
+  requireIsoDate(findings, label, value);
+  if (!isIsoDate(value)) return;
+
+  const dateValue = value as string;
+  const dateLabel = label.replace(/ is YYYY-MM-DD$/, '');
+  const today = todayIsoDate();
+  if (dateValue <= today) pass(findings, `${dateLabel} is not future-dated`, dateValue);
+  else fail(findings, `${dateLabel} is not future-dated`, `Expected ${today} or earlier, got ${dateValue}`);
+}
+
 function evidenceTarget(value: string) {
   const trimmed = value.trim();
   const markdownLink = trimmed.match(/^\[[^\]]+\]\(([^)]+)\)$/);
@@ -433,7 +448,7 @@ function validateEvidence(markdown: string, context: ReleaseContext) {
   requireEqual(findings, 'Release evidence app version matches package.json', fieldValue(markdown, 'App version'), context.appVersion);
   requireEqual(findings, 'Release evidence build number matches native build numbers', fieldValue(markdown, 'Build number / version code'), context.buildNumber);
   requireEqual(findings, 'Release evidence git commit matches current HEAD', fieldValue(markdown, 'Git commit'), context.gitCommit);
-  requireIsoDate(findings, 'Release evidence date is YYYY-MM-DD', fieldValue(markdown, 'Evidence date'));
+  requireReleaseDate(findings, 'Release evidence date is YYYY-MM-DD', fieldValue(markdown, 'Evidence date'));
 
   for (const label of requiredUrlVerificationFields) {
     requirePass(findings, `${label} passed`, fieldValue(markdown, label));
@@ -491,7 +506,7 @@ function validateEvidence(markdown: string, context: ReleaseContext) {
       if (value && isFilled(value)) pass(findings, `${required.platform} build artifact ${cellLabel} is filled`, value);
       else fail(findings, `${required.platform} build artifact ${cellLabel} is filled`, value ? `Current value: ${value}` : 'Missing value');
     }
-    requireIsoDate(findings, `${required.platform} build artifact Upload date is YYYY-MM-DD`, row[4]);
+    requireReleaseDate(findings, `${required.platform} build artifact Upload date is YYYY-MM-DD`, row[4]);
     requireComplete(findings, label, row[5]);
   }
 
@@ -539,7 +554,7 @@ function validateEvidence(markdown: string, context: ReleaseContext) {
       if (value && isFilled(value)) pass(findings, `${required.platform} ${required.device} ${cellLabel} is filled`, value);
       else fail(findings, `${required.platform} ${required.device} ${cellLabel} is filled`, value ? `Current value: ${value}` : 'Missing value');
     }
-    requireIsoDate(findings, `${required.platform} ${required.device} Date is YYYY-MM-DD`, row[6]);
+    requireReleaseDate(findings, `${required.platform} ${required.device} Date is YYYY-MM-DD`, row[6]);
     requireEqual(
       findings,
       `${required.platform} ${required.device} app build shown matches release build`,
@@ -597,7 +612,7 @@ function validateEvidence(markdown: string, context: ReleaseContext) {
     if (value && isFilled(value)) pass(findings, `${label} is signed off`, value);
     else fail(findings, `${label} is signed off`, value ? `Current value: ${value}` : 'Missing field');
   }
-  requireIsoDate(findings, 'Approval date is YYYY-MM-DD', fieldValue(markdown, 'Approval date'));
+  requireReleaseDate(findings, 'Approval date is YYYY-MM-DD', fieldValue(markdown, 'Approval date'));
 
   return findings;
 }
@@ -777,6 +792,12 @@ function negativeSelfTestFindings() {
       baseline.replace('- Approval date: 2026-06-07', '- Approval date: June 7'),
       context,
       ['Approval date is YYYY-MM-DD']
+    ),
+    ...expectSelfTestFailure(
+      'future approval date',
+      baseline.replace('- Approval date: 2026-06-07', '- Approval date: 2999-01-01'),
+      context,
+      ['Approval date is not future-dated']
     ),
     ...expectSelfTestFailure(
       'malformed local artifact manifest',
