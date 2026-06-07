@@ -126,6 +126,8 @@ After the iOS archive is created, verify both signed release artifact paths:
 npm run mobile:artifacts:check -- --android-aab android/app/build/outputs/bundle/release/app-release.aab --ios-archive ios/App/build/FlagArcade.xcarchive
 ```
 
+This checks bundle/archive structure, version metadata, Android AAB signing metadata, the archived iOS app's code-signature resources, embedded provisioning profile, and `codesign --verify`.
+
 Upload that AAB to a Google Play internal testing track before production.
 
 ## 3. iOS Archive

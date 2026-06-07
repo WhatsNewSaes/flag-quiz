@@ -72,6 +72,15 @@ function listZipEntries(filePath: string) {
   }
 }
 
+function parsePlist(filePath: string) {
+  const plistJson = execFileSync('plutil', ['-convert', 'json', '-o', '-', filePath], {
+    cwd: root,
+    encoding: 'utf8',
+    stdio: ['ignore', 'pipe', 'ignore'],
+  });
+  return JSON.parse(plistJson) as Record<string, unknown>;
+}
+
 async function checkAndroidAab(inputPath: string) {
   const aabPath = resolveInput(inputPath);
   const relativePath = path.relative(root, aabPath);
@@ -89,6 +98,14 @@ async function checkAndroidAab(inputPath: string) {
   expect(entries.includes('BundleConfig.pb'), 'Android AAB includes BundleConfig.pb');
   expect(entries.some((entry) => entry.endsWith('/manifest/AndroidManifest.xml')), 'Android AAB includes module AndroidManifest.xml');
   expect(entries.some((entry) => entry.startsWith('base/')), 'Android AAB includes base module entries');
+  expect(
+    entries.some((entry) => /^META-INF\/.+\.SF$/i.test(entry)),
+    'Android AAB includes signing signature file'
+  );
+  expect(
+    entries.some((entry) => /^META-INF\/.+\.(RSA|DSA|EC)$/i.test(entry)),
+    'Android AAB includes signing certificate block'
+  );
 }
 
 async function checkIosArchive(inputPath: string) {
@@ -108,19 +125,16 @@ async function checkIosArchive(inputPath: string) {
   const applicationsPath = path.join(archivePath, 'Products/Applications');
   const applicationsPathExists = existsSync(applicationsPath);
   expect(applicationsPathExists, 'iOS archive includes Products/Applications directory', path.relative(root, applicationsPath));
+  let appPath: string | undefined;
   if (applicationsPathExists) {
     const appBundles = (await readdir(applicationsPath)).filter((entry) => entry.endsWith('.app'));
     expect(appBundles.length > 0, 'iOS archive includes an .app bundle', appBundles.join(', ') || 'none');
+    appPath = appBundles[0] ? path.join(applicationsPath, appBundles[0]) : undefined;
   }
 
   if (existsSync(infoPlistPath)) {
     try {
-      const infoPlistJson = execFileSync('plutil', ['-convert', 'json', '-o', '-', infoPlistPath], {
-        cwd: root,
-        encoding: 'utf8',
-        stdio: ['ignore', 'pipe', 'ignore'],
-      });
-      const infoPlist = JSON.parse(infoPlistJson) as {
+      const infoPlist = parsePlist(infoPlistPath) as {
         ApplicationProperties?: {
           CFBundleIdentifier?: string;
           CFBundleShortVersionString?: string;
@@ -145,6 +159,64 @@ async function checkIosArchive(inputPath: string) {
       );
     } catch {
       fail('iOS archive Info.plist can be parsed');
+    }
+  }
+
+  if (appPath) {
+    const appInfoPlistPath = path.join(appPath, 'Info.plist');
+    expect(existsSync(appInfoPlistPath), 'iOS archived app includes Info.plist', path.relative(root, appInfoPlistPath));
+    expect(
+      existsSync(path.join(appPath, '_CodeSignature/CodeResources')),
+      'iOS archived app includes code signature resources',
+      path.relative(root, path.join(appPath, '_CodeSignature/CodeResources'))
+    );
+    expect(
+      existsSync(path.join(appPath, 'embedded.mobileprovision')),
+      'iOS archived app includes embedded provisioning profile',
+      path.relative(root, path.join(appPath, 'embedded.mobileprovision'))
+    );
+
+    if (existsSync(appInfoPlistPath)) {
+      try {
+        const appInfoPlist = parsePlist(appInfoPlistPath) as {
+          CFBundleExecutable?: string;
+          CFBundleIdentifier?: string;
+          CFBundleShortVersionString?: string;
+          CFBundleVersion?: string;
+        };
+        expect(
+          appInfoPlist.CFBundleIdentifier === 'com.flagarcade.app',
+          'iOS archived app bundle id is com.flagarcade.app',
+          appInfoPlist.CFBundleIdentifier
+        );
+        expect(
+          appInfoPlist.CFBundleShortVersionString === '1.0',
+          'iOS archived app marketing version is 1.0',
+          appInfoPlist.CFBundleShortVersionString
+        );
+        expect(
+          appInfoPlist.CFBundleVersion === '1',
+          'iOS archived app build number is 1',
+          appInfoPlist.CFBundleVersion
+        );
+        const executablePath = appInfoPlist.CFBundleExecutable
+          ? path.join(appPath, appInfoPlist.CFBundleExecutable)
+          : '';
+        expect(Boolean(executablePath && existsSync(executablePath)), 'iOS archived app executable exists', executablePath ? path.relative(root, executablePath) : 'missing CFBundleExecutable');
+      } catch {
+        fail('iOS archived app Info.plist can be parsed');
+      }
+    }
+
+    try {
+      execFileSync('codesign', ['--verify', '--deep', '--strict', '--verbose=2', appPath], {
+        cwd: root,
+        encoding: 'utf8',
+        stdio: ['ignore', 'pipe', 'pipe'],
+      });
+      pass('iOS archived app code signature verifies with codesign');
+    } catch {
+      fail('iOS archived app code signature verifies with codesign');
     }
   }
 }
