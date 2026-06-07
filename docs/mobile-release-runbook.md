@@ -68,16 +68,16 @@ After TestFlight, Play internal testing, and store-console evidence are filled, 
 npm run mobile:evidence:check -- --file docs/release-evidence/<release-file>.md
 ```
 
-As the final local gate before submitting for App Store and Google Play review, run:
-
-```bash
-npm run mobile:go-live:check -- --evidence docs/release-evidence/<release-file>.md
-```
-
-If the signed artifacts are available locally, include them in the final gate:
+As the final local gate before submitting for App Store and Google Play review, run it with the signed artifact paths:
 
 ```bash
 npm run mobile:go-live:check -- --evidence docs/release-evidence/<release-file>.md --android-aab android/app/build/outputs/bundle/release/app-release.aab --ios-archive ios/App/build/FlagArcade.xcarchive
+```
+
+For evidence-only review when the signed builds have already been uploaded and are not available locally, make the skip explicit:
+
+```bash
+npm run mobile:go-live:check -- --evidence docs/release-evidence/<release-file>.md --skip-artifacts
 ```
 
 ## 2. Android Release AAB

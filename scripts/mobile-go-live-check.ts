@@ -8,6 +8,7 @@ type Args = {
   evidenceFile?: string;
   androidAab?: string;
   iosArchive?: string;
+  skipArtifacts: boolean;
   skipUrls: boolean;
 };
 
@@ -18,7 +19,7 @@ type Step = {
 };
 
 function parseArgs(argv: string[]): Args {
-  const args: Args = { skipUrls: false };
+  const args: Args = { skipArtifacts: false, skipUrls: false };
 
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
@@ -26,6 +27,11 @@ function parseArgs(argv: string[]): Args {
 
     if (arg === '--skip-urls') {
       args.skipUrls = true;
+      continue;
+    }
+
+    if (arg === '--skip-artifacts') {
+      args.skipArtifacts = true;
       continue;
     }
 
@@ -91,10 +97,17 @@ async function main() {
     },
   ];
 
-  if (args.androidAab || args.iosArchive) {
-    if (!args.androidAab || !args.iosArchive) {
-      throw new Error('Provide both --android-aab and --ios-archive, or omit both artifact paths.');
-    }
+  if (args.skipArtifacts && (args.androidAab || args.iosArchive)) {
+    throw new Error('Do not combine --skip-artifacts with --android-aab or --ios-archive.');
+  }
+
+  if (!args.skipArtifacts && (!args.androidAab || !args.iosArchive)) {
+    throw new Error('Provide both --android-aab and --ios-archive for the final go-live gate, or pass --skip-artifacts for evidence-only review.');
+  }
+
+  if (!args.skipArtifacts) {
+    const androidAab = args.androidAab as string;
+    const iosArchive = args.iosArchive as string;
 
     steps.push({
       label: 'Signed release artifacts',
@@ -104,9 +117,9 @@ async function main() {
         'mobile:artifacts:check',
         '--',
         '--android-aab',
-        args.androidAab,
+        androidAab,
         '--ios-archive',
-        args.iosArchive,
+        iosArchive,
       ],
     });
   }
@@ -124,7 +137,11 @@ async function main() {
   }
 
   console.log('\nMobile go-live gate passed.');
-  console.log('Confirm App Store Connect and Google Play Console are submitted with the same signed builds referenced in the evidence file.');
+  if (args.skipArtifacts) {
+    console.log('Artifact verification was skipped. Confirm App Store Connect and Google Play Console are submitted with the same signed builds referenced in the evidence file.');
+  } else {
+    console.log('Signed artifacts, release evidence, preflight, and public URLs passed. Confirm App Store Connect and Google Play Console are submitted with these same builds.');
+  }
 }
 
 main().catch((error) => {

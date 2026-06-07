@@ -158,5 +158,5 @@ Before final store review submission, verify the completed evidence file:
 ```bash
 npm run mobile:artifacts:check -- --android-aab android/app/build/outputs/bundle/release/app-release.aab --ios-archive ios/App/build/FlagArcade.xcarchive
 npm run mobile:evidence:check -- --file docs/release-evidence/<release-file>.md
-npm run mobile:go-live:check -- --evidence docs/release-evidence/<release-file>.md
+npm run mobile:go-live:check -- --evidence docs/release-evidence/<release-file>.md --android-aab android/app/build/outputs/bundle/release/app-release.aab --ios-archive ios/App/build/FlagArcade.xcarchive
 ```

@@ -42,7 +42,7 @@ Copy this file for each release candidate, for example `docs/release-evidence/mo
 
 ## Required Smoke Evidence
 
-Record `Pass`, `Fail`, or `N/A`, and link a screenshot or short clip where useful.
+Record `Pass`, `Fail`, or `N/A`. Every required row must include an evidence link to a screenshot, clip, store-console screenshot, or QA note before `npm run mobile:evidence:check` can pass.
 
 | Area | iOS result | Android result | Evidence file/link | Notes |
 | --- | --- | --- | --- | --- |
@@ -89,7 +89,7 @@ Record `Pass`, `Fail`, or `N/A`, and link a screenshot or short clip where usefu
 
 ## Final Signoff
 
-Do not sign off while any required row above is `Not run`, `Fail`, `Not uploaded`, or `Not complete`.
+Do not sign off while any required row above is `Not run`, `Fail`, `Not uploaded`, `Not verified`, or `Not complete`.
 
 - iOS installed build smoke passed:
 - Android installed build smoke passed:

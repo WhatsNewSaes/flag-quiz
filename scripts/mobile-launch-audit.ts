@@ -334,6 +334,10 @@ async function main() {
   expect(storeSubmissionPackage.includes('npm run mobile:evidence:check'), 'Submission package documents release evidence checker command');
   expect(storeSubmissionPackage.includes('npm run mobile:artifacts:check'), 'Submission package documents release artifact checker command');
   expect(storeSubmissionPackage.includes('npm run mobile:go-live:check'), 'Submission package documents go-live gate command');
+  expect(
+    storeSubmissionPackage.includes('npm run mobile:go-live:check -- --evidence docs/release-evidence/<release-file>.md --android-aab android/app/build/outputs/bundle/release/app-release.aab --ios-archive ios/App/build/FlagArcade.xcarchive'),
+    'Submission package documents go-live gate with signed artifact paths'
+  );
   expect(storeSubmissionPackage.includes('npm run package:store-submission'), 'Submission package documents packaging command');
   expect(storeSubmissionPackage.includes('dist/mobile-store-submission'), 'Submission package documents packaging output path');
   expect(storeSubmissionPackage.includes('dist/flag-arcade-mobile-store-submission.zip'), 'Submission package documents packaging archive path');
@@ -598,6 +602,8 @@ async function main() {
     'App Privacy labels',
     'Data Safety',
     'Pre-launch report',
+    'Every required row must include an evidence link',
+    'Not verified',
   ];
   for (const term of releaseEvidenceTerms) {
     expect(releaseEvidenceTemplate.includes(term), `Release evidence template covers ${term}`);
@@ -680,12 +686,16 @@ async function main() {
     '--evidence',
     '--android-aab',
     '--ios-archive',
+    '--skip-artifacts',
     '--skip-urls',
+    'Provide both --android-aab and --ios-archive for the final go-live gate',
+    'Do not combine --skip-artifacts with --android-aab or --ios-archive.',
     'mobile:preflight',
     'mobile:evidence:check',
     'mobile:artifacts:check',
     'mobile:urls:check',
     'Mobile go-live gate passed.',
+    'Signed artifacts, release evidence, preflight, and public URLs passed.',
     'App Store Connect',
     'Google Play Console',
   ];
