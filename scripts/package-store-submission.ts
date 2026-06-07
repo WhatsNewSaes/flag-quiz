@@ -19,6 +19,7 @@ const requiredFiles = [
   'store-assets/shared/app-icon-1024.png',
   'store-assets/google-play/feature-graphic.png',
   'docs/mobile-store-metadata.md',
+  'docs/mobile-store-account-handoff.md',
   'docs/mobile-store-submission-package.md',
   'docs/mobile-store-privacy-form-answers.md',
   'docs/mobile-privacy-data-inventory.md',

@@ -315,6 +315,7 @@ async function main() {
 
   expect(existsSync(resolve('docs/mobile-launch-checklist.md')), 'Mobile launch checklist exists');
   expect(existsSync(resolve('docs/mobile-store-metadata.md')), 'Mobile store metadata draft exists');
+  expect(existsSync(resolve('docs/mobile-store-account-handoff.md')), 'Mobile store account handoff exists');
   expect(existsSync(resolve('docs/mobile-release-runbook.md')), 'Mobile release runbook exists');
   expect(existsSync(resolve('docs/mobile-privacy-data-inventory.md')), 'Mobile privacy data inventory exists');
   expect(existsSync(resolve('docs/mobile-data-deletion-runbook.md')), 'Mobile data deletion runbook exists');
@@ -354,6 +355,19 @@ async function main() {
   expect(storeMetadata.includes('Keywords:'), 'App Store keywords are drafted');
   expect(storeMetadata.includes('Category: Games / Educational / Trivia'), 'Store category selection is drafted');
   expect(storeMetadata.includes('No gambling or loot boxes.'), 'Rating questionnaire notes are drafted');
+
+  const storeAccountHandoff = await readFile(resolve('docs/mobile-store-account-handoff.md'), 'utf8');
+  for (const term of [
+    'Apple Developer Team ID',
+    'Google Play developer account holder',
+    'Copyright holder',
+    'Do not add passwords',
+    'npm run mobile:build:ios:archive',
+    'npm run mobile:build:android:release',
+    'com.flagarcade.app',
+  ]) {
+    expect(storeAccountHandoff.includes(term), `Store account handoff covers ${term}`);
+  }
 
   const storeAssetsReadme = await readFile(resolve('store-assets/README.md'), 'utf8');
   expect(storeAssetsReadme.includes('npm run package:store-submission'), 'Store assets README documents packaging command');
@@ -413,6 +427,7 @@ async function main() {
   expect(storeSubmissionPackage.includes('SHA-256 checksums'), 'Submission package documents handoff checksums');
   expect(storeSubmissionPackage.includes('byte count'), 'Submission package documents handoff byte counts');
   expect(storeSubmissionPackage.includes('com.flagarcade.app'), 'Submission package includes bundle/package id');
+  expect(storeSubmissionPackage.includes('docs/mobile-store-account-handoff.md'), 'Submission package includes store account handoff path');
   expect(storeSubmissionPackage.includes('store-assets/shared/app-icon-1024.png'), 'Submission package includes app icon path');
   expect(storeSubmissionPackage.includes('store-assets/google-play/feature-graphic.png'), 'Submission package includes Play feature graphic path');
   expect(storeSubmissionPackage.includes('android/app/build/outputs/bundle/release/app-release.aab'), 'Submission package includes Android AAB path');
@@ -450,6 +465,7 @@ async function main() {
     'store-assets/google-play/feature-graphic.png',
     'store-assets/app-store/iphone-6-7',
     'store-assets/google-play/phone-screenshots',
+    'docs/mobile-store-account-handoff.md',
     'docs/mobile-store-submission-package.md',
     'docs/mobile-store-privacy-form-answers.md',
     'docs/mobile-release-evidence-template.md',

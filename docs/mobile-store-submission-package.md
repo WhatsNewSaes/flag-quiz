@@ -30,6 +30,7 @@ Output:
 - Privacy Policy URL: `https://flagarcade.com/privacy`
 - Terms URL: `https://flagarcade.com/terms`
 - Source metadata doc: `docs/mobile-store-metadata.md`
+- Store account handoff: `docs/mobile-store-account-handoff.md`
 - Privacy/data-safety source doc: `docs/mobile-privacy-data-inventory.md`
 - Store privacy form answer guide: `docs/mobile-store-privacy-form-answers.md`
 - Data deletion runbook: `docs/mobile-data-deletion-runbook.md`
@@ -68,7 +69,7 @@ Build artifact:
 
 External tasks:
 
-- Confirm Apple Developer team ID and signing profile.
+- Confirm Apple Developer team ID and signing profile using `docs/mobile-store-account-handoff.md`.
 - Upload signed archive to TestFlight.
 - Complete App Privacy using `docs/mobile-store-privacy-form-answers.md`, and verify it against `docs/mobile-privacy-data-inventory.md`.
 - Run TestFlight smoke test on an installed build.
@@ -103,6 +104,7 @@ Build artifact:
 External tasks:
 
 - Create or confirm upload keystore.
+- Confirm Google Play developer account and upload key owner using `docs/mobile-store-account-handoff.md`.
 - Upload signed AAB to an internal testing track.
 - Complete Data Safety using `docs/mobile-store-privacy-form-answers.md`, and verify it against `docs/mobile-privacy-data-inventory.md`.
 - Run Google Play pre-launch report.

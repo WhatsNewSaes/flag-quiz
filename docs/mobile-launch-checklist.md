@@ -11,6 +11,7 @@ Last updated: 2026-06-07
 - [x] iOS URL scheme: `com.flagarcade.app://auth/callback`
 - [x] Android URL scheme: `com.flagarcade.app://auth/callback`
 - [x] Mobile orientation locked to portrait
+- [x] Store account handoff template exists: `docs/mobile-store-account-handoff.md`
 - [ ] Confirm final developer accounts and signing team ids
 - [x] Confirm production release version and build number
 - [x] Android release keystore template exists
