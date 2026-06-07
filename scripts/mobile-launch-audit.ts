@@ -64,6 +64,7 @@ async function main() {
   expect(Boolean(packageJson.scripts?.['mobile:signing:preflight']), 'package.json exposes mobile signing preflight script');
   expect(Boolean(packageJson.scripts?.['mobile:readiness']), 'package.json exposes mobile readiness report script');
   expect(Boolean(packageJson.scripts?.['mobile:evidence:init']), 'package.json exposes mobile release evidence initializer script');
+  expect(Boolean(packageJson.scripts?.['mobile:evidence:self-test']), 'package.json exposes mobile release evidence self-test script');
   expect(Boolean(packageJson.scripts?.['mobile:evidence:check']), 'package.json exposes mobile release evidence checker script');
   expect(Boolean(packageJson.scripts?.['mobile:artifacts:check']), 'package.json exposes mobile release artifact checker script');
   expect(Boolean(packageJson.scripts?.['mobile:go-live:check']), 'package.json exposes mobile go-live gate script');
@@ -87,6 +88,10 @@ async function main() {
   expect(
     packageJson.scripts?.['mobile:preflight']?.includes('npm run mobile:version:check') === true,
     'Mobile preflight includes version consistency checker'
+  );
+  expect(
+    packageJson.scripts?.['mobile:preflight']?.includes('npm run mobile:evidence:self-test') === true,
+    'Mobile preflight includes release evidence checker self-test'
   );
 
   const capacitorConfig = await readFile(resolve('capacitor.config.ts'), 'utf8');
@@ -331,6 +336,7 @@ async function main() {
   expect(storeSubmissionPackage.includes('npm run mobile:handoff:check'), 'Submission package documents store handoff checker command');
   expect(storeSubmissionPackage.includes('npm run mobile:signing:preflight'), 'Submission package documents signing preflight command');
   expect(storeSubmissionPackage.includes('npm run mobile:evidence:init'), 'Submission package documents release evidence initializer command');
+  expect(storeSubmissionPackage.includes('npm run mobile:evidence:self-test'), 'Submission package documents release evidence self-test command');
   expect(storeSubmissionPackage.includes('npm run mobile:evidence:check'), 'Submission package documents release evidence checker command');
   expect(storeSubmissionPackage.includes('npm run mobile:artifacts:check'), 'Submission package documents release artifact checker command');
   expect(storeSubmissionPackage.includes('npm run mobile:go-live:check'), 'Submission package documents go-live gate command');

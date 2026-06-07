@@ -122,6 +122,7 @@ npm run mobile:signing:preflight
 npm run mobile:version:check
 npm run mobile:store:check
 npm run mobile:qa:plan
+npm run mobile:evidence:self-test
 npm run mobile:audit
 npm run build
 npx cap sync
@@ -142,6 +143,7 @@ After packaging, use `dist/mobile-store-submission/manifest.json` as the integri
 Before final store form submission, verify store metadata, installed-build QA coverage, and public listing URLs:
 
 ```bash
+npm run mobile:evidence:self-test
 npm run mobile:store:check
 npm run mobile:qa:plan
 npm run mobile:urls:check
