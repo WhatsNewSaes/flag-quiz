@@ -106,6 +106,12 @@ External tasks:
 Run before creating signed store builds:
 
 ```bash
+npm run mobile:preflight
+```
+
+Full command sequence:
+
+```bash
 npm run typecheck:all
 npm run build:store-assets
 npm run mobile:signing:preflight

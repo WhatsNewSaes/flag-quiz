@@ -51,6 +51,7 @@ async function main() {
   };
   expect(packageJson.version === '1.0.0', 'package.json public version is 1.0.0');
   expect(Boolean(packageJson.scripts?.['mobile:audit']), 'package.json exposes mobile:audit');
+  expect(Boolean(packageJson.scripts?.['mobile:preflight']), 'package.json exposes mobile:preflight');
   expect(Boolean(packageJson.scripts?.['mobile:build:android:debug']), 'package.json exposes Android debug build script');
   expect(Boolean(packageJson.scripts?.['mobile:build:android:release']), 'package.json exposes Android release AAB script');
   expect(Boolean(packageJson.scripts?.['mobile:build:ios:debug']), 'package.json exposes iOS debug build script');
@@ -243,7 +244,12 @@ async function main() {
   expect(storeMetadata.includes('Category: Games / Educational / Trivia'), 'Store category selection is drafted');
   expect(storeMetadata.includes('No gambling or loot boxes.'), 'Rating questionnaire notes are drafted');
 
+  const storeAssetsReadme = await readFile(resolve('store-assets/README.md'), 'utf8');
+  expect(storeAssetsReadme.includes('npm run package:store-submission'), 'Store assets README documents packaging command');
+  expect(storeAssetsReadme.includes('dist/mobile-readiness-report.md'), 'Store assets README documents readiness report output');
+
   const storeSubmissionPackage = await readFile(resolve('docs/mobile-store-submission-package.md'), 'utf8');
+  expect(storeSubmissionPackage.includes('npm run mobile:preflight'), 'Submission package documents mobile preflight command');
   expect(storeSubmissionPackage.includes('npm run mobile:signing:preflight'), 'Submission package documents signing preflight command');
   expect(storeSubmissionPackage.includes('npm run package:store-submission'), 'Submission package documents packaging command');
   expect(storeSubmissionPackage.includes('dist/mobile-store-submission'), 'Submission package documents packaging output path');
@@ -315,6 +321,7 @@ async function main() {
     'Store Handoff Outputs',
     'Remaining External Requirements',
     'Launch Decision',
+    'npm run mobile:preflight',
     'docs/mobile-launch-checklist.md',
     'docs/mobile-release-evidence-template.md',
     'dist/mobile-readiness-report.md',

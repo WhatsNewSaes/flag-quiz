@@ -9,6 +9,12 @@ This runbook covers the repeatable release path for the Capacitor mobile apps. I
 Run these from the repo root:
 
 ```bash
+npm run mobile:preflight
+```
+
+That command runs:
+
+```bash
 npm run typecheck:all
 npm run build:store-assets
 npm run mobile:signing:preflight

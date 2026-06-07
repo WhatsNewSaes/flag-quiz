@@ -23,6 +23,7 @@
     "cap:build": "npm run build && npx cap sync",
     "mobile:audit": "tsx scripts/mobile-launch-audit.ts",
     "mobile:signing:preflight": "tsx scripts/mobile-signing-preflight.ts",
+    "mobile:preflight": "npm run typecheck:all && npm run build:store-assets && npm run mobile:signing:preflight && npm run mobile:audit && npm run build && npx cap sync && npm run package:store-submission",
     "mobile:build:android:debug": "npm run build && npx cap sync android && cd android && JAVA_HOME=${JAVA_HOME:-/opt/homebrew/opt/openjdk@21} ./gradlew assembleDebug",
     "mobile:build:android:release": "npm run build && npx cap sync android && cd android && JAVA_HOME=${JAVA_HOME:-/opt/homebrew/opt/openjdk@21} ./gradlew bundleRelease",
     "mobile:build:ios:debug": "npm run build && npx cap sync ios && xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Debug -destination 'generic/platform=iOS' CODE_SIGNING_ALLOWED=NO build",
