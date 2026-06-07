@@ -138,7 +138,7 @@ After the iOS archive is created, verify both signed release artifact paths:
 npm run mobile:artifacts:check -- --android-aab android/app/build/outputs/bundle/release/app-release.aab --ios-archive ios/App/build/FlagArcade.xcarchive --manifest docs/release-evidence/mobile-<version>-build-<build>-<commit>-artifacts.json
 ```
 
-This checks bundle/archive structure, version metadata, Android AAB signing metadata, the archived iOS app's code-signature resources, embedded provisioning profile, and `codesign --verify`. It also writes a JSON artifact manifest with byte counts and SHA-256 hashes; paste that manifest path into the release evidence file's `Artifact manifest` field.
+This checks bundle/archive structure, version metadata, Android AAB signing metadata, the archived iOS app's code-signature resources, embedded provisioning profile, and `codesign --verify`. It also writes a JSON artifact manifest with byte counts and SHA-256 hashes; keep that manifest path in the release evidence file's `Artifact manifest` field so `npm run mobile:evidence:check` can verify the manifest matches the release commit, version, and build.
 
 Upload that AAB to a Google Play internal testing track before production.
 

@@ -1,5 +1,5 @@
 import { execFileSync } from 'node:child_process';
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 
@@ -21,6 +21,25 @@ type ReleaseContext = {
   appVersion: string;
   buildNumber: string;
   gitCommit: string;
+};
+
+type ArtifactManifest = {
+  generatedAt?: string;
+  gitCommit?: string;
+  appVersion?: string;
+  buildNumber?: string;
+  artifacts?: Array<{
+    platform?: string;
+    kind?: string;
+    path?: string;
+    bytes?: number;
+    sha256?: string;
+    files?: Array<{
+      path?: string;
+      bytes?: number;
+      sha256?: string;
+    }>;
+  }>;
 };
 
 const requiredReleaseFields = [
@@ -308,6 +327,81 @@ function requireEvidenceLink(findings: Finding[], label: string, value: string |
   else fail(findings, label, `Local evidence file does not exist: ${localPath}`);
 }
 
+function isSha256(value: unknown) {
+  return typeof value === 'string' && /^[a-f0-9]{64}$/i.test(value);
+}
+
+function requireArtifactManifest(findings: Finding[], value: string | undefined, context: ReleaseContext) {
+  requireEvidenceLink(findings, 'Artifact manifest evidence link is valid', value);
+  if (!value || !isFilled(value)) return;
+
+  const target = evidenceTarget(value);
+  if (!target || target.startsWith('#') || target.includes('<release-file>') || isExternalEvidenceTarget(target)) {
+    return;
+  }
+
+  const localPath = target.split('#')[0];
+  const absolutePath = path.resolve(root, localPath);
+  if (!existsSync(absolutePath)) return;
+
+  let manifest: ArtifactManifest;
+  try {
+    manifest = JSON.parse(readFileSync(absolutePath, 'utf8')) as ArtifactManifest;
+    pass(findings, 'Artifact manifest JSON can be parsed', localPath);
+  } catch {
+    fail(findings, 'Artifact manifest JSON can be parsed', localPath);
+    return;
+  }
+
+  if (manifest.generatedAt && !Number.isNaN(Date.parse(manifest.generatedAt))) {
+    pass(findings, 'Artifact manifest generatedAt is parseable', manifest.generatedAt);
+  } else {
+    fail(findings, 'Artifact manifest generatedAt is parseable', manifest.generatedAt ?? 'Missing value');
+  }
+
+  requireEqual(findings, 'Artifact manifest git commit matches release evidence', manifest.gitCommit, context.gitCommit);
+  requireEqual(findings, 'Artifact manifest app version matches release evidence', manifest.appVersion, context.appVersion);
+  requireEqual(findings, 'Artifact manifest build number matches release evidence', manifest.buildNumber, context.buildNumber);
+
+  const artifacts = Array.isArray(manifest.artifacts) ? manifest.artifacts : [];
+  if (artifacts.length > 0) pass(findings, 'Artifact manifest includes artifacts', `${artifacts.length} artifacts`);
+  else fail(findings, 'Artifact manifest includes artifacts', 'Missing artifacts');
+
+  const androidArtifact = artifacts.find((artifact) => artifact.platform === 'android' && artifact.kind === 'signed-aab');
+  if (androidArtifact) {
+    pass(findings, 'Artifact manifest includes signed Android AAB');
+    if (androidArtifact.path && isFilled(androidArtifact.path)) pass(findings, 'Artifact manifest Android AAB path is filled', androidArtifact.path);
+    else fail(findings, 'Artifact manifest Android AAB path is filled', androidArtifact.path ?? 'Missing value');
+    if (typeof androidArtifact.bytes === 'number' && androidArtifact.bytes > 0) pass(findings, 'Artifact manifest Android AAB byte count is positive', `${androidArtifact.bytes}`);
+    else fail(findings, 'Artifact manifest Android AAB byte count is positive', `${androidArtifact.bytes ?? 'Missing value'}`);
+    if (isSha256(androidArtifact.sha256)) pass(findings, 'Artifact manifest Android AAB SHA-256 is valid', androidArtifact.sha256);
+    else fail(findings, 'Artifact manifest Android AAB SHA-256 is valid', `${androidArtifact.sha256 ?? 'Missing value'}`);
+  } else {
+    fail(findings, 'Artifact manifest includes signed Android AAB', 'Missing android signed-aab artifact');
+  }
+
+  const iosArtifact = artifacts.find((artifact) => artifact.platform === 'ios' && artifact.kind === 'signed-xcarchive');
+  if (iosArtifact) {
+    pass(findings, 'Artifact manifest includes signed iOS archive');
+    if (iosArtifact.path && isFilled(iosArtifact.path)) pass(findings, 'Artifact manifest iOS archive path is filled', iosArtifact.path);
+    else fail(findings, 'Artifact manifest iOS archive path is filled', iosArtifact.path ?? 'Missing value');
+    const iosFiles = Array.isArray(iosArtifact.files) ? iosArtifact.files : [];
+    if (iosFiles.length > 0) pass(findings, 'Artifact manifest iOS archive includes hashed files', `${iosFiles.length} files`);
+    else fail(findings, 'Artifact manifest iOS archive includes hashed files', 'Missing files');
+    for (const file of iosFiles) {
+      const fileLabel = file.path ?? 'unknown file';
+      if (file.path && isFilled(file.path)) pass(findings, `Artifact manifest iOS file path is filled: ${fileLabel}`, file.path);
+      else fail(findings, `Artifact manifest iOS file path is filled: ${fileLabel}`, 'Missing value');
+      if (typeof file.bytes === 'number' && file.bytes > 0) pass(findings, `Artifact manifest iOS file byte count is positive: ${fileLabel}`, `${file.bytes}`);
+      else fail(findings, `Artifact manifest iOS file byte count is positive: ${fileLabel}`, `${file.bytes ?? 'Missing value'}`);
+      if (isSha256(file.sha256)) pass(findings, `Artifact manifest iOS file SHA-256 is valid: ${fileLabel}`, file.sha256);
+      else fail(findings, `Artifact manifest iOS file SHA-256 is valid: ${fileLabel}`, `${file.sha256 ?? 'Missing value'}`);
+    }
+  } else {
+    fail(findings, 'Artifact manifest includes signed iOS archive', 'Missing ios signed-xcarchive artifact');
+  }
+}
+
 function validateEvidence(markdown: string, context: ReleaseContext) {
   const findings: Finding[] = [];
 
@@ -324,7 +418,7 @@ function validateEvidence(markdown: string, context: ReleaseContext) {
   for (const label of requiredUrlVerificationFields) {
     requirePass(findings, `${label} passed`, fieldValue(markdown, label));
   }
-  requireEvidenceLink(findings, 'Artifact manifest evidence link is valid', fieldValue(markdown, 'Artifact manifest'));
+  requireArtifactManifest(findings, fieldValue(markdown, 'Artifact manifest'), context);
 
   const rows = tableRows(markdown);
   let checkedResultCells = 0;
@@ -620,6 +714,12 @@ function negativeSelfTestFindings() {
       baseline.replace('| Android | Play internal test | Physical Android phone | Android 16 | 1 | QA | 2026-06-07 | Pass |', '| Android | Play internal test | Physical Android phone | Android 16 | 2 | QA | 2026-06-07 | Pass |'),
       context,
       ['Android Physical Android phone app build shown matches release build']
+    ),
+    ...expectSelfTestFailure(
+      'malformed local artifact manifest',
+      baseline.replace('- Artifact manifest: https://example.com/evidence/mobile-artifacts.json', '- Artifact manifest: package.json'),
+      context,
+      ['Artifact manifest git commit matches release evidence']
     ),
   ];
 }

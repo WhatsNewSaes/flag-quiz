@@ -18,6 +18,8 @@ Copy this file for each release candidate, for example `docs/release-evidence/mo
 - Support URL verified:
 - Artifact manifest:
 
+The artifact manifest must be the JSON file written by `npm run mobile:artifacts:check -- --manifest ...`. Local manifest paths are parsed by `npm run mobile:evidence:check` and must match this release candidate's commit, version, and build number.
+
 ## Build Artifacts
 
 | Platform | Store channel | Artifact | Uploaded by | Upload date | Processing status | Notes |

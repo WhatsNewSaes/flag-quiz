@@ -720,6 +720,7 @@ async function main() {
     'Every required row must include an evidence URL or repo-relative evidence file path',
     'Repo-relative evidence file paths must exist',
     'Artifact manifest',
+    'must match this release candidate',
     'Not verified',
   ];
   for (const term of releaseEvidenceTerms) {
@@ -770,6 +771,13 @@ async function main() {
     'build artifact is uploaded',
     'Artifact manifest',
     'Artifact manifest evidence link is valid',
+    'Artifact manifest JSON can be parsed',
+    'Artifact manifest git commit matches release evidence',
+    'Artifact manifest app version matches release evidence',
+    'Artifact manifest build number matches release evidence',
+    'Artifact manifest includes signed Android AAB',
+    'Artifact manifest includes signed iOS archive',
+    'malformed local artifact manifest',
     'signing evidence is verified',
     'requiredInstalledBuildRows',
     'requiredSmokeRows',
