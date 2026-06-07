@@ -1939,7 +1939,9 @@ function generateLegalInfoPage(
         ['What We Do Not Collect', 'Flag Arcade does not request access to precise location, contacts, photos, camera, microphone, health data, or payment information.'],
         ['Service Providers', 'We may use trusted service providers for hosting, analytics, authentication, database storage, and app distribution. These providers process information only as needed to operate Flag Arcade.'],
         ['Children', 'Flag Arcade is designed as a general-audience learning game. We do not knowingly collect personal information from children under 13. If you believe a child provided personal information, contact us so we can review and delete it where appropriate.'],
-        ['Your Choices', 'You can play without signing in. You can also clear local browser or app storage to remove local progress on your device. For account or data requests, use the support page.'],
+        ['Your Choices', 'You can play without signing in. You can also clear local browser or app storage to remove local progress on your device. Signed-in players can request deletion of their account and cloud-synced data from the in-app account menu by choosing Delete Account, or by emailing support@flagarcade.com.'],
+        ['Retention And Deletion', 'Account deletion requests are completed within 30 days after verification. Cloud progress, account identity, leaderboard records, and user-linked analytics are deleted through that process. Anonymous aggregate analytics that are not linked to an identified user may be retained to understand reliability and aggregate usage.'],
+        ['Contact', 'For privacy questions or data requests, email support@flagarcade.com or visit the support page.'],
       ],
     },
     terms: {

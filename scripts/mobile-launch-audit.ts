@@ -303,6 +303,16 @@ async function main() {
   expect(supportSource.includes('Account Deletion'), 'Support page includes account deletion section');
   expect(supportSource.includes('support@flagarcade.com') || supportSource.includes('SUPPORT_EMAIL'), 'Support page includes support email');
 
+  const privacySource = await readFile(resolve('src/pages/PrivacyPage.tsx'), 'utf8');
+  expect(privacySource.includes('Delete Account'), 'Privacy page mentions in-app Delete Account path');
+  expect(privacySource.includes('within 30 days'), 'Privacy page includes deletion timing');
+  expect(privacySource.includes('support@flagarcade.com') || privacySource.includes('SUPPORT_EMAIL'), 'Privacy page includes support email');
+
+  const seoGeneratorSource = await readFile(resolve('scripts/generate-seo-pages.ts'), 'utf8');
+  expect(seoGeneratorSource.includes('Delete Account'), 'Static privacy page mentions in-app Delete Account path');
+  expect(seoGeneratorSource.includes('within 30 days'), 'Static privacy page includes deletion timing');
+  expect(seoGeneratorSource.includes('support@flagarcade.com'), 'Static privacy page includes support email');
+
   const gitignore = await readFile(resolve('.gitignore'), 'utf8');
   expect(gitignore.includes('android/keystore.properties'), 'Android keystore properties are gitignored');
   expect(gitignore.includes('android/*.jks'), 'Android JKS files are gitignored');

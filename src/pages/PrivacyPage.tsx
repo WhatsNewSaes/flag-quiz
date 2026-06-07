@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { SEOHead } from '../components/seo/SEOHead';
+import { SUPPORT_EMAIL } from '../utils/accountDeletion';
 
 const sectionClass = 'space-y-3';
 
@@ -70,14 +71,27 @@ export function PrivacyPage() {
             <section className={sectionClass}>
               <h2 className="font-retro text-xs text-retro-text">Your Choices</h2>
               <p>
-                You can play without signing in. You can also clear local browser or app storage to remove local progress on your device. For account or data requests, use the support page.
+                You can play without signing in. You can also clear local browser or app storage to remove local progress on your device.
+              </p>
+              <p>
+                Signed-in players can request deletion of their account and cloud-synced data from the in-app account menu by choosing Delete Account, or by emailing{' '}
+                <a href={`mailto:${SUPPORT_EMAIL}`} className="text-retro-neon-blue underline">{SUPPORT_EMAIL}</a>.
+              </p>
+            </section>
+
+            <section className={sectionClass}>
+              <h2 className="font-retro text-xs text-retro-text">Retention And Deletion</h2>
+              <p>
+                Account deletion requests are completed within 30 days after verification. Cloud progress, account identity, leaderboard records, and user-linked analytics are deleted through that process. Anonymous aggregate analytics that are not linked to an identified user may be retained to understand reliability and aggregate usage.
               </p>
             </section>
 
             <section className={sectionClass}>
               <h2 className="font-retro text-xs text-retro-text">Contact</h2>
               <p>
-                For privacy questions or data requests, visit the{' '}
+                For privacy questions or data requests, email{' '}
+                <a href={`mailto:${SUPPORT_EMAIL}`} className="text-retro-neon-blue underline">{SUPPORT_EMAIL}</a>
+                {' '}or visit the{' '}
                 <Link to="/support" className="text-retro-neon-blue underline">support page</Link>.
               </p>
             </section>
