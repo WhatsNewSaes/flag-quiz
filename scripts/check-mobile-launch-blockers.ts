@@ -1,3 +1,4 @@
+import { execFileSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
@@ -35,6 +36,20 @@ function normalizeGeneratedFields(markdown: string) {
     .replace(/^Git commit: .+$/m, 'Git commit: <commit>');
 }
 
+function currentCommit() {
+  return execFileSync('git', ['rev-parse', '--short', 'HEAD'], {
+    cwd: root,
+    encoding: 'utf8',
+    stdio: ['ignore', 'pipe', 'ignore'],
+  }).trim();
+}
+
+function fieldValue(markdown: string, label: string) {
+  const escapedLabel = label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const match = markdown.match(new RegExp(`^${escapedLabel}:\\s*(.+)$`, 'm'));
+  return match?.[1]?.trim();
+}
+
 async function main() {
   const checklistPath = resolve('docs/mobile-launch-checklist.md');
   const blockerReportPath = resolve('dist/mobile-launch-blockers.md');
@@ -50,6 +65,7 @@ async function main() {
 
   const checklist = await readFile(checklistPath, 'utf8');
   const actual = await readFile(blockerReportPath, 'utf8');
+  const expectedCommit = currentCommit();
   const sections = checklistSections(checklist);
   const openBlockerCount = sections.reduce((total, section) => total + section.unchecked.length, 0);
   const expected = launchBlockerReport({
@@ -60,6 +76,8 @@ async function main() {
   });
 
   expect(actual.includes('# Mobile Launch Blockers'), 'Launch blocker report has title');
+  expect(fieldValue(actual, 'Git commit') === expectedCommit, 'Launch blocker report was generated for current git commit', expectedCommit);
+  expect(fieldValue(actual, 'App version') === packageJson.version, 'Launch blocker report app version matches package.json', packageJson.version);
   expect(actual.includes(`Open blocker count: ${openBlockerCount}`), 'Launch blocker report has current open blocker count', `${openBlockerCount}`);
   expect(openBlockerCount > 0, 'Launch blocker report still reflects incomplete external launch requirements', `${openBlockerCount} open`);
   expect(

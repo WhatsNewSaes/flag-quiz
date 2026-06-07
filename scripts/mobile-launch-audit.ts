@@ -419,6 +419,8 @@ async function main() {
     'docs/mobile-launch-checklist.md',
     'dist/mobile-launch-blockers.md',
     'Open blocker count',
+    'Launch blocker report was generated for current git commit',
+    'Launch blocker report app version matches package.json',
     'Launch blocker report matches unchecked checklist items',
     'Signed Android AAB and signed iOS App Store archive exist and pass',
     'TestFlight and Google Play internal builds are uploaded',
