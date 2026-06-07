@@ -55,6 +55,7 @@ async function main() {
   expect(Boolean(packageJson.scripts?.['mobile:urls:check']), 'package.json exposes mobile public URL check script');
   expect(Boolean(packageJson.scripts?.['mobile:version:check']), 'package.json exposes mobile version consistency checker script');
   expect(Boolean(packageJson.scripts?.['mobile:store:check']), 'package.json exposes mobile store submission checker script');
+  expect(Boolean(packageJson.scripts?.['mobile:qa:plan']), 'package.json exposes mobile installed-build QA plan checker script');
   expect(Boolean(packageJson.scripts?.['mobile:handoff:check']), 'package.json exposes mobile store handoff checker script');
   expect(Boolean(packageJson.scripts?.['mobile:blockers:check']), 'package.json exposes mobile launch blocker checker script');
   expect(Boolean(packageJson.scripts?.['mobile:build:android:debug']), 'package.json exposes Android debug build script');
@@ -78,6 +79,10 @@ async function main() {
   expect(
     packageJson.scripts?.['mobile:preflight']?.includes('npm run mobile:store:check') === true,
     'Mobile preflight includes store submission checker'
+  );
+  expect(
+    packageJson.scripts?.['mobile:preflight']?.includes('npm run mobile:qa:plan') === true,
+    'Mobile preflight includes installed-build QA plan checker'
   );
   expect(
     packageJson.scripts?.['mobile:preflight']?.includes('npm run mobile:version:check') === true,
@@ -265,6 +270,7 @@ async function main() {
   expect(existsSync(resolve('scripts/check-mobile-version-consistency.ts')), 'Mobile version consistency checker script exists');
   expect(existsSync(resolve('scripts/check-mobile-public-urls.ts')), 'Mobile public URL check script exists');
   expect(existsSync(resolve('scripts/check-mobile-store-submission.ts')), 'Mobile store submission checker script exists');
+  expect(existsSync(resolve('scripts/check-mobile-installed-qa-plan.ts')), 'Mobile installed-build QA plan checker script exists');
   expect(existsSync(resolve('scripts/check-mobile-store-handoff.ts')), 'Mobile store handoff checker script exists');
   expect(existsSync(resolve('scripts/check-mobile-launch-blockers.ts')), 'Mobile launch blocker checker script exists');
   expect(existsSync(resolve('scripts/init-mobile-release-evidence.ts')), 'Mobile release evidence initializer script exists');
@@ -320,6 +326,7 @@ async function main() {
   expect(storeSubmissionPackage.includes('npm run mobile:urls:check'), 'Submission package documents public URL check command');
   expect(storeSubmissionPackage.includes('npm run mobile:version:check'), 'Submission package documents version consistency checker command');
   expect(storeSubmissionPackage.includes('npm run mobile:store:check'), 'Submission package documents store submission checker command');
+  expect(storeSubmissionPackage.includes('npm run mobile:qa:plan'), 'Submission package documents installed-build QA plan checker command');
   expect(storeSubmissionPackage.includes('npm run mobile:blockers:check'), 'Submission package documents launch blocker checker command');
   expect(storeSubmissionPackage.includes('npm run mobile:handoff:check'), 'Submission package documents store handoff checker command');
   expect(storeSubmissionPackage.includes('npm run mobile:signing:preflight'), 'Submission package documents signing preflight command');
@@ -491,6 +498,33 @@ async function main() {
     expect(storeSubmissionChecker.includes(term), `Store submission checker covers ${term}`);
   }
 
+  const installedQaPlanChecker = await readFile(resolve('scripts/check-mobile-installed-qa-plan.ts'), 'utf8');
+  const installedQaPlanCheckerTerms = [
+    'docs/mobile-installed-build-qa.md',
+    'docs/mobile-release-evidence-template.md',
+    'docs/mobile-release-runbook.md',
+    'Physical iPhone',
+    'Small-screen iPhone simulator or device',
+    'Physical Android phone',
+    'Large Android emulator or device',
+    'Journey Mode',
+    'Perfect Passport share',
+    'Flag Jeopardy Type',
+    'Around the World',
+    'Flag Runner',
+    'Native back',
+    'Auth callback',
+    'Offline launch',
+    'Poor network',
+    'Resume/background',
+    'Legal links',
+    'npm run mobile:evidence:init',
+    'npm run mobile:evidence:check',
+  ];
+  for (const term of installedQaPlanCheckerTerms) {
+    expect(installedQaPlanChecker.includes(term), `Installed-build QA plan checker covers ${term}`);
+  }
+
   const readinessReportScript = await readFile(resolve('scripts/generate-mobile-readiness-report.ts'), 'utf8');
   const readinessReportTerms = [
     'Mobile Launch Readiness Report',
@@ -504,6 +538,7 @@ async function main() {
     'npm run mobile:preflight',
     'npm run mobile:version:check',
     'npm run mobile:store:check',
+    'npm run mobile:qa:plan',
     'npm run mobile:urls:check',
     'npm run mobile:evidence:init',
     'npm run mobile:evidence:check',

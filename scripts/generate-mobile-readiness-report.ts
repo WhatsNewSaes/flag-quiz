@@ -127,6 +127,7 @@ async function main() {
     '- `npm run mobile:audit` verifies permissions, privacy manifest, metadata docs, store assets, QA docs, package script, and deletion coverage.',
     '- `npm run mobile:version:check` verifies package, Android, iOS, store metadata, and handoff version/build fields match.',
     '- `npm run mobile:store:check` verifies store listing copy limits, asset dimensions, privacy references, and handoff paths.',
+    '- `npm run mobile:qa:plan` verifies the installed-build QA plan covers required devices, game modes, native behaviors, and release evidence workflow.',
     '- `npm run mobile:preflight` runs the local release preflight sequence in the expected order.',
     '- `.github/workflows/mobile-preflight.yml` runs the unsigned mobile preflight in CI and uploads the generated store submission package.',
     '- `npm run mobile:urls:check` verifies public store listing URLs against the production site when network access is available.',

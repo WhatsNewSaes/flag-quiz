@@ -121,6 +121,7 @@ npm run build:store-assets
 npm run mobile:signing:preflight
 npm run mobile:version:check
 npm run mobile:store:check
+npm run mobile:qa:plan
 npm run mobile:audit
 npm run build
 npx cap sync
@@ -138,10 +139,11 @@ After packaging, use `dist/mobile-store-submission/manifest.json` as the integri
 
 `npm run package:store-submission` runs `npm run mobile:blockers:check` and `npm run mobile:handoff:check` automatically. Run `npm run mobile:blockers:check` again after editing `docs/mobile-launch-checklist.md`, and run `npm run mobile:handoff:check` again if the package is moved or reviewed later and you want to verify the manifest, checksums, and ZIP contents still match.
 
-Before final store form submission, verify store metadata and public listing URLs:
+Before final store form submission, verify store metadata, installed-build QA coverage, and public listing URLs:
 
 ```bash
 npm run mobile:store:check
+npm run mobile:qa:plan
 npm run mobile:urls:check
 ```
 
