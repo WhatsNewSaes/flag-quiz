@@ -14,6 +14,7 @@ type ManifestEntry = {
 type Manifest = {
   packageName: string;
   generatedAt: string;
+  gitCommit: string;
   appVersion: string;
   outputPath: string;
   archivePath: string;
@@ -63,6 +64,14 @@ function listZipEntries(filePath: string) {
   }
 }
 
+function currentCommit() {
+  return execFileSync('git', ['rev-parse', '--short', 'HEAD'], {
+    cwd: root,
+    encoding: 'utf8',
+    stdio: ['ignore', 'pipe', 'ignore'],
+  }).trim();
+}
+
 async function readManifest(manifestPath: string) {
   const manifestJson = await readFile(manifestPath, 'utf8');
   return JSON.parse(manifestJson) as Manifest;
@@ -103,8 +112,10 @@ async function main() {
   }
 
   const manifest = await readManifest(manifestPath);
+  const expectedCommit = currentCommit();
   expect(manifest.packageName === 'Flag Arcade mobile store submission package', 'Manifest package name matches Flag Arcade');
   expect(Boolean(Date.parse(manifest.generatedAt)), 'Manifest generatedAt is parseable', manifest.generatedAt);
+  expect(manifest.gitCommit === expectedCommit, 'Manifest git commit matches current HEAD', manifest.gitCommit);
   expect(manifest.appVersion === '1.0.0', 'Manifest appVersion is 1.0.0', manifest.appVersion);
   expect(manifest.outputPath === 'dist/mobile-store-submission', 'Manifest output path is dist/mobile-store-submission', manifest.outputPath);
   expect(manifest.archivePath === 'dist/flag-arcade-mobile-store-submission.zip', 'Manifest archive path is dist/flag-arcade-mobile-store-submission.zip', manifest.archivePath);

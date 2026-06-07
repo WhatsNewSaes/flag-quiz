@@ -343,6 +343,7 @@ async function main() {
   expect(storeSubmissionPackage.includes('dist/flag-arcade-mobile-store-submission.zip'), 'Submission package documents packaging archive path');
   expect(storeSubmissionPackage.includes('dist/mobile-readiness-report.md'), 'Submission package documents readiness report path');
   expect(storeSubmissionPackage.includes('dist/mobile-launch-blockers.md'), 'Submission package documents launch blocker report path');
+  expect(storeSubmissionPackage.includes('source git commit'), 'Submission package documents handoff source commit');
   expect(storeSubmissionPackage.includes('SHA-256 checksums'), 'Submission package documents handoff checksums');
   expect(storeSubmissionPackage.includes('byte count'), 'Submission package documents handoff byte counts');
   expect(storeSubmissionPackage.includes('com.flagarcade.app'), 'Submission package includes bundle/package id');
@@ -373,6 +374,8 @@ async function main() {
     'flag-arcade-mobile-store-submission.zip',
     'execFileSync',
     'manifest.json',
+    'gitCommit',
+    'Git commit',
     'archivePath',
     'sha256',
     'bytes',
@@ -401,6 +404,8 @@ async function main() {
     'dist/mobile-store-submission/manifest.json',
     'dist/flag-arcade-mobile-store-submission.zip',
     'mobile-launch-blockers.md',
+    'gitCommit',
+    'Manifest git commit matches current HEAD',
     'sha256',
     'bytes',
     'createHash',

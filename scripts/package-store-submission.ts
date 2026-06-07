@@ -47,6 +47,14 @@ function toPosix(relativePath: string) {
   return relativePath.split(path.sep).join('/');
 }
 
+function commandOutput(command: string, args: string[]) {
+  return execFileSync(command, args, {
+    cwd: root,
+    encoding: 'utf8',
+    stdio: ['ignore', 'pipe', 'ignore'],
+  }).trim();
+}
+
 async function assertPathExists(relativePath: string) {
   try {
     await stat(resolve(relativePath));
@@ -106,6 +114,7 @@ async function main() {
   const packageJson = JSON.parse(await readFile(resolve('package.json'), 'utf8')) as {
     version?: string;
   };
+  const gitCommit = commandOutput('git', ['rev-parse', '--short', 'HEAD']);
 
   await rm(outputRoot, { recursive: true, force: true });
   await rm(archivePath, { force: true });
@@ -137,6 +146,7 @@ async function main() {
   const manifest = {
     packageName: 'Flag Arcade mobile store submission package',
     generatedAt: new Date().toISOString(),
+    gitCommit,
     appVersion: packageJson.version ?? 'unknown',
     outputPath: 'dist/mobile-store-submission',
     archivePath: `dist/${archiveFileName}`,
@@ -157,6 +167,7 @@ async function main() {
     '# Flag Arcade Mobile Store Submission Package',
     '',
     `Generated: ${manifest.generatedAt}`,
+    `Git commit: ${manifest.gitCommit}`,
     `Version: ${manifest.appVersion}`,
     '',
     'This folder contains store listing assets, metadata, privacy answers, QA checklists, and launch handoff docs.',
