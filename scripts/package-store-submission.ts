@@ -27,6 +27,7 @@ const requiredFiles = [
   'docs/mobile-release-evidence-template.md',
   'docs/mobile-launch-checklist.md',
   'dist/mobile-readiness-report.md',
+  'dist/mobile-launch-blockers.md',
 ];
 
 const requiredDirectories = [
@@ -124,8 +125,9 @@ async function main() {
     await copyOptionalDirectoryIntoPackage(relativeDirectory, relativeDirectory, entries);
   }
   await copyFileIntoPackage('dist/mobile-readiness-report.md', 'mobile-readiness-report.md', entries);
+  await copyFileIntoPackage('dist/mobile-launch-blockers.md', 'mobile-launch-blockers.md', entries);
 
-  for (const relativeFile of requiredFiles.filter((file) => !file.startsWith('docs/') && file !== 'dist/mobile-readiness-report.md')) {
+  for (const relativeFile of requiredFiles.filter((file) => !file.startsWith('docs/') && !file.startsWith('dist/'))) {
     await assertPathExists(relativeFile);
   }
   for (const relativeDirectory of requiredDirectories) {

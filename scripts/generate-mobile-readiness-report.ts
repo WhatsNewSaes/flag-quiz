@@ -4,6 +4,13 @@ import path from 'node:path';
 
 const root = process.cwd();
 const outputPath = path.join(root, 'dist/mobile-readiness-report.md');
+const blockerOutputPath = path.join(root, 'dist/mobile-launch-blockers.md');
+
+type ChecklistSection = {
+  title: string;
+  checked: number;
+  unchecked: string[];
+};
 
 function resolve(...segments: string[]) {
   return path.join(root, ...segments);
@@ -34,6 +41,62 @@ function uncheckedItems(markdown: string) {
     .map((line) => line.replace('- [ ] ', '').trim());
 }
 
+function checklistSections(markdown: string) {
+  const sections: ChecklistSection[] = [];
+  let current: ChecklistSection | null = null;
+
+  for (const line of markdown.split('\n')) {
+    const heading = line.match(/^## (.+)$/);
+    if (heading) {
+      current = { title: heading[1], checked: 0, unchecked: [] };
+      sections.push(current);
+      continue;
+    }
+
+    if (!current) continue;
+    if (line.startsWith('- [x] ')) current.checked += 1;
+    if (line.startsWith('- [ ] ')) current.unchecked.push(line.replace('- [ ] ', '').trim());
+  }
+
+  return sections.filter((section) => section.checked > 0 || section.unchecked.length > 0);
+}
+
+function launchBlockerReport(params: {
+  appVersion: string;
+  commit: string;
+  generatedAt: string;
+  sections: ChecklistSection[];
+}) {
+  const blockerSections = params.sections.filter((section) => section.unchecked.length > 0);
+  const blockerCount = blockerSections.reduce((total, section) => total + section.unchecked.length, 0);
+
+  return [
+    '# Mobile Launch Blockers',
+    '',
+    `Generated: ${params.generatedAt}`,
+    `Git commit: ${params.commit}`,
+    `App version: ${params.appVersion}`,
+    `Open blocker count: ${blockerCount}`,
+    '',
+    'This file is generated from `docs/mobile-launch-checklist.md`. It is intentionally narrow: these are the remaining unchecked items preventing App Store and Google Play launch readiness.',
+    '',
+    ...blockerSections.flatMap((section) => [
+      `## ${section.title}`,
+      '',
+      ...section.unchecked.map((item) => `- [ ] ${item}`),
+      '',
+    ]),
+    '## Required To Close',
+    '',
+    '- Signed Android AAB and signed iOS App Store archive exist and pass `npm run mobile:artifacts:check`.',
+    '- TestFlight and Google Play internal builds are uploaded, installed, and recorded in release evidence.',
+    '- Installed-build smoke tests pass on the required iOS and Android targets.',
+    '- App Store Connect privacy labels and Google Play Data Safety forms are submitted.',
+    '- The completed release evidence file passes `npm run mobile:evidence:check` and `npm run mobile:go-live:check`.',
+    '',
+  ].join('\n');
+}
+
 async function main() {
   const packageJson = JSON.parse(await readFile(resolve('package.json'), 'utf8')) as {
     version?: string;
@@ -43,15 +106,17 @@ async function main() {
 
   const stats = checklistStats(checklist);
   const remaining = uncheckedItems(checklist);
+  const sections = checklistSections(checklist);
   const commit = commandOutput('git', ['rev-parse', '--short', 'HEAD']);
   const generatedAt = new Date().toISOString();
+  const appVersion = packageJson.version ?? 'unknown';
 
   const report = [
     '# Mobile Launch Readiness Report',
     '',
     `Generated: ${generatedAt}`,
     `Git commit: ${commit}`,
-    `App version: ${packageJson.version ?? 'unknown'}`,
+    `App version: ${appVersion}`,
     `Checklist status: ${stats.checked}/${stats.total} checked, ${stats.unchecked} remaining`,
     '',
     '## Locally Proven',
@@ -77,6 +142,7 @@ async function main() {
     '- Handoff folder: `dist/mobile-store-submission/`',
     '- Handoff archive: `dist/flag-arcade-mobile-store-submission.zip`',
     '- Readiness report: `dist/mobile-readiness-report.md`',
+    '- Launch blocker report: `dist/mobile-launch-blockers.md`',
     '- Store package source: `docs/mobile-store-submission-package.md`',
     '',
     '## Remaining External Requirements',
@@ -102,7 +168,14 @@ async function main() {
 
   await mkdir(path.dirname(outputPath), { recursive: true });
   await writeFile(outputPath, report);
+  await writeFile(blockerOutputPath, launchBlockerReport({
+    appVersion,
+    commit,
+    generatedAt,
+    sections,
+  }));
   console.log(`Wrote ${path.relative(root, outputPath)}`);
+  console.log(`Wrote ${path.relative(root, blockerOutputPath)}`);
 }
 
 main().catch((error) => {

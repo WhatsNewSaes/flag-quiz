@@ -15,6 +15,7 @@ Output:
 - Handoff folder: `dist/mobile-store-submission/`
 - Handoff archive: `dist/flag-arcade-mobile-store-submission.zip`
 - Readiness report: `dist/mobile-readiness-report.md`
+- Launch blocker report: `dist/mobile-launch-blockers.md`
 - Handoff manifest: `dist/mobile-store-submission/manifest.json`, including source paths, package paths, byte counts, and SHA-256 checksums for every included file.
 
 ## Shared Listing Details

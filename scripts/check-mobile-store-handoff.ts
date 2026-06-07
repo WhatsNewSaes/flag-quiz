@@ -108,7 +108,7 @@ async function main() {
   expect(manifest.appVersion === '1.0.0', 'Manifest appVersion is 1.0.0', manifest.appVersion);
   expect(manifest.outputPath === 'dist/mobile-store-submission', 'Manifest output path is dist/mobile-store-submission', manifest.outputPath);
   expect(manifest.archivePath === 'dist/flag-arcade-mobile-store-submission.zip', 'Manifest archive path is dist/flag-arcade-mobile-store-submission.zip', manifest.archivePath);
-  expect(Array.isArray(manifest.includedFiles) && manifest.includedFiles.length >= 23, 'Manifest includes expected handoff files', `${manifest.includedFiles?.length ?? 0} files`);
+  expect(Array.isArray(manifest.includedFiles) && manifest.includedFiles.length >= 24, 'Manifest includes expected handoff files', `${manifest.includedFiles?.length ?? 0} files`);
 
   const archivePath = resolve(manifest.archivePath);
   const archiveExists = existsSync(archivePath);
@@ -125,6 +125,7 @@ async function main() {
   expect(zipEntryList.length > 0, 'Store handoff archive is readable as zip', `${zipEntryList.length} entries`);
   expect(zipEntries.has('manifest.json'), 'Store handoff archive includes manifest.json');
   expect(zipEntries.has('README.md'), 'Store handoff archive includes README.md');
+  expect(zipEntries.has('mobile-launch-blockers.md'), 'Store handoff archive includes mobile-launch-blockers.md');
 
   await checkManifestEntries(manifest, zipEntries);
 

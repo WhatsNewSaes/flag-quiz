@@ -294,6 +294,7 @@ async function main() {
     'dist/mobile-store-submission',
     'dist/flag-arcade-mobile-store-submission.zip',
     'dist/mobile-readiness-report.md',
+    'dist/mobile-launch-blockers.md',
   ];
   for (const term of mobilePreflightWorkflowTerms) {
     expect(mobilePreflightWorkflow.includes(term), `Mobile preflight workflow covers ${term}`);
@@ -314,6 +315,7 @@ async function main() {
   expect(storeSubmissionPackage.includes('dist/mobile-store-submission'), 'Submission package documents packaging output path');
   expect(storeSubmissionPackage.includes('dist/flag-arcade-mobile-store-submission.zip'), 'Submission package documents packaging archive path');
   expect(storeSubmissionPackage.includes('dist/mobile-readiness-report.md'), 'Submission package documents readiness report path');
+  expect(storeSubmissionPackage.includes('dist/mobile-launch-blockers.md'), 'Submission package documents launch blocker report path');
   expect(storeSubmissionPackage.includes('SHA-256 checksums'), 'Submission package documents handoff checksums');
   expect(storeSubmissionPackage.includes('byte count'), 'Submission package documents handoff byte counts');
   expect(storeSubmissionPackage.includes('com.flagarcade.app'), 'Submission package includes bundle/package id');
@@ -338,7 +340,9 @@ async function main() {
   const packageStoreSubmissionTerms = [
     'dist/mobile-store-submission',
     'dist/mobile-readiness-report.md',
+    'dist/mobile-launch-blockers.md',
     'mobile-readiness-report.md',
+    'mobile-launch-blockers.md',
     'flag-arcade-mobile-store-submission.zip',
     'execFileSync',
     'manifest.json',
@@ -368,6 +372,7 @@ async function main() {
   const storeHandoffCheckerTerms = [
     'dist/mobile-store-submission/manifest.json',
     'dist/flag-arcade-mobile-store-submission.zip',
+    'mobile-launch-blockers.md',
     'sha256',
     'bytes',
     'createHash',
@@ -456,11 +461,13 @@ async function main() {
   const readinessReportScript = await readFile(resolve('scripts/generate-mobile-readiness-report.ts'), 'utf8');
   const readinessReportTerms = [
     'Mobile Launch Readiness Report',
+    'Mobile Launch Blockers',
     'Checklist status',
     'Locally Proven',
     'Store Handoff Outputs',
     'Remaining External Requirements',
     'Launch Decision',
+    'Open blocker count',
     'npm run mobile:preflight',
     'npm run mobile:version:check',
     'npm run mobile:store:check',
@@ -469,6 +476,7 @@ async function main() {
     'npm run mobile:evidence:check',
     'docs/mobile-launch-checklist.md',
     'dist/mobile-readiness-report.md',
+    'dist/mobile-launch-blockers.md',
   ];
   for (const term of readinessReportTerms) {
     expect(readinessReportScript.includes(term), `Readiness report script covers ${term}`);
