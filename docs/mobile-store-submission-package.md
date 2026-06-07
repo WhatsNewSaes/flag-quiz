@@ -124,6 +124,7 @@ npm run build
 npx cap sync
 npm run mobile:readiness
 npm run package:store-submission
+npm run mobile:handoff:check
 npm run mobile:build:android:debug
 npm run mobile:build:ios:debug
 ```
@@ -131,6 +132,8 @@ npm run mobile:build:ios:debug
 Expected current local result: all commands pass. Signed release uploads still require developer account credentials and store-console access.
 
 After packaging, use `dist/mobile-store-submission/manifest.json` as the integrity index for the handoff archive. It records each included file's original repo path, archive destination, byte count, and SHA-256 checksum so the exact store assets and docs can be verified during submission.
+
+`npm run package:store-submission` runs `npm run mobile:handoff:check` automatically. Run `npm run mobile:handoff:check` again if the package is moved or reviewed later and you want to verify the manifest, checksums, and ZIP contents still match.
 
 Before final store form submission, verify store metadata and public listing URLs:
 

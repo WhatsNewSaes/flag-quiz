@@ -68,6 +68,7 @@ async function main() {
     '- `npm run mobile:evidence:init` creates a release-candidate evidence file with the current version, build, branch, and commit prefilled.',
     '- `npm run mobile:evidence:check` fails completed release evidence files that still contain missing QA, upload, store-console, or signoff fields.',
     '- `npm run mobile:artifacts:check` verifies signed Android AAB and iOS `.xcarchive` paths when release artifacts exist locally.',
+    '- `npm run mobile:handoff:check` verifies the generated store handoff manifest, SHA-256 checksums, byte counts, and ZIP contents.',
     '- `npm run mobile:go-live:check` composes preflight, release evidence validation, and public URL checks into the final local review gate.',
     '- `npm run package:store-submission` creates a handoff folder and zip archive for upload/supporting materials.',
     '',

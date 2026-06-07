@@ -25,6 +25,7 @@ npm run build
 npx cap sync
 npm run mobile:readiness
 npm run package:store-submission
+npm run mobile:handoff:check
 ```
 
 Expected current result: all commands pass locally.
@@ -42,6 +43,8 @@ Before submitting store forms, run `npm run mobile:store:check` to verify listin
 Confirm privacy and store form answers against `docs/mobile-privacy-data-inventory.md` before uploading builds.
 
 Use `docs/mobile-store-submission-package.md` as the final handoff manifest for upload paths, listing copy, privacy answers, and external store-console tasks.
+
+`npm run package:store-submission` runs `npm run mobile:handoff:check` after creating the ZIP. Run that checker directly any time you need to verify an existing `dist/mobile-store-submission/manifest.json` and `dist/flag-arcade-mobile-store-submission.zip`.
 
 Create a release evidence file before uploading store builds, then keep it updated through TestFlight, Play internal testing, and final signoff:
 
