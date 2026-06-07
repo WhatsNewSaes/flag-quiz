@@ -152,7 +152,7 @@ async function main() {
     '- `npm run mobile:preflight` runs the local release preflight sequence in the expected order.',
     '- `.github/workflows/mobile-preflight.yml` runs the unsigned mobile preflight in CI and uploads the generated store submission package.',
     '- `npm run mobile:urls:check` verifies public store listing URLs against the production site when network access is available.',
-    '- `npm run mobile:evidence:init` creates a release-candidate evidence file with the current version, build, branch, and commit prefilled.',
+    '- `npm run mobile:evidence:init` creates a release-candidate evidence file with the current version, build, branch, commit, and artifact manifest path prefilled.',
     '- `npm run mobile:evidence:check` fails completed release evidence files that still contain missing QA, upload, store-console, or signoff fields.',
     '- `npm run mobile:artifacts:check` verifies signed Android AAB and iOS `.xcarchive` paths when release artifacts exist locally, and can write a SHA-256 release artifact manifest for the final evidence file.',
     '- `npm run mobile:blockers:check` verifies the generated launch blocker report still matches the unchecked launch checklist items.',

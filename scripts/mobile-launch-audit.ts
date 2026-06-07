@@ -736,6 +736,10 @@ async function main() {
     'Release branch',
     'Evidence owner',
     'Terms URL verified',
+    'Artifact manifest',
+    '-artifacts.json',
+    'Artifact manifest path',
+    'mobile:artifacts:check',
     'npm run mobile:urls:check',
   ];
   for (const term of releaseEvidenceInitializerTerms) {

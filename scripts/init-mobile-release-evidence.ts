@@ -78,6 +78,11 @@ function replaceLine(markdown: string, label: string, value: string) {
   return markdown.replace(new RegExp(`- ${label}:.*`), `- ${label}: ${value}`);
 }
 
+function artifactManifestPathForEvidence(outputPath: string) {
+  const parsedPath = path.parse(outputPath);
+  return path.join(parsedPath.dir, `${parsedPath.name}-artifacts.json`);
+}
+
 async function pathExists(filePath: string) {
   try {
     await stat(filePath);
@@ -99,6 +104,8 @@ async function main() {
   const date = new Date().toISOString().slice(0, 10);
   const fileName = `mobile-${version}-build-${buildNumber}-${commit}.md`;
   const outputPath = path.resolve(root, args.output ?? path.join(evidenceDirectory, fileName));
+  const artifactManifestPath = artifactManifestPathForEvidence(outputPath);
+  const relativeArtifactManifestPath = path.relative(root, artifactManifestPath);
 
   let evidence = template;
   evidence = replaceLine(evidence, 'App version', version);
@@ -111,12 +118,14 @@ async function main() {
   evidence = replaceLine(evidence, 'Privacy URL verified', 'Pending - run `npm run mobile:urls:check`');
   evidence = replaceLine(evidence, 'Terms URL verified', 'Pending - run `npm run mobile:urls:check`');
   evidence = replaceLine(evidence, 'Support URL verified', 'Pending - run `npm run mobile:urls:check`');
+  evidence = replaceLine(evidence, 'Artifact manifest', relativeArtifactManifestPath);
 
   const relativeOutputPath = path.relative(root, outputPath);
 
   if (args.dryRun) {
     console.log(`Would write ${relativeOutputPath}`);
     console.log(`Release candidate: version ${version}, build ${buildNumber}, commit ${commit}`);
+    console.log(`Artifact manifest: ${relativeArtifactManifestPath}`);
     return;
   }
 
@@ -128,7 +137,8 @@ async function main() {
   await writeFile(outputPath, evidence);
 
   console.log(`Wrote ${relativeOutputPath}`);
-  console.log('Next: fill signed build ids, device QA results, store-console statuses, and final signoff.');
+  console.log(`Artifact manifest path: ${relativeArtifactManifestPath}`);
+  console.log('Next: run mobile:artifacts:check with --manifest, then fill signed build ids, device QA results, store-console statuses, and final signoff.');
 }
 
 main().catch((error) => {
