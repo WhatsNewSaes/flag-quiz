@@ -22,6 +22,11 @@ public/data/
 .env.local
 .env.*.local
 
+# Native release signing secrets
+android/keystore.properties
+android/*.jks
+android/*.keystore
+
 # Capacitor native build artifacts
 ios/App/App/public/
 ios/App/Pods/

@@ -45,6 +45,14 @@ async function imageMetadata(relativePath: string) {
 }
 
 async function main() {
+  const packageJson = JSON.parse(await readFile(resolve('package.json'), 'utf8')) as {
+    scripts?: Record<string, string>;
+  };
+  expect(Boolean(packageJson.scripts?.['mobile:audit']), 'package.json exposes mobile:audit');
+  expect(Boolean(packageJson.scripts?.['mobile:build:android:debug']), 'package.json exposes Android debug build script');
+  expect(Boolean(packageJson.scripts?.['mobile:build:android:release']), 'package.json exposes Android release AAB script');
+  expect(Boolean(packageJson.scripts?.['mobile:build:ios:debug']), 'package.json exposes iOS debug build script');
+
   const capacitorConfig = await readFile(resolve('capacitor.config.ts'), 'utf8');
   expect(capacitorConfig.includes("appId: 'com.flagarcade.app'"), 'Capacitor app id is com.flagarcade.app');
   expect(capacitorConfig.includes("appName: 'Flag Arcade'"), 'Capacitor app name is Flag Arcade');
@@ -126,6 +134,13 @@ async function main() {
   }
 
   expect(existsSync(resolve('docs/mobile-launch-checklist.md')), 'Mobile launch checklist exists');
+  expect(existsSync(resolve('docs/mobile-store-metadata.md')), 'Mobile store metadata draft exists');
+  expect(existsSync(resolve('docs/mobile-release-runbook.md')), 'Mobile release runbook exists');
+  expect(existsSync(resolve('android/keystore.properties.example')), 'Android keystore template exists');
+
+  const gitignore = await readFile(resolve('.gitignore'), 'utf8');
+  expect(gitignore.includes('android/keystore.properties'), 'Android keystore properties are gitignored');
+  expect(gitignore.includes('android/*.jks'), 'Android JKS files are gitignored');
 
   const failed = checks.filter((check) => !check.ok);
   for (const check of checks) {

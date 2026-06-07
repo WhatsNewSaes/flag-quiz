@@ -13,6 +13,8 @@ Last updated: 2026-06-07
 - [x] Mobile orientation locked to portrait
 - [ ] Confirm final developer accounts and signing team ids
 - [ ] Confirm production release version and build number
+- [x] Android release keystore template exists
+- [x] Mobile release runbook exists
 
 ## Native Assets
 
@@ -62,6 +64,8 @@ Last updated: 2026-06-07
 - [x] `npm run mobile:audit`
 - [x] Android debug build: `./gradlew assembleDebug`
 - [x] iOS unsigned build: `xcodebuild ... CODE_SIGNING_ALLOWED=NO build`
+- [x] Android release build script exists: `npm run mobile:build:android:release`
+- [x] iOS debug build script exists: `npm run mobile:build:ios:debug`
 - [ ] Android release build: signed AAB
 - [ ] iOS archive: signed App Store archive
 - [ ] Upload Android internal test build to Google Play Console
@@ -84,6 +88,7 @@ Last updated: 2026-06-07
 - [ ] Content rating questionnaire
 - [ ] Age rating questionnaire
 - [ ] Copyright holder
+- [x] Store metadata draft exists: `docs/mobile-store-metadata.md`
 
 ## Privacy And Compliance
 
