@@ -20,6 +20,8 @@ Expected current result: all commands pass locally.
 
 Android npm scripts use `$JAVA_HOME` when present and fall back to `/opt/homebrew/opt/openjdk@21`, which is the verified local JDK path for this workspace.
 
+Confirm privacy and store form answers against `docs/mobile-privacy-data-inventory.md` before uploading builds.
+
 ## 2. Android Release AAB
 
 Create an upload keystore once and store it outside git:
@@ -94,6 +96,8 @@ Upload to TestFlight before App Store review.
 ## 5. Store Metadata
 
 Use `docs/mobile-store-metadata.md` as the working copy for listing text, categories, rating notes, and screenshot planning.
+
+Use `docs/mobile-privacy-data-inventory.md` as the working copy for App Store Privacy and Google Play Data Safety answers.
 
 Generate store artwork before packaging screenshots:
 

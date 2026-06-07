@@ -96,11 +96,13 @@ Last updated: 2026-06-07
 
 ## Privacy And Compliance
 
+- [x] Mobile privacy data inventory exists: `docs/mobile-privacy-data-inventory.md`
+- [x] iOS privacy manifest is bundled: `ios/App/App/PrivacyInfo.xcprivacy`
 - [ ] App Store privacy nutrition labels completed
 - [ ] Google Play Data Safety form completed
 - [ ] Confirm analytics data collected and retention policy
 - [ ] Confirm Supabase/auth data collected and deletion path
-- [ ] Confirm no precise location, contacts, photos, microphone, camera, or health permissions are requested
+- [x] Confirm no precise location, contacts, photos, microphone, camera, or health permissions are requested
 - [x] Confirm children's/privacy positioning before launch copy is finalized
 - [x] Confirm Terms of Use, Privacy Policy, and support contact are reachable from store listings
 
@@ -118,4 +120,5 @@ Last updated: 2026-06-07
 
 - iOS command-line tooling in this environment cannot tap through screens, so final iOS interaction QA needs either manual simulator use, XCUITest, or a physical device.
 - First-run Journey onboarding intentionally asks for character and flag selection on fresh installs before showing the map.
+- Privacy form drafts exist, but App Store Connect and Google Play Console still need final human submission.
 - Store submission cannot be considered complete until signed release builds, store screenshots, privacy forms, and internal test tracks are verified.

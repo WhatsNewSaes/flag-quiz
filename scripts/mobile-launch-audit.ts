@@ -70,6 +70,20 @@ async function main() {
     'Android auth callback deep link is configured'
   );
   expect(androidManifest.includes('android.permission.INTERNET'), 'Android internet permission is present');
+  const blockedAndroidPermissions = [
+    'android.permission.ACCESS_FINE_LOCATION',
+    'android.permission.ACCESS_COARSE_LOCATION',
+    'android.permission.CAMERA',
+    'android.permission.RECORD_AUDIO',
+    'android.permission.READ_CONTACTS',
+    'android.permission.READ_MEDIA_IMAGES',
+    'android.permission.READ_MEDIA_VIDEO',
+    'android.permission.READ_EXTERNAL_STORAGE',
+    'android.permission.BODY_SENSORS',
+  ];
+  for (const permission of blockedAndroidPermissions) {
+    expect(!androidManifest.includes(permission), `Android does not request ${permission}`);
+  }
 
   const iosInfoRaw = execFileSync('plutil', ['-convert', 'json', '-o', '-', resolve('ios/App/App/Info.plist')], {
     encoding: 'utf8',
@@ -95,6 +109,30 @@ async function main() {
     iosInfo.CFBundleURLTypes?.some((entry) => entry.CFBundleURLSchemes?.includes('com.flagarcade.app')) === true,
     'iOS auth callback URL scheme is configured'
   );
+
+  const iosInfoPlistText = await readFile(resolve('ios/App/App/Info.plist'), 'utf8');
+  const blockedIosUsageKeys = [
+    'NSCameraUsageDescription',
+    'NSMicrophoneUsageDescription',
+    'NSPhotoLibraryUsageDescription',
+    'NSLocationWhenInUseUsageDescription',
+    'NSLocationAlwaysAndWhenInUseUsageDescription',
+    'NSContactsUsageDescription',
+    'NSHealthShareUsageDescription',
+    'NSHealthUpdateUsageDescription',
+  ];
+  for (const key of blockedIosUsageKeys) {
+    expect(!iosInfoPlistText.includes(key), `iOS Info.plist does not request ${key}`);
+  }
+
+  expect(existsSync(resolve('ios/App/App/PrivacyInfo.xcprivacy')), 'iOS privacy manifest exists');
+  const iosPrivacyManifestText = await readFile(resolve('ios/App/App/PrivacyInfo.xcprivacy'), 'utf8');
+  expect(iosPrivacyManifestText.includes('NSPrivacyTracking'), 'iOS privacy manifest declares tracking status');
+  expect(iosPrivacyManifestText.includes('NSPrivacyAccessedAPICategoryUserDefaults'), 'iOS privacy manifest declares UserDefaults access');
+  expect(iosPrivacyManifestText.includes('NSPrivacyCollectedDataTypeProductInteraction'), 'iOS privacy manifest declares product interaction data');
+  const xcodeProject = await readFile(resolve('ios/App/App.xcodeproj/project.pbxproj'), 'utf8');
+  expect(xcodeProject.includes('PrivacyInfo.xcprivacy'), 'iOS privacy manifest is referenced by Xcode project');
+  expect(xcodeProject.includes('PrivacyInfo.xcprivacy in Resources'), 'iOS privacy manifest is bundled as a resource');
 
   const iosIcon = await imageMetadata('ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png');
   expect(iosIcon?.width === 1024 && iosIcon?.height === 1024, 'iOS App Store icon is 1024x1024');
@@ -146,6 +184,7 @@ async function main() {
   expect(existsSync(resolve('docs/mobile-launch-checklist.md')), 'Mobile launch checklist exists');
   expect(existsSync(resolve('docs/mobile-store-metadata.md')), 'Mobile store metadata draft exists');
   expect(existsSync(resolve('docs/mobile-release-runbook.md')), 'Mobile release runbook exists');
+  expect(existsSync(resolve('docs/mobile-privacy-data-inventory.md')), 'Mobile privacy data inventory exists');
   expect(existsSync(resolve('android/keystore.properties.example')), 'Android keystore template exists');
   expect(existsSync(resolve('store-assets/README.md')), 'Store assets README exists');
   expect(existsSync(resolve('src/pages/PrivacyPage.tsx')), 'Privacy page source exists');
