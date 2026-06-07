@@ -135,10 +135,11 @@ async function main() {
     throw new Error('Provide both --android-aab and --ios-archive for the final go-live gate, or pass --skip-artifacts for evidence-only review.');
   }
 
+  const manifestPath = artifactManifestPath(evidenceMarkdown);
+
   if (!args.skipArtifacts) {
     const androidAab = args.androidAab as string;
     const iosArchive = args.iosArchive as string;
-    const manifestPath = artifactManifestPath(evidenceMarkdown);
 
     steps.push({
       label: 'Signed release artifacts',
@@ -177,7 +178,7 @@ async function main() {
 
   console.log('\nMobile go-live gate passed.');
   if (args.skipArtifacts) {
-    console.log('Artifact verification was skipped. Confirm App Store Connect and Google Play Console are submitted with the same signed builds referenced in the evidence file.');
+    console.log(`Artifact generation was skipped. Verified evidence must already include the local artifact manifest at ${manifestPath}.`);
   } else {
     console.log('Signed artifacts, release evidence, preflight, and public URLs passed. Confirm App Store Connect and Google Play Console are submitted with these same builds.');
   }

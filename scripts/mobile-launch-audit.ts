@@ -867,6 +867,7 @@ async function main() {
   }
 
   const goLiveGate = await readFile(resolve('scripts/mobile-go-live-check.ts'), 'utf8');
+  const releaseRunbook = await readFile(resolve('docs/mobile-release-runbook.md'), 'utf8');
   const goLiveGateTerms = [
     '--evidence',
     '--android-aab',
@@ -878,6 +879,7 @@ async function main() {
     'Do not combine --skip-artifacts with --android-aab or --ios-archive.',
     'Artifact manifest',
     'Full go-live artifact verification needs a local Artifact manifest path',
+    'Artifact generation was skipped. Verified evidence must already include the local artifact manifest',
     'mobile:preflight',
     'mobile:evidence:check',
     'mobile:artifacts:check',
@@ -890,6 +892,15 @@ async function main() {
   for (const term of goLiveGateTerms) {
     expect(goLiveGate.includes(term), `Go-live gate covers ${term}`);
   }
+
+  expect(
+    storeSubmissionPackage.includes('previously generated local artifact manifest'),
+    'Submission package documents skip-artifacts still requires a local artifact manifest'
+  );
+  expect(
+    releaseRunbook.includes('external manifest links are not accepted by the go-live gate'),
+    'Release runbook documents skip-artifacts local manifest requirement'
+  );
 
   const deletionRunbook = await readFile(resolve('docs/mobile-data-deletion-runbook.md'), 'utf8');
   const deletionRunbookTerms = [
