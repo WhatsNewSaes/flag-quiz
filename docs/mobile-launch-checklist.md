@@ -65,6 +65,7 @@ Last updated: 2026-06-07
 - [x] `npm run build:store-assets`
 - [x] `npx cap sync`
 - [x] `npm run mobile:audit`
+- [x] `npm run mobile:store:check`
 - [x] Android debug build: `./gradlew assembleDebug`
 - [x] iOS unsigned build: `xcodebuild ... CODE_SIGNING_ALLOWED=NO build`
 - [x] Android release build script exists: `npm run mobile:build:android:release`

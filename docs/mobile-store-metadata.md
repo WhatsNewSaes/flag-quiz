@@ -19,7 +19,7 @@ Use this as the working copy for App Store Connect and Google Play Console. Fina
 
 ## App Store
 
-- Subtitle: Retro flag quizzes and world games
+- Subtitle: Retro flag quizzes & games
 - Promotional text: Learn world flags through fast retro game modes, daily challenges, and a globe-spanning passport run.
 - Keywords: flags, geography, countries, quiz, trivia, world, learning, maps, education, arcade
 - Description:

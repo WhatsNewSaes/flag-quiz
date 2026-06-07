@@ -53,6 +53,7 @@ async function main() {
   expect(Boolean(packageJson.scripts?.['mobile:audit']), 'package.json exposes mobile:audit');
   expect(Boolean(packageJson.scripts?.['mobile:preflight']), 'package.json exposes mobile:preflight');
   expect(Boolean(packageJson.scripts?.['mobile:urls:check']), 'package.json exposes mobile public URL check script');
+  expect(Boolean(packageJson.scripts?.['mobile:store:check']), 'package.json exposes mobile store submission checker script');
   expect(Boolean(packageJson.scripts?.['mobile:build:android:debug']), 'package.json exposes Android debug build script');
   expect(Boolean(packageJson.scripts?.['mobile:build:android:release']), 'package.json exposes Android release AAB script');
   expect(Boolean(packageJson.scripts?.['mobile:build:ios:debug']), 'package.json exposes iOS debug build script');
@@ -61,6 +62,10 @@ async function main() {
   expect(Boolean(packageJson.scripts?.['mobile:evidence:init']), 'package.json exposes mobile release evidence initializer script');
   expect(Boolean(packageJson.scripts?.['mobile:evidence:check']), 'package.json exposes mobile release evidence checker script');
   expect(Boolean(packageJson.scripts?.['package:store-submission']), 'package.json exposes store submission package script');
+  expect(
+    packageJson.scripts?.['mobile:preflight']?.includes('npm run mobile:store:check') === true,
+    'Mobile preflight includes store submission checker'
+  );
 
   const capacitorConfig = await readFile(resolve('capacitor.config.ts'), 'utf8');
   expect(capacitorConfig.includes("appId: 'com.flagarcade.app'"), 'Capacitor app id is com.flagarcade.app');
@@ -231,6 +236,7 @@ async function main() {
   expect(existsSync(resolve('docs/mobile-release-evidence-template.md')), 'Mobile release evidence template exists');
   expect(existsSync(resolve('scripts/mobile-signing-preflight.ts')), 'Mobile signing preflight script exists');
   expect(existsSync(resolve('scripts/check-mobile-public-urls.ts')), 'Mobile public URL check script exists');
+  expect(existsSync(resolve('scripts/check-mobile-store-submission.ts')), 'Mobile store submission checker script exists');
   expect(existsSync(resolve('scripts/init-mobile-release-evidence.ts')), 'Mobile release evidence initializer script exists');
   expect(existsSync(resolve('scripts/check-mobile-release-evidence.ts')), 'Mobile release evidence checker script exists');
   expect(existsSync(resolve('scripts/generate-mobile-readiness-report.ts')), 'Mobile readiness report script exists');
@@ -257,6 +263,7 @@ async function main() {
   const storeSubmissionPackage = await readFile(resolve('docs/mobile-store-submission-package.md'), 'utf8');
   expect(storeSubmissionPackage.includes('npm run mobile:preflight'), 'Submission package documents mobile preflight command');
   expect(storeSubmissionPackage.includes('npm run mobile:urls:check'), 'Submission package documents public URL check command');
+  expect(storeSubmissionPackage.includes('npm run mobile:store:check'), 'Submission package documents store submission checker command');
   expect(storeSubmissionPackage.includes('npm run mobile:signing:preflight'), 'Submission package documents signing preflight command');
   expect(storeSubmissionPackage.includes('npm run mobile:evidence:init'), 'Submission package documents release evidence initializer command');
   expect(storeSubmissionPackage.includes('npm run mobile:evidence:check'), 'Submission package documents release evidence checker command');
@@ -341,6 +348,25 @@ async function main() {
     expect(publicUrlCheck.includes(term), `Public URL check covers ${term}`);
   }
 
+  const storeSubmissionChecker = await readFile(resolve('scripts/check-mobile-store-submission.ts'), 'utf8');
+  const storeSubmissionCheckerTerms = [
+    'App Store subtitle fits 30-character limit',
+    'App Store promotional text fits 170-character limit',
+    'App Store keywords fit 100-character limit',
+    'Google Play short description fits 80-character limit',
+    'Google Play full description fits 4000-character limit',
+    'store-assets/shared/app-icon-1024.png',
+    'store-assets/google-play/feature-graphic.png',
+    'store-assets/app-store/iphone-6-7',
+    'store-assets/google-play/phone-screenshots',
+    'docs/mobile-store-privacy-form-answers.md',
+    'docs/mobile-privacy-data-inventory.md',
+    'npm run mobile:evidence:check',
+  ];
+  for (const term of storeSubmissionCheckerTerms) {
+    expect(storeSubmissionChecker.includes(term), `Store submission checker covers ${term}`);
+  }
+
   const readinessReportScript = await readFile(resolve('scripts/generate-mobile-readiness-report.ts'), 'utf8');
   const readinessReportTerms = [
     'Mobile Launch Readiness Report',
@@ -350,6 +376,7 @@ async function main() {
     'Remaining External Requirements',
     'Launch Decision',
     'npm run mobile:preflight',
+    'npm run mobile:store:check',
     'npm run mobile:urls:check',
     'npm run mobile:evidence:init',
     'npm run mobile:evidence:check',
