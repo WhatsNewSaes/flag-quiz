@@ -218,6 +218,7 @@ async function main() {
   expect(existsSync(resolve('docs/mobile-release-runbook.md')), 'Mobile release runbook exists');
   expect(existsSync(resolve('docs/mobile-privacy-data-inventory.md')), 'Mobile privacy data inventory exists');
   expect(existsSync(resolve('docs/mobile-store-submission-package.md')), 'Mobile store submission package exists');
+  expect(existsSync(resolve('docs/mobile-installed-build-qa.md')), 'Mobile installed-build QA checklist exists');
   expect(existsSync(resolve('android/keystore.properties.example')), 'Android keystore template exists');
   expect(existsSync(resolve('store-assets/README.md')), 'Store assets README exists');
   expect(existsSync(resolve('src/pages/PrivacyPage.tsx')), 'Privacy page source exists');
@@ -248,6 +249,28 @@ async function main() {
       storeSubmissionPackage.includes(`store-assets/google-play/phone-screenshots/${slug}.png`),
       `Submission package includes ${slug} Google Play screenshot`
     );
+  }
+
+  const installedBuildQa = await readFile(resolve('docs/mobile-installed-build-qa.md'), 'utf8');
+  const requiredQaTerms = [
+    'Journey Mode',
+    'Perfect Passport',
+    'Flag Jeopardy Easy',
+    'Flag Jeopardy Type',
+    'Arcade Mode',
+    'Around the World',
+    'Flag Runner',
+    'Perfect Passport share',
+    'Native back',
+    'Auth callback',
+    'Offline launch',
+    'Poor network',
+    'Legal links',
+    'TestFlight',
+    'Play internal test',
+  ];
+  for (const term of requiredQaTerms) {
+    expect(installedBuildQa.includes(term), `Installed-build QA covers ${term}`);
   }
 
   const appSource = await readFile(resolve('src/App.tsx'), 'utf8');

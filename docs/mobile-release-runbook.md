@@ -87,6 +87,8 @@ Upload to TestFlight before App Store review.
 
 ## 4. Manual QA Before Store Upload
 
+Use `docs/mobile-installed-build-qa.md` as the pass/fail checklist for TestFlight and Google Play internal testing.
+
 - Install the Android internal test build and tap through all six game modes.
 - Install the TestFlight build and tap through all six game modes.
 - Verify Perfect Passport copy link and native share on both platforms.
