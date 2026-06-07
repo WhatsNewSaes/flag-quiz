@@ -53,6 +53,7 @@ async function main() {
   expect(Boolean(packageJson.scripts?.['mobile:audit']), 'package.json exposes mobile:audit');
   expect(Boolean(packageJson.scripts?.['mobile:preflight']), 'package.json exposes mobile:preflight');
   expect(Boolean(packageJson.scripts?.['mobile:urls:check']), 'package.json exposes mobile public URL check script');
+  expect(Boolean(packageJson.scripts?.['mobile:version:check']), 'package.json exposes mobile version consistency checker script');
   expect(Boolean(packageJson.scripts?.['mobile:store:check']), 'package.json exposes mobile store submission checker script');
   expect(Boolean(packageJson.scripts?.['mobile:build:android:debug']), 'package.json exposes Android debug build script');
   expect(Boolean(packageJson.scripts?.['mobile:build:android:release']), 'package.json exposes Android release AAB script');
@@ -65,6 +66,10 @@ async function main() {
   expect(
     packageJson.scripts?.['mobile:preflight']?.includes('npm run mobile:store:check') === true,
     'Mobile preflight includes store submission checker'
+  );
+  expect(
+    packageJson.scripts?.['mobile:preflight']?.includes('npm run mobile:version:check') === true,
+    'Mobile preflight includes version consistency checker'
   );
 
   const capacitorConfig = await readFile(resolve('capacitor.config.ts'), 'utf8');
@@ -235,6 +240,7 @@ async function main() {
   expect(existsSync(resolve('docs/mobile-installed-build-qa.md')), 'Mobile installed-build QA checklist exists');
   expect(existsSync(resolve('docs/mobile-release-evidence-template.md')), 'Mobile release evidence template exists');
   expect(existsSync(resolve('scripts/mobile-signing-preflight.ts')), 'Mobile signing preflight script exists');
+  expect(existsSync(resolve('scripts/check-mobile-version-consistency.ts')), 'Mobile version consistency checker script exists');
   expect(existsSync(resolve('scripts/check-mobile-public-urls.ts')), 'Mobile public URL check script exists');
   expect(existsSync(resolve('scripts/check-mobile-store-submission.ts')), 'Mobile store submission checker script exists');
   expect(existsSync(resolve('scripts/init-mobile-release-evidence.ts')), 'Mobile release evidence initializer script exists');
@@ -263,6 +269,7 @@ async function main() {
   const storeSubmissionPackage = await readFile(resolve('docs/mobile-store-submission-package.md'), 'utf8');
   expect(storeSubmissionPackage.includes('npm run mobile:preflight'), 'Submission package documents mobile preflight command');
   expect(storeSubmissionPackage.includes('npm run mobile:urls:check'), 'Submission package documents public URL check command');
+  expect(storeSubmissionPackage.includes('npm run mobile:version:check'), 'Submission package documents version consistency checker command');
   expect(storeSubmissionPackage.includes('npm run mobile:store:check'), 'Submission package documents store submission checker command');
   expect(storeSubmissionPackage.includes('npm run mobile:signing:preflight'), 'Submission package documents signing preflight command');
   expect(storeSubmissionPackage.includes('npm run mobile:evidence:init'), 'Submission package documents release evidence initializer command');
@@ -348,6 +355,26 @@ async function main() {
     expect(publicUrlCheck.includes(term), `Public URL check covers ${term}`);
   }
 
+  const versionConsistencyChecker = await readFile(resolve('scripts/check-mobile-version-consistency.ts'), 'utf8');
+  const versionConsistencyCheckerTerms = [
+    'package.json',
+    'capacitor.config.ts',
+    'android/app/build.gradle',
+    'ios/App/App.xcodeproj/project.pbxproj',
+    'docs/mobile-store-metadata.md',
+    'docs/mobile-store-submission-package.md',
+    'com.flagarcade.app',
+    'Flag Arcade',
+    'versionCode',
+    'versionName',
+    'MARKETING_VERSION',
+    'CURRENT_PROJECT_VERSION',
+    'Build number / version code',
+  ];
+  for (const term of versionConsistencyCheckerTerms) {
+    expect(versionConsistencyChecker.includes(term), `Version consistency checker covers ${term}`);
+  }
+
   const storeSubmissionChecker = await readFile(resolve('scripts/check-mobile-store-submission.ts'), 'utf8');
   const storeSubmissionCheckerTerms = [
     'App Store subtitle fits 30-character limit',
@@ -376,6 +403,7 @@ async function main() {
     'Remaining External Requirements',
     'Launch Decision',
     'npm run mobile:preflight',
+    'npm run mobile:version:check',
     'npm run mobile:store:check',
     'npm run mobile:urls:check',
     'npm run mobile:evidence:init',

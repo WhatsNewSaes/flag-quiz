@@ -115,6 +115,7 @@ Full command sequence:
 npm run typecheck:all
 npm run build:store-assets
 npm run mobile:signing:preflight
+npm run mobile:version:check
 npm run mobile:store:check
 npm run mobile:audit
 npm run build

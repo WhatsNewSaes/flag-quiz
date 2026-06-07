@@ -18,6 +18,7 @@ That command runs:
 npm run typecheck:all
 npm run build:store-assets
 npm run mobile:signing:preflight
+npm run mobile:version:check
 npm run mobile:store:check
 npm run mobile:audit
 npm run build
@@ -31,6 +32,8 @@ Expected current result: all commands pass locally.
 Android npm scripts use `$JAVA_HOME` when present and fall back to `/opt/homebrew/opt/openjdk@21`, which is the verified local JDK path for this workspace.
 
 `npm run mobile:signing:preflight` is expected to warn until Android signing secrets and the Apple Developer Team are configured locally. It should not fail unless a repo safety invariant or filled signing config is broken.
+
+Run `npm run mobile:version:check` after any release version bump to confirm `package.json`, Android Gradle, iOS project settings, store metadata, and the submission handoff all agree.
 
 Before submitting store forms, run `npm run mobile:store:check` to verify listing copy, store text limits, asset dimensions, privacy references, and handoff paths. Then run `npm run mobile:urls:check` to verify the public marketing, privacy, terms, and support URLs are live. The URL check uses the production site and is intentionally separate from the local preflight.
 
