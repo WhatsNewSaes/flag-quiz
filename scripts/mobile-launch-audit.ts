@@ -54,6 +54,7 @@ async function main() {
   expect(Boolean(packageJson.scripts?.['mobile:build:android:debug']), 'package.json exposes Android debug build script');
   expect(Boolean(packageJson.scripts?.['mobile:build:android:release']), 'package.json exposes Android release AAB script');
   expect(Boolean(packageJson.scripts?.['mobile:build:ios:debug']), 'package.json exposes iOS debug build script');
+  expect(Boolean(packageJson.scripts?.['mobile:readiness']), 'package.json exposes mobile readiness report script');
   expect(Boolean(packageJson.scripts?.['package:store-submission']), 'package.json exposes store submission package script');
 
   const capacitorConfig = await readFile(resolve('capacitor.config.ts'), 'utf8');
@@ -223,6 +224,7 @@ async function main() {
   expect(existsSync(resolve('docs/mobile-store-submission-package.md')), 'Mobile store submission package exists');
   expect(existsSync(resolve('docs/mobile-installed-build-qa.md')), 'Mobile installed-build QA checklist exists');
   expect(existsSync(resolve('docs/mobile-release-evidence-template.md')), 'Mobile release evidence template exists');
+  expect(existsSync(resolve('scripts/generate-mobile-readiness-report.ts')), 'Mobile readiness report script exists');
   expect(existsSync(resolve('scripts/package-store-submission.ts')), 'Store submission packaging script exists');
   expect(existsSync(resolve('android/keystore.properties.example')), 'Android keystore template exists');
   expect(existsSync(resolve('store-assets/README.md')), 'Store assets README exists');
@@ -243,6 +245,7 @@ async function main() {
   expect(storeSubmissionPackage.includes('npm run package:store-submission'), 'Submission package documents packaging command');
   expect(storeSubmissionPackage.includes('dist/mobile-store-submission'), 'Submission package documents packaging output path');
   expect(storeSubmissionPackage.includes('dist/flag-arcade-mobile-store-submission.zip'), 'Submission package documents packaging archive path');
+  expect(storeSubmissionPackage.includes('dist/mobile-readiness-report.md'), 'Submission package documents readiness report path');
   expect(storeSubmissionPackage.includes('com.flagarcade.app'), 'Submission package includes bundle/package id');
   expect(storeSubmissionPackage.includes('store-assets/shared/app-icon-1024.png'), 'Submission package includes app icon path');
   expect(storeSubmissionPackage.includes('store-assets/google-play/feature-graphic.png'), 'Submission package includes Play feature graphic path');
@@ -264,6 +267,8 @@ async function main() {
   const packageStoreSubmission = await readFile(resolve('scripts/package-store-submission.ts'), 'utf8');
   const packageStoreSubmissionTerms = [
     'dist/mobile-store-submission',
+    'dist/mobile-readiness-report.md',
+    'mobile-readiness-report.md',
     'flag-arcade-mobile-store-submission.zip',
     'execFileSync',
     'manifest.json',
@@ -280,6 +285,22 @@ async function main() {
   ];
   for (const term of packageStoreSubmissionTerms) {
     expect(packageStoreSubmission.includes(term), `Store submission packager covers ${term}`);
+  }
+
+  const readinessReportScript = await readFile(resolve('scripts/generate-mobile-readiness-report.ts'), 'utf8');
+  const readinessReportTerms = [
+    'Mobile Launch Readiness Report',
+    'Checklist status',
+    'Locally Proven',
+    'Store Handoff Outputs',
+    'Remaining External Requirements',
+    'Launch Decision',
+    'docs/mobile-launch-checklist.md',
+    'docs/mobile-release-evidence-template.md',
+    'dist/mobile-readiness-report.md',
+  ];
+  for (const term of readinessReportTerms) {
+    expect(readinessReportScript.includes(term), `Readiness report script covers ${term}`);
   }
 
   const installedBuildQa = await readFile(resolve('docs/mobile-installed-build-qa.md'), 'utf8');

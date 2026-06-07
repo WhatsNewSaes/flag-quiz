@@ -14,6 +14,7 @@ Output:
 
 - Handoff folder: `dist/mobile-store-submission/`
 - Handoff archive: `dist/flag-arcade-mobile-store-submission.zip`
+- Readiness report: `dist/mobile-readiness-report.md`
 
 ## Shared Listing Details
 
@@ -110,6 +111,7 @@ npm run build:store-assets
 npm run mobile:audit
 npm run build
 npx cap sync
+npm run mobile:readiness
 npm run package:store-submission
 npm run mobile:build:android:debug
 npm run mobile:build:ios:debug
