@@ -9,6 +9,10 @@ type Check = {
   detail?: string;
 };
 
+type PackageJson = {
+  version?: string;
+};
+
 const root = process.cwd();
 const checks: Check[] = [];
 
@@ -107,6 +111,15 @@ function expectMaxChars(value: string, max: number, label: string) {
   expect(charCount(value) <= max, label, `${charCount(value)}/${max}`);
 }
 
+function firstMatch(source: string, pattern: RegExp) {
+  return source.match(pattern)?.[1]?.trim() ?? '';
+}
+
+function nativeMarketingVersion(packageVersion: string) {
+  const parts = packageVersion.split('.');
+  return parts.length >= 2 ? `${parts[0]}.${parts[1]}` : packageVersion;
+}
+
 async function expectImage(relativePath: string, width: number, height: number, label: string) {
   const absolutePath = resolve(relativePath);
   if (!existsSync(absolutePath)) {
@@ -121,10 +134,14 @@ async function expectImage(relativePath: string, width: number, height: number, 
 }
 
 async function main() {
+  const packageJson = JSON.parse(await readFile(resolve('package.json'), 'utf8')) as PackageJson;
+  const androidBuildGradle = await readFile(resolve('android/app/build.gradle'), 'utf8');
   const metadata = await readFile(resolve('docs/mobile-store-metadata.md'), 'utf8');
   const submissionPackage = await readFile(resolve('docs/mobile-store-submission-package.md'), 'utf8');
   const privacyAnswers = await readFile(resolve('docs/mobile-store-privacy-form-answers.md'), 'utf8');
   const privacyInventory = await readFile(resolve('docs/mobile-privacy-data-inventory.md'), 'utf8');
+  const expectedPublicVersion = nativeMarketingVersion(packageJson.version ?? '');
+  const expectedBuildNumber = firstMatch(androidBuildGradle, /versionCode\s+(\d+)/);
 
   const appName = bulletValue(metadata, 'App name');
   const bundleId = bulletValue(metadata, 'Bundle ID / package name');
@@ -140,8 +157,8 @@ async function main() {
   expect(appName === 'Flag Arcade', 'Store metadata app name is Flag Arcade', appName);
   expectMaxChars(appName, 30, 'App Store app name fits 30-character limit');
   expect(bundleId === 'com.flagarcade.app', 'Store metadata bundle/package id is com.flagarcade.app', bundleId);
-  expect(publicVersion === '1.0', 'Store metadata public version is 1.0', publicVersion);
-  expect(buildNumber === '1', 'Store metadata build number/version code is 1', buildNumber);
+  expect(publicVersion === expectedPublicVersion, 'Store metadata public version matches package major/minor', publicVersion);
+  expect(buildNumber === expectedBuildNumber, 'Store metadata build number/version code matches Android versionCode', buildNumber);
 
   for (const label of ['Website', 'Marketing URL', 'Support URL', 'Privacy policy URL', 'Terms URL']) {
     const value = bulletValue(metadata, label);

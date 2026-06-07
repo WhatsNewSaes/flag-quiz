@@ -8,6 +8,10 @@ type Finding = {
   detail?: string;
 };
 
+type PackageJson = {
+  version?: string;
+};
+
 const root = process.cwd();
 const findings: Finding[] = [];
 
@@ -35,10 +39,28 @@ function parseProperties(source: string) {
   return properties;
 }
 
+function firstMatch(source: string, pattern: RegExp) {
+  return source.match(pattern)?.[1]?.trim() ?? '';
+}
+
+function nativeMarketingVersion(packageVersion: string) {
+  const parts = packageVersion.split('.');
+  return parts.length >= 2 ? `${parts[0]}.${parts[1]}` : packageVersion;
+}
+
+function uniqueValues(values: string[]) {
+  return [...new Set(values.filter(Boolean))];
+}
+
 async function main() {
   const gitignore = await readFile(resolve('.gitignore'), 'utf8');
+  const packageJson = JSON.parse(await readFile(resolve('package.json'), 'utf8')) as PackageJson;
   const androidBuildGradle = await readFile(resolve('android/app/build.gradle'), 'utf8');
   const xcodeProject = await readFile(resolve('ios/App/App.xcodeproj/project.pbxproj'), 'utf8');
+  const expectedMarketingVersion = nativeMarketingVersion(packageJson.version ?? '');
+  const androidVersionCode = firstMatch(androidBuildGradle, /versionCode\s+(\d+)/);
+  const iosMarketingVersions = [...xcodeProject.matchAll(/MARKETING_VERSION = ([^;]+);/g)].map((match) => match[1].trim());
+  const iosBuildNumbers = [...xcodeProject.matchAll(/CURRENT_PROJECT_VERSION = ([^;]+);/g)].map((match) => match[1].trim());
 
   add(
     gitignore.includes('android/keystore.properties') ? 'PASS' : 'FAIL',
@@ -84,8 +106,16 @@ async function main() {
     xcodeProject.includes('PRODUCT_BUNDLE_IDENTIFIER = com.flagarcade.app;') ? 'PASS' : 'FAIL',
     'iOS bundle identifier is com.flagarcade.app'
   );
-  add(xcodeProject.includes('MARKETING_VERSION = 1.0;') ? 'PASS' : 'FAIL', 'iOS marketing version is 1.0');
-  add(xcodeProject.includes('CURRENT_PROJECT_VERSION = 1;') ? 'PASS' : 'FAIL', 'iOS build number is 1');
+  add(
+    iosMarketingVersions.length > 0 && iosMarketingVersions.every((version) => version === expectedMarketingVersion) ? 'PASS' : 'FAIL',
+    'iOS marketing version matches package major/minor',
+    iosMarketingVersions.join(', ') || 'missing'
+  );
+  add(
+    /^\d+$/.test(androidVersionCode) && iosBuildNumbers.length > 0 && uniqueValues([androidVersionCode, ...iosBuildNumbers]).length === 1 ? 'PASS' : 'FAIL',
+    'iOS build number matches Android versionCode',
+    uniqueValues([androidVersionCode, ...iosBuildNumbers]).join(', ') || 'missing'
+  );
   add(xcodeProject.includes('CODE_SIGN_STYLE = Automatic;') ? 'PASS' : 'WARN', 'iOS automatic code signing is enabled');
 
   const teamMatches = [...xcodeProject.matchAll(/DEVELOPMENT_TEAM = ([A-Z0-9]+);/g)].map((match) => match[1]);

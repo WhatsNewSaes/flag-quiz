@@ -28,6 +28,10 @@ type Finding = {
   detail?: string;
 };
 
+type PackageJson = {
+  version?: string;
+};
+
 const root = process.cwd();
 const findings: Finding[] = [];
 
@@ -77,6 +81,11 @@ async function readManifest(manifestPath: string) {
   return JSON.parse(manifestJson) as Manifest;
 }
 
+async function packageVersion() {
+  const packageJson = JSON.parse(await readFile(resolve('package.json'), 'utf8')) as PackageJson;
+  return packageJson.version ?? 'unknown';
+}
+
 async function checkManifestEntries(manifest: Manifest, zipEntries: Set<string>) {
   const destinations = new Set<string>();
 
@@ -113,10 +122,11 @@ async function main() {
 
   const manifest = await readManifest(manifestPath);
   const expectedCommit = currentCommit();
+  const expectedAppVersion = await packageVersion();
   expect(manifest.packageName === 'Flag Arcade mobile store submission package', 'Manifest package name matches Flag Arcade');
   expect(Boolean(Date.parse(manifest.generatedAt)), 'Manifest generatedAt is parseable', manifest.generatedAt);
   expect(manifest.gitCommit === expectedCommit, 'Manifest git commit matches current HEAD', manifest.gitCommit);
-  expect(manifest.appVersion === '1.0.0', 'Manifest appVersion is 1.0.0', manifest.appVersion);
+  expect(manifest.appVersion === expectedAppVersion, 'Manifest appVersion matches package.json', manifest.appVersion);
   expect(manifest.outputPath === 'dist/mobile-store-submission', 'Manifest output path is dist/mobile-store-submission', manifest.outputPath);
   expect(manifest.archivePath === 'dist/flag-arcade-mobile-store-submission.zip', 'Manifest archive path is dist/flag-arcade-mobile-store-submission.zip', manifest.archivePath);
   expect(Array.isArray(manifest.includedFiles) && manifest.includedFiles.length >= 24, 'Manifest includes expected handoff files', `${manifest.includedFiles?.length ?? 0} files`);

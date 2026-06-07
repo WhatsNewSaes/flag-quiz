@@ -78,6 +78,19 @@ function replaceLine(markdown: string, label: string, value: string) {
   return markdown.replace(new RegExp(`- ${label}:.*`), `- ${label}: ${value}`);
 }
 
+function firstMatch(source: string, pattern: RegExp) {
+  return source.match(pattern)?.[1]?.trim() ?? '';
+}
+
+async function currentNativeBuildNumber() {
+  const androidBuildGradle = await readFile(path.join(root, 'android/app/build.gradle'), 'utf8');
+  const buildNumber = firstMatch(androidBuildGradle, /versionCode\s+(\d+)/);
+  if (!buildNumber) {
+    throw new Error('Could not derive the native build number from android/app/build.gradle. Pass --build explicitly.');
+  }
+  return buildNumber;
+}
+
 function artifactManifestPathForEvidence(outputPath: string) {
   const parsedPath = path.parse(outputPath);
   return path.join(parsedPath.dir, `${parsedPath.name}-artifacts.json`);
@@ -98,7 +111,7 @@ async function main() {
   const template = await readFile(templatePath, 'utf8');
 
   const version = packageJson.version ?? 'unknown';
-  const buildNumber = args.buildNumber ?? '1';
+  const buildNumber = args.buildNumber ?? await currentNativeBuildNumber();
   const commit = commandOutput('git', ['rev-parse', '--short', 'HEAD']);
   const branch = commandOutput('git', ['branch', '--show-current']);
   const date = new Date().toISOString().slice(0, 10);
