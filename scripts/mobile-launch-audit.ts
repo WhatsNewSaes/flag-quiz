@@ -54,6 +54,7 @@ async function main() {
   expect(Boolean(packageJson.scripts?.['mobile:preflight']), 'package.json exposes mobile:preflight');
   expect(Boolean(packageJson.scripts?.['mobile:urls:check']), 'package.json exposes mobile public URL check script');
   expect(Boolean(packageJson.scripts?.['mobile:version:check']), 'package.json exposes mobile version consistency checker script');
+  expect(Boolean(packageJson.scripts?.['mobile:privacy:check']), 'package.json exposes mobile native privacy checker script');
   expect(Boolean(packageJson.scripts?.['mobile:store:check']), 'package.json exposes mobile store submission checker script');
   expect(Boolean(packageJson.scripts?.['mobile:qa:plan']), 'package.json exposes mobile installed-build QA plan checker script');
   expect(Boolean(packageJson.scripts?.['mobile:devices:check']), 'package.json exposes mobile local device coverage checker script');
@@ -82,6 +83,10 @@ async function main() {
   expect(
     packageJson.scripts?.['mobile:preflight']?.includes('npm run mobile:store:check') === true,
     'Mobile preflight includes store submission checker'
+  );
+  expect(
+    packageJson.scripts?.['mobile:preflight']?.includes('npm run mobile:privacy:check') === true,
+    'Mobile preflight includes native privacy checker'
   );
   expect(
     packageJson.scripts?.['mobile:preflight']?.includes('npm run mobile:qa:plan') === true,
@@ -297,6 +302,7 @@ async function main() {
   expect(existsSync(resolve('scripts/mobile-signing-preflight.ts')), 'Mobile signing preflight script exists');
   expect(existsSync(resolve('scripts/check-mobile-version-consistency.ts')), 'Mobile version consistency checker script exists');
   expect(existsSync(resolve('scripts/check-mobile-public-urls.ts')), 'Mobile public URL check script exists');
+  expect(existsSync(resolve('scripts/check-mobile-native-privacy.ts')), 'Mobile native privacy checker script exists');
   expect(existsSync(resolve('scripts/check-mobile-store-submission.ts')), 'Mobile store submission checker script exists');
   expect(existsSync(resolve('scripts/check-mobile-installed-qa-plan.ts')), 'Mobile installed-build QA plan checker script exists');
   expect(existsSync(resolve('scripts/check-mobile-local-device-coverage.ts')), 'Mobile local device coverage checker script exists');
@@ -355,6 +361,7 @@ async function main() {
   expect(storeSubmissionPackage.includes('npm run mobile:preflight'), 'Submission package documents mobile preflight command');
   expect(storeSubmissionPackage.includes('npm run mobile:urls:check'), 'Submission package documents public URL check command');
   expect(storeSubmissionPackage.includes('npm run mobile:version:check'), 'Submission package documents version consistency checker command');
+  expect(storeSubmissionPackage.includes('npm run mobile:privacy:check'), 'Submission package documents native privacy checker command');
   expect(storeSubmissionPackage.includes('npm run mobile:store:check'), 'Submission package documents store submission checker command');
   expect(storeSubmissionPackage.includes('npm run mobile:qa:plan'), 'Submission package documents installed-build QA plan checker command');
   expect(storeSubmissionPackage.includes('npm run mobile:devices:check'), 'Submission package documents local device coverage checker command');
@@ -529,6 +536,31 @@ async function main() {
     expect(versionConsistencyChecker.includes(term), `Version consistency checker covers ${term}`);
   }
 
+  const nativePrivacyChecker = await readFile(resolve('scripts/check-mobile-native-privacy.ts'), 'utf8');
+  const nativePrivacyCheckerTerms = [
+    'android.permission.INTERNET',
+    'android.permission.ACCESS_FINE_LOCATION',
+    'android.permission.CAMERA',
+    'android.permission.RECORD_AUDIO',
+    'android.permission.READ_CONTACTS',
+    'android.permission.POST_NOTIFICATIONS',
+    'android:allowBackup="false"',
+    'android:fullBackupContent="false"',
+    'data_extraction_rules.xml',
+    'file_paths.xml',
+    'NSCameraUsageDescription',
+    'NSMicrophoneUsageDescription',
+    'NSLocationWhenInUseUsageDescription',
+    'NSUserTrackingUsageDescription',
+    'PrivacyInfo.xcprivacy',
+    'NSPrivacyTracking',
+    'NSPrivacyCollectedDataTypeProductInteraction',
+    'Android Auto Backup/device transfer is disabled',
+  ];
+  for (const term of nativePrivacyCheckerTerms) {
+    expect(nativePrivacyChecker.includes(term), `Native privacy checker covers ${term}`);
+  }
+
   const storeSubmissionChecker = await readFile(resolve('scripts/check-mobile-store-submission.ts'), 'utf8');
   const storeSubmissionCheckerTerms = [
     'App Store subtitle fits 30-character limit',
@@ -591,6 +623,7 @@ async function main() {
     'docs/release-evidence/mobile-<version>-build-<build>-<commit>.md',
     'npm run mobile:preflight',
     'npm run mobile:version:check',
+    'npm run mobile:privacy:check',
     'npm run mobile:store:check',
     'npm run mobile:qa:plan',
     'npm run mobile:devices:check',

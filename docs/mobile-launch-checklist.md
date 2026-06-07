@@ -66,6 +66,7 @@ Last updated: 2026-06-07
 - [x] `npx cap sync`
 - [x] `npm run mobile:audit`
 - [x] `npm run mobile:version:check`
+- [x] `npm run mobile:privacy:check`
 - [x] `npm run mobile:store:check`
 - [x] `npm run mobile:bundle:check`
 - [x] `npm run mobile:blockers:check`
@@ -110,6 +111,7 @@ Last updated: 2026-06-07
 - [x] Mobile data deletion runbook exists: `docs/mobile-data-deletion-runbook.md`
 - [x] Store privacy form answer guide exists: `docs/mobile-store-privacy-form-answers.md`
 - [x] iOS privacy manifest is bundled: `ios/App/App/PrivacyInfo.xcprivacy`
+- [x] Native privacy checker exists: `npm run mobile:privacy:check`
 - [ ] App Store privacy nutrition labels completed
 - [ ] Google Play Data Safety form completed
 - [x] Confirm analytics data collected and retention policy

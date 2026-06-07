@@ -19,8 +19,10 @@ npm run typecheck:all
 npm run build:store-assets
 npm run mobile:signing:preflight
 npm run mobile:version:check
+npm run mobile:privacy:check
 npm run mobile:store:check
 npm run mobile:qa:plan
+npm run mobile:devices:check
 npm run mobile:evidence:self-test
 npm run mobile:audit
 npm run build
@@ -50,7 +52,7 @@ GitHub Actions also runs the unsigned mobile preflight on `main`, pull requests,
 
 Run `npm run mobile:version:check` after any release version bump to confirm `package.json`, Android Gradle, iOS project settings, store metadata, and the submission handoff all agree.
 
-Before submitting store forms, run `npm run mobile:store:check` to verify listing copy, store text limits, asset dimensions, privacy references, and handoff paths. Run `npm run mobile:qa:plan` to verify the installed-build QA checklist still covers the required devices, game modes, native behaviors, and evidence flow. Run `npm run mobile:devices:check` to verify the local simulator/emulator coverage plan still covers small-screen iPhone, latest iPhone, Pixel 8 Android, large Android, every game mode, native back, offline launch, poor network, and evidence capture notes. Then run `npm run mobile:urls:check` to verify the public marketing, privacy, terms, and support URLs are live. The URL check uses the production site and is intentionally separate from the local preflight.
+Before submitting store forms, run `npm run mobile:privacy:check` to verify Android permissions, backup/data extraction rules, FileProvider scope, iOS usage keys, iOS tracking declarations, and privacy documentation alignment. Run `npm run mobile:store:check` to verify listing copy, store text limits, asset dimensions, privacy references, and handoff paths. Run `npm run mobile:qa:plan` to verify the installed-build QA checklist still covers the required devices, game modes, native behaviors, and evidence flow. Run `npm run mobile:devices:check` to verify the local simulator/emulator coverage plan still covers small-screen iPhone, latest iPhone, Pixel 8 Android, large Android, every game mode, native back, offline launch, poor network, and evidence capture notes. Then run `npm run mobile:urls:check` to verify the public marketing, privacy, terms, and support URLs are live. The URL check uses the production site and is intentionally separate from the local preflight.
 
 `npm run mobile:evidence:self-test` exercises the release evidence checker against a complete synthetic signoff file and negative cases for stale commits, missing repo-relative evidence files, and weak final signoff values. It is included in `npm run mobile:preflight` so CI catches regressions in the final evidence gate before a real release evidence file exists.
 
