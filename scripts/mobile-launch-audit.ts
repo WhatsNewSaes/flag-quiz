@@ -126,6 +126,7 @@ async function main() {
   expect(androidManifest.includes('android:screenOrientation="portrait"'), 'Android main activity is portrait locked');
   expect(androidManifest.includes('android:allowBackup="false"'), 'Android Auto Backup is disabled');
   expect(androidManifest.includes('android:fullBackupContent="false"'), 'Android full backup content is disabled');
+  expect(androidManifest.includes('android:usesCleartextTraffic="false"'), 'Android cleartext traffic is disabled');
   expect(androidManifest.includes('android:dataExtractionRules="@xml/data_extraction_rules"'), 'Android data extraction rules are configured');
   expect(androidDataExtractionRules.includes('<cloud-backup>'), 'Android data extraction rules cover cloud backup');
   expect(androidDataExtractionRules.includes('<device-transfer>'), 'Android data extraction rules cover device transfer');
@@ -162,12 +163,14 @@ async function main() {
   const iosProjectText = await readFile(resolve('ios/App/App.xcodeproj/project.pbxproj'), 'utf8');
   const iosInfo = JSON.parse(iosInfoRaw) as {
     CFBundleDisplayName?: string;
+    ITSAppUsesNonExemptEncryption?: boolean;
     UIRequiresFullScreen?: boolean;
     UISupportedInterfaceOrientations?: string[];
     'UISupportedInterfaceOrientations~ipad'?: string[];
     CFBundleURLTypes?: Array<{ CFBundleURLSchemes?: string[] }>;
   };
   expect(iosInfo.CFBundleDisplayName === 'Flag Arcade', 'iOS display name is Flag Arcade');
+  expect(iosInfo.ITSAppUsesNonExemptEncryption === false, 'iOS export compliance flag declares no non-exempt encryption');
   expect(iosInfo.UIRequiresFullScreen === true, 'iOS requires full screen for portrait lock');
   expect(
     JSON.stringify(iosInfo.UISupportedInterfaceOrientations) === JSON.stringify(['UIInterfaceOrientationPortrait']),
@@ -546,8 +549,10 @@ async function main() {
     'android.permission.POST_NOTIFICATIONS',
     'android:allowBackup="false"',
     'android:fullBackupContent="false"',
+    'android:usesCleartextTraffic="false"',
     'data_extraction_rules.xml',
     'file_paths.xml',
+    'ITSAppUsesNonExemptEncryption',
     'NSCameraUsageDescription',
     'NSMicrophoneUsageDescription',
     'NSLocationWhenInUseUsageDescription',

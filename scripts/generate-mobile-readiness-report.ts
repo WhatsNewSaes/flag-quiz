@@ -144,7 +144,7 @@ async function main() {
     '- Privacy policy, terms, support page, deletion flow, privacy inventory, data-safety answers, QA checklist, release evidence template, and store submission package docs exist.',
     '- `npm run mobile:audit` verifies permissions, privacy manifest, metadata docs, store assets, QA docs, package script, and deletion coverage.',
     '- `npm run mobile:version:check` verifies package, Android, iOS, store metadata, and handoff version/build fields match.',
-    '- `npm run mobile:privacy:check` verifies Android permissions/backup/share scope, iOS usage keys/tracking declarations, and native privacy docs stay aligned.',
+    '- `npm run mobile:privacy:check` verifies Android permissions/backup/share/cleartext scope, iOS usage keys/tracking/export-compliance declarations, and native privacy docs stay aligned.',
     '- `npm run mobile:store:check` verifies store listing copy limits, asset dimensions, privacy references, and handoff paths.',
     '- `npm run mobile:qa:plan` verifies the installed-build QA plan covers required devices, game modes, native behaviors, and release evidence workflow.',
     '- `npm run mobile:devices:check` verifies the local simulator/emulator coverage plan covers target sizes, all game modes, native back, network behavior, and evidence notes.',

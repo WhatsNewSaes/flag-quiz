@@ -40,6 +40,8 @@ Last updated: 2026-06-07
 - [x] Android system back exits from Game Modes
 - [x] Native share links use public web URLs for Perfect Passport
 - [x] Native analytics posts to public site URL
+- [x] Android cleartext traffic is disabled
+- [x] iOS export-compliance encryption flag is set for standard HTTPS-only use
 - [x] Status bar background/style configured
 - [x] Keyboard resize/style configured
 - [ ] Test iOS native share sheet from Perfect Passport results on device or interactive simulator

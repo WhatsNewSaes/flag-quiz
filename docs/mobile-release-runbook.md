@@ -58,6 +58,8 @@ Before submitting store forms, run `npm run mobile:privacy:check` to verify Andr
 
 Confirm privacy and store form answers against `docs/mobile-privacy-data-inventory.md` before uploading builds.
 
+The native projects explicitly disable Android cleartext traffic and set iOS `ITSAppUsesNonExemptEncryption=false` for standard HTTPS/platform encryption only. Revisit both declarations before submission if a future SDK adds custom cryptography, ad attribution, or plain-HTTP endpoints.
+
 Use `docs/mobile-store-submission-package.md` as the final handoff manifest for upload paths, listing copy, privacy answers, and external store-console tasks.
 
 Use `docs/mobile-local-device-coverage.md` before signed builds are available to keep simulator/emulator QA consistent. This local pass is useful for catching layout and native shell issues early, but launch signoff still requires the installed-build evidence generated from TestFlight and Google Play internal testing.

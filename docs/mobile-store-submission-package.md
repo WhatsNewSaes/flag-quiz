@@ -33,6 +33,8 @@ Output:
 - Privacy/data-safety source doc: `docs/mobile-privacy-data-inventory.md`
 - Store privacy form answer guide: `docs/mobile-store-privacy-form-answers.md`
 - Data deletion runbook: `docs/mobile-data-deletion-runbook.md`
+- Android cleartext traffic: disabled.
+- iOS export compliance: `ITSAppUsesNonExemptEncryption=false` for standard HTTPS/platform encryption only.
 
 ## App Store Connect
 

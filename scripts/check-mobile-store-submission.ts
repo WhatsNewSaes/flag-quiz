@@ -198,6 +198,8 @@ async function main() {
 
   const requiredPrivacyTerms = [
     ['Data encrypted in transit: Yes', 'Data is encrypted in transit.'],
+    ['Plain HTTP / cleartext traffic allowed: No', 'cleartext traffic'],
+    ['Uses non-exempt encryption for iOS export compliance: No', 'ITSAppUsesNonExemptEncryption'],
     ['Data sold: No', 'does not sell data'],
     ['Cross-app tracking: No', 'cross-app tracking'],
     ['Precise location collected: No', 'does not request precise location'],

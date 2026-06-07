@@ -15,6 +15,8 @@ Official references checked:
 - Sign-in required to use the app: No.
 - Sign-in required for cloud sync and leaderboards: Yes.
 - Data encrypted in transit: Yes.
+- Plain HTTP / cleartext traffic allowed: No.
+- Uses non-exempt encryption for iOS export compliance: No.
 - Data sold: No.
 - Data shared for advertising: No.
 - Cross-app tracking: No.
@@ -89,6 +91,7 @@ Security practices:
 - Users can request deletion: Yes, in-app `Delete Account` or email `support@flagarcade.com`.
 - Committed deletion window: within 30 days after verification.
 - Android local app data backup/transfer: disabled through the app manifest and data extraction rules.
+- Android cleartext traffic: disabled in the app manifest.
 - App independently security reviewed: No, unless a review is later completed.
 
 Children and families:
@@ -104,6 +107,8 @@ Before submitting either store form:
 - Confirm no new SDKs were added after this date.
 - Confirm analytics events still match `src/lib/analytics.ts` and `src/hooks/useSessionTracking.ts`.
 - Confirm Android permissions still only include `android.permission.INTERNET`.
+- Confirm Android `usesCleartextTraffic` remains false.
 - Confirm Android Auto Backup/device transfer remains disabled for local app data.
+- Confirm iOS `ITSAppUsesNonExemptEncryption` remains false unless custom non-exempt encryption is added.
 - Confirm iOS `PrivacyInfo.xcprivacy` still declares tracking as false and lists the local storage accessed API reason.
 - Confirm the public Privacy Policy at `https://flagarcade.com/privacy` includes account deletion and retention language.

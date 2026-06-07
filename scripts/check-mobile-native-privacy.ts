@@ -107,6 +107,7 @@ async function main() {
 
   expect(androidManifest.includes('android:allowBackup="false"'), 'Android Auto Backup is disabled');
   expect(androidManifest.includes('android:fullBackupContent="false"'), 'Android full backup is disabled');
+  expect(androidManifest.includes('android:usesCleartextTraffic="false"'), 'Android cleartext traffic is disabled');
   expect(
     androidManifest.includes('android:dataExtractionRules="@xml/data_extraction_rules"'),
     'Android data extraction rules are referenced by the manifest'
@@ -127,6 +128,8 @@ async function main() {
     expect(!iosInfoPlistText.includes(key), `iOS Info.plist does not request ${key}`);
   }
   expect(!iosInfoPlistText.includes('SKAdNetworkItems'), 'iOS Info.plist does not declare ad attribution networks');
+  const iosInfo = plistJson<{ ITSAppUsesNonExemptEncryption?: boolean }>('ios/App/App/Info.plist');
+  expect(iosInfo.ITSAppUsesNonExemptEncryption === false, 'iOS non-exempt encryption export flag is false');
 
   expect(existsSync(resolve('ios/App/App/PrivacyInfo.xcprivacy')), 'iOS privacy manifest exists');
   const iosPrivacy = plistJson<{
@@ -175,8 +178,11 @@ async function main() {
   for (const term of [
     'Data sold: No',
     'Cross-app tracking: No',
+    'Plain HTTP / cleartext traffic allowed: No',
+    'Uses non-exempt encryption for iOS export compliance: No',
     'Precise location collected: No',
     'Android local app data backup/transfer',
+    'Android cleartext traffic: disabled',
     'android.permission.INTERNET',
     'PrivacyInfo.xcprivacy',
   ]) {
@@ -185,6 +191,8 @@ async function main() {
   for (const term of [
     'does not sell data',
     'cross-app tracking',
+    'cleartext traffic',
+    'ITSAppUsesNonExemptEncryption',
     'does not request precise location',
     'Android Auto Backup/device transfer is disabled',
     'PrivacyInfo.xcprivacy',
