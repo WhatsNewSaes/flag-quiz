@@ -63,6 +63,12 @@ As the final local gate before submitting for App Store and Google Play review, 
 npm run mobile:go-live:check -- --evidence docs/release-evidence/<release-file>.md
 ```
 
+If the signed artifacts are available locally, include them in the final gate:
+
+```bash
+npm run mobile:go-live:check -- --evidence docs/release-evidence/<release-file>.md --android-aab android/app/build/outputs/bundle/release/app-release.aab --ios-archive ios/App/build/FlagArcade.xcarchive
+```
+
 ## 2. Android Release AAB
 
 Create an upload keystore once and store it outside git:
@@ -101,6 +107,12 @@ Expected output:
 
 ```text
 android/app/build/outputs/bundle/release/app-release.aab
+```
+
+After the iOS archive is created, verify both signed release artifact paths:
+
+```bash
+npm run mobile:artifacts:check -- --android-aab android/app/build/outputs/bundle/release/app-release.aab --ios-archive ios/App/build/FlagArcade.xcarchive
 ```
 
 Upload that AAB to a Google Play internal testing track before production.

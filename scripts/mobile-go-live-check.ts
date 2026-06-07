@@ -6,6 +6,8 @@ const root = process.cwd();
 
 type Args = {
   evidenceFile?: string;
+  androidAab?: string;
+  iosArchive?: string;
   skipUrls: boolean;
 };
 
@@ -29,6 +31,18 @@ function parseArgs(argv: string[]): Args {
 
     if ((arg === '--evidence' || arg === '--file' || arg === '-f') && next) {
       args.evidenceFile = next;
+      index += 1;
+      continue;
+    }
+
+    if (arg === '--android-aab' && next) {
+      args.androidAab = next;
+      index += 1;
+      continue;
+    }
+
+    if (arg === '--ios-archive' && next) {
+      args.iosArchive = next;
       index += 1;
       continue;
     }
@@ -76,6 +90,26 @@ async function main() {
       args: ['run', 'mobile:evidence:check', '--', '--file', path.relative(root, evidencePath)],
     },
   ];
+
+  if (args.androidAab || args.iosArchive) {
+    if (!args.androidAab || !args.iosArchive) {
+      throw new Error('Provide both --android-aab and --ios-archive, or omit both artifact paths.');
+    }
+
+    steps.push({
+      label: 'Signed release artifacts',
+      command: 'npm',
+      args: [
+        'run',
+        'mobile:artifacts:check',
+        '--',
+        '--android-aab',
+        args.androidAab,
+        '--ios-archive',
+        args.iosArchive,
+      ],
+    });
+  }
 
   if (!args.skipUrls) {
     steps.push({

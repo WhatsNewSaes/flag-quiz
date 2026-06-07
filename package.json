@@ -28,6 +28,7 @@
     "mobile:store:check": "tsx scripts/check-mobile-store-submission.ts",
     "mobile:evidence:init": "tsx scripts/init-mobile-release-evidence.ts",
     "mobile:evidence:check": "tsx scripts/check-mobile-release-evidence.ts",
+    "mobile:artifacts:check": "tsx scripts/check-mobile-release-artifacts.ts",
     "mobile:go-live:check": "tsx scripts/mobile-go-live-check.ts",
     "mobile:preflight": "npm run typecheck:all && npm run build:store-assets && npm run mobile:signing:preflight && npm run mobile:version:check && npm run mobile:store:check && npm run mobile:audit && npm run build && npx cap sync && npm run package:store-submission",
     "mobile:build:android:debug": "npm run build && npx cap sync android && cd android && JAVA_HOME=${JAVA_HOME:-/opt/homebrew/opt/openjdk@21} ./gradlew assembleDebug",

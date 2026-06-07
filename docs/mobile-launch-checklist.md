@@ -73,6 +73,7 @@ Last updated: 2026-06-07
 - [x] Android release build script exists: `npm run mobile:build:android:release`
 - [x] iOS debug build script exists: `npm run mobile:build:ios:debug`
 - [x] Signing preflight script exists: `npm run mobile:signing:preflight`
+- [x] Release artifact checker exists: `npm run mobile:artifacts:check`
 - [ ] Android release build: signed AAB
 - [ ] iOS archive: signed App Store archive
 - [ ] Upload Android internal test build to Google Play Console

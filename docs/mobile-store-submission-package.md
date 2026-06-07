@@ -57,6 +57,7 @@ Assets:
 Build artifact:
 
 - Required before upload: signed iOS archive from Xcode Organizer / Transporter.
+- Expected local archive path after command-line archive: `ios/App/build/FlagArcade.xcarchive`.
 - Local unsigned verification command: `npm run mobile:build:ios:debug`.
 
 External tasks:
@@ -144,6 +145,7 @@ npm run mobile:evidence:init -- --build 1 --owner "Release Owner"
 Before final store review submission, verify the completed evidence file:
 
 ```bash
+npm run mobile:artifacts:check -- --android-aab android/app/build/outputs/bundle/release/app-release.aab --ios-archive ios/App/build/FlagArcade.xcarchive
 npm run mobile:evidence:check -- --file docs/release-evidence/<release-file>.md
 npm run mobile:go-live:check -- --evidence docs/release-evidence/<release-file>.md
 ```
