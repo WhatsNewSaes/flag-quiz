@@ -37,6 +37,48 @@ const requiredSignoffFields = [
   'Approval date',
 ];
 
+const requiredInstalledBuildRows = [
+  { platform: 'iOS', buildSource: 'TestFlight', device: 'Physical iPhone' },
+  { platform: 'iOS', buildSource: 'TestFlight', device: 'Small-screen iPhone simulator or device' },
+  { platform: 'Android', buildSource: 'Play internal test', device: 'Physical Android phone' },
+  { platform: 'Android', buildSource: 'Play internal test', device: 'Large Android emulator or device' },
+];
+
+const requiredSmokeRows = [
+  { area: 'Fresh launch and splash', ios: 'Pass', android: 'Pass' },
+  { area: 'Home screen icon on light/dark wallpaper', ios: 'Pass', android: 'Pass' },
+  { area: 'Portrait orientation lock', ios: 'Pass', android: 'Pass' },
+  { area: 'Journey Mode first-run character/favorite flag flow', ios: 'Pass', android: 'Pass' },
+  { area: 'Journey Mode level play and progress persistence', ios: 'Pass', android: 'Pass' },
+  { area: 'Perfect Passport full 10-question run', ios: 'Pass', android: 'Pass' },
+  { area: 'Perfect Passport share sheet', ios: 'Pass', android: 'Pass' },
+  { area: 'Perfect Passport copied public challenge link', ios: 'Pass', android: 'Pass' },
+  { area: 'Flag Jeopardy Easy mode, pick name and pick flag', ios: 'Pass', android: 'Pass' },
+  { area: 'Flag Jeopardy Type mode, keyboard and answer submit', ios: 'Pass', android: 'Pass' },
+  { area: 'Arcade Mode custom quiz', ios: 'Pass', android: 'Pass' },
+  { area: 'Around the World map/tap flow', ios: 'Pass', android: 'Pass' },
+  { area: 'Flag Runner touch controls and restart', ios: 'Pass', android: 'Pass' },
+  { area: 'Android native back behavior', ios: 'N/A', android: 'Pass' },
+  { area: 'Auth callback/deep link', ios: 'Pass', android: 'Pass' },
+  { area: 'Offline launch', ios: 'Pass', android: 'Pass' },
+  { area: 'Poor-network gameplay', ios: 'Pass', android: 'Pass' },
+  { area: 'Resume/background state', ios: 'Pass', android: 'Pass' },
+  { area: 'Privacy, Terms, and Support links', ios: 'Pass', android: 'Pass' },
+];
+
+const requiredStoreConsoleRows = [
+  { store: 'App Store Connect', area: 'App information' },
+  { store: 'App Store Connect', area: 'Pricing/availability' },
+  { store: 'App Store Connect', area: 'Age rating' },
+  { store: 'App Store Connect', area: 'App Privacy labels' },
+  { store: 'App Store Connect', area: 'TestFlight build processing' },
+  { store: 'Google Play Console', area: 'Store listing' },
+  { store: 'Google Play Console', area: 'Content rating' },
+  { store: 'Google Play Console', area: 'Data Safety' },
+  { store: 'Google Play Console', area: 'Internal testing track' },
+  { store: 'Google Play Console', area: 'Pre-launch report' },
+];
+
 const incompleteValues = new Set([
   '',
   'tbd',
@@ -115,6 +157,42 @@ function tableRows(markdown: string) {
     .filter((cells) => cells.length > 0);
 }
 
+function sectionMarkdown(markdown: string, heading: string) {
+  const lines = markdown.split('\n');
+  const startIndex = lines.findIndex((line) => line.trim() === `## ${heading}`);
+  if (startIndex === -1) return '';
+
+  const sectionLines: string[] = [];
+  for (let index = startIndex + 1; index < lines.length; index += 1) {
+    if (lines[index].startsWith('## ')) break;
+    sectionLines.push(lines[index]);
+  }
+
+  return sectionLines.join('\n');
+}
+
+function tableRowsForSection(markdown: string, heading: string) {
+  return tableRows(sectionMarkdown(markdown, heading));
+}
+
+function isPassLike(value: string) {
+  return ['pass', 'yes'].includes(normalize(value));
+}
+
+function isCompleteLike(value: string) {
+  return ['complete', 'uploaded', 'verified', 'pass', 'yes'].includes(normalize(value));
+}
+
+function requirePass(findings: Finding[], label: string, value: string | undefined) {
+  if (value && isPassLike(value)) pass(findings, label, value);
+  else fail(findings, label, value ? `Current value: ${value}` : 'Missing value');
+}
+
+function requireComplete(findings: Finding[], label: string, value: string | undefined) {
+  if (value && isCompleteLike(value)) pass(findings, label, value);
+  else fail(findings, label, value ? `Current value: ${value}` : 'Missing value');
+}
+
 function validateEvidence(markdown: string) {
   const findings: Finding[] = [];
 
@@ -155,6 +233,74 @@ function validateEvidence(markdown: string) {
   if (checkedResultCells > 0) pass(findings, 'Evidence tables include completed result cells', `${checkedResultCells} completed cells`);
   else fail(findings, 'Evidence tables include completed result cells', 'No Pass/Complete/Uploaded/Verified cells found');
 
+  const installedBuildRows = tableRowsForSection(markdown, 'Installed Build Matrix');
+  for (const required of requiredInstalledBuildRows) {
+    const row = installedBuildRows.find((candidate) =>
+      candidate[0] === required.platform
+      && candidate[1] === required.buildSource
+      && candidate[2] === required.device
+    );
+    const label = `Installed build matrix has passing ${required.platform} ${required.device}`;
+    if (!row) {
+      fail(findings, label, 'Missing row');
+      continue;
+    }
+
+    requirePass(findings, label, row[7]);
+    for (const [index, cellLabel] of [
+      [3, 'OS version'],
+      [4, 'App build shown'],
+      [5, 'Tester'],
+      [6, 'Date'],
+    ] as const) {
+      const value = row[index];
+      if (value && isFilled(value)) pass(findings, `${required.platform} ${required.device} ${cellLabel} is filled`, value);
+      else fail(findings, `${required.platform} ${required.device} ${cellLabel} is filled`, value ? `Current value: ${value}` : 'Missing value');
+    }
+  }
+
+  const smokeRows = tableRowsForSection(markdown, 'Required Smoke Evidence');
+  for (const required of requiredSmokeRows) {
+    const row = smokeRows.find((candidate) => candidate[0] === required.area);
+    if (!row) {
+      fail(findings, `Required smoke evidence includes ${required.area}`, 'Missing row');
+      continue;
+    }
+
+    if (required.ios === 'N/A') {
+      if (normalize(row[1] ?? '') === 'n/a') pass(findings, `${required.area} iOS result is N/A`, row[1]);
+      else fail(findings, `${required.area} iOS result is N/A`, row[1] ? `Current value: ${row[1]}` : 'Missing value');
+    } else {
+      requirePass(findings, `${required.area} iOS result passed`, row[1]);
+    }
+
+    if (required.android === 'N/A') {
+      if (normalize(row[2] ?? '') === 'n/a') pass(findings, `${required.area} Android result is N/A`, row[2]);
+      else fail(findings, `${required.area} Android result is N/A`, row[2] ? `Current value: ${row[2]}` : 'Missing value');
+    } else {
+      requirePass(findings, `${required.area} Android result passed`, row[2]);
+    }
+
+    const evidenceLink = row[3];
+    if (evidenceLink && isFilled(evidenceLink)) pass(findings, `${required.area} evidence link is filled`, evidenceLink);
+    else fail(findings, `${required.area} evidence link is filled`, evidenceLink ? `Current value: ${evidenceLink}` : 'Missing value');
+  }
+
+  const storeRows = tableRowsForSection(markdown, 'Store Console Evidence');
+  for (const required of requiredStoreConsoleRows) {
+    const row = storeRows.find((candidate) => candidate[0] === required.store && candidate[1] === required.area);
+    const label = `${required.store} ${required.area} is complete`;
+    if (!row) {
+      fail(findings, label, 'Missing row');
+      continue;
+    }
+
+    requireComplete(findings, label, row[2]);
+    const evidenceLink = row[3];
+    if (evidenceLink && isFilled(evidenceLink)) pass(findings, `${required.store} ${required.area} evidence link is filled`, evidenceLink);
+    else fail(findings, `${required.store} ${required.area} evidence link is filled`, evidenceLink ? `Current value: ${evidenceLink}` : 'Missing value');
+  }
+
   for (const label of requiredSignoffFields) {
     const value = fieldValue(markdown, label);
     if (value && isFilled(value)) pass(findings, `${label} is signed off`, value);
@@ -165,6 +311,13 @@ function validateEvidence(markdown: string) {
 }
 
 function selfTestEvidence() {
+  const smokeEvidenceRows = requiredSmokeRows
+    .map((row) => `| ${row.area} | ${row.ios} | ${row.android} | evidence/${row.area.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.png |  |`)
+    .join('\n');
+  const storeConsoleRows = requiredStoreConsoleRows
+    .map((row) => `| ${row.store} | ${row.area} | Complete | evidence/${row.store.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${row.area.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.png |  |`)
+    .join('\n');
+
   return `# Mobile Release Evidence
 
 ## Release Candidate
@@ -207,15 +360,13 @@ function selfTestEvidence() {
 
 | Area | iOS result | Android result | Evidence file/link | Notes |
 | --- | --- | --- | --- | --- |
-| Fresh launch and splash | Pass | Pass | screenshots |  |
-| Android native back behavior | N/A | Pass | clip |  |
+${smokeEvidenceRows}
 
 ## Store Console Evidence
 
 | Store | Area | Status | Evidence file/link | Notes |
 | --- | --- | --- | --- | --- |
-| App Store Connect | App information | Complete | screenshot |  |
-| Google Play Console | Data Safety | Complete | screenshot |  |
+${storeConsoleRows}
 
 ## Failure Log
 
