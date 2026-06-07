@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
+import { Capacitor } from '@capacitor/core';
 import { countries, type Country } from '../data/countries';
 import { countryFacts } from '../data/countryFacts';
 
@@ -310,9 +311,10 @@ function buildSummary(picks: PassportPick[], seed: string, seedLabel: string): P
 }
 
 function getPlayUrl(): string {
-  return typeof window === 'undefined'
-    ? 'https://flagarcade.com/play/perfect-passport'
-    : `${window.location.origin}/play/perfect-passport`;
+  if (typeof window === 'undefined' || Capacitor.isNativePlatform()) {
+    return 'https://flagarcade.com/play/perfect-passport';
+  }
+  return `${window.location.origin}/play/perfect-passport`;
 }
 
 function buildChallengeUrl({

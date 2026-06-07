@@ -1,4 +1,6 @@
 import { useState, useEffect, useLayoutEffect, useRef, useCallback, lazy, Suspense } from 'react';
+import { App as CapacitorApp } from '@capacitor/app';
+import { Capacitor } from '@capacitor/core';
 import { Routes, Route, Navigate, Outlet, useNavigate, useNavigationType, useParams, useLocation } from 'react-router-dom';
 import { AchievementToast } from './components/journey/AchievementToast';
 import { SiteLayout } from './layouts/SiteLayout';
@@ -117,6 +119,7 @@ const SCREEN_TO_PATH: Record<string, string> = {
 
 function GameLayoutInner() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { pendingAchievements, setPendingAchievements } = useGameContext();
 
   // Hidden test page — type "devmode" anywhere to toggle
@@ -149,6 +152,26 @@ function GameLayoutInner() {
       localStorage.removeItem('app-screen');
     }
   }, [navigate]);
+
+  useEffect(() => {
+    if (!Capacitor.isNativePlatform()) return;
+
+    let isActive = true;
+    const listener = CapacitorApp.addListener('backButton', () => {
+      if (!isActive) return;
+      const isModeSelect = location.pathname === '/play' || location.pathname === '/play/modes';
+      if (isModeSelect) {
+        CapacitorApp.exitApp();
+        return;
+      }
+      navigate('/play/modes');
+    });
+
+    return () => {
+      isActive = false;
+      listener.then((handle) => handle.remove());
+    };
+  }, [location.pathname, navigate]);
 
   if (showTestPage) {
     return (

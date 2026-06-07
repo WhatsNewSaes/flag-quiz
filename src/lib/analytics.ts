@@ -26,6 +26,7 @@ export interface SessionHandle {
 // Tracking is a no-op when Supabase isn't configured (e.g. local dev without env,
 // or the placeholder client in src/lib/supabase.ts).
 const ENABLED = Boolean(import.meta.env.VITE_SUPABASE_URL);
+const SITE_URL = import.meta.env.VITE_SITE_URL || 'https://flagarcade.com';
 
 const DEVICE_ID_KEY = 'fa_device_id';
 
@@ -72,7 +73,7 @@ export function getPlatform(): 'web' | 'ios' | 'android' {
 function post(payload: Record<string, unknown>, beacon = false): void {
   if (!ENABLED) return;
   try {
-    const url = '/api/track';
+    const url = Capacitor.isNativePlatform() ? `${SITE_URL}/api/track` : '/api/track';
     const data = JSON.stringify(payload);
     if (beacon && typeof navigator !== 'undefined' && typeof navigator.sendBeacon === 'function') {
       navigator.sendBeacon(url, new Blob([data], { type: 'application/json' }));
