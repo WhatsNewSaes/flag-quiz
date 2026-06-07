@@ -1,10 +1,13 @@
 import { execFileSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import { cp, mkdir, readdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
 type ManifestEntry = {
   source: string;
   destination: string;
+  bytes: number;
+  sha256: string;
 };
 
 const root = process.cwd();
@@ -51,16 +54,23 @@ async function assertPathExists(relativePath: string) {
   }
 }
 
+async function addManifestEntry(relativeSource: string, destination: string, entries: ManifestEntry[]) {
+  const fileBuffer = await readFile(destination);
+  entries.push({
+    source: toPosix(relativeSource),
+    destination: toPosix(path.relative(outputRoot, destination)),
+    bytes: fileBuffer.byteLength,
+    sha256: createHash('sha256').update(fileBuffer).digest('hex'),
+  });
+}
+
 async function copyFileIntoPackage(relativeSource: string, relativeDestination: string, entries: ManifestEntry[]) {
   await assertPathExists(relativeSource);
   const source = resolve(relativeSource);
   const destination = path.join(outputRoot, relativeDestination);
   await mkdir(path.dirname(destination), { recursive: true });
   await cp(source, destination);
-  entries.push({
-    source: toPosix(relativeSource),
-    destination: toPosix(path.relative(outputRoot, destination)),
-  });
+  await addManifestEntry(relativeSource, destination, entries);
 }
 
 async function copyDirectoryIntoPackage(relativeSource: string, relativeDestination: string, entries: ManifestEntry[]) {
@@ -77,10 +87,7 @@ async function copyDirectoryIntoPackage(relativeSource: string, relativeDestinat
 
     const destinationFile = path.join(destination, file);
     await cp(sourceFile, destinationFile);
-    entries.push({
-      source: toPosix(path.relative(root, sourceFile)),
-      destination: toPosix(path.relative(outputRoot, destinationFile)),
-    });
+    await addManifestEntry(path.relative(root, sourceFile), destinationFile, entries);
   }
 }
 

@@ -307,6 +307,8 @@ async function main() {
   expect(storeSubmissionPackage.includes('dist/mobile-store-submission'), 'Submission package documents packaging output path');
   expect(storeSubmissionPackage.includes('dist/flag-arcade-mobile-store-submission.zip'), 'Submission package documents packaging archive path');
   expect(storeSubmissionPackage.includes('dist/mobile-readiness-report.md'), 'Submission package documents readiness report path');
+  expect(storeSubmissionPackage.includes('SHA-256 checksums'), 'Submission package documents handoff checksums');
+  expect(storeSubmissionPackage.includes('byte count'), 'Submission package documents handoff byte counts');
   expect(storeSubmissionPackage.includes('com.flagarcade.app'), 'Submission package includes bundle/package id');
   expect(storeSubmissionPackage.includes('store-assets/shared/app-icon-1024.png'), 'Submission package includes app icon path');
   expect(storeSubmissionPackage.includes('store-assets/google-play/feature-graphic.png'), 'Submission package includes Play feature graphic path');
@@ -334,6 +336,9 @@ async function main() {
     'execFileSync',
     'manifest.json',
     'archivePath',
+    'sha256',
+    'bytes',
+    'createHash',
     'store-assets/shared/app-icon-1024.png',
     'store-assets/google-play/feature-graphic.png',
     'store-assets/app-store/iphone-6-7',

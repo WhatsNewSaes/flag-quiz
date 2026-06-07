@@ -15,6 +15,7 @@ Output:
 - Handoff folder: `dist/mobile-store-submission/`
 - Handoff archive: `dist/flag-arcade-mobile-store-submission.zip`
 - Readiness report: `dist/mobile-readiness-report.md`
+- Handoff manifest: `dist/mobile-store-submission/manifest.json`, including source paths, package paths, byte counts, and SHA-256 checksums for every included file.
 
 ## Shared Listing Details
 
@@ -128,6 +129,8 @@ npm run mobile:build:ios:debug
 ```
 
 Expected current local result: all commands pass. Signed release uploads still require developer account credentials and store-console access.
+
+After packaging, use `dist/mobile-store-submission/manifest.json` as the integrity index for the handoff archive. It records each included file's original repo path, archive destination, byte count, and SHA-256 checksum so the exact store assets and docs can be verified during submission.
 
 Before final store form submission, verify store metadata and public listing URLs:
 
