@@ -109,9 +109,21 @@ async function main() {
 
   const androidManifest = await readFile(resolve('android/app/src/main/AndroidManifest.xml'), 'utf8');
   const androidBuildGradle = await readFile(resolve('android/app/build.gradle'), 'utf8');
+  const androidFileProviderPaths = await readFile(resolve('android/app/src/main/res/xml/file_paths.xml'), 'utf8');
+  const androidDataExtractionRules = await readFile(resolve('android/app/src/main/res/xml/data_extraction_rules.xml'), 'utf8');
   expect(androidBuildGradle.includes('versionCode 1'), 'Android versionCode is 1');
   expect(androidBuildGradle.includes('versionName "1.0"'), 'Android versionName is 1.0');
   expect(androidManifest.includes('android:screenOrientation="portrait"'), 'Android main activity is portrait locked');
+  expect(androidManifest.includes('android:allowBackup="false"'), 'Android Auto Backup is disabled');
+  expect(androidManifest.includes('android:fullBackupContent="false"'), 'Android full backup content is disabled');
+  expect(androidManifest.includes('android:dataExtractionRules="@xml/data_extraction_rules"'), 'Android data extraction rules are configured');
+  expect(androidDataExtractionRules.includes('<cloud-backup>'), 'Android data extraction rules cover cloud backup');
+  expect(androidDataExtractionRules.includes('<device-transfer>'), 'Android data extraction rules cover device transfer');
+  for (const domain of ['root', 'file', 'database', 'sharedpref', 'external']) {
+    expect(androidDataExtractionRules.includes(`domain="${domain}"`), `Android data extraction rules exclude ${domain}`);
+  }
+  expect(!androidFileProviderPaths.includes('<external-path'), 'Android FileProvider does not expose broad external storage');
+  expect(androidFileProviderPaths.includes('<cache-path name="share_cache" path="."'), 'Android FileProvider is limited to cache sharing');
   expect(
     androidManifest.includes('android:scheme="com.flagarcade.app"')
       && androidManifest.includes('android:host="auth"')

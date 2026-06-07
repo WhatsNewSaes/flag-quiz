@@ -88,6 +88,7 @@ Security practices:
 - Data encrypted in transit: Yes.
 - Users can request deletion: Yes, in-app `Delete Account` or email `support@flagarcade.com`.
 - Committed deletion window: within 30 days after verification.
+- Android local app data backup/transfer: disabled through the app manifest and data extraction rules.
 - App independently security reviewed: No, unless a review is later completed.
 
 Children and families:
@@ -103,5 +104,6 @@ Before submitting either store form:
 - Confirm no new SDKs were added after this date.
 - Confirm analytics events still match `src/lib/analytics.ts` and `src/hooks/useSessionTracking.ts`.
 - Confirm Android permissions still only include `android.permission.INTERNET`.
+- Confirm Android Auto Backup/device transfer remains disabled for local app data.
 - Confirm iOS `PrivacyInfo.xcprivacy` still declares tracking as false and lists the local storage accessed API reason.
 - Confirm the public Privacy Policy at `https://flagarcade.com/privacy` includes account deletion and retention language.

@@ -8,6 +8,7 @@ Use this as the source of truth when filling out App Store Connect privacy nutri
 
 - The app does not request precise location, approximate location, contacts, photos, camera, microphone, health, fitness, calendars, reminders, or payment permissions.
 - The Android app currently requests only `android.permission.INTERNET`.
+- The Android app disables Auto Backup and device-transfer extraction for local app/WebView data.
 - The iOS app declares the local preferences API in `PrivacyInfo.xcprivacy` because Capacitor/WebKit and the app use persistent local storage for settings and progress.
 - The app does not sell data and does not use collected data for third-party advertising or cross-app tracking.
 - Data is sent over HTTPS to hosted service providers for auth, sync, analytics, hosting, and distribution.
@@ -77,6 +78,6 @@ Suggested form statements:
 
 ## Retention And Deletion
 
-Current implementation keeps local progress/settings on the player's device until the app is cleared, uninstalled, or the user resets local app data. Cloud progress, auth identity, leaderboard records, and user-linked analytics are deleted through the process in `docs/mobile-data-deletion-runbook.md`.
+Current implementation keeps local progress/settings on the player's device until the app is cleared, uninstalled, or the user resets local app data. Android Auto Backup/device transfer is disabled for local app data. Cloud progress, auth identity, leaderboard records, and user-linked analytics are deleted through the process in `docs/mobile-data-deletion-runbook.md`.
 
 Deletion requests should be completed within 30 days of verification. Anonymous aggregate analytics not linked to an identified user may be retained for product reliability and aggregate usage analysis.

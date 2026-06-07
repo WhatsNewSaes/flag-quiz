@@ -206,6 +206,7 @@ async function main() {
     ['Apple App Privacy', 'PrivacyInfo.xcprivacy'],
     ['Google Play Data Safety', 'android.permission.INTERNET'],
     ['PrivacyInfo.xcprivacy', 'PrivacyInfo.xcprivacy'],
+    ['Android local app data backup/transfer', 'Android Auto Backup/device transfer is disabled'],
   ] as const;
   for (const [answerTerm, inventoryTerm] of requiredPrivacyTerms) {
     expect(privacyAnswers.includes(answerTerm), `Privacy form answers include ${answerTerm}`);
