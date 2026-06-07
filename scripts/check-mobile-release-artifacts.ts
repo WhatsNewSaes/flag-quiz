@@ -41,6 +41,12 @@ type ArtifactManifest = {
   }>;
 };
 
+type ReleaseContext = {
+  bundleId: string;
+  marketingVersion: string;
+  buildNumber: string;
+};
+
 const findings: Finding[] = [];
 const artifactManifest: ArtifactManifest = {
   generatedAt: new Date().toISOString(),
@@ -123,6 +129,30 @@ function packageVersion() {
   }
 }
 
+function nativeMarketingVersion(packageVersion: string) {
+  const parts = packageVersion.split('.');
+  return parts.length >= 2 ? `${parts[0]}.${parts[1]}` : packageVersion;
+}
+
+function firstMatch(source: string, pattern: RegExp) {
+  return source.match(pattern)?.[1]?.trim() ?? '';
+}
+
+function releaseContext(): ReleaseContext {
+  const packageJsonVersion = packageVersion();
+  const androidBuildGradle = readFileSync(path.join(root, 'android/app/build.gradle'), 'utf8');
+  const bundleId = firstMatch(androidBuildGradle, /applicationId\s+["']([^"']+)["']/) || 'com.flagarcade.app';
+  const buildNumber = firstMatch(androidBuildGradle, /versionCode\s+(\d+)/) || 'unknown';
+  const androidMarketingVersion = firstMatch(androidBuildGradle, /versionName\s+["']([^"']+)["']/);
+  const marketingVersion = androidMarketingVersion || nativeMarketingVersion(packageJsonVersion);
+
+  return {
+    bundleId,
+    marketingVersion,
+    buildNumber,
+  };
+}
+
 function listZipEntries(filePath: string) {
   try {
     return execFileSync('unzip', ['-Z1', filePath], {
@@ -144,7 +174,7 @@ function parsePlist(filePath: string) {
   return JSON.parse(plistJson) as Record<string, unknown>;
 }
 
-async function checkAndroidAab(inputPath: string) {
+async function checkAndroidAab(inputPath: string, context: ReleaseContext) {
   const aabPath = resolveInput(inputPath);
   const relativePath = path.relative(root, aabPath);
   const exists = existsSync(aabPath);
@@ -176,14 +206,14 @@ async function checkAndroidAab(inputPath: string) {
     path: relativePath,
     bytes: stats.size,
     sha256: sha256(aabPath),
-    bundleId: 'com.flagarcade.app',
-    version: '1.0',
-    buildNumber: '1',
+    bundleId: context.bundleId,
+    version: context.marketingVersion,
+    buildNumber: context.buildNumber,
     entries: entries.length,
   });
 }
 
-async function checkIosArchive(inputPath: string) {
+async function checkIosArchive(inputPath: string, context: ReleaseContext) {
   const archivePath = resolveInput(inputPath);
   const relativePath = path.relative(root, archivePath);
   const exists = existsSync(archivePath);
@@ -218,18 +248,18 @@ async function checkIosArchive(inputPath: string) {
       };
       const applicationProperties = infoPlist.ApplicationProperties ?? {};
       expect(
-        applicationProperties.CFBundleIdentifier === 'com.flagarcade.app',
-        'iOS archive bundle id is com.flagarcade.app',
+        applicationProperties.CFBundleIdentifier === context.bundleId,
+        `iOS archive bundle id is ${context.bundleId}`,
         applicationProperties.CFBundleIdentifier
       );
       expect(
-        applicationProperties.CFBundleShortVersionString === '1.0',
-        'iOS archive marketing version is 1.0',
+        applicationProperties.CFBundleShortVersionString === context.marketingVersion,
+        `iOS archive marketing version is ${context.marketingVersion}`,
         applicationProperties.CFBundleShortVersionString
       );
       expect(
-        applicationProperties.CFBundleVersion === '1',
-        'iOS archive build number is 1',
+        applicationProperties.CFBundleVersion === context.buildNumber,
+        `iOS archive build number is ${context.buildNumber}`,
         applicationProperties.CFBundleVersion
       );
     } catch {
@@ -260,18 +290,18 @@ async function checkIosArchive(inputPath: string) {
           CFBundleVersion?: string;
         };
         expect(
-          appInfoPlist.CFBundleIdentifier === 'com.flagarcade.app',
-          'iOS archived app bundle id is com.flagarcade.app',
+          appInfoPlist.CFBundleIdentifier === context.bundleId,
+          `iOS archived app bundle id is ${context.bundleId}`,
           appInfoPlist.CFBundleIdentifier
         );
         expect(
-          appInfoPlist.CFBundleShortVersionString === '1.0',
-          'iOS archived app marketing version is 1.0',
+          appInfoPlist.CFBundleShortVersionString === context.marketingVersion,
+          `iOS archived app marketing version is ${context.marketingVersion}`,
           appInfoPlist.CFBundleShortVersionString
         );
         expect(
-          appInfoPlist.CFBundleVersion === '1',
-          'iOS archived app build number is 1',
+          appInfoPlist.CFBundleVersion === context.buildNumber,
+          `iOS archived app build number is ${context.buildNumber}`,
           appInfoPlist.CFBundleVersion
         );
         const executablePath = appInfoPlist.CFBundleExecutable
@@ -321,16 +351,21 @@ async function checkIosArchive(inputPath: string) {
 
 async function main() {
   const args = parseArgs(process.argv.slice(2));
+  const context = releaseContext();
   artifactManifest.gitCommit = currentGitCommit();
   artifactManifest.appVersion = packageVersion();
-  artifactManifest.buildNumber = '1';
+  artifactManifest.buildNumber = context.buildNumber;
 
   if (!args.androidAab || !args.iosArchive) {
     throw new Error('Usage: npm run mobile:artifacts:check -- --android-aab android/app/build/outputs/bundle/release/app-release.aab --ios-archive ios/App/build/FlagArcade.xcarchive --manifest docs/release-evidence/mobile-<version>-build-<build>-<commit>-artifacts.json');
   }
 
-  await checkAndroidAab(args.androidAab);
-  await checkIosArchive(args.iosArchive);
+  expect(Boolean(context.bundleId), 'Release context bundle id is resolved', context.bundleId);
+  expect(/^\d+\.\d+$/.test(context.marketingVersion), 'Release context marketing version is resolved', context.marketingVersion);
+  expect(/^\d+$/.test(context.buildNumber), 'Release context build number is resolved', context.buildNumber);
+
+  await checkAndroidAab(args.androidAab, context);
+  await checkIosArchive(args.iosArchive, context);
 
   const artifactFailures = findings.filter((finding) => !finding.ok);
   if (artifactFailures.length > 0) {

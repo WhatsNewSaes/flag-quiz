@@ -44,12 +44,27 @@ async function imageMetadata(relativePath: string) {
   return metadata;
 }
 
+function firstMatch(source: string, pattern: RegExp) {
+  return source.match(pattern)?.[1]?.trim() ?? '';
+}
+
+function nativeMarketingVersion(packageVersion: string) {
+  const parts = packageVersion.split('.');
+  return parts.length >= 2 ? `${parts[0]}.${parts[1]}` : packageVersion;
+}
+
+function uniqueValues(values: string[]) {
+  return [...new Set(values.filter(Boolean))];
+}
+
 async function main() {
   const packageJson = JSON.parse(await readFile(resolve('package.json'), 'utf8')) as {
     version?: string;
     scripts?: Record<string, string>;
   };
-  expect(packageJson.version === '1.0.0', 'package.json public version is 1.0.0');
+  const packageVersion = packageJson.version ?? '';
+  const expectedMarketingVersion = nativeMarketingVersion(packageVersion);
+  expect(/^\d+\.\d+\.\d+$/.test(packageVersion), 'package.json public version is semver', packageVersion);
   expect(Boolean(packageJson.scripts?.['mobile:audit']), 'package.json exposes mobile:audit');
   expect(Boolean(packageJson.scripts?.['mobile:preflight']), 'package.json exposes mobile:preflight');
   expect(Boolean(packageJson.scripts?.['mobile:urls:check']), 'package.json exposes mobile public URL check script');
@@ -121,8 +136,10 @@ async function main() {
   const androidBuildGradle = await readFile(resolve('android/app/build.gradle'), 'utf8');
   const androidFileProviderPaths = await readFile(resolve('android/app/src/main/res/xml/file_paths.xml'), 'utf8');
   const androidDataExtractionRules = await readFile(resolve('android/app/src/main/res/xml/data_extraction_rules.xml'), 'utf8');
-  expect(androidBuildGradle.includes('versionCode 1'), 'Android versionCode is 1');
-  expect(androidBuildGradle.includes('versionName "1.0"'), 'Android versionName is 1.0');
+  const androidVersionCode = firstMatch(androidBuildGradle, /versionCode\s+(\d+)/);
+  const androidVersionName = firstMatch(androidBuildGradle, /versionName\s+["']([^"']+)["']/);
+  expect(/^\d+$/.test(androidVersionCode), 'Android versionCode is numeric', androidVersionCode);
+  expect(androidVersionName === expectedMarketingVersion, 'Android versionName matches package major/minor', androidVersionName);
   expect(androidManifest.includes('android:screenOrientation="portrait"'), 'Android main activity is portrait locked');
   expect(androidManifest.includes('android:allowBackup="false"'), 'Android Auto Backup is disabled');
   expect(androidManifest.includes('android:fullBackupContent="false"'), 'Android full backup content is disabled');
@@ -214,8 +231,12 @@ async function main() {
   expect(iosPrivacyManifestText.includes('NSPrivacyAccessedAPICategoryUserDefaults'), 'iOS privacy manifest declares UserDefaults access');
   expect(iosPrivacyManifestText.includes('NSPrivacyCollectedDataTypeProductInteraction'), 'iOS privacy manifest declares product interaction data');
   const xcodeProject = await readFile(resolve('ios/App/App.xcodeproj/project.pbxproj'), 'utf8');
-  expect(xcodeProject.includes('MARKETING_VERSION = 1.0;'), 'iOS marketing version is 1.0');
-  expect(xcodeProject.includes('CURRENT_PROJECT_VERSION = 1;'), 'iOS build number is 1');
+  const iosMarketingVersions = [...xcodeProject.matchAll(/MARKETING_VERSION = ([^;]+);/g)].map((match) => match[1].trim());
+  const iosBuildNumbers = [...xcodeProject.matchAll(/CURRENT_PROJECT_VERSION = ([^;]+);/g)].map((match) => match[1].trim());
+  expect(iosMarketingVersions.length > 0, 'iOS marketing version entries exist', iosMarketingVersions.join(', ') || 'missing');
+  expect(iosMarketingVersions.every((version) => version === expectedMarketingVersion), 'iOS marketing versions match package major/minor', iosMarketingVersions.join(', '));
+  expect(iosBuildNumbers.length > 0, 'iOS build number entries exist', iosBuildNumbers.join(', ') || 'missing');
+  expect(uniqueValues([androidVersionCode, ...iosBuildNumbers]).length === 1, 'iOS and Android build numbers match', uniqueValues([androidVersionCode, ...iosBuildNumbers]).join(', '));
   expect(xcodeProject.includes('PrivacyInfo.xcprivacy'), 'iOS privacy manifest is referenced by Xcode project');
   expect(xcodeProject.includes('PrivacyInfo.xcprivacy in Resources'), 'iOS privacy manifest is bundled as a resource');
 

@@ -47,6 +47,10 @@ function nativeMarketingVersion(packageVersion: string) {
   return parts.length >= 2 ? `${parts[0]}.${parts[1]}` : packageVersion;
 }
 
+function uniqueValues(values: string[]) {
+  return [...new Set(values.filter(Boolean))];
+}
+
 function commandOutput(command: string, args: string[]) {
   try {
     return execFileSync(command, args, {
@@ -70,13 +74,12 @@ async function main() {
 
   const packageVersion = packageJson.version ?? '';
   const expectedMarketingVersion = nativeMarketingVersion(packageVersion);
-  const expectedBuildNumber = '1';
   const expectedAppName = 'Flag Arcade';
   const expectedBundleId = 'com.flagarcade.app';
 
   expect(Boolean(packageVersion), 'package.json version is present', packageVersion || 'missing');
   expect(/^\d+\.\d+\.\d+$/.test(packageVersion), 'package.json version is semver', packageVersion);
-  expect(expectedMarketingVersion === '1.0', 'Expected native marketing version is 1.0 for current package version', expectedMarketingVersion);
+  expect(/^\d+\.\d+$/.test(expectedMarketingVersion), 'Native marketing version derives from package major/minor', expectedMarketingVersion);
 
   const capacitorAppId = firstMatch(capacitorConfig, /appId:\s*['"]([^'"]+)['"]/);
   const capacitorAppName = firstMatch(capacitorConfig, /appName:\s*['"]([^'"]+)['"]/);
@@ -86,8 +89,9 @@ async function main() {
   const androidApplicationId = firstMatch(androidBuildGradle, /applicationId\s+["']([^"']+)["']/);
   const androidVersionCode = firstMatch(androidBuildGradle, /versionCode\s+(\d+)/);
   const androidVersionName = firstMatch(androidBuildGradle, /versionName\s+["']([^"']+)["']/);
+  const expectedBuildNumber = androidVersionCode;
   expect(androidApplicationId === expectedBundleId, 'Android applicationId matches bundle/package id', androidApplicationId);
-  expect(androidVersionCode === expectedBuildNumber, 'Android versionCode matches expected build number', androidVersionCode);
+  expect(/^\d+$/.test(androidVersionCode), 'Android versionCode is numeric', androidVersionCode);
   expect(androidVersionName === expectedMarketingVersion, 'Android versionName matches native marketing version', androidVersionName);
 
   const iosMarketingVersions = [...xcodeProject.matchAll(/MARKETING_VERSION = ([^;]+);/g)].map((match) => match[1].trim());
@@ -99,6 +103,7 @@ async function main() {
   expect(iosBuildNumbers.every((build) => build === expectedBuildNumber), 'All iOS build numbers match expected build number', iosBuildNumbers.join(', '));
   expect(iosBundleIds.length > 0, 'iOS bundle id entries exist', iosBundleIds.join(', ') || 'missing');
   expect(iosBundleIds.every((bundleId) => bundleId === expectedBundleId), 'All iOS bundle ids match expected bundle id', iosBundleIds.join(', '));
+  expect(uniqueValues([androidVersionCode, ...iosBuildNumbers]).length === 1, 'Android and iOS build numbers use the same release number', uniqueValues([androidVersionCode, ...iosBuildNumbers]).join(', '));
 
   const infoPlistJson = commandOutput('plutil', ['-convert', 'json', '-o', '-', resolve('ios/App/App/Info.plist')]);
   if (infoPlistJson) {
