@@ -172,4 +172,4 @@ npm run mobile:evidence:check -- --file docs/release-evidence/<release-file>.md
 npm run mobile:go-live:check -- --evidence docs/release-evidence/<release-file>.md --android-aab android/app/build/outputs/bundle/release/app-release.aab --ios-archive ios/App/build/FlagArcade.xcarchive
 ```
 
-The evidence initializer prefills the `Artifact manifest` field. Keep that generated manifest path in the release evidence file before running `npm run mobile:evidence:check`.
+The evidence initializer prefills the `Artifact manifest` field. The full go-live gate reads that local path, writes the artifact manifest before evidence validation, and then verifies the completed evidence file.

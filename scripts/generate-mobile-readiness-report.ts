@@ -157,7 +157,7 @@ async function main() {
     '- `npm run mobile:artifacts:check` verifies signed Android AAB and iOS `.xcarchive` paths when release artifacts exist locally, and can write a SHA-256 release artifact manifest for the final evidence file.',
     '- `npm run mobile:blockers:check` verifies the generated launch blocker report still matches the unchecked launch checklist items.',
     '- `npm run mobile:handoff:check` verifies the generated store handoff manifest, SHA-256 checksums, byte counts, and ZIP contents.',
-    '- `npm run mobile:go-live:check` composes preflight, release evidence validation, and public URL checks into the final local review gate.',
+    '- `npm run mobile:go-live:check` composes preflight, signed artifact manifest generation, release evidence validation, and public URL checks into the final local review gate.',
     '- `npm run package:store-submission` creates a handoff folder and zip archive for upload/supporting materials.',
     '',
     '## Store Handoff Outputs',

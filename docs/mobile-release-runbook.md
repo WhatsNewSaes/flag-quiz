@@ -72,7 +72,7 @@ Create a release evidence file before uploading store builds, then keep it updat
 npm run mobile:evidence:init -- --build 1 --owner "Release Owner"
 ```
 
-The generated file is written to `docs/release-evidence/` with the current version, build, branch, and git commit prefilled.
+The generated file is written to `docs/release-evidence/` with the current version, build, branch, git commit, and local artifact manifest path prefilled.
 
 After TestFlight, Play internal testing, and store-console evidence are filled, verify the signoff file:
 
@@ -80,7 +80,7 @@ After TestFlight, Play internal testing, and store-console evidence are filled, 
 npm run mobile:evidence:check -- --file docs/release-evidence/<release-file>.md
 ```
 
-As the final local gate before submitting for App Store and Google Play review, run it with the signed artifact paths:
+As the final local gate before submitting for App Store and Google Play review, run it with the signed artifact paths. The gate runs unsigned preflight, writes the artifact manifest from the evidence file's `Artifact manifest` path, validates the completed evidence file, and checks public URLs.
 
 ```bash
 npm run mobile:go-live:check -- --evidence docs/release-evidence/<release-file>.md --android-aab android/app/build/outputs/bundle/release/app-release.aab --ios-archive ios/App/build/FlagArcade.xcarchive

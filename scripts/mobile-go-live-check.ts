@@ -1,5 +1,5 @@
 import { execFileSync } from 'node:child_process';
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 
 const root = process.cwd();
@@ -72,6 +72,40 @@ function runStep(step: Step) {
   });
 }
 
+function fieldValue(markdown: string, label: string) {
+  const escapedLabel = label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const match = markdown.match(new RegExp(`^- ${escapedLabel}:[ \\t]*(.*)$`, 'm'));
+  return match?.[1]?.trim();
+}
+
+function evidenceTarget(value: string) {
+  const trimmed = value.trim();
+  const markdownLink = trimmed.match(/^\[[^\]]+\]\(([^)]+)\)$/);
+  return (markdownLink?.[1] ?? trimmed).trim();
+}
+
+function isExternalEvidenceTarget(target: string) {
+  return /^[a-z][a-z0-9+.-]*:\/\//i.test(target);
+}
+
+function artifactManifestPath(markdown: string) {
+  const value = fieldValue(markdown, 'Artifact manifest');
+  if (!value || ['tbd', 'todo', 'pending'].includes(value.toLowerCase())) {
+    throw new Error('Release evidence must include an Artifact manifest path before running the final go-live gate.');
+  }
+
+  const target = evidenceTarget(value);
+  if (!target || target.startsWith('#') || target.includes('<release-file>')) {
+    throw new Error(`Release evidence Artifact manifest is still a placeholder: ${value}`);
+  }
+
+  if (isExternalEvidenceTarget(target)) {
+    throw new Error('Full go-live artifact verification needs a local Artifact manifest path so mobile:artifacts:check can write hashes before evidence validation.');
+  }
+
+  return target;
+}
+
 async function main() {
   const args = parseArgs(process.argv.slice(2));
 
@@ -83,17 +117,13 @@ async function main() {
   if (!existsSync(evidencePath)) {
     throw new Error(`Release evidence file does not exist: ${path.relative(root, evidencePath)}`);
   }
+  const evidenceMarkdown = readFileSync(evidencePath, 'utf8');
 
   const steps: Step[] = [
     {
       label: 'Unsigned mobile preflight',
       command: 'npm',
       args: ['run', 'mobile:preflight'],
-    },
-    {
-      label: 'Completed release evidence',
-      command: 'npm',
-      args: ['run', 'mobile:evidence:check', '--', '--file', path.relative(root, evidencePath)],
     },
   ];
 
@@ -108,6 +138,7 @@ async function main() {
   if (!args.skipArtifacts) {
     const androidAab = args.androidAab as string;
     const iosArchive = args.iosArchive as string;
+    const manifestPath = artifactManifestPath(evidenceMarkdown);
 
     steps.push({
       label: 'Signed release artifacts',
@@ -120,9 +151,17 @@ async function main() {
         androidAab,
         '--ios-archive',
         iosArchive,
+        '--manifest',
+        manifestPath,
       ],
     });
   }
+
+  steps.push({
+    label: 'Completed release evidence',
+    command: 'npm',
+    args: ['run', 'mobile:evidence:check', '--', '--file', path.relative(root, evidencePath)],
+  });
 
   if (!args.skipUrls) {
     steps.push({
