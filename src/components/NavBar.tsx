@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useGameContext } from '../contexts/GameContext';
 import { playMenuSelectSound } from '../utils/sounds';
+import { buildAccountDeletionMailto } from '../utils/accountDeletion';
 import { FlagImage } from './FlagImage';
 import { CharacterKey } from '../data/characters';
 
@@ -271,12 +272,21 @@ export function NavBar({ variant = 'default' }: NavBarProps) {
         <div className="p-4 mt-auto">
           {!loading && (
             user ? (
-              <button
-                onClick={() => { signOut(); close(); }}
-                className="retro-btn w-full px-3 py-2 text-xs font-retro bg-retro-neon-red text-white min-h-[44px]"
-              >
-                Sign Out
-              </button>
+              <div className="space-y-3">
+                <a
+                  href={buildAccountDeletionMailto(user.id, user.email)}
+                  onClick={close}
+                  className="block text-center border-2 border-retro-border bg-retro-surface px-3 py-2 text-[10px] font-retro text-retro-text shadow-pixel-sm min-h-[44px] leading-[24px]"
+                >
+                  Delete Account
+                </a>
+                <button
+                  onClick={() => { signOut(); close(); }}
+                  className="retro-btn w-full px-3 py-2 text-xs font-retro bg-retro-neon-red text-white min-h-[44px]"
+                >
+                  Sign Out
+                </button>
+              </div>
             ) : (
               <button
                 onClick={() => { signInWithGoogle(); close(); }}

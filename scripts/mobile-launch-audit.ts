@@ -217,6 +217,7 @@ async function main() {
   expect(existsSync(resolve('docs/mobile-store-metadata.md')), 'Mobile store metadata draft exists');
   expect(existsSync(resolve('docs/mobile-release-runbook.md')), 'Mobile release runbook exists');
   expect(existsSync(resolve('docs/mobile-privacy-data-inventory.md')), 'Mobile privacy data inventory exists');
+  expect(existsSync(resolve('docs/mobile-data-deletion-runbook.md')), 'Mobile data deletion runbook exists');
   expect(existsSync(resolve('docs/mobile-store-submission-package.md')), 'Mobile store submission package exists');
   expect(existsSync(resolve('docs/mobile-installed-build-qa.md')), 'Mobile installed-build QA checklist exists');
   expect(existsSync(resolve('android/keystore.properties.example')), 'Android keystore template exists');
@@ -240,6 +241,7 @@ async function main() {
   expect(storeSubmissionPackage.includes('store-assets/google-play/feature-graphic.png'), 'Submission package includes Play feature graphic path');
   expect(storeSubmissionPackage.includes('android/app/build/outputs/bundle/release/app-release.aab'), 'Submission package includes Android AAB path');
   expect(storeSubmissionPackage.includes('docs/mobile-privacy-data-inventory.md'), 'Submission package links privacy inventory');
+  expect(storeSubmissionPackage.includes('docs/mobile-data-deletion-runbook.md'), 'Submission package links deletion runbook');
   for (const slug of storeScreenshotSlugs) {
     expect(
       storeSubmissionPackage.includes(`store-assets/app-store/iphone-6-7/${slug}.png`),
@@ -273,10 +275,33 @@ async function main() {
     expect(installedBuildQa.includes(term), `Installed-build QA covers ${term}`);
   }
 
+  const deletionRunbook = await readFile(resolve('docs/mobile-data-deletion-runbook.md'), 'utf8');
+  const deletionRunbookTerms = [
+    'Delete Account',
+    'support@flagarcade.com',
+    'within 30 days',
+    'public.user_progress',
+    'public.leaderboard_scores',
+    'public.leaderboard_monthly',
+    'public.play_sessions',
+    'Supabase Auth',
+  ];
+  for (const term of deletionRunbookTerms) {
+    expect(deletionRunbook.includes(term), `Deletion runbook covers ${term}`);
+  }
+
   const appSource = await readFile(resolve('src/App.tsx'), 'utf8');
   expect(appSource.includes('path="/privacy"'), 'Privacy route is registered');
   expect(appSource.includes('path="/terms"'), 'Terms route is registered');
   expect(appSource.includes('path="/support"'), 'Support route is registered');
+
+  const navBarSource = await readFile(resolve('src/components/NavBar.tsx'), 'utf8');
+  expect(navBarSource.includes('Delete Account'), 'Signed-in drawer includes Delete Account action');
+  expect(navBarSource.includes('buildAccountDeletionMailto'), 'Signed-in drawer uses account deletion mailto helper');
+
+  const supportSource = await readFile(resolve('src/pages/SupportPage.tsx'), 'utf8');
+  expect(supportSource.includes('Account Deletion'), 'Support page includes account deletion section');
+  expect(supportSource.includes('support@flagarcade.com') || supportSource.includes('SUPPORT_EMAIL'), 'Support page includes support email');
 
   const gitignore = await readFile(resolve('.gitignore'), 'utf8');
   expect(gitignore.includes('android/keystore.properties'), 'Android keystore properties are gitignored');

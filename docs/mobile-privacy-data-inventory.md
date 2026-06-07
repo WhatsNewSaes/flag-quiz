@@ -71,12 +71,12 @@ Suggested Data Safety answers:
 Suggested form statements:
 
 - Data is encrypted in transit.
-- Users can request account/data deletion through `support@flagarcade.com` until an in-app deletion flow is added.
+- Users can request account/data deletion from the in-app account menu or through `support@flagarcade.com`.
 - The app does not share data for advertising and does not sell data.
 - Sign-in is optional, but cloud sync and leaderboards require account data.
 
 ## Retention And Deletion
 
-Current implementation keeps local progress/settings on the player's device until the app is cleared, uninstalled, or the user resets local app data. Cloud progress, auth identity, leaderboard records, and analytics are retained by the configured backend until manually deleted or until a formal retention policy is added.
+Current implementation keeps local progress/settings on the player's device until the app is cleared, uninstalled, or the user resets local app data. Cloud progress, auth identity, leaderboard records, and user-linked analytics are deleted through the process in `docs/mobile-data-deletion-runbook.md`.
 
-Launch blocker before store submission: choose a retention policy, document it in the Privacy Policy if needed, and confirm the support process for deleting Supabase Auth, `user_progress`, leaderboard records, and analytics rows.
+Deletion requests should be completed within 30 days of verification. Anonymous aggregate analytics not linked to an identified user may be retained for product reliability and aggregate usage analysis.

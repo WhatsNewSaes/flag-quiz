@@ -17,6 +17,7 @@ This is the handoff checklist for the exact assets, copy, URLs, and build artifa
 - Terms URL: `https://flagarcade.com/terms`
 - Source metadata doc: `docs/mobile-store-metadata.md`
 - Privacy/data-safety source doc: `docs/mobile-privacy-data-inventory.md`
+- Data deletion runbook: `docs/mobile-data-deletion-runbook.md`
 
 ## App Store Connect
 

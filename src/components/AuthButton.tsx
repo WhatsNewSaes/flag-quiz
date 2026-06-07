@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { buildAccountDeletionMailto } from '../utils/accountDeletion';
 
 export function AuthButton() {
   const { user, loading, signInWithGoogle, signOut } = useAuth();
@@ -81,6 +82,13 @@ export function AuthButton() {
               >
                 Sign Out
               </button>
+              <a
+                href={buildAccountDeletionMailto(user.id, user.email)}
+                onClick={() => setShowMenu(false)}
+                className="block text-center border-2 border-retro-border bg-retro-surface px-3 py-2 text-[10px] font-retro text-retro-text shadow-pixel-sm"
+              >
+                Delete Account
+              </a>
             </div>
           </div>
         </>

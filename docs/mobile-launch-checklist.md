@@ -98,11 +98,12 @@ Last updated: 2026-06-07
 ## Privacy And Compliance
 
 - [x] Mobile privacy data inventory exists: `docs/mobile-privacy-data-inventory.md`
+- [x] Mobile data deletion runbook exists: `docs/mobile-data-deletion-runbook.md`
 - [x] iOS privacy manifest is bundled: `ios/App/App/PrivacyInfo.xcprivacy`
 - [ ] App Store privacy nutrition labels completed
 - [ ] Google Play Data Safety form completed
-- [ ] Confirm analytics data collected and retention policy
-- [ ] Confirm Supabase/auth data collected and deletion path
+- [x] Confirm analytics data collected and retention policy
+- [x] Confirm Supabase/auth data collected and deletion path
 - [x] Confirm no precise location, contacts, photos, microphone, camera, or health permissions are requested
 - [x] Confirm children's/privacy positioning before launch copy is finalized
 - [x] Confirm Terms of Use, Privacy Policy, and support contact are reachable from store listings

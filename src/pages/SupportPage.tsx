@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { SEOHead } from '../components/seo/SEOHead';
+import { SUPPORT_EMAIL } from '../utils/accountDeletion';
 
 export function SupportPage() {
   return (
@@ -24,7 +25,14 @@ export function SupportPage() {
             <div className="border-2 border-retro-border bg-white/70 p-4 shadow-pixel-sm">
               <h2 className="font-retro text-xs text-retro-text mb-3">Contact</h2>
               <p>
-                Flag Arcade is built by UX Cabin. For support, visit{' '}
+                Flag Arcade is built by UX Cabin. For support, email{' '}
+                <a
+                  href={`mailto:${SUPPORT_EMAIL}`}
+                  className="text-retro-neon-blue underline"
+                >
+                  {SUPPORT_EMAIL}
+                </a>
+                {' '}or visit{' '}
                 <a
                   href="https://uxcabin.com"
                   target="_blank"
@@ -33,6 +41,20 @@ export function SupportPage() {
                 >
                   uxcabin.com
                 </a>.
+              </p>
+            </div>
+
+            <div className="border-2 border-retro-border bg-white/70 p-4 shadow-pixel-sm">
+              <h2 className="font-retro text-xs text-retro-text mb-3">Account Deletion</h2>
+              <p>
+                Signed-in players can request deletion of their account and cloud-synced game data from the in-app menu by choosing Delete Account. You can also email{' '}
+                <a
+                  href={`mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent('Flag Arcade account deletion request')}`}
+                  className="text-retro-neon-blue underline"
+                >
+                  {SUPPORT_EMAIL}
+                </a>
+                {' '}with the email address used to sign in.
               </p>
             </div>
 
