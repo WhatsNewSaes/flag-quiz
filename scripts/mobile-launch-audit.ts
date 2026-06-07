@@ -242,6 +242,7 @@ async function main() {
   const storeSubmissionPackage = await readFile(resolve('docs/mobile-store-submission-package.md'), 'utf8');
   expect(storeSubmissionPackage.includes('npm run package:store-submission'), 'Submission package documents packaging command');
   expect(storeSubmissionPackage.includes('dist/mobile-store-submission'), 'Submission package documents packaging output path');
+  expect(storeSubmissionPackage.includes('dist/flag-arcade-mobile-store-submission.zip'), 'Submission package documents packaging archive path');
   expect(storeSubmissionPackage.includes('com.flagarcade.app'), 'Submission package includes bundle/package id');
   expect(storeSubmissionPackage.includes('store-assets/shared/app-icon-1024.png'), 'Submission package includes app icon path');
   expect(storeSubmissionPackage.includes('store-assets/google-play/feature-graphic.png'), 'Submission package includes Play feature graphic path');
@@ -263,7 +264,10 @@ async function main() {
   const packageStoreSubmission = await readFile(resolve('scripts/package-store-submission.ts'), 'utf8');
   const packageStoreSubmissionTerms = [
     'dist/mobile-store-submission',
+    'flag-arcade-mobile-store-submission.zip',
+    'execFileSync',
     'manifest.json',
+    'archivePath',
     'store-assets/shared/app-icon-1024.png',
     'store-assets/google-play/feature-graphic.png',
     'store-assets/app-store/iphone-6-7',

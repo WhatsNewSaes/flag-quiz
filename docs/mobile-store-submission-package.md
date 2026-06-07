@@ -10,7 +10,10 @@ Create a local handoff folder with:
 npm run package:store-submission
 ```
 
-Output: `dist/mobile-store-submission/`.
+Output:
+
+- Handoff folder: `dist/mobile-store-submission/`
+- Handoff archive: `dist/flag-arcade-mobile-store-submission.zip`
 
 ## Shared Listing Details
 
@@ -104,10 +107,10 @@ Run before creating signed store builds:
 ```bash
 npm run typecheck:all
 npm run build:store-assets
-npm run package:store-submission
 npm run mobile:audit
 npm run build
 npx cap sync
+npm run package:store-submission
 npm run mobile:build:android:debug
 npm run mobile:build:ios:debug
 ```

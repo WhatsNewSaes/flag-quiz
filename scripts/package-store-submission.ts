@@ -1,3 +1,4 @@
+import { execFileSync } from 'node:child_process';
 import { cp, mkdir, readdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
@@ -8,6 +9,8 @@ type ManifestEntry = {
 
 const root = process.cwd();
 const outputRoot = path.join(root, 'dist/mobile-store-submission');
+const archiveFileName = 'flag-arcade-mobile-store-submission.zip';
+const archivePath = path.join(root, 'dist', archiveFileName);
 
 const requiredFiles = [
   'store-assets/shared/app-icon-1024.png',
@@ -82,6 +85,7 @@ async function main() {
   };
 
   await rm(outputRoot, { recursive: true, force: true });
+  await rm(archivePath, { force: true });
   await mkdir(outputRoot, { recursive: true });
 
   const entries: ManifestEntry[] = [];
@@ -107,6 +111,7 @@ async function main() {
     generatedAt: new Date().toISOString(),
     appVersion: packageJson.version ?? 'unknown',
     outputPath: 'dist/mobile-store-submission',
+    archivePath: `dist/${archiveFileName}`,
     includedFiles: entries,
     externalRequired: [
       'Signed iOS archive uploaded to TestFlight',
@@ -136,7 +141,13 @@ async function main() {
 
   await writeFile(path.join(outputRoot, 'README.md'), summary);
 
+  execFileSync('zip', ['-qr', archivePath, '.'], {
+    cwd: outputRoot,
+    stdio: 'inherit',
+  });
+
   console.log(`Packaged ${entries.length} files into ${path.relative(root, outputRoot)}`);
+  console.log(`Created archive ${path.relative(root, archivePath)}`);
   console.log('Next: add signed store build ids and installed-build QA evidence after TestFlight/Play internal uploads.');
 }
 
