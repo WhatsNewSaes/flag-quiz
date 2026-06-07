@@ -4,6 +4,14 @@ Last updated: 2026-06-07
 
 This is the handoff checklist for the exact assets, copy, URLs, and build artifacts needed in App Store Connect and Google Play Console.
 
+Create a local handoff folder with:
+
+```bash
+npm run package:store-submission
+```
+
+Output: `dist/mobile-store-submission/`.
+
 ## Shared Listing Details
 
 - App name: `Flag Arcade`
@@ -96,6 +104,7 @@ Run before creating signed store builds:
 ```bash
 npm run typecheck:all
 npm run build:store-assets
+npm run package:store-submission
 npm run mobile:audit
 npm run build
 npx cap sync

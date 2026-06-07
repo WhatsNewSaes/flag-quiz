@@ -11,6 +11,7 @@ Run these from the repo root:
 ```bash
 npm run typecheck:all
 npm run build:store-assets
+npm run package:store-submission
 npm run mobile:audit
 npm run build
 npx cap sync

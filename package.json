@@ -13,6 +13,7 @@
     "build:seo": "tsx scripts/generate-seo-pages.ts",
     "build:mode-og": "tsx scripts/generate-mode-og-images.ts",
     "build:store-assets": "tsx scripts/generate-store-assets.ts",
+    "package:store-submission": "tsx scripts/package-store-submission.ts",
     "split-data": "tsx scripts/split-country-data.ts",
     "sync-data": "tsx scripts/fetch-country-data.ts",
     "sync-flags": "tsx scripts/fetch-flag-images.ts",

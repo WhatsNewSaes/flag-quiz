@@ -54,6 +54,7 @@ async function main() {
   expect(Boolean(packageJson.scripts?.['mobile:build:android:debug']), 'package.json exposes Android debug build script');
   expect(Boolean(packageJson.scripts?.['mobile:build:android:release']), 'package.json exposes Android release AAB script');
   expect(Boolean(packageJson.scripts?.['mobile:build:ios:debug']), 'package.json exposes iOS debug build script');
+  expect(Boolean(packageJson.scripts?.['package:store-submission']), 'package.json exposes store submission package script');
 
   const capacitorConfig = await readFile(resolve('capacitor.config.ts'), 'utf8');
   expect(capacitorConfig.includes("appId: 'com.flagarcade.app'"), 'Capacitor app id is com.flagarcade.app');
@@ -222,6 +223,7 @@ async function main() {
   expect(existsSync(resolve('docs/mobile-store-submission-package.md')), 'Mobile store submission package exists');
   expect(existsSync(resolve('docs/mobile-installed-build-qa.md')), 'Mobile installed-build QA checklist exists');
   expect(existsSync(resolve('docs/mobile-release-evidence-template.md')), 'Mobile release evidence template exists');
+  expect(existsSync(resolve('scripts/package-store-submission.ts')), 'Store submission packaging script exists');
   expect(existsSync(resolve('android/keystore.properties.example')), 'Android keystore template exists');
   expect(existsSync(resolve('store-assets/README.md')), 'Store assets README exists');
   expect(existsSync(resolve('src/pages/PrivacyPage.tsx')), 'Privacy page source exists');
@@ -238,6 +240,8 @@ async function main() {
   expect(storeMetadata.includes('No gambling or loot boxes.'), 'Rating questionnaire notes are drafted');
 
   const storeSubmissionPackage = await readFile(resolve('docs/mobile-store-submission-package.md'), 'utf8');
+  expect(storeSubmissionPackage.includes('npm run package:store-submission'), 'Submission package documents packaging command');
+  expect(storeSubmissionPackage.includes('dist/mobile-store-submission'), 'Submission package documents packaging output path');
   expect(storeSubmissionPackage.includes('com.flagarcade.app'), 'Submission package includes bundle/package id');
   expect(storeSubmissionPackage.includes('store-assets/shared/app-icon-1024.png'), 'Submission package includes app icon path');
   expect(storeSubmissionPackage.includes('store-assets/google-play/feature-graphic.png'), 'Submission package includes Play feature graphic path');
@@ -254,6 +258,24 @@ async function main() {
       storeSubmissionPackage.includes(`store-assets/google-play/phone-screenshots/${slug}.png`),
       `Submission package includes ${slug} Google Play screenshot`
     );
+  }
+
+  const packageStoreSubmission = await readFile(resolve('scripts/package-store-submission.ts'), 'utf8');
+  const packageStoreSubmissionTerms = [
+    'dist/mobile-store-submission',
+    'manifest.json',
+    'store-assets/shared/app-icon-1024.png',
+    'store-assets/google-play/feature-graphic.png',
+    'store-assets/app-store/iphone-6-7',
+    'store-assets/google-play/phone-screenshots',
+    'docs/mobile-store-submission-package.md',
+    'docs/mobile-store-privacy-form-answers.md',
+    'docs/mobile-release-evidence-template.md',
+    'Signed iOS archive uploaded to TestFlight',
+    'Signed Android AAB uploaded to Google Play internal testing',
+  ];
+  for (const term of packageStoreSubmissionTerms) {
+    expect(packageStoreSubmission.includes(term), `Store submission packager covers ${term}`);
   }
 
   const installedBuildQa = await readFile(resolve('docs/mobile-installed-build-qa.md'), 'utf8');
