@@ -419,7 +419,6 @@ function validateEvidence(markdown: string, context: ReleaseContext) {
     requirePass(findings, label, row[7]);
     for (const [index, cellLabel] of [
       [3, 'OS version'],
-      [4, 'App build shown'],
       [5, 'Tester'],
       [6, 'Date'],
     ] as const) {
@@ -427,6 +426,12 @@ function validateEvidence(markdown: string, context: ReleaseContext) {
       if (value && isFilled(value)) pass(findings, `${required.platform} ${required.device} ${cellLabel} is filled`, value);
       else fail(findings, `${required.platform} ${required.device} ${cellLabel} is filled`, value ? `Current value: ${value}` : 'Missing value');
     }
+    requireEqual(
+      findings,
+      `${required.platform} ${required.device} app build shown matches release build`,
+      row[4],
+      context.buildNumber
+    );
   }
 
   const smokeRows = tableRowsForSection(markdown, 'Required Smoke Evidence');
@@ -609,6 +614,12 @@ function negativeSelfTestFindings() {
       baseline.replace('- Store privacy forms submitted: Yes', '- Store privacy forms submitted: No'),
       context,
       ['Store privacy forms submitted is signed off']
+    ),
+    ...expectSelfTestFailure(
+      'wrong installed build number',
+      baseline.replace('| Android | Play internal test | Physical Android phone | Android 16 | 1 | QA | 2026-06-07 | Pass |', '| Android | Play internal test | Physical Android phone | Android 16 | 2 | QA | 2026-06-07 | Pass |'),
+      context,
+      ['Android Physical Android phone app build shown matches release build']
     ),
   ];
 }

@@ -34,6 +34,8 @@ Copy this file for each release candidate, for example `docs/release-evidence/mo
 
 ## Installed Build Matrix
 
+`App build shown` must match the release candidate's `Build number / version code`.
+
 | Platform | Build source | Device | OS version | App build shown | Tester | Date | Result |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | iOS | TestFlight | Physical iPhone |  |  |  |  | Not run |

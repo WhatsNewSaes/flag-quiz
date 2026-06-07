@@ -15,6 +15,8 @@ For launch signoff, run `npm run mobile:evidence:init -- --build 1 --owner "Rele
 | Android | Play internal test | Physical Android phone |  |  |  | Not run |
 | Android | Play internal test | Large Android emulator or device |  |  |  | Not run |
 
+The `App build shown` value copied into release evidence must match the release candidate's `Build number / version code`.
+
 ## Required Smoke Tests
 
 Run these on both iOS and Android.
