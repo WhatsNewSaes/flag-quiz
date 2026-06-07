@@ -218,6 +218,7 @@ async function main() {
   expect(existsSync(resolve('docs/mobile-release-runbook.md')), 'Mobile release runbook exists');
   expect(existsSync(resolve('docs/mobile-privacy-data-inventory.md')), 'Mobile privacy data inventory exists');
   expect(existsSync(resolve('docs/mobile-data-deletion-runbook.md')), 'Mobile data deletion runbook exists');
+  expect(existsSync(resolve('docs/mobile-store-privacy-form-answers.md')), 'Mobile store privacy form answers exist');
   expect(existsSync(resolve('docs/mobile-store-submission-package.md')), 'Mobile store submission package exists');
   expect(existsSync(resolve('docs/mobile-installed-build-qa.md')), 'Mobile installed-build QA checklist exists');
   expect(existsSync(resolve('android/keystore.properties.example')), 'Android keystore template exists');
@@ -241,6 +242,7 @@ async function main() {
   expect(storeSubmissionPackage.includes('store-assets/google-play/feature-graphic.png'), 'Submission package includes Play feature graphic path');
   expect(storeSubmissionPackage.includes('android/app/build/outputs/bundle/release/app-release.aab'), 'Submission package includes Android AAB path');
   expect(storeSubmissionPackage.includes('docs/mobile-privacy-data-inventory.md'), 'Submission package links privacy inventory');
+  expect(storeSubmissionPackage.includes('docs/mobile-store-privacy-form-answers.md'), 'Submission package links privacy form answers');
   expect(storeSubmissionPackage.includes('docs/mobile-data-deletion-runbook.md'), 'Submission package links deletion runbook');
   for (const slug of storeScreenshotSlugs) {
     expect(
@@ -288,6 +290,24 @@ async function main() {
   ];
   for (const term of deletionRunbookTerms) {
     expect(deletionRunbook.includes(term), `Deletion runbook covers ${term}`);
+  }
+
+  const privacyFormAnswers = await readFile(resolve('docs/mobile-store-privacy-form-answers.md'), 'utf8');
+  const privacyFormAnswerTerms = [
+    'Apple App Privacy Details',
+    'Google Play Data Safety',
+    'Tracking',
+    'Data linked to the user',
+    'Data not linked to the user',
+    'Data encrypted in transit',
+    'Delete Account',
+    'support@flagarcade.com',
+    'within 30 days',
+    'android.permission.INTERNET',
+    'PrivacyInfo.xcprivacy',
+  ];
+  for (const term of privacyFormAnswerTerms) {
+    expect(privacyFormAnswers.includes(term), `Privacy form answers cover ${term}`);
   }
 
   const appSource = await readFile(resolve('src/App.tsx'), 'utf8');

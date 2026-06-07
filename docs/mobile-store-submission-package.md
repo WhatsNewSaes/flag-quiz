@@ -17,6 +17,7 @@ This is the handoff checklist for the exact assets, copy, URLs, and build artifa
 - Terms URL: `https://flagarcade.com/terms`
 - Source metadata doc: `docs/mobile-store-metadata.md`
 - Privacy/data-safety source doc: `docs/mobile-privacy-data-inventory.md`
+- Store privacy form answer guide: `docs/mobile-store-privacy-form-answers.md`
 - Data deletion runbook: `docs/mobile-data-deletion-runbook.md`
 
 ## App Store Connect
@@ -28,7 +29,7 @@ Copy:
 - Description: see `docs/mobile-store-metadata.md`
 - Keywords: see `docs/mobile-store-metadata.md`
 - Age rating notes: see `docs/mobile-store-metadata.md`
-- Privacy labels: see `docs/mobile-privacy-data-inventory.md`
+- Privacy labels: see `docs/mobile-store-privacy-form-answers.md`
 
 Assets:
 
@@ -50,7 +51,7 @@ External tasks:
 
 - Confirm Apple Developer team ID and signing profile.
 - Upload signed archive to TestFlight.
-- Complete App Privacy using `docs/mobile-privacy-data-inventory.md`.
+- Complete App Privacy using `docs/mobile-store-privacy-form-answers.md`, and verify it against `docs/mobile-privacy-data-inventory.md`.
 - Run TestFlight smoke test on an installed build.
 
 ## Google Play Console
@@ -60,7 +61,7 @@ Copy:
 - Short description: see `docs/mobile-store-metadata.md`
 - Full description: see `docs/mobile-store-metadata.md`
 - Category/rating notes: see `docs/mobile-store-metadata.md`
-- Data Safety answers: see `docs/mobile-privacy-data-inventory.md`
+- Data Safety answers: see `docs/mobile-store-privacy-form-answers.md`
 
 Assets:
 
@@ -84,7 +85,7 @@ External tasks:
 
 - Create or confirm upload keystore.
 - Upload signed AAB to an internal testing track.
-- Complete Data Safety using `docs/mobile-privacy-data-inventory.md`.
+- Complete Data Safety using `docs/mobile-store-privacy-form-answers.md`, and verify it against `docs/mobile-privacy-data-inventory.md`.
 - Run Google Play pre-launch report.
 - Run internal test smoke test on an installed build.
 

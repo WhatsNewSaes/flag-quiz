@@ -99,6 +99,7 @@ Last updated: 2026-06-07
 
 - [x] Mobile privacy data inventory exists: `docs/mobile-privacy-data-inventory.md`
 - [x] Mobile data deletion runbook exists: `docs/mobile-data-deletion-runbook.md`
+- [x] Store privacy form answer guide exists: `docs/mobile-store-privacy-form-answers.md`
 - [x] iOS privacy manifest is bundled: `ios/App/App/PrivacyInfo.xcprivacy`
 - [ ] App Store privacy nutrition labels completed
 - [ ] Google Play Data Safety form completed
@@ -123,5 +124,5 @@ Last updated: 2026-06-07
 
 - iOS command-line tooling in this environment cannot tap through screens, so final iOS interaction QA needs either manual simulator use, XCUITest, or a physical device.
 - First-run Journey onboarding intentionally asks for character and flag selection on fresh installs before showing the map.
-- Privacy form drafts exist, but App Store Connect and Google Play Console still need final human submission.
+- Privacy form answer drafts exist, but App Store Connect and Google Play Console still need final human submission.
 - Store submission cannot be considered complete until signed release builds, store screenshots, privacy forms, and internal test tracks are verified.
