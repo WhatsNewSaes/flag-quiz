@@ -62,6 +62,7 @@ async function main() {
   expect(Boolean(packageJson.scripts?.['mobile:readiness']), 'package.json exposes mobile readiness report script');
   expect(Boolean(packageJson.scripts?.['mobile:evidence:init']), 'package.json exposes mobile release evidence initializer script');
   expect(Boolean(packageJson.scripts?.['mobile:evidence:check']), 'package.json exposes mobile release evidence checker script');
+  expect(Boolean(packageJson.scripts?.['mobile:go-live:check']), 'package.json exposes mobile go-live gate script');
   expect(Boolean(packageJson.scripts?.['package:store-submission']), 'package.json exposes store submission package script');
   expect(
     packageJson.scripts?.['mobile:preflight']?.includes('npm run mobile:store:check') === true,
@@ -246,6 +247,7 @@ async function main() {
   expect(existsSync(resolve('scripts/check-mobile-store-submission.ts')), 'Mobile store submission checker script exists');
   expect(existsSync(resolve('scripts/init-mobile-release-evidence.ts')), 'Mobile release evidence initializer script exists');
   expect(existsSync(resolve('scripts/check-mobile-release-evidence.ts')), 'Mobile release evidence checker script exists');
+  expect(existsSync(resolve('scripts/mobile-go-live-check.ts')), 'Mobile go-live gate script exists');
   expect(existsSync(resolve('scripts/generate-mobile-readiness-report.ts')), 'Mobile readiness report script exists');
   expect(existsSync(resolve('scripts/package-store-submission.ts')), 'Store submission packaging script exists');
   expect(existsSync(resolve('android/keystore.properties.example')), 'Android keystore template exists');
@@ -297,6 +299,7 @@ async function main() {
   expect(storeSubmissionPackage.includes('npm run mobile:signing:preflight'), 'Submission package documents signing preflight command');
   expect(storeSubmissionPackage.includes('npm run mobile:evidence:init'), 'Submission package documents release evidence initializer command');
   expect(storeSubmissionPackage.includes('npm run mobile:evidence:check'), 'Submission package documents release evidence checker command');
+  expect(storeSubmissionPackage.includes('npm run mobile:go-live:check'), 'Submission package documents go-live gate command');
   expect(storeSubmissionPackage.includes('npm run package:store-submission'), 'Submission package documents packaging command');
   expect(storeSubmissionPackage.includes('dist/mobile-store-submission'), 'Submission package documents packaging output path');
   expect(storeSubmissionPackage.includes('dist/flag-arcade-mobile-store-submission.zip'), 'Submission package documents packaging archive path');
@@ -528,6 +531,21 @@ async function main() {
   ];
   for (const term of releaseEvidenceCheckerTerms) {
     expect(releaseEvidenceChecker.includes(term), `Release evidence checker covers ${term}`);
+  }
+
+  const goLiveGate = await readFile(resolve('scripts/mobile-go-live-check.ts'), 'utf8');
+  const goLiveGateTerms = [
+    '--evidence',
+    '--skip-urls',
+    'mobile:preflight',
+    'mobile:evidence:check',
+    'mobile:urls:check',
+    'Mobile go-live gate passed.',
+    'App Store Connect',
+    'Google Play Console',
+  ];
+  for (const term of goLiveGateTerms) {
+    expect(goLiveGate.includes(term), `Go-live gate covers ${term}`);
   }
 
   const deletionRunbook = await readFile(resolve('docs/mobile-data-deletion-runbook.md'), 'utf8');

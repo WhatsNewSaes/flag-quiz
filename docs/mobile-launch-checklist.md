@@ -123,6 +123,7 @@ Last updated: 2026-06-07
 - [x] Release evidence template exists: `docs/mobile-release-evidence-template.md`
 - [x] Release evidence initializer exists: `npm run mobile:evidence:init`
 - [x] Release evidence checker exists: `npm run mobile:evidence:check`
+- [x] Final go-live gate exists: `npm run mobile:go-live:check`
 - [ ] Physical iPhone test
 - [ ] Physical Android test
 - [ ] Small-screen iPhone simulator test
