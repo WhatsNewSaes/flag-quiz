@@ -33,6 +33,8 @@ Expected current result: all commands pass locally.
 
 Android npm scripts use `$JAVA_HOME` when present and fall back to `/opt/homebrew/opt/openjdk@21`, which is the verified local JDK path for this workspace.
 
+The first iOS release is targeted to iPhone only. Do not add iPad screenshots unless the Xcode target is changed back to universal support.
+
 `npm run mobile:readiness` writes `dist/mobile-readiness-report.md` and `dist/mobile-launch-blockers.md`. The blocker report is generated from unchecked items in `docs/mobile-launch-checklist.md` and is included in the store handoff package.
 
 `npm run mobile:blockers:check` verifies that `dist/mobile-launch-blockers.md` still matches the unchecked launch checklist items and required closeout criteria.

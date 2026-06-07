@@ -122,6 +122,7 @@ async function main() {
   const iosInfoRaw = execFileSync('plutil', ['-convert', 'json', '-o', '-', resolve('ios/App/App/Info.plist')], {
     encoding: 'utf8',
   });
+  const iosProjectText = await readFile(resolve('ios/App/App.xcodeproj/project.pbxproj'), 'utf8');
   const iosInfo = JSON.parse(iosInfoRaw) as {
     CFBundleDisplayName?: string;
     UIRequiresFullScreen?: boolean;
@@ -138,6 +139,14 @@ async function main() {
   expect(
     JSON.stringify(iosInfo['UISupportedInterfaceOrientations~ipad']) === JSON.stringify(['UIInterfaceOrientationPortrait']),
     'iPad orientation is portrait only'
+  );
+  expect(
+    (iosProjectText.match(/TARGETED_DEVICE_FAMILY = 1;/g) ?? []).length >= 2,
+    'iOS target is iPhone-only for first release'
+  );
+  expect(
+    !iosProjectText.includes('TARGETED_DEVICE_FAMILY = "1,2";'),
+    'iOS target does not enable universal iPhone/iPad support'
   );
   expect(
     iosInfo.CFBundleURLTypes?.some((entry) => entry.CFBundleURLSchemes?.includes('com.flagarcade.app')) === true,

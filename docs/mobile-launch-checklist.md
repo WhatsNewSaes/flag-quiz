@@ -31,7 +31,7 @@ Last updated: 2026-06-07
 - [ ] Review splash screen on real devices for cropping and perceived load time
 - [x] Produce App Store screenshots for required iPhone sizes
 - [x] Produce Google Play screenshots for phone listing
-- [ ] Produce optional iPad/tablet screenshots only if tablet support remains enabled
+- [x] iPad/tablet screenshots not required for first release because iOS target is iPhone-only
 
 ## Native Functionality
 

@@ -48,6 +48,7 @@ Copy:
 Assets:
 
 - App icon source: `store-assets/shared/app-icon-1024.png`
+- iOS device family: iPhone-only for the first release.
 - 6.7-inch iPhone screenshots:
   - `store-assets/app-store/iphone-6-7/01-game-modes.png`
   - `store-assets/app-store/iphone-6-7/02-perfect-passport.png`
