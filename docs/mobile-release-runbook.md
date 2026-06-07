@@ -10,6 +10,7 @@ Run these from the repo root:
 
 ```bash
 npm run typecheck:all
+npm run build:store-assets
 npm run mobile:audit
 npm run build
 npx cap sync
@@ -93,6 +94,12 @@ Upload to TestFlight before App Store review.
 ## 5. Store Metadata
 
 Use `docs/mobile-store-metadata.md` as the working copy for listing text, categories, rating notes, and screenshot planning.
+
+Generate store artwork before packaging screenshots:
+
+```bash
+npm run build:store-assets
+```
 
 Remaining required external artifacts:
 

@@ -25,6 +25,8 @@ Last updated: 2026-06-07
 - [x] Android splash resources exist for portrait and landscape densities
 - [x] Game mode landing-page OG images exist at 1200x630
 - [x] Game mode landing pages use mode-specific OG images
+- [x] Shared app icon store asset exists at 1024x1024
+- [x] Google Play feature graphic exists at 1024x500
 - [ ] Review app icon on real home screens against light/dark wallpapers
 - [ ] Review splash screen on real devices for cropping and perceived load time
 - [ ] Produce App Store screenshots for required iPhone sizes
@@ -60,6 +62,7 @@ Last updated: 2026-06-07
 
 - [x] `npm run typecheck:all`
 - [x] `npm run build`
+- [x] `npm run build:store-assets`
 - [x] `npx cap sync`
 - [x] `npm run mobile:audit`
 - [x] Android debug build: `./gradlew assembleDebug`

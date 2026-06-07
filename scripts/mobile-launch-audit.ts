@@ -102,6 +102,16 @@ async function main() {
   const iosSplash = await imageMetadata('ios/App/App/Assets.xcassets/Splash.imageset/splash-2732x2732.png');
   expect(iosSplash?.width === 2732 && iosSplash?.height === 2732, 'iOS splash source is 2732x2732');
 
+  const storeIcon = await imageMetadata('store-assets/shared/app-icon-1024.png');
+  expect(storeIcon?.width === 1024 && storeIcon?.height === 1024, 'Store asset app icon is 1024x1024');
+
+  const playFeatureGraphic = await imageMetadata('store-assets/google-play/feature-graphic.png');
+  expect(
+    playFeatureGraphic?.width === 1024 && playFeatureGraphic?.height === 500,
+    'Google Play feature graphic is 1024x500',
+    playFeatureGraphic ? `${playFeatureGraphic.width}x${playFeatureGraphic.height}` : undefined
+  );
+
   const androidIcon = await imageMetadata('android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png');
   expect(androidIcon?.width === 192 && androidIcon?.height === 192, 'Android xxxhdpi launcher icon is 192x192');
 
@@ -137,6 +147,7 @@ async function main() {
   expect(existsSync(resolve('docs/mobile-store-metadata.md')), 'Mobile store metadata draft exists');
   expect(existsSync(resolve('docs/mobile-release-runbook.md')), 'Mobile release runbook exists');
   expect(existsSync(resolve('android/keystore.properties.example')), 'Android keystore template exists');
+  expect(existsSync(resolve('store-assets/README.md')), 'Store assets README exists');
   expect(existsSync(resolve('src/pages/PrivacyPage.tsx')), 'Privacy page source exists');
   expect(existsSync(resolve('src/pages/TermsPage.tsx')), 'Terms page source exists');
   expect(existsSync(resolve('src/pages/SupportPage.tsx')), 'Support page source exists');

@@ -40,6 +40,7 @@ Flag Arcade is built for players who want geography practice to feel more like a
 ## Google Play
 
 - Short description: Retro flag quizzes and geography games for 197 countries.
+- Feature graphic: `store-assets/google-play/feature-graphic.png`
 - Full description:
 
 Flag Arcade is a retro-style flag quiz game with multiple ways to learn, practice, and challenge yourself.
