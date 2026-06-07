@@ -65,6 +65,8 @@ Whether you are studying geography, practicing country flags, or just want a fun
 
 ## Screenshot Plan
 
-- iPhone portrait: Home/Game Modes, Perfect Passport round, Perfect Passport result, Journey map, Jeopardy board, Flag Runner.
-- Android phone portrait: same six scenes.
+- iPhone portrait generated assets: `store-assets/app-store/iphone-6-7/*.png`.
+- Android phone generated assets: `store-assets/google-play/phone-screenshots/*.png`.
+- Screenshot themes: Game Modes, Perfect Passport, Share Score, Journey Mode, Flag Jeopardy, Flag Runner.
+- Optional exact UI captures from installed builds: Home/Game Modes, Perfect Passport round, Perfect Passport result, Journey map, Jeopardy board, Flag Runner.
 - Optional tablet/iPad: only if tablet support remains enabled after final store positioning.

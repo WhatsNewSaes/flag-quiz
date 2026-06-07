@@ -150,6 +150,31 @@ async function main() {
     playFeatureGraphic ? `${playFeatureGraphic.width}x${playFeatureGraphic.height}` : undefined
   );
 
+  const storeScreenshotSlugs = [
+    '01-game-modes',
+    '02-perfect-passport',
+    '03-share-score',
+    '04-journey-mode',
+    '05-flag-jeopardy',
+    '06-flag-runner',
+  ];
+
+  for (const slug of storeScreenshotSlugs) {
+    const appStoreScreenshot = await imageMetadata(`store-assets/app-store/iphone-6-7/${slug}.png`);
+    expect(
+      appStoreScreenshot?.width === 1290 && appStoreScreenshot?.height === 2796,
+      `${slug} App Store screenshot is 1290x2796`,
+      appStoreScreenshot ? `${appStoreScreenshot.width}x${appStoreScreenshot.height}` : undefined
+    );
+
+    const googlePlayScreenshot = await imageMetadata(`store-assets/google-play/phone-screenshots/${slug}.png`);
+    expect(
+      googlePlayScreenshot?.width === 1080 && googlePlayScreenshot?.height === 1920,
+      `${slug} Google Play phone screenshot is 1080x1920`,
+      googlePlayScreenshot ? `${googlePlayScreenshot.width}x${googlePlayScreenshot.height}` : undefined
+    );
+  }
+
   const androidIcon = await imageMetadata('android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png');
   expect(androidIcon?.width === 192 && androidIcon?.height === 192, 'Android xxxhdpi launcher icon is 192x192');
 

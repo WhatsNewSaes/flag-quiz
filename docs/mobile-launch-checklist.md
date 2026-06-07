@@ -29,8 +29,8 @@ Last updated: 2026-06-07
 - [x] Google Play feature graphic exists at 1024x500
 - [ ] Review app icon on real home screens against light/dark wallpapers
 - [ ] Review splash screen on real devices for cropping and perceived load time
-- [ ] Produce App Store screenshots for required iPhone sizes
-- [ ] Produce Google Play screenshots for phone listing
+- [x] Produce App Store screenshots for required iPhone sizes
+- [x] Produce Google Play screenshots for phone listing
 - [ ] Produce optional iPad/tablet screenshots only if tablet support remains enabled
 
 ## Native Functionality
