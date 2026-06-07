@@ -66,6 +66,7 @@ async function main() {
   const checklist = await readFile(checklistPath, 'utf8');
   const actual = await readFile(blockerReportPath, 'utf8');
   const expectedCommit = currentCommit();
+  const actualCommit = fieldValue(actual, 'Git commit');
   const sections = checklistSections(checklist);
   const openBlockerCount = sections.reduce((total, section) => total + section.unchecked.length, 0);
   const expected = launchBlockerReport({
@@ -76,7 +77,15 @@ async function main() {
   });
 
   expect(actual.includes('# Mobile Launch Blockers'), 'Launch blocker report has title');
-  expect(fieldValue(actual, 'Git commit') === expectedCommit, 'Launch blocker report was generated for current git commit', expectedCommit);
+  expect(
+    actualCommit === expectedCommit,
+    'Launch blocker report was generated for current git commit',
+    actualCommit === expectedCommit
+      ? expectedCommit
+      : actualCommit
+        ? `found ${actualCommit}, expected ${expectedCommit}; run npm run mobile:readiness`
+        : `missing Git commit, expected ${expectedCommit}; run npm run mobile:readiness`
+  );
   expect(fieldValue(actual, 'App version') === packageJson.version, 'Launch blocker report app version matches package.json', packageJson.version);
   expect(actual.includes(`Open blocker count: ${openBlockerCount}`), 'Launch blocker report has current open blocker count', `${openBlockerCount}`);
   expect(openBlockerCount > 0, 'Launch blocker report still reflects incomplete external launch requirements', `${openBlockerCount} open`);
