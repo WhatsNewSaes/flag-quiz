@@ -851,6 +851,9 @@ async function main() {
     'invalid approval date',
     'future approval date',
     'placeholder external evidence URL',
+    'local Perfect Passport challenge URL',
+    'requirePublicChallengeLinkNote',
+    'Perfect Passport copied public challenge link notes include public challenge URL',
     'open failure log row',
     'invalid failure severity',
     'Approval date is YYYY-MM-DD',
@@ -909,6 +912,10 @@ async function main() {
   expect(
     releaseRunbook.includes('placeholder hosts such as `example.com`'),
     'Release runbook documents placeholder evidence URL rejection'
+  );
+  expect(
+    releaseRunbook.includes('paste the actual copied `https://flagarcade.com` challenge URL'),
+    'Release runbook documents Perfect Passport public challenge URL evidence'
   );
   expect(
     releaseEvidenceTemplate.includes('Placeholder evidence hosts such as `example.com`'),

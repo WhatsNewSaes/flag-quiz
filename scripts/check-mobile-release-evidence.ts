@@ -394,6 +394,19 @@ function requireEvidenceLink(findings: Finding[], label: string, value: string |
   else fail(findings, label, `Local evidence file does not exist: ${localPath}`);
 }
 
+function requirePublicChallengeLinkNote(findings: Finding[], area: string, value: string | undefined) {
+  const label = `${area} notes include public challenge URL`;
+  if (!value || !isFilled(value)) {
+    fail(findings, label, value ? `Current value: ${value}` : 'Missing value');
+    return;
+  }
+
+  const hasPublicChallengeUrl = /https:\/\/flagarcade\.com\/[^\s|)]*/i.test(value);
+  const hasInvalidTarget = /localhost|127\.0\.0\.1|com\.flagarcade\.app:\/\//i.test(value);
+  if (hasPublicChallengeUrl && !hasInvalidTarget) pass(findings, label, value);
+  else fail(findings, label, `Expected copied https://flagarcade.com challenge URL, got: ${value}`);
+}
+
 function isSha256(value: unknown) {
   return typeof value === 'string' && /^[a-f0-9]{64}$/i.test(value);
 }
@@ -626,6 +639,9 @@ function validateEvidence(markdown: string, context: ReleaseContext) {
 
     const evidenceLink = row[3];
     requireEvidenceLink(findings, `${required.area} evidence link is valid`, evidenceLink);
+    if (required.area === 'Perfect Passport copied public challenge link') {
+      requirePublicChallengeLinkNote(findings, required.area, row[4]);
+    }
   }
 
   const storeRows = tableRowsForSection(markdown, 'Store Console Evidence');
@@ -712,7 +728,12 @@ function selfTestArtifactManifestPath(context: ReleaseContext) {
 function selfTestEvidence(context = selfTestReleaseContext()) {
   const artifactManifestPath = selfTestArtifactManifestPath(context);
   const smokeEvidenceRows = requiredSmokeRows
-    .map((row) => `| ${row.area} | ${row.ios} | ${row.android} | https://flagarcade.com/release-evidence/${row.area.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.png |  |`)
+    .map((row) => {
+      const notes = row.area === 'Perfect Passport copied public challenge link'
+        ? 'Copied URL: https://flagarcade.com/play/perfect-passport?challenge=abc123'
+        : '';
+      return `| ${row.area} | ${row.ios} | ${row.android} | https://flagarcade.com/release-evidence/${row.area.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.png | ${notes} |`;
+    })
     .join('\n');
   const storeConsoleRows = requiredStoreConsoleRows
     .map((row) => `| ${row.store} | ${row.area} | Complete | https://flagarcade.com/release-evidence/${row.store.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${row.area.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.png |  |`)
@@ -840,6 +861,12 @@ function negativeSelfTestFindings() {
       baseline.replace('https://flagarcade.com/release-evidence/fresh-launch-and-splash.png', 'https://example.com/evidence/fresh-launch-and-splash.png'),
       context,
       ['Fresh launch and splash evidence link is valid']
+    ),
+    ...expectSelfTestFailure(
+      'local Perfect Passport challenge URL',
+      baseline.replace('Copied URL: https://flagarcade.com/play/perfect-passport?challenge=abc123', 'Copied URL: http://127.0.0.1:5173/play/perfect-passport?challenge=abc123'),
+      context,
+      ['Perfect Passport copied public challenge link notes include public challenge URL']
     ),
     ...expectSelfTestFailure(
       'missing copyright holder',

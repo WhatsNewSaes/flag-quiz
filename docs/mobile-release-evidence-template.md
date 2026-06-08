@@ -63,7 +63,7 @@ Record `Pass`, `Fail`, or `N/A`. Every required row must include an evidence URL
 | Journey Mode level play and progress persistence | Not run | Not run |  |  |
 | Perfect Passport full 10-question run | Not run | Not run |  |  |
 | Perfect Passport share sheet | Not run | Not run |  |  |
-| Perfect Passport copied public challenge link | Not run | Not run |  |  |
+| Perfect Passport copied public challenge link | Not run | Not run |  | Record copied `https://flagarcade.com` challenge URL here. |
 | Flag Jeopardy Easy mode, pick name and pick flag | Not run | Not run |  |  |
 | Flag Jeopardy Type mode, keyboard and answer submit | Not run | Not run |  |  |
 | Arcade Mode custom quiz | Not run | Not run |  |  |
