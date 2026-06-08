@@ -50,6 +50,8 @@ GitHub Actions also runs the unsigned mobile preflight on `main`, pull requests,
 
 `npm run mobile:signing:preflight` is expected to warn until Android signing secrets and the Apple Developer Team are configured locally. It should not fail unless a repo safety invariant or filled signing config is broken.
 
+Before creating signed release builds, run `npm run mobile:signing:release`. This strict signing gate fails on remaining signing warnings so TestFlight and Google Play builds are not created with missing local signing configuration.
+
 Run `npm run mobile:version:check` after any release version bump to confirm `package.json`, Android Gradle, iOS project settings, store metadata, and the submission handoff all agree.
 
 Before submitting store forms, run `npm run mobile:privacy:check` to verify Android permissions, backup/data extraction rules, FileProvider scope, iOS usage keys, iOS tracking declarations, and privacy documentation alignment. Run `npm run mobile:store:check` to verify listing copy, store text limits, asset dimensions, privacy references, and handoff paths. Run `npm run mobile:qa:plan` to verify the installed-build QA checklist still covers the required devices, game modes, native behaviors, and evidence flow. Run `npm run mobile:devices:check` to verify the local simulator/emulator coverage plan still covers small-screen iPhone, latest iPhone, Pixel 8 Android, large Android, every game mode, native back, offline launch, poor network, and evidence capture notes. Then run `npm run mobile:urls:check` to verify the public marketing, privacy, terms, and support URLs are live. The URL check uses the production site and is intentionally separate from the local preflight.
@@ -125,7 +127,7 @@ Fill in the passwords and keystore file name in `android/keystore.properties`.
 Check signing readiness:
 
 ```bash
-npm run mobile:signing:preflight
+npm run mobile:signing:release
 ```
 
 Build the Play upload artifact:

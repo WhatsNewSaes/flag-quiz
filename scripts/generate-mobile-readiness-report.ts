@@ -99,7 +99,7 @@ export function launchBlockerReport(params: {
     'Run these after signing credentials, TestFlight, and Google Play internal testing are available:',
     '',
     '```bash',
-    'npm run mobile:signing:preflight',
+    'npm run mobile:signing:release',
     'npm run mobile:build:android:release',
     'npm run mobile:build:ios:archive',
     'npm run mobile:evidence:init -- --build 1 --owner "Release Owner"',

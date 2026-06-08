@@ -81,6 +81,7 @@ async function main() {
   expect(Boolean(packageJson.scripts?.['mobile:build:ios:debug']), 'package.json exposes iOS debug build script');
   expect(Boolean(packageJson.scripts?.['mobile:build:ios:archive']), 'package.json exposes iOS App Store archive script');
   expect(Boolean(packageJson.scripts?.['mobile:signing:preflight']), 'package.json exposes mobile signing preflight script');
+  expect(Boolean(packageJson.scripts?.['mobile:signing:release']), 'package.json exposes strict mobile release signing script');
   expect(Boolean(packageJson.scripts?.['mobile:readiness']), 'package.json exposes mobile readiness report script');
   expect(Boolean(packageJson.scripts?.['mobile:evidence:init']), 'package.json exposes mobile release evidence initializer script');
   expect(Boolean(packageJson.scripts?.['mobile:evidence:self-test']), 'package.json exposes mobile release evidence self-test script');
@@ -408,6 +409,7 @@ async function main() {
   expect(storeSubmissionPackage.includes('npm run mobile:blockers:check'), 'Submission package documents launch blocker checker command');
   expect(storeSubmissionPackage.includes('npm run mobile:handoff:check'), 'Submission package documents store handoff checker command');
   expect(storeSubmissionPackage.includes('npm run mobile:signing:preflight'), 'Submission package documents signing preflight command');
+  expect(storeSubmissionPackage.includes('npm run mobile:signing:release'), 'Submission package documents strict release signing command');
   expect(storeSubmissionPackage.includes('npm run mobile:evidence:init'), 'Submission package documents release evidence initializer command');
   expect(storeSubmissionPackage.includes('npm run mobile:evidence:self-test'), 'Submission package documents release evidence self-test command');
   expect(storeSubmissionPackage.includes('npm run mobile:evidence:check'), 'Submission package documents release evidence checker command');
@@ -522,6 +524,7 @@ async function main() {
     'npm run mobile:evidence:check',
     'npm run mobile:go-live:check',
     '## Closeout Commands',
+    'npm run mobile:signing:release',
     'npm run mobile:build:android:release',
     'npm run mobile:build:ios:archive',
     'npm run mobile:artifacts:check -- --android-aab android/app/build/outputs/bundle/release/app-release.aab --ios-archive ios/App/build/FlagArcade.xcarchive --manifest docs/release-evidence/mobile-<version>-build-<build>-<commit>-artifacts.json',
@@ -544,6 +547,8 @@ async function main() {
     'DEVELOPMENT_TEAM',
     'PRODUCT_BUNDLE_IDENTIFIER = com.flagarcade.app',
     'iOS Apple Developer Team is not set',
+    '--strict',
+    'Strict signing preflight failed because release signing warnings remain.',
   ];
   for (const term of signingPreflightTerms) {
     expect(signingPreflight.includes(term), `Signing preflight covers ${term}`);

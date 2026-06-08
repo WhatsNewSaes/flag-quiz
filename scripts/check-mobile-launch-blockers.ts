@@ -107,7 +107,7 @@ async function main() {
 
   const requiredCloseoutTerms = [
     '## Closeout Commands',
-    'npm run mobile:signing:preflight',
+    'npm run mobile:signing:release',
     'npm run mobile:build:android:release',
     'npm run mobile:build:ios:archive',
     'npm run mobile:evidence:init -- --build 1 --owner "Release Owner"',

@@ -14,6 +14,7 @@ type PackageJson = {
 
 const root = process.cwd();
 const findings: Finding[] = [];
+const strict = process.argv.includes('--strict');
 
 function resolve(...segments: string[]) {
   return path.join(root, ...segments);
@@ -137,8 +138,11 @@ async function main() {
   const failures = findings.filter((finding) => finding.status === 'FAIL');
   const warnings = findings.filter((finding) => finding.status === 'WARN');
   console.log(`\n${findings.length} signing preflight checks: ${failures.length} fail, ${warnings.length} warn.`);
+  if (strict && warnings.length > 0) {
+    console.error('Strict signing preflight failed because release signing warnings remain.');
+  }
 
-  if (failures.length > 0) {
+  if (failures.length > 0 || (strict && warnings.length > 0)) {
     process.exit(1);
   }
 }

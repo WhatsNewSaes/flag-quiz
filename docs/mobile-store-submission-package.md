@@ -159,6 +159,7 @@ npm run mobile:privacy:check
 npm run mobile:store:check
 npm run mobile:qa:plan
 npm run mobile:devices:check
+npm run mobile:signing:release
 npm run mobile:urls:check
 ```
 
