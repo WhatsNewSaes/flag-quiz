@@ -26,6 +26,7 @@ const requiredFiles = [
   'docs/mobile-data-deletion-runbook.md',
   'docs/mobile-installed-build-qa.md',
   'docs/mobile-local-device-coverage.md',
+  'docs/mobile-release-runbook.md',
   'docs/mobile-release-evidence-template.md',
   'docs/mobile-launch-checklist.md',
   'dist/mobile-readiness-report.md',
@@ -178,7 +179,7 @@ async function main() {
     '',
     'This package is verified by `npm run mobile:blockers:check` and `npm run mobile:handoff:check`, which check the generated blocker report, manifest byte counts, SHA-256 checksums, and ZIP contents.',
     '',
-    'Start with `docs/mobile-store-submission-package.md`, then run `npm run mobile:evidence:init`, fill the generated release evidence file after signed builds are uploaded, and verify it with `npm run mobile:evidence:check`.',
+    'Start with `docs/mobile-store-submission-package.md` and `docs/mobile-release-runbook.md`, then run `npm run mobile:evidence:init`, fill the generated release evidence file after signed builds are uploaded, and verify it with `npm run mobile:evidence:check`.',
     '',
   ].join('\n');
 

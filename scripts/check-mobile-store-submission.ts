@@ -210,6 +210,7 @@ async function main() {
     'https://flagarcade.com/privacy',
     'https://flagarcade.com/terms',
     'docs/mobile-store-metadata.md',
+    'docs/mobile-release-runbook.md',
     'docs/mobile-privacy-data-inventory.md',
     'docs/mobile-store-privacy-form-answers.md',
     'docs/mobile-data-deletion-runbook.md',

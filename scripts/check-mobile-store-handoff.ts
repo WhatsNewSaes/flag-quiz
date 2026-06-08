@@ -112,6 +112,24 @@ async function checkManifestEntries(manifest: Manifest, zipEntries: Set<string>)
   }
 }
 
+function checkRequiredManifestDestinations(manifest: Manifest) {
+  const destinations = new Set(manifest.includedFiles.map((entry) => entry.destination));
+  const requiredDestinations = [
+    'docs/mobile-store-submission-package.md',
+    'docs/mobile-release-runbook.md',
+    'docs/mobile-release-evidence-template.md',
+    'docs/mobile-installed-build-qa.md',
+    'docs/mobile-local-device-coverage.md',
+    'docs/mobile-store-account-handoff.md',
+    'mobile-readiness-report.md',
+    'mobile-launch-blockers.md',
+  ];
+
+  for (const destination of requiredDestinations) {
+    expect(destinations.has(destination), `Manifest includes required handoff file: ${destination}`);
+  }
+}
+
 async function main() {
   const manifestPath = resolve('dist/mobile-store-submission/manifest.json');
   const manifestExists = existsSync(manifestPath);
@@ -149,6 +167,7 @@ async function main() {
   expect(zipEntries.has('mobile-launch-blockers.md'), 'Store handoff archive includes mobile-launch-blockers.md');
 
   await checkManifestEntries(manifest, zipEntries);
+  checkRequiredManifestDestinations(manifest);
 
   const requiredExternalItems = [
     'Signed iOS archive uploaded to TestFlight',

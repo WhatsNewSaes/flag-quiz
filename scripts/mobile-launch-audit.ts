@@ -428,6 +428,7 @@ async function main() {
   expect(storeSubmissionPackage.includes('byte count'), 'Submission package documents handoff byte counts');
   expect(storeSubmissionPackage.includes('com.flagarcade.app'), 'Submission package includes bundle/package id');
   expect(storeSubmissionPackage.includes('docs/mobile-store-account-handoff.md'), 'Submission package includes store account handoff path');
+  expect(storeSubmissionPackage.includes('docs/mobile-release-runbook.md'), 'Submission package includes release runbook path');
   expect(storeSubmissionPackage.includes('store-assets/shared/app-icon-1024.png'), 'Submission package includes app icon path');
   expect(storeSubmissionPackage.includes('store-assets/google-play/feature-graphic.png'), 'Submission package includes Play feature graphic path');
   expect(storeSubmissionPackage.includes('android/app/build/outputs/bundle/release/app-release.aab'), 'Submission package includes Android AAB path');
@@ -470,6 +471,7 @@ async function main() {
     'docs/mobile-store-account-handoff.md',
     'docs/mobile-store-submission-package.md',
     'docs/mobile-store-privacy-form-answers.md',
+    'docs/mobile-release-runbook.md',
     'docs/mobile-release-evidence-template.md',
     'docs/mobile-local-device-coverage.md',
     'docs/release-evidence',
@@ -496,6 +498,8 @@ async function main() {
     'createHash',
     'unzip',
     'Archive includes packaged file',
+    'Manifest includes required handoff file',
+    'docs/mobile-release-runbook.md',
     'Manifest keeps external blocker visible',
     'Signed iOS archive uploaded to TestFlight',
     'Signed Android AAB uploaded to Google Play internal testing',

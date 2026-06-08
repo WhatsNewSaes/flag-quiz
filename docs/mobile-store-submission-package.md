@@ -31,6 +31,7 @@ Output:
 - Terms URL: `https://flagarcade.com/terms`
 - Source metadata doc: `docs/mobile-store-metadata.md`
 - Store account handoff: `docs/mobile-store-account-handoff.md`
+- Release runbook: `docs/mobile-release-runbook.md`
 - Privacy/data-safety source doc: `docs/mobile-privacy-data-inventory.md`
 - Store privacy form answer guide: `docs/mobile-store-privacy-form-answers.md`
 - Data deletion runbook: `docs/mobile-data-deletion-runbook.md`
