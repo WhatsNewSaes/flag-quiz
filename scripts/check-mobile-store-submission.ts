@@ -188,6 +188,20 @@ async function main() {
     expect(metadata.includes(term), `Store metadata includes rating note: ${term}`);
   }
 
+  const reviewerNotes = section(metadata, 'Reviewer Notes');
+  for (const term of [
+    'App review notes:',
+    'Google Play testing notes:',
+    'Sign-in is optional',
+    'can be tested without signing in',
+    'Perfect Passport sharing',
+    'Journey Mode first-run setup',
+    'Flag Jeopardy Easy and Type modes',
+    'does not include gambling, loot boxes, ads, public user-generated content, camera, microphone, contacts, photos, precise location, or health permissions',
+  ]) {
+    expect(reviewerNotes.includes(term), `Store metadata reviewer notes include ${term}`);
+  }
+
   const requiredPackageTerms = [
     'Flag Arcade',
     'com.flagarcade.app',
@@ -208,6 +222,8 @@ async function main() {
     'android/keystore.properties.example',
     'TestFlight smoke test',
     'Google Play pre-launch report',
+    'App Review notes',
+    'Google Play testing notes',
   ];
   for (const term of requiredPackageTerms) {
     expect(submissionPackage.includes(term), `Submission package includes ${term}`);

@@ -64,6 +64,16 @@ Whether you are studying geography, practicing country flags, or just want a fun
 - Uses internet access for web app content, analytics, auth/sync, and share links.
 - Final age rating must be confirmed in App Store Connect and Google Play Console.
 
+## Reviewer Notes
+
+App review notes:
+
+Flag Arcade is a general-audience educational trivia game about flags and geography. Sign-in is optional; reviewers can use guest play to access the game modes without test credentials. Please review Game Modes, Perfect Passport sharing, Journey Mode first-run setup, Flag Jeopardy Easy and Type modes, Around the World, Arcade Mode, and Flag Runner. The app does not include gambling, loot boxes, ads, public user-generated content, camera, microphone, contacts, photos, precise location, or health permissions.
+
+Google Play testing notes:
+
+Flag Arcade can be tested without signing in. Use Game Modes to open each mode, complete a Perfect Passport run to verify challenge-link sharing, and use Journey Mode to verify first-run character and favorite-flag setup. Internet access is used for web content, analytics, optional auth/sync, and public share links.
+
 ## Screenshot Plan
 
 - iPhone portrait generated assets: `store-assets/app-store/iphone-6-7/*.png`.

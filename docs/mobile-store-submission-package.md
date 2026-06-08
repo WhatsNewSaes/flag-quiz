@@ -46,6 +46,7 @@ Copy:
 - Description: see `docs/mobile-store-metadata.md`
 - Keywords: see `docs/mobile-store-metadata.md`
 - Age rating notes: see `docs/mobile-store-metadata.md`
+- App Review notes: see `docs/mobile-store-metadata.md`
 - Privacy labels: see `docs/mobile-store-privacy-form-answers.md`
 
 Assets:
@@ -81,6 +82,7 @@ Copy:
 - Short description: see `docs/mobile-store-metadata.md`
 - Full description: see `docs/mobile-store-metadata.md`
 - Category/rating notes: see `docs/mobile-store-metadata.md`
+- Google Play testing notes: see `docs/mobile-store-metadata.md`
 - Data Safety answers: see `docs/mobile-store-privacy-form-answers.md`
 
 Assets:
