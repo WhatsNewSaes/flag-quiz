@@ -95,6 +95,15 @@ async function main() {
     'npm run mobile:evidence:check',
   ]);
 
+  includesAll(qa, 'Installed-build QA store build id confirmation', [
+    'Store Build ID Confirmation',
+    'not a local debug build',
+    'App Store Connect / TestFlight build number',
+    'Google Play internal test release name and version code',
+    'Build Artifacts `Artifact`, Installed Build Matrix `App build shown`',
+    'restart the evidence file for the correct release candidate',
+  ]);
+
   includesAll(evidenceTemplate, 'Release evidence template installed matrix', [
     'Physical iPhone',
     'Small-screen iPhone simulator or device',

@@ -6,6 +6,17 @@ Use this checklist for TestFlight and Google Play internal testing builds. Do no
 
 For launch signoff, run `npm run mobile:evidence:init -- --build 1 --owner "Release Owner"` and fill the generated `docs/release-evidence/` file with the exact build ids, the prefilled artifact manifest path, devices, screenshots or clips, store-console statuses, failures, and final approval. Then run `npm run mobile:evidence:check -- --file docs/release-evidence/<release-file>.md` before final store review submission.
 
+## Store Build ID Confirmation
+
+Before any smoke test, confirm the installed app came from the uploaded store build, not a local debug build.
+
+| Platform | Store build id to record | Where to confirm | Required evidence field |
+| --- | --- | --- | --- |
+| iOS | App Store Connect / TestFlight build number | TestFlight build details and installed app build | Build Artifacts `Artifact`, Installed Build Matrix `App build shown` |
+| Android | Google Play internal test release name and version code | Play Console internal testing release and installed app info | Build Artifacts `Artifact`, Installed Build Matrix `App build shown` |
+
+If the installed build id does not match the release candidate's `Build number / version code`, stop QA, upload the correct build, and restart the evidence file for the correct release candidate.
+
 ## Test Matrix
 
 | Platform | Build source | Device | OS version | Tester | Date | Result |

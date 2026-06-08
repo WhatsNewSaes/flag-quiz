@@ -706,6 +706,10 @@ async function main() {
     'Legal links',
     'TestFlight',
     'Play internal test',
+    'Store Build ID Confirmation',
+    'not a local debug build',
+    'App Store Connect / TestFlight build number',
+    'Google Play internal test release name and version code',
   ];
   for (const term of requiredQaTerms) {
     expect(installedBuildQa.includes(term), `Installed-build QA covers ${term}`);
