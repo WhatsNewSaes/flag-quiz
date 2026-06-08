@@ -125,6 +125,11 @@ async function main() {
       command: 'npm',
       args: ['run', 'mobile:preflight'],
     },
+    {
+      label: 'Final store account handoff',
+      command: 'npm',
+      args: ['run', 'mobile:accounts:release'],
+    },
   ];
 
   if (args.skipArtifacts && (args.androidAab || args.iosArchive)) {
@@ -186,7 +191,7 @@ async function main() {
   if (args.skipArtifacts) {
     console.log(`Artifact generation was skipped. Verified evidence must already include the local artifact manifest at ${manifestPath}.`);
   } else {
-    console.log('Strict signing, signed artifacts, release evidence, preflight, and public URLs passed. Confirm App Store Connect and Google Play Console are submitted with these same builds.');
+    console.log('Final account handoff, strict signing, signed artifacts, release evidence, preflight, and public URLs passed. Confirm App Store Connect and Google Play Console are submitted with these same builds.');
   }
 }
 

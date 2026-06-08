@@ -71,6 +71,7 @@ Last updated: 2026-06-07
 - [x] `npm run mobile:version:check`
 - [x] `npm run mobile:privacy:check`
 - [x] `npm run mobile:store:check`
+- [x] `npm run mobile:accounts:check`
 - [x] `npm run mobile:bundle:check`
 - [x] `npm run mobile:blockers:check`
 - [x] `npm run mobile:handoff:check`
@@ -82,6 +83,7 @@ Last updated: 2026-06-07
 - [x] iOS App Store archive script exists: `npm run mobile:build:ios:archive`
 - [x] Signing preflight script exists: `npm run mobile:signing:preflight`
 - [x] Strict release signing gate exists: `npm run mobile:signing:release`
+- [x] Strict store account handoff gate exists: `npm run mobile:accounts:release`
 - [x] Release artifact checker exists: `npm run mobile:artifacts:check`
 - [ ] Android release build: signed AAB
 - [ ] iOS archive: signed App Store archive

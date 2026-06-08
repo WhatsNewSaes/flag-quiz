@@ -21,6 +21,7 @@ npm run mobile:signing:preflight
 npm run mobile:version:check
 npm run mobile:privacy:check
 npm run mobile:store:check
+npm run mobile:accounts:check
 npm run mobile:qa:plan
 npm run mobile:devices:check
 npm run mobile:evidence:self-test
@@ -54,7 +55,7 @@ Before creating signed release builds, run `npm run mobile:signing:release`. Thi
 
 Run `npm run mobile:version:check` after any release version bump to confirm `package.json`, Android Gradle, iOS project settings, store metadata, and the submission handoff all agree.
 
-Before submitting store forms, run `npm run mobile:privacy:check` to verify Android permissions, backup/data extraction rules, FileProvider scope, iOS usage keys, iOS tracking declarations, and privacy documentation alignment. Run `npm run mobile:store:check` to verify listing copy, store text limits, asset dimensions, privacy references, and handoff paths. Run `npm run mobile:qa:plan` to verify the installed-build QA checklist still covers the required devices, game modes, native behaviors, and evidence flow. Run `npm run mobile:devices:check` to verify the local simulator/emulator coverage plan still covers small-screen iPhone, latest iPhone, Pixel 8 Android, large Android, every game mode, native back, offline launch, poor network, and evidence capture notes. Then run `npm run mobile:urls:check` to verify the public marketing, privacy, terms, and support URLs are live. The URL check uses the production site and is intentionally separate from the local preflight.
+Before submitting store forms, run `npm run mobile:privacy:check` to verify Android permissions, backup/data extraction rules, FileProvider scope, iOS usage keys, iOS tracking declarations, and privacy documentation alignment. Run `npm run mobile:store:check` to verify listing copy, store text limits, asset dimensions, privacy references, and handoff paths. Run `npm run mobile:accounts:check` to verify the store account handoff structure; run `npm run mobile:accounts:release` once final account values are filled. Run `npm run mobile:qa:plan` to verify the installed-build QA checklist still covers the required devices, game modes, native behaviors, and evidence flow. Run `npm run mobile:devices:check` to verify the local simulator/emulator coverage plan still covers small-screen iPhone, latest iPhone, Pixel 8 Android, large Android, every game mode, native back, offline launch, poor network, and evidence capture notes. Then run `npm run mobile:urls:check` to verify the public marketing, privacy, terms, and support URLs are live. The URL check uses the production site and is intentionally separate from the local preflight.
 
 `npm run mobile:evidence:self-test` exercises the release evidence checker against a complete synthetic signoff file and negative cases for stale commits, missing repo-relative evidence files, and weak final signoff values. It is included in `npm run mobile:preflight` so CI catches regressions in the final evidence gate before a real release evidence file exists.
 
@@ -90,7 +91,7 @@ Evidence date, signed-build upload dates, installed-build test dates, and approv
 
 If any launch issue is recorded in the Failure Log, keep the row until it has a valid severity (`Critical`, `High`, `Medium`, or `Low`), owner, fix commit or no-code-change reference, and `Pass` retest result. Empty failure logs are allowed; unresolved failure rows are rejected.
 
-As the final local gate before submitting for App Store and Google Play review, run it with the signed artifact paths. The gate runs unsigned preflight, runs the strict release signing preflight, writes the artifact manifest from the evidence file's `Artifact manifest` path, validates the completed evidence file, and checks public URLs.
+As the final local gate before submitting for App Store and Google Play review, run it with the signed artifact paths. The gate runs unsigned preflight, runs strict store account handoff validation, runs the strict release signing preflight, writes the artifact manifest from the evidence file's `Artifact manifest` path, validates the completed evidence file, and checks public URLs.
 
 ```bash
 npm run mobile:go-live:check -- --evidence docs/release-evidence/<release-file>.md --android-aab android/app/build/outputs/bundle/release/app-release.aab --ios-archive ios/App/build/FlagArcade.xcarchive

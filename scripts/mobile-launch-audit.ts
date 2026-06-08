@@ -71,6 +71,8 @@ async function main() {
   expect(Boolean(packageJson.scripts?.['mobile:version:check']), 'package.json exposes mobile version consistency checker script');
   expect(Boolean(packageJson.scripts?.['mobile:privacy:check']), 'package.json exposes mobile native privacy checker script');
   expect(Boolean(packageJson.scripts?.['mobile:store:check']), 'package.json exposes mobile store submission checker script');
+  expect(Boolean(packageJson.scripts?.['mobile:accounts:check']), 'package.json exposes mobile store account handoff checker script');
+  expect(Boolean(packageJson.scripts?.['mobile:accounts:release']), 'package.json exposes strict mobile store account handoff checker script');
   expect(Boolean(packageJson.scripts?.['mobile:qa:plan']), 'package.json exposes mobile installed-build QA plan checker script');
   expect(Boolean(packageJson.scripts?.['mobile:devices:check']), 'package.json exposes mobile local device coverage checker script');
   expect(Boolean(packageJson.scripts?.['mobile:bundle:check']), 'package.json exposes mobile bundle cleanliness checker script');
@@ -104,6 +106,10 @@ async function main() {
   expect(
     packageJson.scripts?.['mobile:preflight']?.includes('npm run mobile:privacy:check') === true,
     'Mobile preflight includes native privacy checker'
+  );
+  expect(
+    packageJson.scripts?.['mobile:preflight']?.includes('npm run mobile:accounts:check') === true,
+    'Mobile preflight includes store account handoff checker'
   );
   expect(
     packageJson.scripts?.['mobile:preflight']?.includes('npm run mobile:qa:plan') === true,
@@ -331,6 +337,7 @@ async function main() {
   expect(existsSync(resolve('scripts/check-mobile-public-urls.ts')), 'Mobile public URL check script exists');
   expect(existsSync(resolve('scripts/check-mobile-native-privacy.ts')), 'Mobile native privacy checker script exists');
   expect(existsSync(resolve('scripts/check-mobile-store-submission.ts')), 'Mobile store submission checker script exists');
+  expect(existsSync(resolve('scripts/check-mobile-store-account-handoff.ts')), 'Mobile store account handoff checker script exists');
   expect(existsSync(resolve('scripts/check-mobile-installed-qa-plan.ts')), 'Mobile installed-build QA plan checker script exists');
   expect(existsSync(resolve('scripts/check-mobile-local-device-coverage.ts')), 'Mobile local device coverage checker script exists');
   expect(existsSync(resolve('scripts/check-mobile-bundle-cleanliness.ts')), 'Mobile bundle cleanliness checker script exists');
@@ -352,6 +359,10 @@ async function main() {
   expect(
     launchChecklist.includes('- [x] Strict release signing gate exists: `npm run mobile:signing:release`'),
     'Launch checklist records strict release signing gate'
+  );
+  expect(
+    launchChecklist.includes('- [x] Strict store account handoff gate exists: `npm run mobile:accounts:release`'),
+    'Launch checklist records strict store account handoff gate'
   );
 
   const storeMetadata = await readFile(resolve('docs/mobile-store-metadata.md'), 'utf8');
@@ -409,6 +420,8 @@ async function main() {
   expect(storeSubmissionPackage.includes('npm run mobile:version:check'), 'Submission package documents version consistency checker command');
   expect(storeSubmissionPackage.includes('npm run mobile:privacy:check'), 'Submission package documents native privacy checker command');
   expect(storeSubmissionPackage.includes('npm run mobile:store:check'), 'Submission package documents store submission checker command');
+  expect(storeSubmissionPackage.includes('npm run mobile:accounts:check'), 'Submission package documents store account handoff checker command');
+  expect(storeSubmissionPackage.includes('npm run mobile:accounts:release'), 'Submission package documents strict store account handoff checker command');
   expect(storeSubmissionPackage.includes('npm run mobile:qa:plan'), 'Submission package documents installed-build QA plan checker command');
   expect(storeSubmissionPackage.includes('npm run mobile:devices:check'), 'Submission package documents local device coverage checker command');
   expect(storeSubmissionPackage.includes('npm run mobile:bundle:check'), 'Submission package documents bundle cleanliness checker command');
@@ -514,6 +527,30 @@ async function main() {
   ];
   for (const term of storeHandoffCheckerTerms) {
     expect(storeHandoffChecker.includes(term), `Store handoff checker covers ${term}`);
+  }
+
+  const storeAccountHandoffChecker = await readFile(resolve('scripts/check-mobile-store-account-handoff.ts'), 'utf8');
+  const storeAccountHandoffCheckerTerms = [
+    'docs/mobile-store-account-handoff.md',
+    '--strict',
+    'Strict store account handoff failed because final account warnings remain.',
+    'Release owner',
+    'Copyright holder',
+    'Apple Developer account holder',
+    'Apple Developer Team ID',
+    'App Store Connect app record',
+    'Bundle identifier owner confirmed',
+    'Google Play developer account holder',
+    'Upload key owner',
+    'Keystore file path',
+    'Support contact is support@flagarcade.com',
+    'Public site is production HTTPS URL',
+    'Bundle/package id matches native app id',
+    'Google Play package name matches native app id',
+    'Final confirmation checked',
+  ];
+  for (const term of storeAccountHandoffCheckerTerms) {
+    expect(storeAccountHandoffChecker.includes(term), `Store account handoff checker covers ${term}`);
   }
 
   const launchBlockerChecker = await readFile(resolve('scripts/check-mobile-launch-blockers.ts'), 'utf8');
@@ -993,14 +1030,16 @@ async function main() {
     'Artifact manifest',
     'Full go-live artifact verification needs a local Artifact manifest path',
     'Artifact generation was skipped. Verified evidence must already include the local artifact manifest',
+    'Final store account handoff',
     'Strict release signing preflight',
     'mobile:preflight',
+    'mobile:accounts:release',
     'mobile:signing:release',
     'mobile:evidence:check',
     'mobile:artifacts:check',
     'mobile:urls:check',
     'Mobile go-live gate passed.',
-    'Strict signing, signed artifacts, release evidence, preflight, and public URLs passed.',
+    'Final account handoff, strict signing, signed artifacts, release evidence, preflight, and public URLs passed.',
     'App Store Connect',
     'Google Play Console',
   ];
@@ -1017,9 +1056,11 @@ async function main() {
     'Release runbook documents skip-artifacts local manifest requirement'
   );
   expect(
-    releaseRunbook.includes('runs the strict release signing preflight')
+    releaseRunbook.includes('runs strict store account handoff validation')
+      && releaseRunbook.includes('runs the strict release signing preflight')
+      && storeSubmissionPackage.includes('runs strict store account handoff validation')
       && storeSubmissionPackage.includes('runs strict release signing preflight'),
-    'Release docs document strict signing inside full go-live gate'
+    'Release docs document strict account and signing checks inside full go-live gate'
   );
 
   const deletionRunbook = await readFile(resolve('docs/mobile-data-deletion-runbook.md'), 'utf8');
