@@ -80,7 +80,7 @@ After TestFlight, Play internal testing, and store-console evidence are filled, 
 npm run mobile:evidence:check -- --file docs/release-evidence/<release-file>.md
 ```
 
-The release evidence checker requires the `Artifact manifest` field to be a local JSON path so it can parse and verify the manifest's commit, version, build number, and signed artifact hashes. Other screenshot, clip, QA-note, and store-console evidence fields may use external URLs or repo-relative files. External evidence URLs must point to real evidence; placeholder hosts such as `example.com`, `localhost`, `127.0.0.1`, and `.invalid` domains are rejected.
+The release evidence checker requires the `Artifact manifest` field to be a local JSON path so it can parse and verify the manifest's commit, version, build number, and signed artifact hashes. It also requires the final copyright holder, Apple Developer Team ID, and Google Play developer account to be filled from `docs/mobile-store-account-handoff.md`. Other screenshot, clip, QA-note, and store-console evidence fields may use external URLs or repo-relative files. External evidence URLs must point to real evidence; placeholder hosts such as `example.com`, `localhost`, `127.0.0.1`, and `.invalid` domains are rejected.
 
 Evidence date, signed-build upload dates, installed-build test dates, and approval date must use `YYYY-MM-DD` and must be today or earlier. Future-dated evidence is rejected so the file cannot pass before the work is actually complete.
 

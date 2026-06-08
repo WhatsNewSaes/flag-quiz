@@ -56,6 +56,9 @@ const requiredReleaseFields = [
   'Terms URL verified',
   'Support URL verified',
   'Artifact manifest',
+  'Copyright holder',
+  'Apple Developer Team ID',
+  'Google Play developer account',
 ];
 
 const requiredCompleteSignoffFields = [
@@ -730,6 +733,9 @@ function selfTestEvidence(context = selfTestReleaseContext()) {
 - Terms URL verified: Pass
 - Support URL verified: Pass
 - Artifact manifest: ${artifactManifestPath}
+- Copyright holder: Flag Arcade LLC
+- Apple Developer Team ID: TEAMID
+- Google Play developer account: Flag Arcade Play Console
 
 ## Build Artifacts
 
@@ -834,6 +840,12 @@ function negativeSelfTestFindings() {
       baseline.replace('https://flagarcade.com/release-evidence/fresh-launch-and-splash.png', 'https://example.com/evidence/fresh-launch-and-splash.png'),
       context,
       ['Fresh launch and splash evidence link is valid']
+    ),
+    ...expectSelfTestFailure(
+      'missing copyright holder',
+      baseline.replace('- Copyright holder: Flag Arcade LLC', '- Copyright holder: '),
+      context,
+      ['Copyright holder is filled']
     ),
     ...expectSelfTestFailure(
       'weak final signoff value',

@@ -159,7 +159,7 @@ npm run mobile:devices:check
 npm run mobile:urls:check
 ```
 
-The evidence self-test includes negative rejection cases for stale commits, missing repo-relative evidence files, external artifact manifests, and weak final signoff values.
+The evidence self-test includes negative rejection cases for stale commits, missing copyright holder, missing repo-relative evidence files, external artifact manifests, and weak final signoff values.
 
 Before uploading signed builds, start a release evidence file:
 
@@ -176,4 +176,4 @@ npm run mobile:evidence:check -- --file docs/release-evidence/<release-file>.md
 npm run mobile:go-live:check -- --evidence docs/release-evidence/<release-file>.md --android-aab android/app/build/outputs/bundle/release/app-release.aab --ios-archive ios/App/build/FlagArcade.xcarchive
 ```
 
-The evidence initializer prefills the `Artifact manifest` field. The evidence checker requires that field to stay a local JSON path so it can parse and verify the manifest's commit, version, build number, and signed artifact hashes. The full go-live gate reads that same local path, writes the artifact manifest before evidence validation, and then verifies the completed evidence file. If `--skip-artifacts` is used for evidence-only review, the completed evidence file must still point to a previously generated local artifact manifest.
+The evidence initializer prefills the `Artifact manifest` field and leaves final account fields as `TBD`. Fill copyright holder, Apple Developer Team ID, and Google Play developer account from `docs/mobile-store-account-handoff.md` before final evidence validation. The evidence checker requires the artifact manifest to stay a local JSON path so it can parse and verify the manifest's commit, version, build number, and signed artifact hashes. The full go-live gate reads that same local path, writes the artifact manifest before evidence validation, and then verifies the completed evidence file. If `--skip-artifacts` is used for evidence-only review, the completed evidence file must still point to a previously generated local artifact manifest.

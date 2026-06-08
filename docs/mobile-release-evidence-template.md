@@ -19,6 +19,9 @@ Use `YYYY-MM-DD` for Evidence date, Upload date, installed-build Date, Failure L
 - Terms URL verified:
 - Support URL verified:
 - Artifact manifest:
+- Copyright holder:
+- Apple Developer Team ID:
+- Google Play developer account:
 
 The artifact manifest must be the JSON file written by `npm run mobile:artifacts:check -- --manifest ...`. Local manifest paths are parsed by `npm run mobile:evidence:check` and must match this release candidate's commit, version, and build number.
 

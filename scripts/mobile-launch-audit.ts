@@ -761,6 +761,9 @@ async function main() {
     'Every required row must include an evidence URL or repo-relative evidence file path',
     'Repo-relative evidence file paths must exist',
     'Artifact manifest',
+    'Copyright holder',
+    'Apple Developer Team ID',
+    'Google Play developer account',
     'must match this release candidate',
     'Not verified',
   ];
@@ -781,6 +784,9 @@ async function main() {
     'Evidence owner',
     'Terms URL verified',
     'Artifact manifest',
+    'Copyright holder',
+    'Apple Developer Team ID',
+    'Google Play developer account',
     '-artifacts.json',
     'Artifact manifest path',
     'mobile:artifacts:check',
@@ -813,6 +819,9 @@ async function main() {
     'requiredCompleteSignoffFields',
     'requiredFilledSignoffFields',
     'Terms URL verified',
+    'Copyright holder',
+    'Apple Developer Team ID',
+    'Google Play developer account',
     'build artifact is uploaded',
     'Artifact manifest',
     'Artifact manifest evidence link is valid',
@@ -851,6 +860,7 @@ async function main() {
     'Negative self-test rejects',
     'stale git commit',
     'missing repo-relative evidence file',
+    'missing copyright holder',
     'external artifact manifest',
     'weak final signoff value',
     'existsSync',
@@ -879,6 +889,10 @@ async function main() {
     'Release runbook documents local artifact manifest enforcement'
   );
   expect(
+    releaseRunbook.includes('requires the final copyright holder, Apple Developer Team ID, and Google Play developer account'),
+    'Release runbook documents final account evidence requirements'
+  );
+  expect(
     releaseRunbook.includes('Future-dated evidence is rejected'),
     'Release runbook documents future-dated evidence rejection'
   );
@@ -905,6 +919,10 @@ async function main() {
   expect(
     storeSubmissionPackage.includes('external artifact manifests'),
     'Submission package documents external artifact manifest rejection'
+  );
+  expect(
+    storeSubmissionPackage.includes('Fill copyright holder, Apple Developer Team ID, and Google Play developer account'),
+    'Submission package documents final account evidence fields'
   );
 
   const releaseArtifactChecker = await readFile(resolve('scripts/check-mobile-release-artifacts.ts'), 'utf8');

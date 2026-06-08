@@ -132,6 +132,9 @@ async function main() {
   evidence = replaceLine(evidence, 'Terms URL verified', 'Pending - run `npm run mobile:urls:check`');
   evidence = replaceLine(evidence, 'Support URL verified', 'Pending - run `npm run mobile:urls:check`');
   evidence = replaceLine(evidence, 'Artifact manifest', relativeArtifactManifestPath);
+  evidence = replaceLine(evidence, 'Copyright holder', 'TBD');
+  evidence = replaceLine(evidence, 'Apple Developer Team ID', 'TBD');
+  evidence = replaceLine(evidence, 'Google Play developer account', 'TBD');
 
   const relativeOutputPath = path.relative(root, outputPath);
 
