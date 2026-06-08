@@ -348,6 +348,12 @@ async function main() {
   expect(existsSync(resolve('src/pages/TermsPage.tsx')), 'Terms page source exists');
   expect(existsSync(resolve('src/pages/SupportPage.tsx')), 'Support page source exists');
 
+  const launchChecklist = await readFile(resolve('docs/mobile-launch-checklist.md'), 'utf8');
+  expect(
+    launchChecklist.includes('- [x] Strict release signing gate exists: `npm run mobile:signing:release`'),
+    'Launch checklist records strict release signing gate'
+  );
+
   const storeMetadata = await readFile(resolve('docs/mobile-store-metadata.md'), 'utf8');
   expect(storeMetadata.includes('Short description:'), 'Google Play short description is drafted');
   expect(storeMetadata.includes('Full description:'), 'Google Play full description is drafted');

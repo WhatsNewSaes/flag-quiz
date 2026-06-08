@@ -81,6 +81,7 @@ Last updated: 2026-06-07
 - [x] iOS debug build script exists: `npm run mobile:build:ios:debug`
 - [x] iOS App Store archive script exists: `npm run mobile:build:ios:archive`
 - [x] Signing preflight script exists: `npm run mobile:signing:preflight`
+- [x] Strict release signing gate exists: `npm run mobile:signing:release`
 - [x] Release artifact checker exists: `npm run mobile:artifacts:check`
 - [ ] Android release build: signed AAB
 - [ ] iOS archive: signed App Store archive
