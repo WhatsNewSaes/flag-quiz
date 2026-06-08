@@ -142,6 +142,12 @@ async function main() {
     const iosArchive = args.iosArchive as string;
 
     steps.push({
+      label: 'Strict release signing preflight',
+      command: 'npm',
+      args: ['run', 'mobile:signing:release'],
+    });
+
+    steps.push({
       label: 'Signed release artifacts',
       command: 'npm',
       args: [
@@ -180,7 +186,7 @@ async function main() {
   if (args.skipArtifacts) {
     console.log(`Artifact generation was skipped. Verified evidence must already include the local artifact manifest at ${manifestPath}.`);
   } else {
-    console.log('Signed artifacts, release evidence, preflight, and public URLs passed. Confirm App Store Connect and Google Play Console are submitted with these same builds.');
+    console.log('Strict signing, signed artifacts, release evidence, preflight, and public URLs passed. Confirm App Store Connect and Google Play Console are submitted with these same builds.');
   }
 }
 

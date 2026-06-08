@@ -90,7 +90,7 @@ Evidence date, signed-build upload dates, installed-build test dates, and approv
 
 If any launch issue is recorded in the Failure Log, keep the row until it has a valid severity (`Critical`, `High`, `Medium`, or `Low`), owner, fix commit or no-code-change reference, and `Pass` retest result. Empty failure logs are allowed; unresolved failure rows are rejected.
 
-As the final local gate before submitting for App Store and Google Play review, run it with the signed artifact paths. The gate runs unsigned preflight, writes the artifact manifest from the evidence file's `Artifact manifest` path, validates the completed evidence file, and checks public URLs.
+As the final local gate before submitting for App Store and Google Play review, run it with the signed artifact paths. The gate runs unsigned preflight, runs the strict release signing preflight, writes the artifact manifest from the evidence file's `Artifact manifest` path, validates the completed evidence file, and checks public URLs.
 
 ```bash
 npm run mobile:go-live:check -- --evidence docs/release-evidence/<release-file>.md --android-aab android/app/build/outputs/bundle/release/app-release.aab --ios-archive ios/App/build/FlagArcade.xcarchive

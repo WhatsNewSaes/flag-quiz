@@ -993,12 +993,14 @@ async function main() {
     'Artifact manifest',
     'Full go-live artifact verification needs a local Artifact manifest path',
     'Artifact generation was skipped. Verified evidence must already include the local artifact manifest',
+    'Strict release signing preflight',
     'mobile:preflight',
+    'mobile:signing:release',
     'mobile:evidence:check',
     'mobile:artifacts:check',
     'mobile:urls:check',
     'Mobile go-live gate passed.',
-    'Signed artifacts, release evidence, preflight, and public URLs passed.',
+    'Strict signing, signed artifacts, release evidence, preflight, and public URLs passed.',
     'App Store Connect',
     'Google Play Console',
   ];
@@ -1013,6 +1015,11 @@ async function main() {
   expect(
     releaseRunbook.includes('external manifest links are not accepted by the go-live gate'),
     'Release runbook documents skip-artifacts local manifest requirement'
+  );
+  expect(
+    releaseRunbook.includes('runs the strict release signing preflight')
+      && storeSubmissionPackage.includes('runs strict release signing preflight'),
+    'Release docs document strict signing inside full go-live gate'
   );
 
   const deletionRunbook = await readFile(resolve('docs/mobile-data-deletion-runbook.md'), 'utf8');
